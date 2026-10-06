@@ -1,0 +1,1164 @@
+1. VALUACIÓN (DCF, base FY2025) Soriana Walmex Chedraui La Comer
+WACC 12.50% 12.85% 10.65% 12.71%
+Crecimiento perpetuo (g) 3.50% 3.50% 3.50% 3.50%
+FCF 2025A (flujo libre de efectivo) 6,761.4 40,916.8 12,113.9 302.9
+VPN de los FCF 2026E–2030E 26,018.6 159,027.4 49,789.4 1,181.5
+Valor terminal (TV) al 2030 90,637.0 538,153.7 208,214.2 4,044.4
+Valor presente del TV 50,295.3 294,083.6 125,521.4 2,223.8
+Enterprise Value (EV) 76,313.9 453,111.0 175,310.7 3,405.2
+Deuda total (bancaria/bursátil + arrendamientos) 23,618.0 80,848.1 56,744.3 2,441.8
+Efectivo y equivalentes 9,295.0 28,591.2 14,640.2 2,962.8
+Equity Value (valor para los accionistas) 61,990.9 400,854.1 133,206.6 3,926.2
+Valor intrínseco por acción (MXN) $34.44 $22.96 $138.72 $3.68
+Precio actual en bolsa (MXN) $33.48 $46.60 $92.94 $32.08
+Potencial de apreciación / (baja) 2.9% (50.7%) 49.3% (88.5%)
+Precio objetivo consenso de analistas (MXN) $23.36 $60.09 $128.93 $47.67
+Recomendación consenso de analistas Venta (0 C / 1 M / 6 V) Neutral (5 C / 10 M / 3 V) Neutral (3 C / 12 M / 0 V) Compra (5 C / 4 M / 0 V)
+2. RAZONES FINANCIERAS – PROMEDIO DE LOS ÚLTIMOS 5 TRIMESTRES Soriana Walmex Chedraui La Comer
+Circulante 1.25x 0.98x 0.93x 1.23x
+Prueba ácida 0.35x 0.35x 0.41x 0.48x
+Deuda / Activo total 45.5% 52.9% 66.3% 25.8%
+Capitalización a largo plazo 20.7% 18.0% 38.0% 6.5%
+Cobertura de intereses 2.90x 6.65x 4.15x 11.84x
+Rotación del inventario (trimestral) 0.96x 1.78x 2.38x 1.35x
+Rotación del inventario en días 96.0 51.7 38.4 67.9
+Rotación del activo total (trimestral) 0.28x 0.51x 0.46x 0.28x
+Margen bruto 24.6% 24.2% 23.5% 29.7%
+Margen neto 2.1% 4.8% 2.3% 5.5%
+ROA (trimestral) 0.58% 2.47% 1.09% 1.52%
+ROE (trimestral) 1.07% 5.25% 3.22% 2.04%
+ROI (trimestral) 1.20% 4.24% 2.43% 1.79%
+3. RAZONES FINANCIERAS ANUALES FY2025 (incluye Chedraui) Soriana Walmex Chedraui La Comer
+Circulante 1.24x 0.97x 0.92x 1.21x
+Prueba ácida 0.41x 0.33x 0.44x 0.50x
+Deuda / Activo total 45.7% 52.4% 67.4% 25.4%
+Capitalización a largo plazo 20.6% 18.2% 37.1% 6.4%
+Cobertura de intereses 2.46x 6.85x 3.92x 13.40x
+Rotación del inventario (anual) 4.17x 7.13x 9.71x 5.63x
+Rotación del inventario en días (365) 87.4 51.2 37.6 64.9
+Rotación del activo total (anual) 1.14x 2.04x 1.84x 1.08x
+Margen bruto 24.1% 24.2% 23.0% 29.6%
+Margen neto 1.9% 4.9% 2.2% 5.6%
+ROA (anual) 2.14% 10.07% 4.13% 6.08%
+ROE (anual) 3.93% 21.18% 12.65% 8.15%
+ROI (anual) 4.88% 17.36% 9.69% 7.05%
+
+-- 1 of 11 --
+
+1. INFORMACIÓN GENERAL DE LA EMPRESA Dato
+Clave de cotización SORIANA B (BMV, cotiza desde 1987)
+Fundación 1968, Torreón, Coahuila
+Sede corporativa Monterrey, Nuevo León
+Giro Tiendas de autoservicio y clubes de membresía (multiformato)
+Tiendas en operación (2T26) 812
+Colaboradores (jun-2026) 82,064
+Acciones en circulación (millones) 1,800.0
+Capitalización de mercado a precio actual (mdp) 60,264.0
+2. NOTICIAS Y ANÁLISIS RECIENTES Fecha
+Resultados 2T26: menos ventas, más utilidad 31-jul-2026
+Cierre de 20 tiendas en 2026 26-ago-2026
+Reducción de plantilla y automatización 2-sep-2026
+Plan de inversión 2S26 sep-2026
+Sector: Walmart, Soriana y Chedraui sufren por ingresos e inflación 2026
+3. CALIFICACIÓN Y CONSENSO DE ANALISTAS Dato
+Calificación crediticia (HR Ratings) HR+1 (corto plazo)
+Consenso de analistas Venta
+Precio objetivo promedio 12 meses (MXN) 23.357
+4. ANÁLISIS FUNDAMENTAL – RESUMEN FINANCIERO FY2025 (mdp) Valor
+Ingresos totales 177,515.0
+Utilidad bruta 42,764.0
+Utilidad de operación (EBIT) 7,552.0
+Utilidad neta consolidada 3,334.0
+Margen bruto 24.1%
+Margen de operación 4.3%
+Margen neto 1.9%
+5. CUENTA DE RESULTADOS – ÚLTIMO TRIMESTRE (2T26 vs 2T25, mdp) 2T26
+Ingresos totales 43,559.0
+Costo de ventas 32,919.0
+Utilidad bruta 10,640.0
+Utilidad de operación 1,855.0
+Gastos financieros 582.0
+Utilidad neta 1,090.0
+6. BALANCE (cierre 2025 vs 1T26, mdp) Dic-2025
+Activo total 156,038.0
+Pasivo total 71,306.0
+Capital contable 84,732.0
+Deuda bancaria y bursátil 11,500.0
+Efectivo 9,295.0
+7. FLUJOS DE EFECTIVO FY2025 (mdp) Valor
+Flujo neto de operación (CFO) 13,738.0
+Capex 2,867.0
+Flujo libre (CFO − Capex) 10,871.0
+8. ANÁLISIS FUNDAMENTAL – RATIOS DE MERCADO Valor
+P/U (precio / utilidad por acción) 18.08x
+Valor en libros por acción (MXN) $47.07
+P/VL (precio / valor en libros) 0.71x
+ROE anual FY2025 3.9%
+9. DIVIDENDOS Valor
+Último dividendo por acción (MXN) $0.5556
+Rendimiento por dividendo a precio actual 1.66%
+10. REPORTE – PUNTOS CLAVE 2T26
+Ventas mismas tiendas 2T26 −4.5%
+Margen bruto 2T26 24.4%
+Costo financiero neto 2T26 (mdp) 477
+Deuda neta bancaria y bursátil al 2T26 (mdp) 4,625
+Capex acumulado 1S26 (mdp) 1,411
+11. PREVISIÓN Valor
+Próximo reporte trimestral (3T26) 23-oct-2026
+Precio objetivo consenso vs precio actual (30.2%)
+Proyección de ingresos 2027 HR Ratings (mdp) 196,480
+12. ANÁLISIS TÉCNICO Valor
+Precio de cierre (MXN) $33.48
+Rango de 52 semanas (MXN) 23.90 – 42.70
+Variación 1 año 21.3%
+Señal técnica resumen (diaria, semanal y mensual) Compra fuerte
+RSI (14) 75.0
+MACD (12,26) 1.154
+Media móvil 50 días (MXN) $29.68
+Media móvil 200 días (MXN) $29.71
+13. COMPARATIVO BURSÁTIL DEL SECTOR Soriana Walmex Chedraui La Comer
+Precio actual (MXN) $33.48 $46.60 $92.94 $32.08
+P/U 18.08x 16.31x 13.48x 12.74x
+Rendimiento por dividendo 1.7% 2.5% 2.5% 0.9%
+Variación 1 año 21.3% -16.9% -41.3% -20.5%
+Beta de regresión (referencia) -0.24 0.03 -0.06 0.17
+Señal técnica resumen (diaria) Compra fuerte Compra fuerte Compra fuerte Compra fuerte
+RSI (14) 75.0 41.1 60.2 40.0
+Consenso de analistas Venta Neutral Neutral Compra
+Precio objetivo consenso (MXN) $23.36 $60.09 $128.93 $47.67
+Calificación crediticia HR+1 (HR Ratings, CP) n.d. AAA(mex) Fitch, perspectiva estable n.d.
+
+-- 2 of 11 --
+
+ORGANIZACIÓN SORIANA (SORIANA B) 2T25 3T25 4T25 1T26 2T26 FY2025
+Ingresos totales 45,810.0 42,683.0 47,592.0 40,444.0 43,559.0 177,515.0
+Costo de ventas 34,856.0 31,998.0 35,795.0 30,466.0 32,919.0 134,752.0
+Utilidad bruta 10,954.0 10,685.0 11,797.0 9,978.0 10,640.0 42,764.0
+Utilidad de operación (EBIT) 1,909.0 1,468.0 2,486.0 1,822.0 1,855.0 7,552.0
+Gastos financieros (intereses) 829.0 786.0 616.0 588.0 582.0 3,074.0
+Utilidad antes de impuestos 1,203.0 764.0 1,763.0 1,326.0 1,372.0 4,766.0
+Impuestos a la utilidad 461.0 179.0 455.0 492.0 282.0 1,433.0
+Utilidad neta consolidada 743.0 584.0 1,308.0 834.0 1,090.0 3,334.0
+Depreciación y amortización 1,105.9 1,049.3 1,051.0 1,048.9 1,030.6 4,342.0
+Flujo neto de operación (CFO) 4,013.1 (205.9) 13,017.0 (3,565.6) 3,916.0 13,738.0
+Capex (inmuebles, equipo e intangibles) 663.2 775.2 816.0 501.0 909.9 2,867.0
+Efectivo y equivalentes 7,540.0 5,798.0 9,295.0 4,589.0 6,875.4 9,295.0
+Inventarios 37,421.0 36,394.0 32,283.0 32,635.0 35,486.7 32,283.0
+Activo circulante 52,131.0 49,767.0 48,529.0 43,562.0 49,259.8 48,529.0
+Activo total 159,842.0 157,502.0 156,038.0 150,941.0 156,813.0 156,038.0
+Pasivo circulante 41,065.0 38,190.0 39,219.0 33,850.0 41,957.9 39,219.0
+Pasivo a largo plazo 34,801.0 34,753.0 32,086.0 31,527.0 28,201.1 32,086.0
+Pasivo total 75,866.0 72,943.0 71,306.0 65,377.0 70,159.0 71,306.0
+Capital contable 83,976.0 84,559.0 84,732.0 85,564.0 86,654.0 84,732.0
+Deuda bursátil y bancaria CP 6,627.0 6,553.0 3,000.0 3,000.0 6,500.0 3,000.0
+Deuda bursátil y bancaria LP 11,500.0 11,500.0 8,500.0 8,500.0 5,000.0 8,500.0
+Pasivo por arrendamiento CP 638.0 659.0 676.0 683.0 640.0 676.0
+Pasivo por arrendamiento LP 11,389.0 11,506.0 11,442.0 11,540.0 11,580.6 11,442.0
+Deuda total (financiera + arrendamientos) 30,154.0 30,218.0 23,618.0 23,723.0 23,720.6 23,618.0
+WALMART DE MÉXICO (WALMEX) 2T25 3T25 4T25 1T26 2T26 FY2025
+Ingresos totales 246,253.8 241,520.2 282,849.3 245,018.5 250,947.8 1,011,597.9
+Costo de ventas 186,848.1 181,746.3 214,905.4 185,425.3 190,822.8 766,400.0
+Utilidad bruta 59,405.7 59,773.8 67,943.9 59,593.2 60,125.0 245,197.9
+Utilidad de operación (EBIT) 17,267.1 19,020.8 23,317.0 18,471.6 17,019.7 78,493.8
+Gastos financieros (intereses) 2,646.3 3,223.3 2,795.1 2,895.6 2,799.6 11,464.7
+Utilidad antes de impuestos 15,076.8 16,328.0 21,053.3 16,176.4 14,754.6 68,876.6
+Impuestos a la utilidad 3,849.9 4,580.7 6,453.5 3,676.9 3,602.2 18,985.9
+Utilidad neta consolidada 11,226.9 11,747.3 14,599.8 12,499.6 11,152.4 49,890.7
+Depreciación y amortización 6,227.7 6,245.4 6,277.9 6,506.9 6,620.7 24,953.1
+Flujo neto de operación (CFO) 21,549.4 22,017.2 43,314.6 4,955.6 18,326.1 82,437.7
+Capex (inmuebles, equipo e intangibles) 7,989.7 11,746.3 15,831.8 2,436.5 9,264.9 38,982.0
+Efectivo y equivalentes 32,443.8 35,181.7 28,591.2 28,085.1 30,118.3 28,591.2
+Inventarios 106,742.4 113,238.4 107,450.9 106,202.0 107,528.9 107,450.9
+Activo circulante 166,663.9 176,974.1 164,109.4 163,317.9 168,653.5 164,109.4
+Activo total 480,957.5 497,334.5 495,273.3 496,840.7 505,946.6 495,273.3
+Pasivo circulante 177,161.4 186,356.5 169,716.7 153,660.1 174,921.4 169,716.7
+Pasivo a largo plazo 86,252.9 87,538.9 89,976.5 90,611.7 92,411.4 89,976.5
+Pasivo total 263,414.3 273,895.4 259,693.2 244,271.8 267,332.8 259,693.2
+Capital contable 217,543.2 223,439.1 235,580.1 252,568.9 238,613.8 235,580.1
+Deuda bursátil y bancaria CP - - - - - -
+Deuda bursátil y bancaria LP - - - - - -
+Pasivo por arrendamiento CP 4,917.5 4,981.5 5,186.9 5,317.6 5,495.2 5,186.9
+Pasivo por arrendamiento LP 73,863.0 74,013.7 75,661.2 75,952.9 77,602.9 75,661.2
+Deuda total (financiera + arrendamientos) 78,780.5 78,995.2 80,848.1 81,270.5 83,098.1 80,848.1
+GRUPO COMERCIAL CHEDRAUI (CHDRAUI B) 2T25 3T25 4T25 1T26 2T26 FY2025 Aux. FY2025
+Ingresos totales 73,883.8 71,768.1 75,221.1 69,795.8 71,034.9 295,313.7
+Costo de ventas 56,050.0 54,122.2 60,335.2 52,843.2 53,394.0 227,511.8
+Utilidad bruta 17,833.9 17,645.9 14,886.0 16,952.6 17,640.9 67,801.8
+Utilidad de operación (EBIT) 4,248.0 3,745.3 3,403.0 3,680.6 4,016.9 15,097.9
+Gastos financieros (intereses) 880.6 944.2 1,003.1 904.7 892.5 3,846.9
+Utilidad antes de impuestos 2,986.9 2,417.8 1,813.8 2,306.5 2,653.8 9,508.6
+Impuestos a la utilidad 924.5 771.4 469.6 723.2 829.1 2,888.6
+Utilidad neta consolidada 2,062.3 1,646.4 1,344.2 1,583.3 1,824.7 6,620.1
+Depreciación y amortización 2,303.7 2,297.2 2,308.7 2,259.0 2,312.7 9,293.3
+Flujo neto de operación (CFO) 5,617.8 4,366.0 10,197.4 (756.9) 5,978.8 18,240.9
+Capex (inmuebles, equipo e intangibles) 2,185.9 2,286.1 2,688.9 2,195.6 2,859.1 7,747.9 7,747.9 Inversión neta (−flujo de inversión FY2025), proxy de capex
+Efectivo y equivalentes 9,740.3 9,638.0 14,640.2 10,487.9 8,499.8 14,640.2
+Inventarios 22,914.7 23,527.6 23,430.1 23,660.9 22,606.5 23,430.1
+Activo circulante 39,608.2 41,642.6 44,626.6 41,294.3 38,968.1 44,626.7
+Activo total 154,895.8 155,620.7 160,365.4 156,233.2 152,993.2 160,365.4
+Pasivo circulante 42,247.7 43,507.3 48,465.3 43,265.0 43,358.1 48,465.3
+Pasivo a largo plazo 61,262.9 60,415.6 59,551.5 58,979.8 56,310.1 59,551.5
+Pasivo total 103,510.6 103,922.9 108,016.7 102,244.8 99,668.2 108,016.8
+Capital contable 51,385.3 51,697.8 52,348.7 53,988.5 53,325.0 52,348.7
+Deuda bursátil y bancaria CP 1,055.1 1,541.9 530.0 705.3 1,087.1 530.0
+Deuda bursátil y bancaria LP 7,557.1 7,353.0 7,186.7 7,226.7 5,241.0 7,186.7
+Pasivo por arrendamiento CP 2,674.4 2,626.9 2,926.0 3,014.6 3,015.6 2,926.0
+Pasivo por arrendamiento LP 48,473.1 47,033.3 46,631.7 46,405.9 45,276.7 46,631.7
+Deuda total (financiera + arrendamientos) 59,759.6 58,555.1 57,274.4 57,352.5 54,620.4 56,744.3
+LA COMER (LACOMER UBC) 2T25 3T25 4T25 1T26 2T26 FY2025 9M2025
+Ingresos totales 12,232.6 11,813.2 12,404.4 12,006.5 12,933.1 47,526.6 35,122.3
+Costo de ventas 8,718.1 8,306.7 8,694.3 8,328.1 9,130.7 33,441.0 24,746.7
+Utilidad bruta 3,514.5 3,506.5 3,710.1 3,678.4 3,802.4 14,085.6 10,375.5
+Utilidad de operación (EBIT) 1,026.3 839.0 712.6 1,001.4 932.2 3,564.1 2,851.5
+Gastos financieros (intereses) 90.2 76.7 64.9 73.3 76.0 266.0 235.5
+Utilidad antes de impuestos 1,003.4 817.0 697.7 992.7 893.8 3,507.6 2,810.0
+Impuestos a la utilidad 200.4 176.1 191.4 250.5 222.6 822.9 631.5
+Utilidad neta consolidada 803.0 640.9 506.2 742.2 671.1 2,684.7 2,178.5
+Depreciación y amortización 407.8 411.7 397.3 386.4 399.1 1,650.8 1,219.9
+Flujo neto de operación (CFO) 1,576.0 468.6 1,924.6 583.8 988.7 4,713.2 2,788.6
+Capex (inmuebles, equipo e intangibles) 1,484.5 912.2 1,480.1 606.8 1,670.1 3,842.7 2,839.7
+Efectivo y equivalentes 3,071.8 2,615.8 2,962.8 2,813.0 1,665.7 2,962.8
+Inventarios 6,630.4 6,020.2 5,943.1 6,182.4 7,365.3 5,943.1
+Activo circulante 11,202.7 10,026.3 10,147.2 10,422.3 10,810.2 10,147.2
+Activo total 43,616.2 42,970.2 44,188.5 44,754.6 46,541.8 44,188.5
+Pasivo circulante 9,031.0 7,608.5 8,406.7 8,294.0 9,623.2 8,406.7
+Pasivo a largo plazo 2,754.8 2,852.9 2,838.5 2,853.0 3,034.5 2,838.5
+Pasivo total 11,785.8 10,461.4 11,245.2 11,147.0 12,657.7 11,245.2
+Capital contable 31,830.4 32,508.8 32,943.3 33,607.6 33,884.1 32,943.3
+Deuda bursátil y bancaria CP - - - - - -
+Deuda bursátil y bancaria LP - - - - - -
+Pasivo por arrendamiento CP 93.4 92.3 98.3 99.7 105.6 98.3
+Pasivo por arrendamiento LP 2,260.3 2,272.5 2,343.5 2,344.7 2,443.7 2,343.5
+Deuda total (financiera + arrendamientos) 2,353.7 2,364.8 2,441.8 2,444.4 2,549.3 2,441.8
+DETALLE DE CAPEX (mdp) 2T25 3T25 4T25 1T26 2T26
+Soriana – Inmuebles y equipo 543.7 1,033.7 816.0 384.7 795.5
+Soriana – Intangibles 119.5 - - 116.3 114.4
+Soriana – Otros / ajustes - (258.5) - - -
+Walmex – Inmuebles y equipo 7,989.7 11,746.3 15,831.8 2,436.5 9,264.9
+Walmex – Intangibles - - - - -
+Walmex – Otros / ajustes - - - - -
+Chedraui – Inmuebles y equipo 2,117.2 2,215.3 8,220.6 2,159.3 2,752.3
+Chedraui – Intangibles 68.7 70.8 140.6 36.3 106.8
+Chedraui – Otros / ajustes - - (5,672.3) - -
+La Comer – Inmuebles y equipo 1,484.5 912.2 1,447.7 606.8 1,670.1
+La Comer – Intangibles - - 32.4 - -
+La Comer – Otros / ajustes - - - - -
+
+-- 3 of 11 --
+
+Días del trimestre 91.25
+ORGANIZACIÓN SORIANA 2T25 3T25 4T25 1T26 2T26 Promedio 5T
+Circulante 1.27x 1.30x 1.24x 1.29x 1.17x 1.25x
+Prueba ácida 0.36x 0.35x 0.41x 0.32x 0.33x 0.35x
+Deuda / Activo total 47.5% 46.3% 45.7% 43.3% 44.7% 45.5%
+Capitalización a largo plazo 21.8% 22.1% 20.6% 20.9% 18.0% 20.7%
+Cobertura de intereses 2.30x 1.87x 4.04x 3.10x 3.19x 2.90x
+Rotación del inventario 0.93x 0.88x 1.11x 0.93x 0.93x 0.96x
+Rotación del inventario en días 98.0 103.8 82.3 97.7 98.4 96.0
+Rotación del activo total 0.29x 0.27x 0.31x 0.27x 0.28x 0.28x
+Margen bruto 23.9% 25.0% 24.8% 24.7% 24.4% 24.6%
+Margen neto 1.6% 1.4% 2.7% 2.1% 2.5% 2.1%
+Rentabilidad sobre activos (ROA) 0.46% 0.37% 0.84% 0.55% 0.70% 0.58%
+Rentabilidad sobre capital (ROE) 0.88% 0.69% 1.54% 0.97% 1.26% 1.07%
+ROI (rendimiento sobre la inversión) 1.17% 0.90% 1.61% 1.17% 1.18% 1.20%
+WALMART DE MÉXICO 2T25 3T25 4T25 1T26 2T26 Promedio 5T
+Circulante 0.94x 0.95x 0.97x 1.06x 0.96x 0.98x
+Prueba ácida 0.34x 0.34x 0.33x 0.37x 0.35x 0.35x
+Deuda / Activo total 54.8% 55.1% 52.4% 49.2% 52.8% 52.9%
+Capitalización a largo plazo 17.9% 17.6% 18.2% 18.2% 18.3% 18.0%
+Cobertura de intereses 6.52x 5.90x 8.34x 6.38x 6.08x 6.65x
+Rotación del inventario 1.75x 1.60x 2.00x 1.75x 1.77x 1.78x
+Rotación del inventario en días 52.1 56.9 45.6 52.3 51.4 51.7
+Rotación del activo total 0.51x 0.49x 0.57x 0.49x 0.50x 0.51x
+Margen bruto 24.1% 24.7% 24.0% 24.3% 24.0% 24.2%
+Margen neto 4.6% 4.9% 5.2% 5.1% 4.4% 4.8%
+Rentabilidad sobre activos (ROA) 2.33% 2.36% 2.95% 2.52% 2.20% 2.47%
+Rentabilidad sobre capital (ROE) 5.16% 5.26% 6.20% 4.95% 4.67% 5.25%
+ROI (rendimiento sobre la inversión) 4.08% 4.40% 5.16% 3.87% 3.70% 4.24%
+GRUPO COMERCIAL CHEDRAUI 2T25 3T25 4T25 1T26 2T26 Promedio 5T
+Circulante 0.94x 0.96x 0.92x 0.95x 0.90x 0.93x
+Prueba ácida 0.40x 0.42x 0.44x 0.41x 0.38x 0.41x
+Deuda / Activo total 66.8% 66.8% 67.4% 65.4% 65.1% 66.3%
+Capitalización a largo plazo 39.6% 38.8% 37.1% 37.8% 36.8% 38.0%
+Cobertura de intereses 4.82x 3.97x 3.39x 4.07x 4.50x 4.15x
+Rotación del inventario 2.45x 2.30x 2.58x 2.23x 2.36x 2.38x
+Rotación del inventario en días 37.3 39.7 35.4 40.9 38.6 38.4
+Rotación del activo total 0.48x 0.46x 0.47x 0.45x 0.46x 0.46x
+Margen bruto 24.1% 24.6% 19.8% 24.3% 24.8% 23.5%
+Margen neto 2.8% 2.3% 1.8% 2.3% 2.6% 2.3%
+Rentabilidad sobre activos (ROA) 1.33% 1.06% 0.84% 1.01% 1.19% 1.09%
+Rentabilidad sobre capital (ROE) 4.01% 3.18% 2.57% 2.93% 3.42% 3.22%
+ROI (rendimiento sobre la inversión) 2.68% 2.38% 2.17% 2.31% 2.60% 2.43%
+LA COMER 2T25 3T25 4T25 1T26 2T26 Promedio 5T
+Circulante 1.24x 1.32x 1.21x 1.26x 1.12x 1.23x
+Prueba ácida 0.51x 0.53x 0.50x 0.51x 0.36x 0.48x
+Deuda / Activo total 27.0% 24.3% 25.4% 24.9% 27.2% 25.8%
+Capitalización a largo plazo 6.3% 6.6% 6.4% 6.4% 6.5% 6.5%
+Cobertura de intereses 11.38x 10.94x 10.98x 13.66x 12.27x 11.84x
+Rotación del inventario 1.31x 1.38x 1.46x 1.35x 1.24x 1.35x
+Rotación del inventario en días 69.4 66.1 62.4 67.7 73.6 67.9
+Rotación del activo total 0.28x 0.27x 0.28x 0.27x 0.28x 0.28x
+Margen bruto 28.7% 29.7% 29.9% 30.6% 29.4% 29.7%
+Margen neto 6.6% 5.4% 4.1% 6.2% 5.2% 5.5%
+Rentabilidad sobre activos (ROA) 1.84% 1.49% 1.15% 1.66% 1.44% 1.52%
+Rentabilidad sobre capital (ROE) 2.52% 1.97% 1.54% 2.21% 1.98% 2.04%
+ROI (rendimiento sobre la inversión) 2.10% 1.68% 1.41% 1.94% 1.79% 1.79%
+
+-- 4 of 11 --
+
+Concepto Soriana Walmex Chedraui La Comer
+PARÁMETROS DE MERCADO
+Tasa libre de riesgo (Bono M 10 años) 9.52% 9.52% 9.52% 9.52%
+Prima de riesgo de mercado madura 4.23% 4.23% 4.23% 4.23%
+Prima de riesgo país México (referencia) 2.46% 2.46% 2.46% 2.46%
+Prima de riesgo de mercado aplicada (PRM) 4.23% 4.23% 4.23% 4.23%
+Beta desapalancada del sector 0.80 0.80 0.80 0.80
+Tasa de impuestos (ISR) 30.00% 30.00% 30.00% 30.00%
+DATOS DE MERCADO
+Precio actual por acción (MXN) 33.48 46.60 92.94 32.08
+Fecha del precio 25-Sep-26 Sep-26 21-ago-2026 Sep-26
+Capitalización de mercado reportada 54,180.0 801,750.0 89,150.0 34,190.0
+Precio de cierre asociado a esa capitalización (MXN) 30.10 45.92 92.84 32.08
+Acciones en circulación (millones) 1,800.0 17,459.7 960.3 1,065.8
+Valor de mercado del capital (E) 60,264.0 813,622.6 89,246.0 34,190.0
+ESTRUCTURA DE CAPITAL (cierre 2025)
+Deuda total (D) = bancaria/bursátil + arrendamientos 23,618.0 80,848.1 56,744.3 2,441.8
+Efectivo y equivalentes 9,295.0 28,591.2 14,640.2 2,962.8
+D / E 0.392x 0.10x 0.64x 0.07x
+Peso de la deuda D/(D+E) 28.16% 9.04% 38.87% 6.67%
+Peso del capital E/(D+E) 71.84% 90.96% 61.13% 93.33%
+COSTO DE CAPITAL
+Beta apalancada βL = βU × [1 + (1−t)·D/E] 1.02 0.86 1.16 0.84
+Costo del capital propio Ke = Rf + βL × PRM 13.83% 13.14% 14.41% 13.07%
+Gastos financieros FY2025 3,074.0 11,464.7 3,846.9 266.0
+Costo de la deuda antes de impuestos Kd 13.02% 14.18% 6.78% 10.89%
+Costo de la deuda después de impuestos Kd(1−t) 9.11% 9.93% 4.75% 7.62%
+WACC = E/(D+E)·Ke + D/(D+E)·Kd(1−t) 12.50% 12.85% 10.65% 12.71%
+
+-- 5 of 11 --
+
+Crecimiento perpetuo (g) para valor terminal 3.5%
+Crecimiento anual de ventas 2026E–2030E (supuesto base) 3.5%
+ORGANIZACIÓN SORIANA 2025A 2026E 2027E 2028E 2029E 2030E
+Crecimiento anual de ventas (explícito) 3.50%
+Margen EBIT 4.25%
+Depreciación y amortización (% ventas) 2.45%
+Capex (% ventas) 1.62%
+Inversión en capital de trabajo (% del incremento en ventas) 2.08%
+Tasa de impuestos 30.00%
+WACC 12.50%
+Crecimiento perpetuo (g) 3.50%
+PROYECCIÓN DEL FLUJO LIBRE DE EFECTIVO (FCF) 2025A 2026E 2027E 2028E 2029E 2030E
+Periodo (n) 0 1 2 3 4 5
+Ventas 177,515.0 183,728.0 190,158.5 196,814.1 203,702.5 210,832.1
+Utilidad de operación (EBIT) 7,552.0 7,816.3 8,089.9 8,373.0 8,666.1 8,969.4
+(−) Impuestos sobre EBIT (2,265.6) (2,344.9) (2,427.0) (2,511.9) (2,599.8) (2,690.8)
+NOPAT (EBIT después de impuestos) 5,286.4 5,471.4 5,662.9 5,861.1 6,066.3 6,278.6
+(+) Depreciación y amortización 4,342.0 4,494.0 4,651.3 4,814.1 4,982.5 5,156.9
+(−) Capex (2,867.0) (2,967.3) (3,071.2) (3,178.7) (3,289.9) (3,405.1)
+(−) Inversión en capital de trabajo - (129.2) (133.7) (138.4) (143.2) (148.2)
+FCF – Flujo libre de efectivo 6,761.4 6,868.9 7,109.3 7,358.1 7,615.6 7,882.2
+Factor de descuento 1/(1+WACC)^n 0.8889 0.7901 0.7023 0.6243 0.5549
+Valor presente del FCF 6,105.6 5,617.1 5,167.7 4,754.3 4,373.9
+VPN de los FCF 2026E–2030E 26,018.6
+FCF del año 6 (2031E) 8,158.1
+Valor terminal (TV) al cierre de 2030 90,637.0
+Valor presente del TV 50,295.3
+ENTERPRISE VALUE (EV) 76,313.9
+(−) Deuda total (bancaria/bursátil + arrendamientos) (23,618.0)
+(+) Efectivo y equivalentes 9,295.0
+Deuda neta 14,323.0
+EQUITY VALUE (valor para los accionistas) 61,990.9
+Acciones en circulación (millones) 1,800.0
+Valor intrínseco por acción (MXN) $34.44 Precio modelo
+integrado $34.43
+Precio actual en bolsa (MXN) $33.48 Diferencia vs
+integrado $0.00
+Potencial de apreciación / (baja) 2.9% Diferencia (%) 0.0%
+Peso del valor terminal en el EV 65.9%
+WALMART DE MÉXICO 2025A 2026E 2027E 2028E 2029E 2030E
+Crecimiento anual de ventas (explícito) 3.50%
+Margen EBIT 7.76%
+Depreciación y amortización (% ventas) 2.47%
+Capex (% ventas) 3.85%
+Inversión en capital de trabajo (% del incremento en ventas) 0.00%
+Tasa de impuestos 30.00%
+WACC 12.85%
+Crecimiento perpetuo (g) 3.50%
+PROYECCIÓN DEL FLUJO LIBRE DE EFECTIVO (FCF) 2025A 2026E 2027E 2028E 2029E 2030E
+Periodo (n) 0 1 2 3 4 5
+Ventas 1,011,597.9 1,047,003.8 1,083,649.0 1,121,576.7 1,160,831.9 1,201,461.0
+Utilidad de operación (EBIT) 78,493.8 81,241.1 84,084.5 87,027.5 90,073.4 93,226.0
+(−) Impuestos sobre EBIT (23,548.1) (24,372.3) (25,225.4) (26,108.2) (27,022.0) (27,967.8)
+NOPAT (EBIT después de impuestos) 54,945.7 56,868.8 58,859.2 60,919.2 63,051.4 65,258.2
+(+) Depreciación y amortización 24,953.1 25,826.5 26,730.4 27,665.9 28,634.3 29,636.5
+(−) Capex (38,982.0) (40,346.4) (41,758.5) (43,220.0) (44,732.7) (46,298.4)
+(−) Inversión en capital de trabajo - - - - - -
+FCF – Flujo libre de efectivo 40,916.8 42,348.8 43,831.1 45,365.1 46,952.9 48,596.3
+Factor de descuento 1/(1+WACC)^n 0.8862 0.7853 0.6959 0.6167 0.5465
+Valor presente del FCF 37,527.9 34,419.8 31,569.0 28,954.4 26,556.3
+VPN de los FCF 2026E–2030E 159,027.4
+FCF del año 6 (2031E) 50,297.1
+Valor terminal (TV) al cierre de 2030 538,153.7
+Valor presente del TV 294,083.6
+ENTERPRISE VALUE (EV) 453,111.0
+(−) Deuda total (bancaria/bursátil + arrendamientos) (80,848.1)
+(+) Efectivo y equivalentes 28,591.2
+Deuda neta 52,256.9
+EQUITY VALUE (valor para los accionistas) 400,854.1
+Acciones en circulación (millones) 17,459.7
+Valor intrínseco por acción (MXN) $22.96
+Precio actual en bolsa (MXN) $46.60
+Potencial de apreciación / (baja) (50.7%)
+Peso del valor terminal en el EV 64.9%
+GRUPO COMERCIAL CHEDRAUI 2025A 2026E 2027E 2028E 2029E 2030E
+Crecimiento anual de ventas (explícito) 3.50%
+Margen EBIT 5.11%
+Depreciación y amortización (% ventas) 3.15%
+Capex (% ventas) 2.62%
+Inversión en capital de trabajo (% del incremento en ventas) 0.00%
+Tasa de impuestos 30.00%
+WACC 10.65%
+Crecimiento perpetuo (g) 3.50%
+PROYECCIÓN DEL FLUJO LIBRE DE EFECTIVO (FCF) 2025A 2026E 2027E 2028E 2029E 2030E
+Periodo (n) 0 1 2 3 4 5
+Ventas 295,313.7 305,649.6 316,347.4 327,419.5 338,879.2 350,740.0
+Utilidad de operación (EBIT) 15,097.9 15,626.3 16,173.2 16,739.3 17,325.2 17,931.6
+(−) Impuestos sobre EBIT (4,529.4) (4,687.9) (4,852.0) (5,021.8) (5,197.6) (5,379.5)
+NOPAT (EBIT después de impuestos) 10,568.5 10,938.4 11,321.3 11,717.5 12,127.6 12,552.1
+(+) Depreciación y amortización 9,293.3 9,618.5 9,955.2 10,303.6 10,664.2 11,037.5
+(−) Capex (7,747.9) (8,019.1) (8,299.7) (8,590.2) (8,890.9) (9,202.1)
+(−) Inversión en capital de trabajo - - - - - -
+FCF – Flujo libre de efectivo 12,113.9 12,537.9 12,976.7 13,430.9 13,901.0 14,387.5
+Factor de descuento 1/(1+WACC)^n 0.9037 0.8167 0.7381 0.6671 0.6028
+Valor presente del FCF 11,330.9 10,598.6 9,913.6 9,272.8 8,673.5
+VPN de los FCF 2026E–2030E 49,789.4
+FCF del año 6 (2031E) 14,891.1
+Valor terminal (TV) al cierre de 2030 208,214.2
+Valor presente del TV 125,521.4
+ENTERPRISE VALUE (EV) 175,310.7
+(−) Deuda total (bancaria/bursátil + arrendamientos) (56,744.3)
+(+) Efectivo y equivalentes 14,640.2
+Deuda neta 42,104.2
+EQUITY VALUE (valor para los accionistas) 133,206.6
+Acciones en circulación (millones) 960.3
+Valor intrínseco por acción (MXN) $138.72
+Precio actual en bolsa (MXN) $92.94
+Potencial de apreciación / (baja) 49.3%
+Peso del valor terminal en el EV 71.6%
+LA COMER 2025A 2026E 2027E 2028E 2029E 2030E
+Crecimiento anual de ventas (explícito) 3.50%
+Margen EBIT 7.50%
+Depreciación y amortización (% ventas) 3.47%
+Capex (% ventas) 8.09%
+Inversión en capital de trabajo (% del incremento en ventas) 0.00%
+Tasa de impuestos 30.00%
+WACC 12.71%
+Crecimiento perpetuo (g) 3.50%
+PROYECCIÓN DEL FLUJO LIBRE DE EFECTIVO (FCF) 2025A 2026E 2027E 2028E 2029E 2030E
+Periodo (n) 0 1 2 3 4 5
+Ventas 47,526.6 49,190.1 50,911.7 52,693.6 54,537.9 56,446.7
+Utilidad de operación (EBIT) 3,564.1 3,688.8 3,817.9 3,951.5 4,089.8 4,233.0
+(−) Impuestos sobre EBIT (1,069.2) (1,106.6) (1,145.4) (1,185.5) (1,227.0) (1,269.9)
+NOPAT (EBIT después de impuestos) 2,494.8 2,582.2 2,672.5 2,766.1 2,862.9 2,963.1
+(+) Depreciación y amortización 1,650.8 1,708.5 1,768.3 1,830.2 1,894.3 1,960.6
+(−) Capex (3,842.7) (3,977.2) (4,116.4) (4,260.4) (4,409.6) (4,563.9)
+(−) Inversión en capital de trabajo - - - - - -
+FCF – Flujo libre de efectivo 302.9 313.5 324.5 335.9 347.6 359.8
+Factor de descuento 1/(1+WACC)^n 0.8873 0.7872 0.6985 0.6197 0.5498
+Valor presente del FCF 278.2 255.5 234.6 215.4 197.8
+VPN de los FCF 2026E–2030E 1,181.5
+FCF del año 6 (2031E) 372.4
+Valor terminal (TV) al cierre de 2030 4,044.4
+Valor presente del TV 2,223.8
+ENTERPRISE VALUE (EV) 3,405.2
+(−) Deuda total (bancaria/bursátil + arrendamientos) (2,441.8)
+(+) Efectivo y equivalentes 2,962.8
+Deuda neta (521.0)
+EQUITY VALUE (valor para los accionistas) 3,926.2
+Acciones en circulación (millones) 1,065.8
+Valor intrínseco por acción (MXN) $3.68
+Precio actual en bolsa (MXN) $32.08
+Potencial de apreciación / (baja) (88.5%)
+Peso del valor terminal en el EV 65.3%
+
+-- 6 of 11 --
+
+SUPUESTOS 2025A 2026E 2027E 2028E 2029E 2030E
+Crecimiento de ventas 3.5% 3.5% 3.5% 3.5% 3.5%
+Costo de ventas (% ventas) 75.9% 75.9% 75.9% 75.9% 75.9% 75.9%
+Gastos de operación sin D&A (% ventas) 17.4% 17.4% 17.4% 17.4% 17.4% 17.4%
+Depreciación y amortización (% ventas) 2.4% 2.4% 2.4% 2.4% 2.4% 2.4%
+Capex (% ventas) 1.6% 1.6% 1.6% 1.6% 1.6% 1.6%
+Tasa de interés implícita (% deuda + arrendamientos) 13.0% 13.0% 13.0% 13.0% 13.0% 13.0%
+Tasa de impuestos 30.0% 30.0% 30.0% 30.0% 30.0% 30.0%
+Días de inventario (sobre costo de ventas) 87.4 87.4 87.4 87.4 87.4 87.4
+Otros activos circulantes (% ventas) 3.9% 3.9% 3.9% 3.9% 3.9% 3.9%
+Pasivo circulante operativo (% ventas) 20.0% 20.0% 20.0% 20.0% 20.0% 20.0%
+Dividendos (% utilidad neta) 30.0% 30.0% 30.0% 30.0% 30.0% 30.0%
+WACC 12.5% 12.5% 12.5% 12.5% 12.5%
+Crecimiento perpetuo (g) 3.5% 3.5% 3.5% 3.5% 3.5%
+1. ESTADO DE RESULTADOS 2025A 2026E 2027E 2028E 2029E 2030E
+Ventas 177,515.0 183,728.0 190,158.5 196,814.1 203,702.5 210,832.1
+Costo de ventas (134,752.0) (139,468.3) (144,349.7) (149,402.0) (154,631.0) (160,043.1)
+Utilidad bruta 42,763.0 44,259.7 45,808.8 47,412.1 49,071.5 50,789.0
+Gastos de operación (sin D&A) (30,870.0) (31,950.5) (33,068.7) (34,226.1) (35,424.0) (36,663.9)
+EBITDA 11,893.0 12,309.3 12,740.1 13,186.0 13,647.5 14,125.2
+Depreciación y amortización (4,342.0) (4,494.0) (4,651.3) (4,814.1) (4,982.5) (5,156.9)
+Utilidad de operación (EBIT) 7,551.0 7,815.3 8,088.8 8,371.9 8,664.9 8,968.2
+Gastos financieros (3,074.0) (3,074.0) (3,074.0) (3,074.0) (3,074.0) (3,074.0)
+Otros ingresos (gastos) netos 288.0 - - - - -
+Utilidad antes de impuestos 4,765.0 4,741.3 5,014.8 5,297.9 5,590.9 5,894.2
+Impuestos a la utilidad (1,433.0) (1,422.4) (1,504.4) (1,589.4) (1,677.3) (1,768.3)
+Utilidad neta 3,332.0 3,318.9 3,510.4 3,708.6 3,913.7 4,126.0
+Dividendos pagados (996.1) (1,053.6) (1,113.1) (1,174.7) (1,238.4)
+2. BALANCE GENERAL 2025A 2026E 2027E 2028E 2029E 2030E
+Efectivo y equivalentes 9,295.0 13,015.2 16,918.3 21,010.7 25,299.1 29,790.3
+Inventarios 32,283.0 33,412.9 34,582.4 35,792.7 37,045.5 38,342.1
+Otros activos circulantes 6,951.0 7,194.3 7,446.1 7,706.7 7,976.4 8,255.6
+Activo circulante 48,529.0 53,622.4 58,946.7 64,510.2 70,321.0 76,387.9
+Activo no circulante 107,509.0 105,982.4 104,402.3 102,767.0 101,074.4 99,322.5
+Activo total 156,038.0 159,604.8 163,349.1 167,277.1 171,395.4 175,710.5
+Pasivo circulante operativo (proveedores y otros) 35,543.0 36,787.0 38,074.6 39,407.2 40,786.4 42,213.9
+Deuda bursátil y bancaria 11,500.0 11,500.0 11,500.0 11,500.0 11,500.0 11,500.0
+Pasivo por arrendamiento 12,118.0 12,118.0 12,118.0 12,118.0 12,118.0 12,118.0
+Otros pasivos a largo plazo 12,145.0 12,145.0 12,145.0 12,145.0 12,145.0 12,145.0
+Pasivo total 71,306.0 72,550.0 73,837.6 75,170.2 76,549.4 77,976.9
+Capital contable 84,732.0 87,054.8 89,511.5 92,107.0 94,846.0 97,733.5
+Pasivo + capital 156,038.0 159,604.8 163,349.1 167,277.1 171,395.4 175,710.5
+Comprobación (activo − pasivo − capital) - - - - - -
+CONCILIACIÓN DE EFECTIVO 2025A 2026E 2027E 2028E 2029E 2030E
+Utilidad neta 3,318.9 3,510.4 3,708.6 3,913.7 4,126.0
+(+) Depreciación y amortización 4,494.0 4,651.3 4,814.1 4,982.5 5,156.9
+(−) Aumento en inventarios (1,129.9) (1,169.5) (1,210.4) (1,252.7) (1,296.6)
+(−) Aumento en otros activos circulantes (243.3) (251.8) (260.6) (269.7) (279.2)
+(−) Capex (2,967.3) (3,071.2) (3,178.7) (3,289.9) (3,405.1)
+(+) Aumento en pasivo circulante operativo 1,244.0 1,287.5 1,332.6 1,379.3 1,427.5
+Cambio neto en efectivo (después de dividendos) 3,720.2 3,903.1 4,092.4 4,288.4 4,491.2
+3. FLUJO LIBRE DE EFECTIVO (FFL) 2025A 2026E 2027E 2028E 2029E 2030E
+Utilidad de operación (EBIT) 7,815.3 8,088.8 8,371.9 8,664.9 8,968.2
+(−) Impuestos sobre EBIT (2,344.6) (2,426.6) (2,511.6) (2,599.5) (2,690.5)
+NOPAT 5,470.7 5,662.2 5,860.4 6,065.5 6,277.8
+(+) Depreciación y amortización 4,494.0 4,651.3 4,814.1 4,982.5 5,156.9
+(−) Capex (2,967.3) (3,071.2) (3,178.7) (3,289.9) (3,405.1)
+(−) Inversión en capital de trabajo (129.2) (133.7) (138.4) (143.2) (148.2)
+Flujo libre de efectivo (FFL) 6,868.1 7,108.5 7,357.3 7,614.8 7,881.3
+Periodo (n) 1 2 3 4 5
+Factor de descuento 1/(1+WACC)^n 0.8889 0.7901 0.7023 0.6243 0.5549
+Valor presente del FFL 6,105.0 5,616.5 5,167.2 4,753.8 4,373.4
+4. VALOR TERMINAL Y VALOR DE LA EMPRESA Valor
+Suma VP de FFL 2026E–2030E 26,015.9
+FFL 2031E = FFL 2030E × (1+g) 8,157.2
+Valor terminal al cierre 2030 (Gordon) 90,627.4
+Valor presente del valor terminal 50,290.0
+Valor de la empresa (VE) 76,305.9
+Peso del valor terminal en el VE 65.9%
+5. VALOR DEL CAPITAL Y PRECIO POR ACCIÓN Valor
+Valor de la empresa (VE) 76,305.9
+(−) Deuda bursátil y bancaria (2025) (11,500.0)
+(−) Pasivo por arrendamiento (2025) (12,118.0)
+(+) Efectivo y equivalentes (2025) 9,295.0
+Valor del capital 61,982.9
+Acciones en circulación (millones) 1,800.0
+Precio por acción (MXN) 34.43
+Precio actual en bolsa (MXN) 33.48
+Potencial de apreciación / (baja) 2.9%
+
+-- 7 of 11 --
+
+1. FCFF PROYECTADO — MÍNIMOS CUADRADOS (sin ajustes externos)
+Concepto 3T26 4T26 1T27 2T27 LTM proyectado (3T26–2T27) LTM actual (3T25–2T26) Variación vs. LTM actual
+X (pronóstico) 3 4 5 6
+Ventas 41,995.3 41,321.2 40,647.1 39,973.0 163,936.6 174,278.0 (5.9%)
+Costos y gastos operativos 40,013.5 39,314.8 38,616.1 37,917.4 155,861.8 166,647.0 (6.5%)
+EBIT 1,981.8 2,006.4 2,031.0 2,055.6 8,074.8 7,631.0 5.8%
+Margen EBIT 4.7% 4.9% 5.0% 5.1% 4.9% 4.4%
+Tasa de impuesto 22.5% 20.3% 18.1% 15.9% 19.2% 26.9%
+EBIT (1 − T) 1,536.2 1,599.1 1,663.1 1,728.2 6,526.6 5,574.6 17.1%
+(+) Depreciación y amortización 1,011.9 996.8 981.7 966.6 3,956.8 4,179.9 (5.3%)
+(−) Capex 798.8 820.7 842.7 864.6 3,326.8 3,002.1 10.8%
+Capital de trabajo neto (cierre) 6,975.4 6,036.1 5,096.8 4,157.5 4,157.5 7,301.9
+(−) ΔNWC (cambio en capital de trabajo) (326.5) (939.3) (939.3) (939.3) (3,144.4) (3,764.1)
+FCFF = EBIT(1−T) + D&A − Capex − ΔNWC 2,075.7 2,714.4 2,741.4 2,769.5 10,301.0 10,516.5 (2.0%)
+2. FCFF PROYECTADO AJUSTADO POR VARIABLES EXTERNAS
+Ajuste neto a ventas (0.90%)
+Ajuste neto a costos y gastos 0.52%
+Ajuste neto a capex 2.50%
+Concepto 3T26 4T26 1T27 2T27 LTM ajustado (3T26–2T27) LTM proyectado sin ajuste Variación vs. sin ajuste
+Ventas 41,617.3 40,949.3 40,281.3 39,613.2 162,461.2 163,936.6 (0.9%)
+Costos y gastos operativos 39,859.6 39,163.6 38,467.6 37,771.5 155,262.2 155,861.8 (0.4%)
+EBIT 1,757.8 1,785.7 1,813.7 1,841.7 7,198.9 8,074.8 (10.8%)
+Margen EBIT 4.2% 4.4% 4.5% 4.6% 4.4% 4.9%
+Tasa de impuesto 22.5% 20.3% 18.1% 15.9% 19.2% 19.2%
+EBIT (1 − T) 1,362.5 1,423.2 1,485.2 1,548.4 5,819.3 6,526.6 (10.8%)
+(+) Depreciación y amortización 1,011.9 996.8 981.7 966.6 3,956.8 3,956.8 -
+(−) Capex 818.8 841.3 863.7 886.2 3,410.0 3,326.8 2.5%
+(−) ΔNWC (326.5) (939.3) (939.3) (939.3) (3,144.4) (3,144.4)
+FCFF ajustado 1,882.1 2,518.1 2,542.4 2,568.0 9,510.6 10,301.0 (7.7%)
+DETALLE DE MÍNIMOS CUADRADOS POR PARTIDA DEL FCFF
+1. VENTAS (ingresos totales)
+Trimestre n X = n − (N+1)/2 Y (mdp) XY X² Trimestre a pronosticar X (pronóstico) Y pronosticada
+2T25 1 (2.0) 45,810.0 (91,620.0) 4.0 3T26 3 41,995.3
+3T25 2 (1.0) 42,683.0 (42,683.0) 1.0 4T26 4 41,321.2
+4T25 3 0.0 47,592.0 - 0.0 1T27 5 40,647.1
+1T26 4 1.0 40,444.0 40,444.0 1.0 2T27 6 39,973.0
+2T26 5 2.0 43,559.0 87,118.0 4.0
+Σ (sumas) 0.0 220,088.0 (6,741.0) 10.0 Ecuación: Y = 44,017.6000 + (-674.1000)·X
+N (trimestres) 5
+X̄ = ΣX / N 0.0
+b = ΣXY / ΣX² (674.1)
+a = ΣY / N 44,017.6
+R² (ajuste) 0.148
+2. COSTOS Y GASTOS OPERATIVOS (ventas − EBIT)
+Trimestre n X = n − (N+1)/2 Y (mdp) XY X² Trimestre a pronosticar X (pronóstico) Y pronosticada
+2T25 1 (2.0) 43,901.0 (87,802.0) 4.0 3T26 3 40,013.5
+3T25 2 (1.0) 41,215.0 (41,215.0) 1.0 4T26 4 39,314.8
+4T25 3 0.0 45,106.0 - 0.0 1T27 5 38,616.1
+1T26 4 1.0 38,622.0 38,622.0 1.0 2T27 6 37,917.4
+2T26 5 2.0 41,704.0 83,408.0 4.0
+Σ (sumas) 0.0 210,548.0 (6,987.0) 10.0 Ecuación: Y = 42,109.6000 + (-698.7000)·X
+N (trimestres) 5
+X̄ = ΣX / N 0.0
+b = ΣXY / ΣX² (698.7)
+a = ΣY / N 42,109.6
+R² (ajuste) 0.193
+3. TASA DE IMPUESTO (impuestos / UAI)
+Trimestre n X = n − (N+1)/2 Y (tasa) XY X² Trimestre a pronosticar X (pronóstico) Y pronosticada
+2T25 1 (2.0) 38.32% -0.7664 4.0 3T26 3 22.49%
+3T25 2 (1.0) 23.43% -0.2343 1.0 4T26 4 20.30%
+4T25 3 0.0 25.81% 0.0000 0.0 1T27 5 18.11%
+1T26 4 1.0 37.10% 0.3710 1.0 2T27 6 15.93%
+2T26 5 2.0 20.55% 0.4111 4.0
+Σ (sumas) 0.0 145.22% -0.2186 10.0 Ecuación: Y = 0.2904 + (-0.0219)·X
+N (trimestres) 5
+X̄ = ΣX / N 0.0
+b = ΣXY / ΣX² -0.0219
+a = ΣY / N 0.2904
+R² (ajuste) 0.180
+4. DEPRECIACIÓN Y AMORTIZACIÓN
+Trimestre n X = n − (N+1)/2 Y (mdp) XY X² Trimestre a pronosticar X (pronóstico) Y pronosticada
+2T25 1 (2.0) 1,105.9 (2,211.8) 4.0 3T26 3 1,011.9
+3T25 2 (1.0) 1,049.3 (1,049.3) 1.0 4T26 4 996.8
+4T25 3 0.0 1,051.0 - 0.0 1T27 5 981.7
+1T26 4 1.0 1,048.9 1,048.9 1.0 2T27 6 966.6
+2T26 5 2.0 1,030.6 2,061.3 4.0
+Σ (sumas) 0.0 5,285.8 (151.0) 10.0 Ecuación: Y = 1,057.1552 + (-15.1004)·X
+N (trimestres) 5
+X̄ = ΣX / N 0.0
+b = ΣXY / ΣX² (15.1)
+a = ΣY / N 1,057.2
+R² (ajuste) 0.702
+5. CAPEX (inmuebles, equipo e intangibles)
+Trimestre n X = n − (N+1)/2 Y (mdp) XY X² Trimestre a pronosticar X (pronóstico) Y pronosticada
+2T25 1 (2.0) 663.2 (1,326.4) 4.0 3T26 3 798.8
+3T25 2 (1.0) 775.2 (775.2) 1.0 4T26 4 820.7
+4T25 3 0.0 816.0 - 0.0 1T27 5 842.7
+1T26 4 1.0 501.0 501.0 1.0 2T27 6 864.6
+2T26 5 2.0 909.9 1,819.8 4.0
+Σ (sumas) 0.0 3,665.3 219.2 10.0 Ecuación: Y = 733.0600 + (21.9200)·X
+N (trimestres) 5
+X̄ = ΣX / N 0.0
+b = ΣXY / ΣX² 21.9
+a = ΣY / N 733.1
+R² (ajuste) 0.049
+6. CAPITAL DE TRABAJO NETO (activo circ. − pasivo circ.)
+Trimestre n X = n − (N+1)/2 Y (mdp) XY X² Trimestre a pronosticar X (pronóstico) Y pronosticada
+2T25 1 (2.0) 11,066.0 (22,132.0) 4.0 3T26 3 6,975.4
+3T25 2 (1.0) 11,577.0 (11,577.0) 1.0 4T26 4 6,036.1
+4T25 3 0.0 9,310.0 - 0.0 1T27 5 5,096.8
+1T26 4 1.0 9,712.0 9,712.0 1.0 2T27 6 4,157.5
+2T26 5 2.0 7,301.9 14,603.8 4.0
+Σ (sumas) 0.0 48,966.9 (9,393.2) 10.0 Ecuación: Y = 9,793.3828 + (-939.3172)·X
+N (trimestres) 5
+X̄ = ΣX / N 0.0
+b = ΣXY / ΣX² (939.3)
+a = ΣY / N 9,793.4
+R² (ajuste) 0.784
+
+-- 8 of 11 --
+
+# Categoría Variable Dato observado Canal de transmisión a Soriana Partida del FCFF
+afectada Efecto Ajuste a ventas
+(%)
+Ajuste a costos y
+gastos (%)
+Ajuste a capex
+(%)
+1 Macroeconomía México Crecimiento del PIB Banxico (Informe abr–jun 2026): PIB 2026 1.5% (rango
+1.0–2.0%); 2027 2.0% (rango 1.2–2.8%)
+Banxico espera que el consumo privado retome tendencia
+positiva tras la debilidad de inicio de 2026: más volumen en
+autoservicio
+Ventas + 0.50% - -
+2 Macroeconomía México Inflación General 3.42% y subyacente 3.79% (1a quincena sep-2026);
+convergencia a 3% hasta 4T27
+Eleva ventas nominales y costo de mercancía en proporción
+similar; efecto casi neutral en margen (ya capturado en la
+tendencia)
+Ventas y costos Neutral - - -
+3 Política monetaria Tasa objetivo Banxico / Fed Banxico mantuvo 6.50% (24-sep-2026, unánime); la Fed
+subió 25 pb en septiembre
+Afecta costo de deuda y WACC (descuento del FCFF), no el
+FCFF operativo; crédito al consumo sigue caro
+WACC / gastos
+financieros − (valuación) - - -
+4 Macroeconomía México Tipo de cambio 18.08 MXN/USD al cierre del 30-sep-2026; el peso perdió
+6.38% en septiembre
+Encarece mercancía general importada (electrónica, línea
+blanca) y equipo/refrigeración del programa de capex Costos y capex − - 0.10% 1.00%
+5 Macroeconomía México Remesas 2025: USD 61,791 mm (−4.6%), primera caída anual en 11
+años; 1T26 +1.4%
+Menor ingreso de hogares en Bajío, Occidente y Norte
+(regiones clave de Soriana) por política migratoria de EU Ventas − (0.30%) - -
+6 Política México (laboral) Salario mínimo 2026 +13%: de 278.80 a 315.04 $/día (frontera norte +5%:
+440.87 $/día); meta 2.5 canastas básicas a 2030
+Sube la nómina operativa de tiendas, pero también el
+ingreso disponible del cliente de bajos ingresos Costos (+) y ventas (+) Mixto 0.20% 0.15% -
+7 Política México (laboral) Jornada laboral de 40 horas Reducción gradual de 48 a 40 h; 2026 es periodo de
+adecuación y los cambios inician en 2027
+Requiere más turnos/plantilla en tiendas de horario
+extendido o más automatización Costos − - 0.05% -
+8 Política México (fiscal) IEPS a bebidas y tabaco Bebidas azucaradas de 1.64 a 3.08 $/litro; tabaco de 160%
+a 200% ad valorem (2026)
+Menor volumen en categorías de alta rotación (refrescos,
+tabaco) dentro del ticket del autoservicio Ventas − (0.20%) - -
+9 Política comercial México Aranceles a países sin tratado
+Aranceles nuevos o mayores de hasta 50% a importaciones
+de China, Corea del Sur, India, Vietnam, etc. desde 1-ene-
+2026
+Encarece ropa, juguetes, electrónicos y equipo de tienda de
+origen asiático Costos y capex − - 0.05% 0.50%
+10 T-MEC Revisión del T-MEC
+EU activó el mecanismo de revisiones anuales (no hubo
+extensión en jul-2026); Banxico prevé inversión débil por la
+incertidumbre comercial
+Frena inversión y empleo formal en el Norte industrial,
+base de clientes de Soriana (Coahuila, NL, Chihuahua) Ventas − (0.30%) - -
+11 T-MEC / aranceles de EU Aranceles de EU a sectores
+estratégicos
+Persisten aranceles de EU a acero, aluminio y automotriz;
+bienes con origen T-MEC conservan exención;
+exportaciones a EU +7.7% acumulado a mayo
+Presión sobre empleo manufacturero (autopartes, acero)
+en ciudades del Norte donde Soriana concentra tiendas Ventas − (0.20%) - -
+12 Geopolítica Conflicto en Medio Oriente /
+petróleo
+Petróleo por encima de USD 100, dólar fuerte e
+incertidumbre geopolítica presionan al peso (sep-2026)
+Encarece energía de tiendas, diésel y fletes de la logística;
+riesgo inflacionario Costos − - 0.05% -
+13 Sector retail Ventas ANTAD (mismas
+tiendas)
+Ago-2026: tiendas iguales +1.7% y totales +4.2%;
+autoservicio −0.7% a tiendas iguales; acumulado ene–ago
++1.5%
+Demanda del formato autoservicio crece por debajo de la
+inflación (caída real del ticket/tráfico) Ventas − (0.50%) - -
+14 Megatendencia / retail Hard discount y búsqueda de
+valor
+Tiendas 3B pasó de 4% (2019) a 14% (2025) del mercado de
+descuento; Bodega Aurrera de 71% a 63% (Bain &
+Company)
+Pérdida de tráfico en formatos Súper/Mercado y mayor
+gasto promocional para defender precio Ventas (−) y costos (+) − (0.50%) 0.10% -
+15 Megatendencia / retail Omnicanalidad y comercio
+digital
+Las temporalidades sostienen el eCommerce durante todo
+el año; los autoservicios invierten en surtido en línea y
+última milla (ANTAD)
+Ventas digitales incrementales, pero exige capex en
+tecnología, refrigeración y logística Ventas (+) y capex (+) Mixto 0.20% - 1.00%
+16 Inmobiliario y
+arrendamientos Rentas de locales comerciales Rentas de locales comerciales +11.09% en 1S26; promedio
+USD 28.93/m² a jun-2026
+Encarece la renovación de contratos de tiendas arrendadas
+(pasivo por arrendamiento), pero valoriza m² propios y
+espacios subarrendables
+Costos (+) y otros
+ingresos (+) Mixto 0.10% 0.02% -
+17 Inmobiliario y
+arrendamientos
+Ocupación de centros
+comerciales (FIBRAs)
+Los 10 jugadores institucionales con ocupación arriba de
+91% (algunos 99%) al 2T26, rentas al alza y spreads de
+renovación altos
+Alta demanda por espacio facilita monetizar/subarrendar
+las áreas liberadas por cierres y reducción de tiendas Ventas (otros ingresos) + 0.10% - -
+TOTAL Ajuste neto aplicado a la proyección (0.90%) 0.52% 2.50%
+
+-- 9 of 11 --
+
+A. PONDERACIÓN DE MÉTODOS 2025A 2026E 2027E 2028E 2029E 2030E
+Peso de variables externas 70.0% 70.0% 75.0% 80.0% 85.0%
+Peso de mínimos cuadrados 30.0% 30.0% 25.0% 20.0% 15.0%
+B. CRECIMIENTO DE VENTAS — VARIABLES EXTERNAS 2025A 2026E 2027E 2028E 2029E 2030E
+Inflación esperada (INPC) 3.93% 3.83% 3.75% 3.75% 3.75%
+Crecimiento real del PIB de México 1.40% 1.80% 2.00% 2.00% 2.00%
+Elasticidad del volumen de autoservicio al PIB (x) 0.50x 0.50x 0.50x 0.50x 0.50x
+Ajuste por debilidad del consumo (4.00%) (1.50%) (0.50%) - -
+Crecimiento nominal del mercado de autoservicio 0.63% 3.23% 4.25% 4.75% 4.75%
+(±) Pérdida de participación (hard discount y competidores) (3.00%) (2.00%) (1.25%) (1.00%) (0.75%)
+(±) Cierre y reducción de tiendas (1.00%) (0.50%) - - -
+(±) Remesas y política migratoria de EU (0.30%) (0.20%) (0.10%) - -
+(±) T-MEC y aranceles de EU (empleo industrial del Norte) (0.20%) (0.30%) (0.10%) - -
+(±) Programas sociales y salario mínimo (ingreso disponible) 0.20% 0.30% 0.30% 0.20% 0.20%
+(±) Omnicanalidad y ventas digitales 0.30% 0.40% 0.50% 0.50% 0.50%
+(±) PACIC e IEPS (precio tope y menor volumen) (0.20%) (0.20%) (0.10%) - -
+(±) Ingresos inmobiliarios y financieros (m² liberados, Sofipo) 0.10% 0.20% 0.20% 0.20% 0.20%
+Crecimiento de ventas — variables externas (3.47%) 0.93% 3.70% 4.65% 4.90%
+C. CRECIMIENTO DE VENTAS — MÍNIMOS CUADRADOS 2025A 2026E 2027E 2028E 2029E 2030E
+Ventas por mínimos cuadrados (trayectoria lineal anualizada, mdp) 174,278 163,937 153,151 142,365 131,580 120,794
+Crecimiento de ventas — mínimos cuadrados (5.9%) (6.6%) (7.0%) (7.6%) (8.2%)
+CRECIMIENTO DE VENTAS FINAL (ponderado) (4.2%) (1.3%) 1.0% 2.2% 2.9%
+D. MARGEN EBIT 2025A 2026E 2027E 2028E 2029E 2030E
+Margen EBIT — variables externas (acumulado) 4.25% 4.37% 4.34% 4.37% 4.40% 4.43%
+(±) Austeridad, cierres y eficiencias 0.55% 0.30% 0.20% 0.10% 0.10%
+(±) Salario mínimo +13% y jornada de 40 h (0.10%) (0.15%) (0.15%) (0.10%) (0.10%)
+(±) Inversión en precio (hard discount, PACIC) (0.15%) (0.10%) (0.10%) (0.05%) -
+(±) Tipo de cambio y aranceles a importaciones de Asia (0.05%) (0.05%) - - -
+(±) Energía, combustibles y fletes (0.05%) (0.05%) - - -
+(±) Rentas comerciales (tiendas arrendadas) (0.03%) (0.03%) (0.02%) (0.02%) (0.02%)
+(±) Ingresos inmobiliarios y servicios financieros 0.05% 0.10% 0.10% 0.10% 0.05%
+(±) Desapalancamiento operativo por menores ventas (0.10%) (0.05%) - - -
+Margen EBIT — mínimos cuadrados 4.93% 4.93% 4.93% 4.93% 4.93%
+MARGEN EBIT FINAL (ponderado) 4.54% 4.52% 4.51% 4.51% 4.51%
+E. OTROS SUPUESTOS (FCF Y ESTADOS FINANCIEROS) 2025A 2026E 2027E 2028E 2029E 2030E
+D&A (% ventas) — variables externas / histórico 2.45% 2.45% 2.45% 2.45% 2.45%
+D&A (% ventas) — mínimos cuadrados 2.41% 2.41% 2.41% 2.41% 2.41%
+D&A (% ventas) FINAL 2.44% 2.44% 2.44% 2.44% 2.44%
+Capex guía de Soriana 2026 (mdp) 4,000
+(+) Inversión adicional en omnicanal y remodelación (% ventas) 0.30% 0.30% 0.30% 0.30%
+Capex (% ventas) — variables externas 2.35% 1.96% 1.96% 1.96% 1.96%
+Capex (% ventas) — mínimos cuadrados 2.03% 2.03% 2.03% 2.03% 2.03%
+Capex (% ventas) FINAL 2.26% 1.98% 1.97% 1.97% 1.97%
+(+) Ajuste a la tasa por límite de deducciones (Paquete Económico 2027) - 0.50% 0.50% 0.50% 0.50%
+Tasa de impuestos — variables externas 30.00% 30.50% 30.50% 30.50% 30.50%
+Tasa de impuestos — mínimos cuadrados 19.17% 19.17% 19.17% 19.17% 19.17%
+Tasa de impuestos FINAL 26.75% 27.10% 27.67% 28.23% 28.80%
+Días de inventario (sobre costo de ventas) 87.4 88.0 88.0 87.0 87.0 87.0
+Otros activos circulantes (% ventas) 3.9% 3.9% 3.9% 3.9% 3.9% 3.9%
+Pasivo circulante operativo (% ventas) 20.0% 20.0% 20.0% 20.0% 20.0% 20.0%
+Costo de ventas (% ventas) 75.9% 75.6% 75.7% 75.8% 75.8% 75.8%
+Gastos de operación sin D&A (% ventas) 17.4% 17.4% 17.3% 17.2% 17.3% 17.3%
+Tasa de interés implícita (% deuda + arrendamientos) 13.02% 10.00% 9.75% 9.75% 9.75% 9.75%
+Amortización neta de deuda bursátil y bancaria (mdp) - (1,500.0) (1,500.0) (1,500.0) (1,500.0)
+Dividendos (% utilidad neta) 30.0% 30.0% 30.0% 30.0% 30.0% 30.0%
+1. PROYECCIÓN DE ESTADOS FINANCIEROS (mdp)
+1.1 ESTADO DE RESULTADOS 2025A 2026E 2027E 2028E 2029E 2030E
+Ventas 177,515.0 170,043.1 167,793.9 169,496.0 173,233.0 178,318.2
+Costo de ventas (134,752.0) (128,552.6) (127,020.0) (128,477.9) (131,310.6) (135,165.2)
+Utilidad bruta 42,763.0 41,490.5 40,773.9 41,018.0 41,922.4 43,153.0
+Gastos de operación (sin D&A) (30,870.0) (29,628.4) (29,103.9) (29,238.0) (29,886.1) (30,761.5)
+EBITDA 11,893.0 11,862.1 11,670.0 11,780.0 12,036.3 12,391.5
+Depreciación y amortización (4,342.0) (4,142.7) (4,087.9) (4,132.1) (4,226.0) (4,353.0)
+Utilidad de operación (EBIT) 7,551.0 7,719.4 7,582.1 7,647.8 7,810.3 8,038.5
+Gastos financieros (3,074.0) (2,361.8) (2,302.8) (2,156.5) (2,010.3) (1,864.0)
+Otros ingresos (gastos) netos 288.0 - - - - -
+Utilidad antes de impuestos 4,765.0 5,357.6 5,279.3 5,491.3 5,800.0 6,174.5
+Impuestos a la utilidad (1,433.0) (1,433.3) (1,430.8) (1,519.4) (1,637.6) (1,778.3)
+Utilidad neta 3,332.0 3,924.3 3,848.5 3,972.0 4,162.4 4,396.2
+Dividendos pagados (1,177.9) (1,155.1) (1,192.2) (1,249.3) (1,319.5)
+Margen EBITDA 6.7% 7.0% 7.0% 7.0% 6.9% 6.9%
+Margen neto 1.9% 2.3% 2.3% 2.3% 2.4% 2.5%
+1.2 BALANCE GENERAL 2025A 2026E 2027E 2028E 2029E 2030E
+Efectivo y equivalentes 9,295.0 12,435.0 14,405.2 16,746.1 18,898.9 21,222.2
+Inventarios 32,283.0 30,993.5 30,624.0 30,623.5 31,298.7 32,217.5
+Otros activos circulantes 6,951.0 6,658.4 6,570.3 6,637.0 6,783.3 6,982.5
+Activo circulante 48,529.0 50,086.9 51,599.6 54,006.6 56,980.9 60,422.1
+Activo no circulante 107,509.0 107,201.5 106,431.9 105,645.4 104,832.5 103,986.2
+Activo total 156,038.0 157,288.4 158,031.5 159,652.1 161,813.4 164,408.3
+Pasivo circulante operativo (proveedores y otros) 35,543.0 34,046.9 33,596.6 33,937.4 34,685.6 35,703.8
+Deuda bursátil y bancaria 11,500.0 11,500.0 10,000.0 8,500.0 7,000.0 5,500.0
+Pasivo por arrendamiento 12,118.0 12,118.0 12,118.0 12,118.0 12,118.0 12,118.0
+Otros pasivos a largo plazo 12,145.0 12,145.0 12,145.0 12,145.0 12,145.0 12,145.0
+Pasivo total 71,306.0 69,809.9 67,859.6 66,700.4 65,948.6 65,466.8
+Capital contable 84,732.0 87,478.5 90,171.9 92,951.7 95,864.8 98,941.5
+Pasivo + capital 156,038.0 157,288.4 158,031.5 159,652.1 161,813.4 164,408.3
+Comprobación (activo − pasivo − capital) - - - - - -
+1.3 CONCILIACIÓN DE EFECTIVO 2025A 2026E 2027E 2028E 2029E 2030E
+Utilidad neta 3,924.3 3,848.5 3,972.0 4,162.4 4,396.2
+(+) Depreciación y amortización 4,142.7 4,087.9 4,132.1 4,226.0 4,353.0
+(−) Aumento en inventarios 1,289.5 369.5 0.5 (675.2) (918.8)
+(−) Aumento en otros activos circulantes 292.6 88.1 (66.6) (146.3) (199.1)
+(−) Capex (3,835.2) (3,318.3) (3,345.7) (3,413.1) (3,506.7)
+(+) Aumento en pasivo circulante operativo (1,496.1) (450.4) 340.8 748.3 1,018.2
+(−) Dividendos pagados (1,177.9) (1,155.1) (1,192.2) (1,249.3) (1,319.5)
+(±) Amortización neta de deuda - (1,500.0) (1,500.0) (1,500.0) (1,500.0)
+Cambio neto en efectivo 3,140.0 1,970.2 2,340.9 2,152.8 2,323.3
+2. FLUJO LIBRE DE EFECTIVO (FCF) — 5 AÑOS 2025A 2026E 2027E 2028E 2029E 2030E
+Utilidad de operación (EBIT) 7,719.4 7,582.1 7,647.8 7,810.3 8,038.5
+(−) Impuestos sobre EBIT (2,065.1) (2,054.9) (2,116.0) (2,205.2) (2,315.2)
+NOPAT = EBIT × (1 − T) 5,654.3 5,527.2 5,531.8 5,605.1 5,723.4
+(+) Depreciación y amortización 4,142.7 4,087.9 4,132.1 4,226.0 4,353.0
+(−) Capex (3,835.2) (3,318.3) (3,345.7) (3,413.1) (3,506.7)
+(−) Inversión en capital de trabajo 86.0 7.2 274.6 (73.3) (99.7)
+FCF = NOPAT + D&A − Capex − ΔNWC 6,047.8 6,304.0 6,592.9 6,344.8 6,470.0
+Periodo (n) 1 2 3 4 5
+Factor de descuento 1/(1+WACC)^n 0.8938 0.7989 0.7141 0.6383 0.5705
+Valor presente del FCF 5,405.8 5,036.5 4,708.1 4,049.9 3,691.4
+3. VALOR TERMINAL Valor
+Crecimiento perpetuo (g) 3.50%
+WACC base (iterado) 11.88%
+(+) Prima por riesgo externo -
+WACC final 11.88%
+FCF 2030E (año 5) 6,470.0
+FCF + 1 (2031E) = FCF 2030E × (1 + g) 6,696.4
+Valor terminal = FCF+1 / (WACC − g) 79,934.9
+Factor de descuento del año 5 0.5705
+Valor presente del valor terminal 45,606.4
+4. VALOR DE LA EMPRESA (EV) Valor
+Suma VP de FCF 2026E–2030E 22,891.8
+(+) VP del valor terminal 45,606.4
+Valor de la empresa (EV) 68,498.1
+Peso del valor terminal en el EV 66.6%
+5. EQUITY VALUE Valor
+Valor de la empresa (EV) 68,498.1
+(−) Deuda bursátil y bancaria (2025) (11,500.0)
+(−) Pasivo por arrendamiento (2025) (12,118.0)
+(+) Efectivo y equivalentes (2025) 9,295.0
+Deuda neta (memo) 14,323.0
+Equity Value (valor del capital) 54,175.1
+6. PRECIO POR ACCIÓN Valor
+Equity Value 54,175.1
+Acciones en circulación (millones) 1,800
+PRECIO POR ACCIÓN — PROYECCIÓN FINAL (MXN) $30.10
+Precio actual en bolsa (MXN) $33.48
+Potencial de apreciación / (baja) (10.1%)
+Precio por acción de la proyección base (MXN) $34.43
+Diferencia vs. proyección base (12.6%)
+Umbral para recomendación (±) 15.0%
+Recomendación del modelo MANTENER
+Comprobación del balance PASS
+Comprobación WACC > g PASS
+7. SENSIBILIDAD — PRECIO POR ACCIÓN (MXN)
+Paso de WACC y g 0.50%
+WACC ↓ / g → 2.50% 3.00% 3.50% 4.00% 4.50%
+10.88% $31.33 $33.13 $35.18 $37.52 $40.23
+11.38% $29.14 $30.71 $32.48 $34.49 $36.79
+11.88% $27.18 $28.55 $30.10 $31.84 $33.81
+12.38% $25.41 $26.63 $27.99 $29.50 $31.21
+12.88% $23.82 $24.90 $26.10 $27.43 $28.92
+Diferencia centro vs. B150 0.00
+8. MATRIZ DE FACTORES EXTERNOS (investigación) Efecto Impacto (1–5) Probabilidad Horizonte Partida Fila modelo
+MACRO — Crecimiento del PIB de México + 4 Alta CP–MP Ventas 11
+MACRO — Inflación Mixto 3 Alta CP–MP Ventas y costos 10
+MACRO — Consumo privado y confianza − 5 Alta CP Ventas 13
+MACRO — Empleo formal y masa salarial + 3 Media CP–MP Ventas 13
+MACRO — Remesas − 3 Media CP Ventas 17
+MONETARIO — Tasa Banxico − 3 Alta CP–MP WACC / intereses 61 / 126
+MONETARIO — Fed y tasas de EU − 3 Alta CP WACC / TC 125
+CAMBIARIO — Tipo de cambio − 3 Media CP Costos y capex 35
+RIESGO PAÍS — Calificación soberana − 2 Media MP WACC 125
+T-MEC — Revisiones anuales − 4 Alta MP Ventas 18
+T-MEC — Aranceles de EU (232, 301) − 3 Alta CP–MP Ventas 18
+POLÍTICA COMERCIAL MX — Aranceles a Asia − 2 Alta CP Costos y capex 35
+POLÍTICA LABORAL — Salario mínimo Mixto 4 Alta CP–LP Costos y ventas 33 / 19
+POLÍTICA LABORAL — Jornada de 40 h − 3 Alta MP Costos 33
+POLÍTICA FISCAL — IEPS (refrescos, tabaco, sodio) − 2 Media CP–MP Ventas 21
+POLÍTICA FISCAL — Paquete Económico 2027 − 2 Media MP Tasa de impuestos 52
+POLÍTICA SOCIAL — Programas del Bienestar + 3 Alta MP Ventas 19
+REGULACIÓN — PACIC (canasta básica) − 3 Alta CP Margen 34
+SECTOR RETAIL — Desempeño de competidores − 5 Alta CP Ventas 15
+MEGATENDENCIA — Hard discount − 5 Alta CP–LP Ventas y margen 15 / 34
+MEGATENDENCIA — Comercio electrónico Mixto 4 Alta MP–LP Ventas y capex 20 / 48
+MEGATENDENCIA — Formatos más pequeños / proximidad Mixto 3 Alta MP Ventas y margen 16
+INMOBILIARIO — Rentas comerciales Mixto 2 Alta MP Margen 37 / 38
+INMOBILIARIO — Ocupación de FIBRAs comerciales + 2 Alta MP Ventas (otros ingresos) 22
+SORIANA — Servicios financieros (Sofipo) + 2 Media MP–LP Margen 38
+SORIANA — Austeridad y eficiencia + 4 Alta CP Margen 32
+SORIANA — Guía de inversión 2026 Mixto 3 Alta CP Capex 47
+GEOPOLÍTICA — Medio Oriente y petróleo − 3 Media CP Costos 36
+GEOPOLÍTICA — Política migratoria de EU − 3 Alta CP–MP Ventas 17
+SEGURIDAD — Extorsión e inseguridad − 2 Media CP–MP Costos —
+9. ITERACIÓN DEL WACC (estructura de capital al valor DCF) Valor
+Kd antes de impuestos (tasa implícita proyectada 2026E) 10.00%
+Tasa de impuestos para el escudo fiscal 28.80%
+Kd después de impuestos 7.12%
+Deuda total (D) = bancaria/bursátil + arrendamientos (2025) 23,618.0
+Tasa libre de riesgo (Bono M 10 años) 9.52%
+Prima de riesgo de mercado (PRM) 4.23%
+Beta desapalancada del sector (βU) 0.80
+Iteración WACC de entrada Equity DCF (mdp) D / E Beta apalancada Ke (CAPM) WACC de salida
+0 (WACC de la hoja WACC) 12.50% 49,499.3 0.4771 1.0718 14.05% 11.81%
+1 11.81% 54,706.7 0.4317 1.0459 13.94% 11.88%
+2 11.88% 54,119.2 0.4364 1.0486 13.95% 11.88%
+3 11.88% 54,181.1 0.4359 1.0483 13.95% 11.88%
+4 11.88% 54,174.5 0.4360 1.0483 13.95% 11.88%
+5 11.88% 54,175.2 0.4360 1.0483 13.95% 11.88%
+WACC convergido 11.88%
+Ke convergido 13.95%
+Variación de la última iteración (pb) 0.00
+10. VALOR TERMINAL POR MÚLTIPLOS (EV/EBITDA) Soriana Walmex Chedraui La Comer
+Valor de mercado del capital (E) 60,264.0 813,622.6 89,246.0 34,190.0
+(+) Deuda total (bancaria/bursátil + arrendamientos) 23,618.0 80,848.1 56,744.3 2,441.8
+(−) Efectivo y equivalentes (9,295.0) (28,591.2) (14,640.2) (2,962.8)
+EV de mercado 74,587.0 865,879.5 131,350.2 33,669.0
+EBITDA FY2025 (EBIT + D&A) 11,894.0 103,446.9 24,391.2 5,214.8
+EV / EBITDA actual 6.3x 8.4x 5.4x 6.5x
+Mediana de comparables (Walmex, Chedraui, La Comer) 6.5x
+(−) Descuento de Soriana vs. comparables 10.00%
+Múltiplo de salida aplicado (EV/EBITDA) 5.8x
+EBITDA 2030E 12,391.5
+Valor terminal por múltiplo al cierre de 2030 72,004.4
+Valor presente del valor terminal (múltiplo) 41,081.7
+EV por múltiplos 63,973.5
+Equity Value por múltiplos 49,650.5
+Precio por acción — múltiplos (MXN) $27.58
+Múltiplo EV/EBITDA implícito en Gordon 6.5x
+g implícita en el múltiplo aplicado 2.65%
+Peso del método Gordon 50.00%
+Peso del método de múltiplos 50.00%
+EV ponderado (cierre 2025) 66,235.8
+Precio por acción ponderado al cierre 2025 (MXN) $28.84
+11. VALOR A LA FECHA DE VALUACIÓN Y PRECIO OBJETIVO FINAL Valor
+Fecha base del descuento 31-Dec-2025
+Fecha del último balance disponible (2T26) 30-Jun-2026
+Fecha de valuación 01-Oct-2026
+Años del cierre 2025 al 2T26 0.50
+Años del 2T26 a la fecha de valuación 0.25
+EV ponderado al cierre 2025 66,235.8
+EV capitalizado al 2T26 = EV × (1 + WACC)^t 70,059.0
+(−/+) FCF ya generado en 1S26 (CFO − Capex real) 1,060.5
+EV al 2T26 71,119.5
+(−) Deuda bursátil y bancaria 2T26 (11,500.0)
+(−) Pasivo por arrendamiento 2T26 (12,220.6)
+(+) Efectivo y equivalentes 2T26 6,875.4
+Equity Value al 2T26 54,274.3
+Equity Value a la fecha de valuación = E × (1 + Ke)^t 56,095.9
+Acciones en circulación (millones) 1,800
+PRECIO OBJETIVO FINAL POR ACCIÓN (MXN) $31.16
+Precio actual en bolsa (MXN) $33.48
+Potencial de apreciación / (baja) (6.9%)
+Recomendación final MANTENER
+Precio objetivo consenso de analistas (MXN) $23.36
+Diferencia vs. consenso 33.4%
+
+-- 10 of 11 --
+
+SORIANA - ANÁLISIS DE SENSIBILIDAD
+1. SUPUESTOS BASE (vinculados a Proyección Final Soriana) 2025A 2026E 2027E 2028E 2029E 2030E
+Periodo (n) 1 2 3 4 5
+Ventas $ 177,515 $ 170,043 $ 167,794 $ 169,496 $ 173,233 $ 178,318
+Crecimiento de ventas (4.21%) (1.32%) 1.01% 2.20% 2.94%
+Margen EBIT 4.54% 4.52% 4.51% 4.51% 4.51%
+Depreciación y amortización (% ventas) 2.44% 2.44% 2.44% 2.44% 2.44%
+Capex (% ventas) 2.26% 1.98% 1.97% 1.97% 1.97%
+Tasa de impuestos sobre EBIT 26.75% 27.10% 27.67% 28.23% 28.80%
+Capital de trabajo neto operativo (Inv. + Otros AC − Pasivo op.) $ 3,691 $ 3,605 $ 3,598 $ 3,323 $ 3,396 $ 3,496
+Capital de trabajo neto operativo (% ventas) 2.08% 2.12% 2.14% 1.96% 1.96% 1.96%
+FCF base del modelo $ 6,047.8 $ 6,304.0 $ 6,592.9 $ 6,344.8 $ 6,470.0
+FCF reconstruido con los supuestos de esta hoja $ 6,047.8 $ 6,304.0 $ 6,592.9 $ 6,344.8 $ 6,470.0
+Diferencia (comprobación, debe ser 0) $ - $ - $ - $ - $ -
+2. PARÁMETROS DE VALUACIÓN BASE Valor
+WACC final (iterado) 11.88%
+Crecimiento perpetuo (g) 3.50%
+Múltiplo de salida EV/EBITDA 5.81x
+Peso del método Gordon 50%
+Peso del método de múltiplos 50%
+Años del cierre 2025 al 2T26 0.500
+Años del 2T26 a la fecha de valuación 0.253
+Ke convergido (se mantiene fijo en la sensibilidad) 13.95%
+(+) FCF ya generado en 1S26 $ 1,060.5
+(−) Deuda bursátil y bancaria 2T26 $ (11,500.0)
+(−) Pasivo por arrendamiento 2T26 $ (12,220.6)
+(+) Efectivo y equivalentes 2T26 $ 6,875.4
+Acciones en circulación (millones) 1,800.0
+Precio actual en bolsa (MXN) $ 33.48
+Precio objetivo final del modelo (MXN) $ 31.16
+Precio objetivo reconstruido — caso base de esta hoja (MXN) $ 31.16
+$ -
+3. PASOS DE SENSIBILIDAD Paso
+Paso WACC 0.50%
+Paso crecimiento perpetuo (g) 0.50%
+Paso crecimiento anual de ventas 2026E–2030E (pp) 1.00%
+Paso margen EBIT (pp) 0.25%
+Paso capex (% ventas, pp) 0.25%
+Paso tasa de impuestos (pp) 2.00%
+Paso múltiplo EV/EBITDA (x) 0.5x
+4. TABLAS DE SENSIBILIDAD BIDIMENSIONALES - PRECIO POR ACCIÓN (MXN)
+Tabla 4.1 - WACC vs. crecimiento perpetuo (g)
+WACC / g 2.50% 3.00% 3.50% 4.00% 4.50%
+10.88% $ 32.40 $ 33.38 $ 34.50 $ 35.77 $ 37.25
+11.38% $ 30.92 $ 31.78 $ 32.74 $ 33.84 $ 35.09
+11.88% $ 29.57 $ 30.32 $ 31.16 $ 32.11 $ 33.19
+12.38% $ 28.33 $ 28.99 $ 29.73 $ 30.56 $ 31.50
+12.88% $ 27.18 $ 27.77 $ 28.43 $ 29.16 $ 29.98
+Tabla 4.2 - Δ Crecimiento anual de ventas vs. Δ Margen EBIT (pp vs. base)
+Δ Ventas / Δ Margen -0.50% -0.25% 0.00% +0.25% +0.50%
+-2.00% $ 24.82 $ 26.48 $ 28.15 $ 29.81 $ 31.47
+-1.00% $ 26.16 $ 27.89 $ 29.63 $ 31.36 $ 33.10
+0.00% $ 27.55 $ 29.36 $ 31.16 $ 32.97 $ 34.78
++1.00% $ 28.98 $ 30.87 $ 32.75 $ 34.64 $ 36.53
++2.00% $ 30.47 $ 32.43 $ 34.40 $ 36.36 $ 38.33
+Tabla 4.3 - WACC vs. múltiplo de salida EV/EBITDA
+WACC / Múltiplo 4.81x 5.31x 5.81x 6.31x 6.81x
+10.88% $ 32.26 $ 33.38 $ 34.50 $ 35.61 $ 36.73
+11.38% $ 30.55 $ 31.65 $ 32.74 $ 33.84 $ 34.93
+11.88% $ 29.02 $ 30.09 $ 31.16 $ 32.24 $ 33.31
+12.38% $ 27.63 $ 28.68 $ 29.73 $ 30.79 $ 31.84
+12.88% $ 26.37 $ 27.40 $ 28.43 $ 29.46 $ 30.49
+Tabla 4.4 - Δ Capex (% ventas) vs. Δ Tasa de impuestos (pp vs. base)
+Δ Capex / Δ Tasa -4.00% -2.00% 0.00% +2.00% +4.00%
+-0.50% $ 36.32 $ 35.64 $ 34.95 $ 34.27 $ 33.59
+-0.25% $ 34.43 $ 33.74 $ 33.06 $ 32.38 $ 31.69
+0.00% $ 32.53 $ 31.85 $ 31.16 $ 30.48 $ 29.80
++0.25% $ 30.64 $ 29.95 $ 29.27 $ 28.59 $ 27.90
++0.50% $ 28.74 $ 28.06 $ 27.37 $ 26.69 $ 26.01
+5. SENSIBILIDAD UNIVARIADA (un factor a la vez; el resto en caso base)
+Valor del factor en cada escenario Baja fuerte Baja Base Sube Sube fuerte Cambio vs. base:
+baja fuerte
+Cambio vs. base:
+baja
+Base (sin
+cambio)
+Cambio vs. base:
+sube
+Cambio vs. base:
+sube fuerte
+WACC 10.88% 11.38% 11.88% 12.38% 12.88% -1.00% -0.50% 0.00% +0.50% +1.00%
+Crecimiento perpetuo (g) 2.50% 3.00% 3.50% 4.00% 4.50% -1.00% -0.50% 0.00% +0.50% +1.00%
+Δ Crecimiento anual de ventas (pp) -2.00% -1.00% 0.00% +1.00% +2.00% -2.00% -1.00% 0.00% +1.00% +2.00%
+Δ Margen EBIT (pp) -0.50% -0.25% 0.00% +0.25% +0.50% -0.50% -0.25% 0.00% +0.25% +0.50%
+Δ Capex (% ventas, pp) -0.50% -0.25% 0.00% +0.25% +0.50% -0.50% -0.25% 0.00% +0.25% +0.50%
+Δ Tasa de impuestos (pp) -4.00% -2.00% 0.00% +2.00% +4.00% -4.00% -2.00% 0.00% +2.00% +4.00%
+Múltiplo de salida EV/EBITDA (x) 4.81x 5.31x 5.81x 6.31x 6.81x -1.0x -0.5x 0.0x +0.5x +1.0x
+Precio por acción (MXN) Baja fuerte Baja Base Sube Sube fuerte
+Rango en
+pesos (máx −
+mín)
+Impacto en
+pesos: baja
+fuerte
+Impacto en
+pesos: baja
+Impacto en
+pesos: sube
+Impacto en
+pesos: sube
+fuerte
+Var. %: baja
+fuerte Var. %: baja Var. %: sube Var. %: sube
+fuerte
+Rango (% del
+precio base)
+WACC $ 34.50 $ 32.74 $ 31.16 $ 29.73 $ 28.43 $ 6.07 $ 3.33 $ 1.58 $ (1.43) $ (2.73) +10.7% +5.1% -4.6% -8.8% 19.5%
+Crecimiento perpetuo (g) $ 29.57 $ 30.32 $ 31.16 $ 32.11 $ 33.19 $ 3.63 $ (1.60) $ (0.84) $ 0.95 $ 2.03 -5.1% -2.7% +3.0% +6.5% 11.6%
+Δ Crecimiento anual de ventas (pp) $ 28.15 $ 29.63 $ 31.16 $ 32.75 $ 34.40 $ 6.25 $ (3.02) $ (1.54) $ 1.59 $ 3.23 -9.7% -4.9% +5.1% +10.4% 20.1%
+Δ Margen EBIT (pp) $ 27.55 $ 29.36 $ 31.16 $ 32.97 $ 34.78 $ 7.24 $ (3.62) $ (1.81) $ 1.81 $ 3.62 -11.6% -5.8% +5.8% +11.6% 23.2%
+Δ Capex (% ventas, pp) $ 34.95 $ 33.06 $ 31.16 $ 29.27 $ 27.37 $ 7.58 $ 3.79 $ 1.89 $ (1.89) $ (3.79) +12.2% +6.1% -6.1% -12.2% 24.3%
+Δ Tasa de impuestos (pp) $ 32.53 $ 31.85 $ 31.16 $ 30.48 $ 29.80 $ 2.74 $ 1.37 $ 0.68 $ (0.68) $ (1.37) +4.4% +2.2% -2.2% -4.4% 8.8%
+Múltiplo de salida EV/EBITDA (x) $ 29.02 $ 30.09 $ 31.16 $ 32.24 $ 33.31 $ 4.29 $ (2.15) $ (1.07) $ 1.07 $ 2.15 -6.9% -3.4% +3.4% +6.9% 13.8%
+Tornado: impacto en el precio por acción (MXN) — baja fuerte vs. sube fuerte
+WACC
+Crecimiento perpetuo (g)
+Δ Crecimiento anual de ventas (pp)
+Δ Margen EBIT (pp)
+Δ Capex (% ventas, pp)
+Δ Tasa de impuestos (pp)
+Múltiplo de salida EV/EBITDA (x)
+$5.00	$4.00	$3.00	$2.00	$1.00	$0	-$1.00	-$2.00	-$3.00	-$4.00	-$5.00
+Sube fuerte Baja fuerte
+
+-- 11 of 11 --
+

@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ValuFlow · Plataforma de Valuación Empresarial</title>
+<meta name="ext-resource-dependency" content="assets/soriana.svg" data-resource-id="sorianaLogo">
+<script>window.vfRes=function(u){if(!u)return u;var r=window.__resources||{};if(/(^|\/)assets\/soriana\.svg$/.test(u))return r.sorianaLogo||u;return u;};</script>
+<link rel="stylesheet" href="_ds/industry-78f903b4-3229-4348-82a7-33f55a9fb28d/styles.css">
+<script src="_ds/industry-78f903b4-3229-4348-82a7-33f55a9fb28d/_ds_bundle.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="vf-data-soriana.js"></script>
+<script src="vf-engine.js"></script>
+<style>
+:root{--color-accent:#0039A6;--color-accent-100:#eef3fc;--color-accent-200:#d8e3f8;--color-accent-300:#b0c6ef;--color-accent-400:#7c9ddf;--color-accent-500:#3d6bc6;--color-accent-600:#002f8c;--color-accent-700:#00276f;--color-accent-800:#001e57;--color-accent-900:#00153d;--pos:#16794a;--neg:#b42318;--warn:#a15c07;}
+html,body{margin:0;background:var(--color-bg);}
+body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
+a{color:var(--color-accent);} a:hover{color:var(--color-accent-600);}
+input[type=range]{accent-color:var(--color-accent);width:100%;}
+@media print{[data-noprint]{display:none !important;} [data-page]{break-after:page;} body{background:#fff;}}
+</style>
+</helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0039A6"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0039A6"/><text x="50" y="62" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="34" font-weight="700" fill="#ffffff">VF</text></svg></template>
+<div style="min-height:100vh; background:var(--color-bg); color:var(--color-text); font-family:var(--font-body);">
+
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh; display:grid; place-items:center;">
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+      <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style="width:48px; height:48px;">
+      <div style="font-family:var(--font-heading); font-size:20px; font-weight:600;">Cargando modelo de valuación…</div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============ PORTADA ============ -->
+<sc-if value="{{ v.cover }}" hint-placeholder-val="{{ true }}">
+<section data-screen-label="00 Portada" style="position:relative; min-height:100vh; overflow:hidden; background-image:linear-gradient(var(--color-divider) 1px, transparent 1px), linear-gradient(90deg, var(--color-divider) 1px, transparent 1px); background-size:56px 56px; background-position:-1px -1px;">
+  <div style="position:absolute; inset:0; background:radial-gradient(ellipse at 70% 40%, transparent 0%, var(--color-bg) 78%); pointer-events:none;"></div>
+  <div style="position:relative; max-width:1360px; margin:0 auto; padding:40px 32px 32px; min-height:100vh; display:flex; flex-direction:column; gap:40px;">
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; opacity:{{ cv.o1 }}; transform:{{ cv.t1 }}; transition:all .7s cubic-bezier(.2,.7,.2,1);">
+      <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style="width:56px; height:56px;">
+      <div style="display:flex; flex-direction:column;">
+        <span style="font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.01em;">Tecnológico de Monterrey</span>
+        <span style="font-size:13px; color:var(--color-neutral-700);">Valuación de Empresas · 2026</span>
+      </div>
+      <div style="margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-700);">
+        <span style="width:8px; height:8px; background:var(--color-accent);"></span>ValuFlow · Motor de valuación
+      </div>
+    </div>
+
+    <div style="flex:1; display:flex; flex-wrap:wrap; gap:48px; align-items:center;">
+      <div style="flex:7 1 520px; min-width:0; display:flex; flex-direction:column; gap:28px; opacity:{{ cv.o2 }}; transform:{{ cv.t2 }}; transition:all .9s cubic-bezier(.2,.7,.2,1) .1s;">
+        <div style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">Plataforma de Valuación Empresarial</div>
+        <h1 style="margin:0; font-family:var(--font-heading); font-weight:600; font-size:clamp(56px, 8.4vw, 132px); line-height:.9; letter-spacing:-.025em; text-transform:uppercase; text-wrap:balance;">Valor intrínseco,<br><span style="color:var(--color-accent);">paso a paso.</span></h1>
+        <p style="margin:0; max-width:560px; font-size:17px; line-height:1.55; color:var(--color-neutral-800); text-wrap:pretty;">Un motor DCF reutilizable: proyección de flujos, costo de capital iterado, valor terminal por dos métodos y sensibilidad, con trazabilidad hasta el dato de origen.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+          <button class="btn btn-primary blueprint" onClick="{{ startTour }}" style="font-size:17px; padding:14px 24px; gap:10px;"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Explorar valuación <span style="font-family:var(--font-body);">→</span></button>
+          <button class="btn btn-secondary" onClick="{{ startPresent }}" style="font-size:15px; padding:13px 18px;">Modo presentación</button>
+          <button class="btn btn-ghost" onClick="{{ goImport }}" style="font-size:15px;">+ Nueva valuación</button>
+        </div>
+      </div>
+
+      <div style="flex:5 1 380px; min-width:0; opacity:{{ cv.o3 }}; transform:{{ cv.t3 }}; transition:all .9s cubic-bezier(.2,.7,.2,1) .25s;">
+        <div class="blueprint" style="padding:28px; background:color-mix(in srgb, var(--color-bg) 82%, transparent); display:flex; flex-direction:column; gap:22px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);"><span>Caso de estudio</span><span>{{ co.ticker }} · {{ co.exchange }}</span></div>
+          <div style="height:72px; display:flex; align-items:center;">
+            <sc-if value="{{ co.hasLogo }}" hint-placeholder-val="{{ false }}"><img src="{{ co.logo }}" alt="{{ co.name }}" style="max-height:72px; max-width:300px; object-fit:contain;"></sc-if>
+            <sc-if value="{{ co.noLogo }}" hint-placeholder-val="{{ false }}"><div style="width:72px; height:72px; display:grid; place-items:center; border:1px solid var(--color-divider); font-family:var(--font-heading); font-size:30px; font-weight:600; color:{{ co.brand }};">{{ co.initials }}</div></sc-if>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <div style="font-family:var(--font-heading); font-weight:600; font-size:26px; line-height:1.1;">{{ co.legalName }}</div>
+            <div style="font-size:14px; color:var(--color-neutral-700);">{{ co.sector }}</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--color-divider);">
+            <div style="padding:14px 12px 0 0; display:flex; flex-direction:column; gap:4px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);">Valor intrínseco</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);">{{ r.value }}</span></div>
+            <div style="padding:14px 12px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);">Precio</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600;">{{ r.price }}</span></div>
+            <div style="padding:14px 0 0 12px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);">Potencial</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600; color:{{ r.upColor }};">{{ r.upside }}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px; opacity:{{ cv.o4 }}; transition:opacity 1s ease .45s;">
+      <div style="display:flex; align-items:baseline; gap:12px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);"><span>Equipo</span><span style="flex:1; height:1px; background:var(--color-divider);"></span></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0;">
+        <sc-for list="{{ team }}" as="m" hint-placeholder-count="5">
+          <div style="padding:10px 16px 10px 0; display:flex; gap:12px; align-items:baseline;">
+            <span style="font-family:var(--font-heading); font-size:14px; color:var(--color-accent);">{{ m.n }}</span>
+            <div style="display:flex; flex-direction:column;"><span style="font-weight:500; font-size:14px; line-height:1.3;">{{ m.name }}</span><span style="font-size:12px; color:var(--color-neutral-700); letter-spacing:.04em;">{{ m.id }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+</sc-if>
+
+<!-- ============ APP ============ -->
+<sc-if value="{{ v.app }}" hint-placeholder-val="{{ false }}">
+<div>
+  <header data-noprint style="position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--color-bg) 90%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--color-divider); transform:{{ ui.headerT }}; transition:transform .3s;">
+    <div style="max-width:1360px; margin:0 auto; padding:0 24px; height:64px; display:flex; align-items:center; gap:14px;">
+      <button onClick="{{ goCover }}" title="Portada" style="display:flex; align-items:center; gap:10px; background:none; border:0; cursor:pointer; padding:0; color:var(--color-text);">
+        <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style="height:32px; width:32px;">
+        <span style="font-family:var(--font-heading); font-weight:600; font-size:20px; letter-spacing:.02em;">ValuFlow</span>
+      </button>
+      <span style="width:1px; height:28px; background:var(--color-divider);"></span>
+      <div style="position:relative;">
+        <button onClick="{{ toggleCompanyMenu }}" style="display:flex; align-items:center; gap:10px; background:none; border:1px solid transparent; cursor:pointer; padding:6px 10px 6px 6px; color:var(--color-text);" style-hover="border-color:var(--color-divider);">
+          <span style="width:44px; height:28px; display:grid; place-items:center;">
+            <sc-if value="{{ co.hasLogo }}" hint-placeholder-val="{{ false }}"><img src="{{ co.logo }}" alt="{{ co.name }}" style="max-width:44px; max-height:28px; object-fit:contain;"></sc-if>
+            <sc-if value="{{ co.noLogo }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--font-heading); font-weight:600; font-size:16px; color:{{ co.brand }};">{{ co.initials }}</span></sc-if>
+          </span>
+          <span style="display:flex; flex-direction:column; align-items:flex-start; line-height:1.15;">
+            <span style="font-weight:600; font-size:14px;">{{ co.name }}</span>
+            <span style="font-size:11px; color:var(--color-neutral-700); letter-spacing:.06em;">{{ co.ticker }} · {{ co.exchange }}</span>
+          </span>
+          <span style="font-size:10px; color:var(--color-neutral-700);">▼</span>
+        </button>
+        <sc-if value="{{ ui.companyMenu }}" hint-placeholder-val="{{ false }}">
+          <div class="blueprint" style="position:absolute; top:52px; left:0; width:320px; background:var(--color-bg); box-shadow:var(--shadow-lg); padding:8px; display:flex; flex-direction:column; gap:2px; z-index:60;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="padding:8px 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);">Empresa actual</div>
+            <sc-for list="{{ companyList }}" as="c" hint-placeholder-count="1">
+              <button onClick="{{ c.onClick }}" style="display:flex; align-items:center; gap:10px; padding:10px; background:{{ c.bg }}; border:0; cursor:pointer; text-align:left; color:var(--color-text);" style-hover="background:var(--color-accent-100);">
+                <span style="flex:1; display:flex; flex-direction:column;"><span style="font-weight:600; font-size:14px;">{{ c.name }}</span><span style="font-size:12px; color:var(--color-neutral-700);">{{ c.meta }}</span></span>
+                <span style="font-family:var(--font-heading); font-size:16px;">{{ c.value }}</span>
+              </button>
+            </sc-for>
+            <div style="height:1px; background:var(--color-divider); margin:6px 0;"></div>
+            <button onClick="{{ goLibrary }}" class="btn btn-ghost" style="justify-content:flex-start; padding:8px 10px;">Mis valuaciones</button>
+            <button onClick="{{ goImport }}" class="btn btn-ghost" style="justify-content:flex-start; padding:8px 10px;">+ Nueva valuación</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ ui.desktop }}" hint-placeholder-val="{{ true }}">
+        <nav style="display:flex; align-items:stretch; height:64px; margin-left:12px;">
+          <sc-for list="{{ navItems }}" as="it" hint-placeholder-count="6">
+            <button onClick="{{ it.onClick }}" style="display:flex; align-items:center; gap:6px; padding:0 14px; background:none; border:0; border-bottom:2px solid {{ it.border }}; cursor:pointer; font-family:var(--font-heading); font-size:16px; font-weight:600; color:{{ it.color }}; transition:color .2s, border-color .2s;" style-hover="color:var(--color-accent);">
+              <span style="font-size:12px; font-family:var(--font-body); font-weight:500; opacity:.7;">{{ it.num }}</span>{{ it.label }}
+            </button>
+          </sc-for>
+        </nav>
+      </sc-if>
+
+      <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+        <sc-if value="{{ ui.modified }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ resetA }}" class="tag tag-accent" style="border:0; cursor:pointer; gap:6px;" title="Restaurar valores base">● Modelo modificado · Restaurar</button>
+        </sc-if>
+        <sc-if value="{{ ui.desktop }}" hint-placeholder-val="{{ true }}">
+          <button class="btn btn-secondary" onClick="{{ startPresent }}">Presentar</button>
+        </sc-if>
+        <div style="position:relative;">
+          <button class="btn btn-primary blueprint" onClick="{{ toggleExportMenu }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Exportar ▾</button>
+          <sc-if value="{{ ui.exportMenu }}" hint-placeholder-val="{{ false }}">
+            <div class="blueprint" style="position:absolute; top:48px; right:0; width:300px; background:var(--color-bg); box-shadow:var(--shadow-lg); padding:8px; display:flex; flex-direction:column; z-index:60;">
+              <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <div style="padding:8px 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);">Exportar valuación · {{ co.short }}</div>
+              <sc-for list="{{ exportItems }}" as="e" hint-placeholder-count="5">
+                <button onClick="{{ e.onClick }}" style="display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px; background:none; border:0; cursor:pointer; text-align:left; color:var(--color-text);" style-hover="background:var(--color-accent-100);">
+                  <span style="font-weight:600; font-size:14px;">{{ e.label }}</span><span style="font-size:12px; color:var(--color-neutral-700);">{{ e.desc }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width:1360px; margin:0 auto; padding:32px 24px 120px; opacity:{{ ui.pageO }}; transform:{{ ui.pageT }}; transition:opacity .45s ease, transform .55s cubic-bezier(.2,.7,.2,1);">
+
+  <sc-if value="{{ ui.errorsShow }}" hint-placeholder-val="{{ false }}">
+    <div class="blueprint" style="padding:16px 20px; margin-bottom:24px; border-color:var(--neg); display:flex; gap:12px; align-items:flex-start;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span style="color:var(--neg); font-weight:700;">✕</span>
+      <div style="display:flex; flex-direction:column; gap:4px;"><strong style="font-size:14px;">No es posible calcular la valuación con los supuestos actuales</strong><sc-for list="{{ ui.errors }}" as="e"><span style="font-size:14px;">{{ e }}</span></sc-for></div>
+      <button class="btn btn-secondary" onClick="{{ resetA }}" style="margin-left:auto;">Restaurar valores base</button>
+    </div>
+  </sc-if>
+
+  <!-- ===== 01 VALOR ===== -->
+  <sc-if value="{{ v.p1 }}" hint-placeholder-val="{{ false }}">
+  <section data-page data-screen-label="01 Valor" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">01 · Valor</span>
+        <h1 style="margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;">¿Cuánto vale {{ co.short }}?</h1>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <span class="tag tag-outline">Modelo: {{ r.modelLabel }}</span>
+        <span class="tag tag-neutral">Valuación al {{ co.valDate }}</span>
+        <span class="tag tag-neutral">Precio al {{ co.priceDate }}</span>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:28px;">
+      <div class="blueprint" style="flex:7 1 600px; min-width:0; padding:32px; display:flex; flex-direction:column; gap:28px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <span style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);">Valor intrínseco por acción · {{ co.currency }}</span>
+          <div style="display:flex; gap:8px;"><span class="tag tag-accent">Resultado</span><button class="btn btn-ghost" onClick="{{ openDrawerValue }}" style="font-size:13px;">¿Cómo se calculó?</button></div>
+        </div>
+        <div style="display:flex; align-items:flex-end; gap:20px; flex-wrap:wrap;">
+          <span style="font-family:var(--font-heading); font-weight:600; font-size:clamp(88px, 11vw, 168px); line-height:.82; letter-spacing:-.03em; color:var(--color-accent);">{{ r.heroDisp }}</span>
+          <div style="display:flex; flex-direction:column; gap:6px; padding-bottom:10px;">
+            <span style="font-family:var(--font-heading); font-weight:600; font-size:34px; line-height:1; color:{{ r.upColor }};">{{ r.upside }}</span>
+            <span style="font-size:13px; color:var(--color-neutral-700);">vs. precio de mercado</span>
+          </div>
+          <sc-if value="{{ ui.busy }}" hint-placeholder-val="{{ false }}"><span class="tag tag-neutral" style="margin-bottom:14px;">Actualizando valuación…</span></sc-if>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="position:relative; height:64px;">
+            <div style="position:absolute; left:0; right:0; top:30px; height:1px; background:var(--color-divider);"></div>
+            <sc-if value="{{ track.has52 }}"><div title="Rango 52 semanas" style="position:absolute; top:24px; height:13px; left:{{ track.lo52 }}; width:{{ track.w52 }}; background:var(--color-neutral-200);"></div></sc-if>
+            <sc-if value="{{ track.hasCons }}"><div style="position:absolute; top:22px; left:{{ track.cons }}; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center;"><span style="width:1px; height:17px; background:var(--color-neutral-600);"></span><span style="font-size:11px; color:var(--color-neutral-700); white-space:nowrap; margin-top:4px;">Consenso {{ track.consTxt }}</span></div></sc-if>
+            <div style="position:absolute; top:30px; height:2px; margin-top:-1px; left:{{ track.segL }}; width:{{ track.segW }}; background:{{ r.upColor }}; transition:all .8s cubic-bezier(.2,.7,.2,1);"></div>
+            <div style="position:absolute; top:0; left:{{ track.price }}; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:4px; transition:left .8s cubic-bezier(.2,.7,.2,1);"><span style="font-size:11px; white-space:nowrap; font-weight:600;">Precio {{ r.price }}</span><span style="width:13px; height:13px; border:2px solid var(--color-text); background:var(--color-bg); transform:rotate(45deg);"></span></div>
+            <div style="position:absolute; top:22px; left:{{ track.value }}; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:4px; transition:left .8s cubic-bezier(.2,.7,.2,1);"><span style="width:16px; height:16px; background:var(--color-accent); border-radius:50%; box-shadow:0 0 0 4px var(--color-accent-200);"></span><span style="font-size:11px; white-space:nowrap; font-weight:600; color:var(--color-accent-700);">Valor {{ r.value }}</span></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--color-neutral-700);"><span>{{ track.minTxt }}</span><span>Banda gris: rango de 52 semanas</span><span>{{ track.maxTxt }}</span></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); border-top:1px solid var(--color-divider);">
+          <div style="padding:16px 16px 0 0; display:flex; flex-direction:column; gap:4px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);">Precio de mercado · Dato</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600;">{{ r.price }}</span><span style="font-size:12px; color:var(--color-neutral-700);">Cierre al {{ co.priceDate }}</span></div>
+          <div style="padding:16px 16px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);">Diferencia por acción</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600; color:{{ r.upColor }};">{{ r.diff }}</span><span style="font-size:12px; color:var(--color-neutral-700);">Valor − precio</span></div>
+          <div style="padding:16px 0 0 16px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);">Lectura del modelo</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600;">{{ r.signal }}</span><span style="font-size:12px; color:var(--color-neutral-700);">Umbral ±{{ r.threshold }} · académico</span></div>
+        </div>
+      </div>
+
+      <div style="flex:5 1 380px; min-width:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0; border:1px solid var(--color-divider); align-content:stretch;">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+          <button onClick="{{ k.onClick }}" style="text-align:left; background:none; border:0; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); padding:20px; display:flex; flex-direction:column; gap:6px; cursor:pointer; color:var(--color-text); transition:background .2s;" style-hover="background:var(--color-accent-100);">
+            <span style="display:flex; justify-content:space-between; gap:8px; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);"><span>{{ k.label }}</span><span style="color:var(--color-accent-700);">{{ k.kind }}</span></span>
+            <span style="font-family:var(--font-heading); font-size:34px; font-weight:600; line-height:1;">{{ k.value }}<span style="font-size:15px; margin-left:4px; color:var(--color-neutral-700);">{{ k.unit }}</span></span>
+            <span style="font-size:12px; line-height:1.4; color:var(--color-neutral-700);">{{ k.desc }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="blueprint" style="padding:28px; display:flex; flex-direction:column; gap:20px;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:flex-end;">
+        <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Métodos de valuación</div><h3 style="margin:4px 0 0; font-size:28px;">¿Qué dicen los distintos métodos?</h3></div>
+        <span style="font-size:13px; color:var(--color-neutral-700); max-width:520px;">Barras: rango con WACC ±0.5 pp y g ±0.5 pp (múltiplo ±0.5x). Línea vertical: precio de mercado. {{ co.currency }} por acción.</span>
+      </div>
+      <div style="display:flex; flex-direction:column;">
+        <sc-for list="{{ football.rows }}" as="f" hint-placeholder-count="6">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; padding:10px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent);">
+            <div style="flex:0 0 240px; display:flex; flex-direction:column;"><span style="font-weight:{{ f.weight }}; font-size:15px;">{{ f.label }}</span><span style="font-size:12px; color:var(--color-neutral-700);">{{ f.sub }}</span></div>
+            <div style="flex:1 1 300px; position:relative; height:28px;">
+              <div style="position:absolute; top:-10px; bottom:-10px; left:{{ football.priceLeft }}; width:0; border-left:1px dashed var(--color-text); opacity:.55;"></div>
+              <sc-if value="{{ f.hasBar }}"><div style="position:absolute; top:7px; height:14px; left:{{ f.barLeft }}; width:{{ f.barWidth }}; background:{{ f.barBg }}; transition:all .8s cubic-bezier(.2,.7,.2,1) {{ f.delay }};"></div></sc-if>
+              <sc-if value="{{ f.hasDot }}"><div style="position:absolute; top:4px; left:{{ f.dotLeft }}; width:20px; height:20px; margin-left:-10px; background:{{ f.dotBg }}; border:2px solid var(--color-bg); transform:rotate(45deg); transition:left .8s cubic-bezier(.2,.7,.2,1);"></div></sc-if>
+            </div>
+            <div style="flex:0 0 150px; text-align:right; display:flex; flex-direction:column;"><span style="font-family:var(--font-heading); font-size:22px; font-weight:600; color:{{ f.color }};">{{ f.valueTxt }}</span><span style="font-size:12px; color:var(--color-neutral-700);">{{ f.rangeTxt }}</span></div>
+          </div>
+        </sc-for>
+        <div style="display:flex; gap:20px; padding-top:12px; font-size:12px; color:var(--color-neutral-700); flex-wrap:wrap;"><span>Precio de mercado {{ r.price }} (línea punteada)</span><span>{{ football.scaleTxt }}</span></div>
+      </div>
+    </div>
+
+    <div class="blueprint" style="padding:28px; display:flex; flex-direction:column; gap:20px;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:flex-end;">
+        <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Puente de valuación · {{ co.units }}</div><h3 style="margin:4px 0 0; font-size:28px;">¿De dónde sale el Equity Value?</h3></div>
+        <button class="btn btn-ghost" onClick="{{ openDrawerEV }}">Ver cálculo</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <div style="display:flex; align-items:stretch; gap:8px; min-width:{{ wf.minW }}; height:340px; padding-top:8px;">
+          <sc-for list="{{ wf.steps }}" as="s" hint-placeholder-count="8">
+            <div style="flex:1 1 0; min-width:64px; display:flex; flex-direction:column; gap:8px;">
+              <div style="flex:1; position:relative; border-bottom:1px solid var(--color-text);">
+                <div style="position:absolute; left:10%; right:10%; bottom:{{ s.bottom }}; height:{{ s.height }}; background:{{ s.bg }}; border:{{ s.border }}; transition:height .9s cubic-bezier(.2,.7,.2,1) {{ s.delay }}, bottom .9s cubic-bezier(.2,.7,.2,1) {{ s.delay }};"></div>
+                <div style="position:absolute; left:0; right:0; bottom:{{ s.labelBottom }}; text-align:center; font-family:var(--font-heading); font-size:15px; font-weight:600; color:{{ s.color }}; transition:bottom .9s cubic-bezier(.2,.7,.2,1) {{ s.delay }}, opacity .6s; opacity:{{ s.op }}; padding-bottom:4px;">{{ s.valTxt }}</div>
+              </div>
+              <div style="height:44px; font-size:12px; line-height:1.25; text-align:center; color:var(--color-neutral-800); text-wrap:balance;">{{ s.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex; gap:20px; flex-wrap:wrap; font-size:12px; color:var(--color-neutral-700);">
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:var(--color-accent);"></span>Total</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:var(--color-accent-300);"></span>Suma</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:color-mix(in srgb, var(--neg) 70%, white);"></span>Resta</span>
+        <span>{{ wf.note }}</span>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px;"><h3 style="margin:0; font-size:28px;">Lectura rápida</h3><span style="font-size:13px; color:var(--color-neutral-700);">Derivada automáticamente del modelo</span></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0; border-top:1px solid var(--color-divider); border-left:1px solid var(--color-divider);">
+        <sc-for list="{{ insights }}" as="i" hint-placeholder-count="5">
+          <div style="padding:20px; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); display:flex; flex-direction:column; gap:8px; opacity:{{ i.op }}; transform:{{ i.tr }}; transition:all .6s cubic-bezier(.2,.7,.2,1) {{ i.delay }};">
+            <span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-accent-700);">{{ i.k }}</span>
+            <span style="font-family:var(--font-heading); font-size:30px; font-weight:600; line-height:1;">{{ i.v }}</span>
+            <span style="font-size:14px; line-height:1.45; color:var(--color-neutral-800); text-wrap:pretty;">{{ i.t }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:8px;">
+        <span style="font-size:13px; color:var(--color-neutral-700);">El valor intrínseco es una estimación dependiente de los supuestos utilizados. Uso académico; no constituye recomendación de inversión.</span>
+        <button class="btn btn-primary blueprint" onClick="{{ goP2 }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>02 · ¿Cuánto efectivo genera? →</button>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== 02 FLUJOS ===== -->
+  <sc-if value="{{ v.p2 }}" hint-placeholder-val="{{ false }}">
+  <section data-page data-screen-label="02 Flujos" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">02 · Flujos</span>
+        <h1 style="margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;">¿Cuánto efectivo genera?</h1>
+      </div>
+      <span style="font-size:14px; color:var(--color-neutral-700); max-width:520px;">FCFF = EBIT × (1 − t) + D&amp;A − Capex − ΔNWC. {{ co.units }}. A = actual, E = estimado.</span>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:28px;">
+      <div class="blueprint" style="flex:7 1 600px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:18px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;">
+          <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Flujo libre de efectivo · {{ co.units }}</div><h3 style="margin:4px 0 0; font-size:26px;">FCF proyectado y su valor presente</h3></div>
+          <div style="display:flex; gap:16px; font-size:12px; color:var(--color-neutral-700);"><span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:var(--color-accent-300);"></span>FCF</span><span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:var(--color-accent);"></span>Valor presente</span><span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; border:1px dashed var(--color-neutral-600);"></span>Actual</span></div>
+        </div>
+        <div style="display:flex; gap:10px; height:300px; align-items:stretch;">
+          <sc-for list="{{ fcfChart.cols }}" as="c" hint-placeholder-count="6">
+            <button onClick="{{ c.onClick }}" style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:8px; background:{{ c.bg }}; border:0; padding:6px 4px 0; cursor:pointer; color:var(--color-text); transition:background .2s;" style-hover="background:var(--color-accent-100);">
+              <span style="flex:1; width:100%; position:relative; border-bottom:1px solid var(--color-text);">
+                <span style="position:absolute; left:14%; right:14%; bottom:0; height:{{ c.hF }}; background:{{ c.fBg }}; border:{{ c.fBorder }}; transition:height .9s cubic-bezier(.2,.7,.2,1) {{ c.delay }};"></span>
+                <span style="position:absolute; left:30%; right:30%; bottom:0; height:{{ c.hP }}; background:var(--color-accent); transition:height .9s cubic-bezier(.2,.7,.2,1) {{ c.delay2 }};"></span>
+                <span style="position:absolute; left:0; right:0; bottom:{{ c.hF }}; padding-bottom:6px; text-align:center; font-family:var(--font-heading); font-size:16px; font-weight:600; transition:bottom .9s cubic-bezier(.2,.7,.2,1) {{ c.delay }};">{{ c.fcfTxt }}</span>
+              </span>
+              <span style="display:flex; flex-direction:column; align-items:center; padding-bottom:8px;"><span style="font-family:var(--font-heading); font-size:16px; font-weight:{{ c.weight }};">{{ c.label }}</span><span style="font-size:11px; color:var(--color-neutral-700);">VP {{ c.pvTxt }}</span></span>
+            </button>
+          </sc-for>
+        </div>
+        <span style="font-size:13px; color:var(--color-neutral-700);">{{ fcfChart.note }}</span>
+      </div>
+
+      <div class="blueprint" style="flex:5 1 380px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:16px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Construcción del FCF · {{ fcfSel.year }}</div><h3 style="margin:4px 0 0; font-size:26px;">De EBIT a flujo libre</h3></div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ fcfSel.items }}" as="it" hint-placeholder-count="6">
+            <div style="display:grid; grid-template-columns:120px minmax(0,1fr) 84px; align-items:center; gap:10px;">
+              <span style="font-size:13px; font-weight:{{ it.weight }};">{{ it.label }}</span>
+              <span style="position:relative; height:22px;"><span style="position:absolute; top:3px; bottom:3px; left:{{ it.left }}; width:{{ it.width }}; background:{{ it.bg }}; transition:all .7s cubic-bezier(.2,.7,.2,1);"></span></span>
+              <span style="text-align:right; font-family:var(--font-heading); font-size:17px; font-weight:600; color:{{ it.color }};">{{ it.valTxt }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <span style="font-size:12px; color:var(--color-neutral-700); line-height:1.5;">Selecciona un año en la gráfica para ver su construcción. Tasa de impuestos sobre EBIT {{ fcfSel.tax }} · margen EBIT {{ fcfSel.margin }} · crecimiento de ventas {{ fcfSel.growth }}.</span>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:28px;">
+      <div class="blueprint" style="flex:7 1 600px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:16px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+          <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Ventas · {{ co.units }}</div><h3 style="margin:4px 0 0; font-size:26px;">¿Cómo se proyectaron las ventas?</h3></div>
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <sc-for list="{{ sales.legend }}" as="l"><span style="display:flex; gap:6px; align-items:center; font-size:12px; color:var(--color-neutral-800);"><span style="width:18px; height:0; border-top:2px {{ l.dash }} {{ l.color }};"></span>{{ l.label }}</span></sc-for>
+          </div>
+        </div>
+        <svg viewBox="0 0 640 280" style="width:100%; height:auto; overflow:visible;" role="img" aria-label="Trayectorias de ventas">
+          <sc-for list="{{ sales.yl }}" as="y"><line x1="56" x2="628" y1="{{ y.y }}" y2="{{ y.y }}" stroke="currentColor" stroke-opacity=".1"></line><text x="48" y="{{ y.ty }}" text-anchor="end" font-size="11" fill="currentColor" fill-opacity=".65">{{ y.t }}</text></sc-for>
+          <line x1="{{ sales.splitX }}" x2="{{ sales.splitX }}" y1="12" y2="248" stroke="currentColor" stroke-opacity=".35" stroke-dasharray="3 4"></line>
+          <text x="{{ sales.splitTx }}" y="20" font-size="11" fill="currentColor" fill-opacity=".65">Proyección →</text>
+          <sc-for list="{{ sales.paths }}" as="p"><path d="{{ p.d }}" fill="none" stroke="{{ p.color }}" stroke-width="{{ p.w }}" stroke-dasharray="{{ p.dash }}" pathLength="1000" style="stroke-dashoffset:{{ p.off }}; transition:stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1);"></path></sc-for>
+          <sc-for list="{{ sales.dots }}" as="d"><circle cx="{{ d.x }}" cy="{{ d.y }}" r="4" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="2"></circle><text x="{{ d.x }}" y="{{ d.ty }}" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor">{{ d.t }}</text></sc-for>
+          <sc-for list="{{ sales.xl }}" as="x"><text x="{{ x.x }}" y="270" text-anchor="middle" font-size="12" fill="currentColor" font-weight="{{ x.fw }}">{{ x.t }}</text></sc-for>
+        </svg>
+        <span style="font-size:13px; color:var(--color-neutral-700);">{{ sales.note }}</span>
+      </div>
+
+      <div style="flex:5 1 380px; min-width:0; display:flex; flex-direction:column; gap:0; border:1px solid var(--color-divider);">
+        <sc-for list="{{ methodSteps }}" as="m" hint-placeholder-count="3">
+          <div style="padding:22px; border-bottom:1px solid var(--color-divider); display:flex; gap:16px;">
+            <span style="font-family:var(--font-heading); font-size:40px; font-weight:600; line-height:.9; color:var(--color-accent-300);">{{ m.n }}</span>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="font-family:var(--font-heading); font-size:20px; font-weight:600;">{{ m.title }}</span>
+              <span style="font-size:14px; line-height:1.45; color:var(--color-neutral-800);">{{ m.text }}</span>
+              <span style="font-size:12px; color:var(--color-accent-700);">{{ m.meta }}</span>
+            </div>
+          </div>
+        </sc-for>
+        <button class="btn btn-ghost" onClick="{{ goAnnexMethod }}" style="margin:12px 16px; align-self:flex-start;">Ver mínimos cuadrados y variables externas →</button>
+      </div>
+    </div>
+
+    <sc-if value="{{ hasMethod }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex; flex-wrap:wrap; gap:28px;">
+      <div class="blueprint" style="flex:5 1 380px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:16px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Ponderación de métodos</div><h3 style="margin:4px 0 0; font-size:24px;">Peso de cada método por año</h3></div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ weights }}" as="w" hint-placeholder-count="5">
+            <div style="display:grid; grid-template-columns:52px minmax(0,1fr); gap:12px; align-items:center;">
+              <span style="font-family:var(--font-heading); font-size:16px; font-weight:600;">{{ w.year }}</span>
+              <span style="display:flex; height:26px; font-size:12px; font-weight:600;">
+                <span style="width:{{ w.ext }}; background:var(--color-accent); color:var(--color-bg); display:flex; align-items:center; padding-left:8px; transition:width .9s cubic-bezier(.2,.7,.2,1) {{ w.delay }};">{{ w.extTxt }}</span>
+                <span style="flex:1; background:var(--color-accent-200); color:var(--color-accent-800); display:flex; align-items:center; justify-content:flex-end; padding-right:8px;">{{ w.lsTxt }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:16px; font-size:12px; color:var(--color-neutral-700);"><span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:var(--color-accent);"></span>Variables externas</span><span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:var(--color-accent-200);"></span>Mínimos cuadrados</span></div>
+      </div>
+      <div class="blueprint" style="flex:7 1 600px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:16px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+          <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">17 variables externas</div><h3 style="margin:4px 0 0; font-size:24px;">Ajuste a la proyección de ventas</h3></div>
+          <div style="display:flex; gap:20px;">
+            <sc-for list="{{ extNet }}" as="e"><div style="display:flex; flex-direction:column; align-items:flex-end;"><span style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-neutral-700);">{{ e.k }}</span><span style="font-family:var(--font-heading); font-size:24px; font-weight:600; color:{{ e.color }};">{{ e.v }}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <sc-for list="{{ extTop }}" as="x" hint-placeholder-count="8">
+            <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 60px; gap:12px; align-items:center; padding:4px 0; border-bottom:1px solid color-mix(in srgb, var(--color-text) 7%, transparent);">
+              <span style="display:flex; flex-direction:column;"><span style="font-size:14px; font-weight:500;">{{ x.name }}</span><span style="font-size:11px; color:var(--color-neutral-700);">{{ x.cat }}</span></span>
+              <span style="position:relative; height:16px;"><span style="position:absolute; left:50%; top:-4px; bottom:-4px; width:1px; background:var(--color-divider);"></span><span style="position:absolute; top:3px; height:10px; left:{{ x.left }}; width:{{ x.width }}; background:{{ x.color }}; transition:all .8s cubic-bezier(.2,.7,.2,1);"></span></span>
+              <span style="text-align:right; font-family:var(--font-heading); font-size:16px; font-weight:600; color:{{ x.color }};">{{ x.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <div class="blueprint" style="padding:28px; display:flex; flex-wrap:wrap; gap:28px; align-items:center;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div style="flex:1 1 320px; display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Valor terminal · Gordon</div>
+        <h3 style="margin:0; font-size:26px;">Lo que vale la empresa después de {{ tv.lastYear }}</h3>
+        <span style="font-size:14px; line-height:1.5; color:var(--color-neutral-800);">Es el valor presente de todos los flujos posteriores al periodo explícito, suponiendo que crecen a una tasa constante g para siempre.</span>
+      </div>
+      <div style="flex:2 1 520px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; font-family:var(--font-heading);">
+        <div style="display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);"><span style="font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);">FCF {{ tv.lastYear }}</span><span style="font-size:24px; font-weight:600;">{{ tv.fcfN }}</span></div>
+        <span style="font-size:22px;">× (1 + </span>
+        <div style="display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);"><span style="font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);">g</span><span style="font-size:24px; font-weight:600;">{{ tv.g }}</span></div>
+        <span style="font-size:22px;">) ÷ (</span>
+        <div style="display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);"><span style="font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);">WACC − g</span><span style="font-size:24px; font-weight:600;">{{ tv.denom }}</span></div>
+        <span style="font-size:22px;">) =</span>
+        <div style="display:flex; flex-direction:column; padding:12px 16px; background:var(--color-accent); color:var(--color-bg);"><span style="font-family:var(--font-body); font-size:11px; opacity:.85;">Valor terminal</span><span style="font-size:24px; font-weight:600;">{{ tv.tv }}</span></div>
+        <span style="font-size:22px;">→ VP</span>
+        <div style="display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-accent);"><span style="font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);">Valor presente</span><span style="font-size:24px; font-weight:600; color:var(--color-accent);">{{ tv.pv }}</span></div>
+      </div>
+      <div style="flex:1 1 100%; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; height:34px; font-size:13px; font-weight:600;">
+          <span style="width:{{ tv.wExp }}; background:var(--color-accent-200); color:var(--color-accent-800); display:flex; align-items:center; padding:0 10px; white-space:nowrap; transition:width 1s cubic-bezier(.2,.7,.2,1);">Flujos explícitos {{ tv.expTxt }}</span>
+          <span style="flex:1; background:var(--color-accent); color:var(--color-bg); display:flex; align-items:center; justify-content:flex-end; padding:0 10px; white-space:nowrap;">Valor terminal {{ tv.tvTxt }}</span>
+        </div>
+        <span style="font-size:13px; color:var(--color-neutral-700);">Peso del valor terminal en el EV (método Gordon). Una proporción alta implica que el resultado depende materialmente de WACC y g.</span>
+      </div>
+      <div style="flex:1 1 100%; display:flex; justify-content:flex-end;"><button class="btn btn-primary blueprint" onClick="{{ goP3 }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>03 · ¿Qué tan estable es el valor? →</button></div>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== 03 RIESGO ===== -->
+  <sc-if value="{{ v.p3 }}" hint-placeholder-val="{{ false }}">
+  <section data-page data-screen-label="03 Riesgo" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">03 · Costo de capital y sensibilidad</span>
+        <h1 style="margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;">¿Qué tan estable es el valor?</h1>
+      </div>
+      <span class="tag tag-outline">WACC: {{ wb.modeLabel }}</span>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:28px;">
+      <div class="blueprint" style="flex:7 1 620px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:22px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+          <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">WACC · CAPM</div><h3 style="margin:4px 0 0; font-size:26px;">¿Cuál es el costo de capital?</h3></div>
+          <button class="btn btn-ghost" onClick="{{ openDrawerWacc }}">Ver cálculo</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:12px; color:var(--color-neutral-700);">Costo del capital propio · Ke = Rf + βL × PRM</span>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-family:var(--font-heading);">
+            <sc-for list="{{ wb.keBlocks }}" as="b">
+              <div style="display:flex; flex-direction:column; padding:10px 14px; min-width:96px; background:{{ b.bg }}; color:{{ b.color }}; border:1px solid {{ b.border }};"><span style="font-family:var(--font-body); font-size:11px; opacity:.8;">{{ b.k }}</span><span style="font-size:26px; font-weight:600; line-height:1.05;">{{ b.v }}</span><span style="font-family:var(--font-body); font-size:11px; opacity:.8;">{{ b.s }}</span></div>
+              <span style="font-size:24px; color:var(--color-neutral-700);">{{ b.op }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:12px; color:var(--color-neutral-700);">Costo de la deuda después de impuestos · Kd × (1 − t)</span>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-family:var(--font-heading);">
+            <sc-for list="{{ wb.kdBlocks }}" as="b">
+              <div style="display:flex; flex-direction:column; padding:10px 14px; min-width:96px; background:{{ b.bg }}; color:{{ b.color }}; border:1px solid {{ b.border }};"><span style="font-family:var(--font-body); font-size:11px; opacity:.8;">{{ b.k }}</span><span style="font-size:26px; font-weight:600; line-height:1.05;">{{ b.v }}</span><span style="font-family:var(--font-body); font-size:11px; opacity:.8;">{{ b.s }}</span></div>
+              <span style="font-size:24px; color:var(--color-neutral-700);">{{ b.op }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:12px; color:var(--color-neutral-700);">Estructura de capital · {{ wb.structLabel }}</span>
+          <div style="display:flex; height:40px; font-size:13px; font-weight:600;">
+            <span style="width:{{ wb.wEW }}; background:var(--color-accent); color:var(--color-bg); display:flex; align-items:center; padding:0 12px; white-space:nowrap; transition:width .9s cubic-bezier(.2,.7,.2,1);">Capital E/(D+E) {{ wb.wE }} · Ke {{ wb.ke }}</span>
+            <span style="flex:1; background:var(--color-accent-200); color:var(--color-accent-800); display:flex; align-items:center; justify-content:flex-end; padding:0 12px; white-space:nowrap;">Deuda {{ wb.wD }} · Kd(1−t) {{ wb.kdat }}</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding-top:16px; border-top:1px solid var(--color-divider); flex-wrap:wrap;">
+          <span style="font-size:14px; color:var(--color-neutral-800);">WACC = E/(D+E) × Ke + D/(D+E) × Kd(1−t)</span>
+          <span style="font-family:var(--font-heading); font-size:52px; font-weight:600; line-height:1; color:var(--color-accent);">{{ wb.wacc }}</span>
+        </div>
+      </div>
+
+      <div class="blueprint" style="flex:5 1 380px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:14px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Iteración del WACC</div><h3 style="margin:4px 0 0; font-size:24px;">Del valor de mercado al valor DCF</h3></div>
+        <span style="font-size:13px; line-height:1.5; color:var(--color-neutral-800);">El equity que resulta del DCF redefine D/E, la beta apalancada y Ke; el proceso se repite hasta que el WACC deja de cambiar.</span>
+        <svg viewBox="0 0 360 180" style="width:100%; height:auto; overflow:visible;" role="img" aria-label="Convergencia del WACC">
+          <sc-for list="{{ iter.yl }}" as="y"><line x1="44" x2="350" y1="{{ y.y }}" y2="{{ y.y }}" stroke="currentColor" stroke-opacity=".1"></line><text x="38" y="{{ y.ty }}" text-anchor="end" font-size="10" fill="currentColor" fill-opacity=".65">{{ y.t }}</text></sc-for>
+          <polyline points="{{ iter.poly }}" fill="none" stroke="var(--color-accent)" stroke-width="2"></polyline>
+          <sc-for list="{{ iter.pts }}" as="p"><circle cx="{{ p.x }}" cy="{{ p.y }}" r="4" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="2"></circle><text x="{{ p.x }}" y="{{ p.ty }}" text-anchor="middle" font-size="10" fill="currentColor">{{ p.t }}</text><text x="{{ p.x }}" y="176" text-anchor="middle" font-size="10" fill="currentColor" fill-opacity=".65">{{ p.k }}</text></sc-for>
+        </svg>
+        <div style="display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--color-divider);">
+          <sc-for list="{{ iter.stats }}" as="s"><div style="padding:12px 8px 0 0; display:flex; flex-direction:column;"><span style="font-size:11px; color:var(--color-neutral-700);">{{ s.k }}</span><span style="font-family:var(--font-heading); font-size:22px; font-weight:600;">{{ s.v }}</span></div></sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:28px;">
+      <div class="blueprint" style="flex:7 1 620px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:16px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+          <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Sensibilidad · valor por acción ({{ co.currency }})</div><h3 style="margin:4px 0 0; font-size:26px;">WACC vs. crecimiento perpetuo</h3></div>
+          <div style="display:flex; gap:8px; align-items:center; font-size:12px; color:var(--color-neutral-700);">Paso
+            <div class="seg"><sc-for list="{{ heat.steps }}" as="s"><button onClick="{{ s.onClick }}" style="padding:6px 10px; border:0; border-left:1px solid var(--color-divider); background:{{ s.bg }}; color:{{ s.color }}; cursor:pointer; font-size:12px;">{{ s.t }}</button></sc-for></div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:84px repeat(5, minmax(72px, 1fr)); min-width:480px;">
+            <div style="padding:8px; font-size:11px; color:var(--color-neutral-700); display:flex; align-items:flex-end;">WACC ↓ · g →</div>
+            <sc-for list="{{ heat.cols }}" as="c"><div style="padding:8px; text-align:center; font-family:var(--font-heading); font-size:15px; font-weight:600; border-bottom:1px solid var(--color-text);">{{ c }}</div></sc-for>
+            <sc-for list="{{ heat.rows }}" as="row" hint-placeholder-count="5">
+              <div style="padding:8px; font-family:var(--font-heading); font-size:15px; font-weight:600; display:flex; align-items:center; border-right:1px solid var(--color-text);">{{ row.head }}</div>
+              <sc-for list="{{ row.cells }}" as="c">
+                <div style="height:56px; display:grid; place-items:center; background:{{ c.bg }}; outline:{{ c.outline }}; outline-offset:-2px; font-family:var(--font-heading); font-size:19px; font-weight:{{ c.weight }}; color:var(--color-text); transition:background .4s;">{{ c.t }}</div>
+              </sc-for>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:var(--color-neutral-700);">
+          <span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:color-mix(in srgb, var(--pos) 30%, transparent);"></span>Valor ≥ precio de mercado</span>
+          <span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; background:color-mix(in srgb, var(--neg) 26%, transparent);"></span>Valor &lt; precio de mercado</span>
+          <span style="display:flex; gap:6px; align-items:center;"><span style="width:12px; height:12px; outline:2px solid var(--color-text);"></span>Escenario base</span>
+        </div>
+      </div>
+
+      <div class="blueprint" style="flex:5 1 380px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:14px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Tornado · un factor a la vez</div><h3 style="margin:4px 0 0; font-size:24px;">¿Qué supuesto mueve más el valor?</h3></div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ torn.rows }}" as="t" hint-placeholder-count="7">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between; font-size:13px;"><span style="font-weight:500;">{{ t.label }}</span><span style="color:var(--color-neutral-700);">± {{ t.stepTxt }} · rango {{ t.rangeTxt }}</span></div>
+              <div style="position:relative; height:20px;">
+                <span style="position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:var(--color-text);"></span>
+                <span style="position:absolute; top:2px; bottom:2px; right:50%; width:{{ t.lW }}; background:color-mix(in srgb, var(--neg) 60%, white); transition:width .8s cubic-bezier(.2,.7,.2,1) {{ t.delay }};"></span>
+                <span style="position:absolute; top:2px; bottom:2px; left:50%; width:{{ t.rW }}; background:var(--color-accent); transition:width .8s cubic-bezier(.2,.7,.2,1) {{ t.delay }};"></span>
+                <span style="position:absolute; right:calc(50% + {{ t.lW }} + 6px); top:1px; font-size:11px; font-weight:600;">{{ t.lowTxt }}</span>
+                <span style="position:absolute; left:calc(50% + {{ t.rW }} + 6px); top:1px; font-size:11px; font-weight:600;">{{ t.highTxt }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <span style="font-size:12px; color:var(--color-neutral-700);">Centro: valor base {{ r.value }}. Rojo: dirección que reduce el valor; azul: dirección que lo aumenta.</span>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;"><h3 style="margin:0; font-size:28px;">Escenarios</h3><span style="font-size:13px; color:var(--color-neutral-700);">Construidos con los pasos de sensibilidad del Excel (WACC y g ±0.5 pp, ventas ±1 pp, margen ±0.25 pp)</span></div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px;">
+        <sc-for list="{{ scen }}" as="s" hint-placeholder-count="3">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:10px; background:{{ s.bg }};">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <span style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);">{{ s.label }}</span>
+            <span style="font-family:var(--font-heading); font-size:56px; font-weight:600; line-height:.95; color:{{ s.vColor }};">{{ s.valTxt }}</span>
+            <span style="font-family:var(--font-heading); font-size:20px; font-weight:600; color:{{ s.upColor }};">{{ s.upTxt }} vs. precio</span>
+            <span style="font-size:13px; color:var(--color-neutral-700);">{{ s.desc }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; padding-top:8px;">
+        <span style="font-size:13px; color:var(--color-neutral-700);">Riesgos / sensibilidades del modelo: peso del valor terminal {{ r.tvWeight }}; el WACC y la proyección de capex y margen concentran el rango de valor.</span>
+        <button class="btn btn-primary blueprint" onClick="{{ goLab }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Modificar supuestos →</button>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== LABORATORIO ===== -->
+  <sc-if value="{{ v.lab }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="04 Laboratorio" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">Laboratorio · Editar modelo</span>
+        <h1 style="margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;">¿Qué pasa si cambian los supuestos?</h1>
+      </div>
+      <button class="btn btn-secondary" onClick="{{ resetA }}">Restaurar valores base</button>
+    </div>
+    <div class="blueprint" style="padding:12px 16px; display:flex; gap:10px; align-items:center; font-size:14px; border-color:var(--color-accent-300);">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <span style="color:var(--color-accent); font-weight:700;">i</span>Modificar un supuesto actualiza todos los resultados: FCF, valor terminal, EV, Equity, valor por acción, sensibilidad y escenarios. Los cambios se guardan en esta sesión para {{ co.short }}.
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:28px; align-items:flex-start;">
+      <div style="flex:7 1 600px; min-width:0; display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; flex-wrap:wrap; gap:20px;">
+          <sc-if value="{{ lab.hasAlt }}">
+          <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:12px; color:var(--color-neutral-700);">Proyección</span>
+            <div class="seg"><sc-for list="{{ lab.fcOpts }}" as="o"><button onClick="{{ o.onClick }}" style="padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:{{ o.bg }}; color:{{ o.color }}; cursor:pointer; font-size:13px;">{{ o.t }}</button></sc-for></div>
+          </div>
+          </sc-if>
+          <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:12px; color:var(--color-neutral-700);">Método de WACC</span>
+            <div class="seg"><sc-for list="{{ lab.waccOpts }}" as="o"><button onClick="{{ o.onClick }}" style="padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:{{ o.bg }}; color:{{ o.color }}; cursor:pointer; font-size:13px;">{{ o.t }}</button></sc-for></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;"><span style="font-size:12px; color:var(--color-neutral-700);">Escenario rápido</span>
+            <div class="seg"><sc-for list="{{ lab.scenOpts }}" as="o"><button onClick="{{ o.onClick }}" style="padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:none; color:var(--color-text); cursor:pointer; font-size:13px;">{{ o.t }}</button></sc-for></div>
+          </div>
+        </div>
+        <sc-for list="{{ lab.groups }}" as="gr" hint-placeholder-count="4">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:18px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;"><h3 style="margin:0; font-size:22px;">{{ gr.title }}</h3><span style="font-size:12px; color:var(--color-neutral-700);">{{ gr.desc }}</span></div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:20px 28px;">
+              <sc-for list="{{ gr.controls }}" as="c">
+                <label style="display:flex; flex-direction:column; gap:6px;">
+                  <span style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;"><span style="font-size:14px; font-weight:500;">{{ c.label }} <span style="color:var(--color-accent);">{{ c.dot }}</span></span><span style="font-family:var(--font-heading); font-size:22px; font-weight:600;">{{ c.valTxt }}</span></span>
+                  <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" onChange="{{ c.onChange }}" aria-label="{{ c.label }}">
+                  <span style="display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--color-neutral-700);"><span>{{ c.impact }}</span><span class="tag tag-neutral" style="padding:1px 6px; font-size:10px;">{{ c.source }}</span></span>
+                </label>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:14px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;"><h3 style="margin:0; font-size:22px;">Mercado</h3><span style="font-size:12px; color:var(--color-neutral-700);">Datos de entrada · afectan el upside y el WACC de mercado</span></div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+            <div class="field"><label>Precio actual ({{ co.currency }})</label><input class="input" type="number" step="0.01" value="{{ lab.price }}" onChange="{{ lab.onPrice }}"></div>
+            <div class="field"><label>Acciones en circulación (millones)</label><input class="input" type="number" step="0.1" value="{{ lab.shares }}" onChange="{{ lab.onShares }}"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:4 1 340px; min-width:0; position:sticky; top:88px;">
+        <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:16px; background:var(--color-bg);">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);">Resultado en vivo</span><sc-if value="{{ ui.busy }}"><span class="tag tag-neutral">Actualizando valuación…</span></sc-if></div>
+          <span style="font-family:var(--font-heading); font-size:84px; font-weight:600; line-height:.85; color:var(--color-accent);">{{ r.heroDisp }}</span>
+          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:baseline;"><span style="font-family:var(--font-heading); font-size:26px; font-weight:600; color:{{ r.upColor }};">{{ r.upside }}</span><span style="font-size:13px; color:var(--color-neutral-700);">vs. precio {{ r.price }}</span></div>
+          <span style="font-size:13px; color:var(--color-neutral-700);">Cambio vs. base: <strong style="color:{{ lab.deltaColor }};">{{ lab.delta }}</strong></span>
+          <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); border-top:1px solid var(--color-divider);">
+            <sc-for list="{{ lab.stats }}" as="s"><div style="padding:12px 8px 4px 0; display:flex; flex-direction:column;"><span style="font-size:11px; color:var(--color-neutral-700);">{{ s.k }}</span><span style="font-family:var(--font-heading); font-size:22px; font-weight:600;">{{ s.v }}</span></div></sc-for>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <sc-for list="{{ scen }}" as="s"><div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent);"><span>{{ s.label }}</span><strong style="font-family:var(--font-heading); font-size:17px;">{{ s.valTxt }}</strong></div></sc-for>
+          </div>
+          <button class="btn btn-secondary" onClick="{{ goP1 }}">Ver en el dashboard</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== ANEXOS ===== -->
+  <sc-if value="{{ v.annex }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="05 Anexos" style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">Anexos · Segunda capa</span>
+      <h1 style="margin:0; font-size:clamp(36px, 4.4vw, 56px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;">¿Cómo se construyó cada número?</h1>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:28px; align-items:flex-start;">
+      <nav data-noprint style="flex:0 1 260px; min-width:220px; display:flex; flex-direction:column; border-top:1px solid var(--color-divider); position:sticky; top:88px;">
+        <sc-for list="{{ annexNav }}" as="a" hint-placeholder-count="10">
+          <button onClick="{{ a.onClick }}" style="display:flex; gap:10px; align-items:baseline; padding:10px 12px; text-align:left; background:{{ a.bg }}; border:0; border-bottom:1px solid var(--color-divider); border-left:2px solid {{ a.border }}; cursor:pointer; color:var(--color-text);" style-hover="background:var(--color-accent-100);">
+            <span style="font-family:var(--font-heading); font-size:13px; color:var(--color-accent-700); min-width:28px;">{{ a.code }}</span><span style="font-size:14px; font-weight:{{ a.fw }};">{{ a.title }}</span>
+          </button>
+        </sc-for>
+      </nav>
+      <div style="flex:1 1 640px; min-width:0; display:flex; flex-direction:column; gap:28px;">
+        <sc-for list="{{ annexTables }}" as="t">
+          <div data-page class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:14px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+              <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">{{ t.code }} · {{ t.unit }}</div><h3 style="margin:4px 0 0; font-size:26px;">{{ t.title }}</h3><span style="font-size:13px; color:var(--color-neutral-700);">{{ t.question }}</span></div>
+              <span class="tag tag-outline">Fuente: {{ t.source }}</span>
+            </div>
+            <div style="overflow:auto; max-height:640px; border-top:1px solid var(--color-text);">
+              <table class="table" style="font-size:13px; min-width:{{ t.minW }};">
+                <thead><tr><th style="position:sticky; top:0; left:0; z-index:2; background:var(--color-bg);">Concepto</th><sc-for list="{{ t.head }}" as="h"><th style="position:sticky; top:0; background:{{ h.bg }}; text-align:{{ h.align }}; white-space:nowrap; z-index:1;">{{ h.t }}</th></sc-for></tr></thead>
+                <tbody>
+                  <sc-for list="{{ t.rows }}" as="row">
+                    <tr>
+                      <td style="position:sticky; left:0; background:var(--color-bg); font-weight:{{ row.fw }}; color:{{ row.lc }}; font-size:{{ row.fs }}; letter-spacing:{{ row.ls }}; text-transform:{{ row.tt }}; min-width:220px;">{{ row.label }}</td>
+                      <sc-for list="{{ row.cells }}" as="c"><td style="text-align:{{ c.align }}; white-space:{{ c.ws }}; min-width:{{ c.mw }}; background:{{ c.bg }}; color:{{ c.color }}; font-weight:{{ row.fw }};">{{ c.t }}</td></sc-for>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{ t.hasNote }}"><span style="font-size:12px; line-height:1.5; color:var(--color-neutral-700);">{{ t.note }}</span></sc-if>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ ax.empresa }}" hint-placeholder-val="{{ false }}">
+        <div data-page style="display:flex; flex-direction:column; gap:24px;">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:18px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-start;">
+              <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">{{ ax.empCode }} · Perfil</div><h3 style="margin:4px 0 0; font-size:26px;">{{ co.legalName }}</h3></div>
+              <sc-if value="{{ co.hasLogo }}"><img src="{{ co.logo }}" alt="{{ co.name }}" style="max-height:48px; max-width:200px; object-fit:contain;"></sc-if>
+            </div>
+            <sc-if value="{{ emp.hasDesc }}"><p style="margin:0; font-size:15px; line-height:1.55; max-width:820px; text-wrap:pretty;">{{ emp.desc }}</p></sc-if>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); border-top:1px solid var(--color-divider); border-left:1px solid var(--color-divider);">
+              <sc-for list="{{ emp.facts }}" as="f"><div style="padding:14px; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); display:flex; flex-direction:column; gap:2px;"><span style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-neutral-700);">{{ f.k }}</span><span style="font-family:var(--font-heading); font-size:20px; font-weight:600;">{{ f.v }}</span></div></sc-for>
+            </div>
+            <sc-if value="{{ emp.hasFormats }}"><div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;"><span style="font-size:12px; color:var(--color-neutral-700);">Formatos</span><sc-for list="{{ emp.formats }}" as="f"><span class="tag tag-accent">{{ f }}</span></sc-for></div></sc-if>
+          </div>
+
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+              <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Investigación cualitativa</div><h3 style="margin:4px 0 0; font-size:22px;">Investigar con IA</h3><span style="font-size:13px; color:var(--color-neutral-700);">Busca perfil, historia y gobierno corporativo en fuentes abiertas con URL. Nunca modifica datos financieros.</span></div>
+              <button class="btn btn-primary blueprint" onClick="{{ runResearch }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>{{ res.btn }}</button>
+            </div>
+            <sc-if value="{{ res.has }}">
+              <span style="font-size:12px; color:var(--color-neutral-700);">{{ res.meta }}</span>
+              <div style="display:flex; flex-direction:column;">
+                <sc-for list="{{ res.items }}" as="it">
+                  <div style="display:grid; grid-template-columns:110px minmax(0,1fr) auto; gap:14px; padding:12px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); align-items:start;">
+                    <span style="display:flex; flex-direction:column; gap:4px;"><span class="tag tag-neutral" style="align-self:flex-start;">{{ it.section }}</span><span style="font-size:11px; color:var(--color-neutral-700);">Confianza {{ it.confidence }}</span></span>
+                    <span style="display:flex; flex-direction:column; gap:4px;"><strong style="font-size:14px;">{{ it.field }} <span style="font-weight:400; color:var(--color-neutral-700);">{{ it.date }}</span></strong><span style="font-size:14px; line-height:1.45;">{{ it.value }}</span><a href="{{ it.url }}" target="_blank" rel="noopener" style="font-size:12px;">Abrir fuente ↗</a></span>
+                    <span style="display:flex; gap:6px; align-items:center;"><span style="font-size:12px; color:{{ it.stColor }};">{{ it.stTxt }}</span><sc-if value="{{ it.pending }}"><button class="btn btn-secondary" onClick="{{ it.onApply }}" style="padding:4px 10px;">Aplicar</button><button class="btn btn-ghost" onClick="{{ it.onDiscard }}" style="padding:4px 8px;">Descartar</button></sc-if></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+
+          <sc-if value="{{ emp.hasTimeline }}">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Historia</div><h3 style="margin:4px 0 0; font-size:22px;">Hitos relevantes</h3></div>
+            <div style="display:flex; flex-direction:column; position:relative; padding-left:28px;">
+              <span style="position:absolute; left:6px; top:6px; bottom:6px; width:1px; background:var(--color-accent-300);"></span>
+              <sc-for list="{{ emp.timeline }}" as="e">
+                <div style="position:relative; display:grid; grid-template-columns:90px minmax(0,1fr); gap:16px; padding:10px 0;">
+                  <span style="position:absolute; left:-27px; top:15px; width:11px; height:11px; background:var(--color-bg); border:2px solid var(--color-accent); transform:rotate(45deg);"></span>
+                  <span style="font-family:var(--font-heading); font-size:18px; font-weight:600; color:var(--color-accent);">{{ e.date }}</span>
+                  <span style="display:flex; flex-direction:column; gap:2px;"><strong style="font-size:15px;">{{ e.title }}</strong><span style="font-size:14px; color:var(--color-neutral-800);">{{ e.desc }}</span><span style="font-size:11px; color:var(--color-neutral-700);">Fuente: {{ e.src }}</span></span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ emp.hasGov }}">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Gobierno corporativo</div><h3 style="margin:4px 0 0; font-size:22px;">Consejo de Administración · {{ emp.gov.board }} consejeros</h3></div>
+            <div style="display:flex; height:36px; font-size:12px; font-weight:600;">
+              <span style="width:{{ emp.gov.pW }}; background:var(--color-accent-200); color:var(--color-accent-800); display:flex; align-items:center; padding-left:10px; white-space:nowrap;">{{ emp.gov.patrimonial }} patrimoniales</span>
+              <span style="width:{{ emp.gov.rW }}; background:var(--color-neutral-300); display:flex; align-items:center; justify-content:center;">{{ emp.gov.related }}</span>
+              <span style="flex:1; background:var(--color-accent); color:var(--color-bg); display:flex; align-items:center; justify-content:flex-end; padding-right:10px; white-space:nowrap;">{{ emp.gov.independent }} independientes · {{ emp.gov.ind }}</span>
+            </div>
+            <span style="font-size:13px; color:var(--color-neutral-700);">Independencia {{ emp.gov.ind }} vs. referencia de mejores prácticas {{ emp.gov.best }}. Presidente: {{ emp.gov.chair }} · Director General: {{ emp.gov.ceo }}.</span>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+              <sc-for list="{{ emp.gov.committees }}" as="c"><div style="padding:14px; border:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;"><strong style="font-size:14px;">{{ c.k }}</strong><span style="font-size:13px; color:var(--color-neutral-800);">{{ c.v }}</span></div></sc-for>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;"><sc-for list="{{ emp.gov.controls }}" as="c"><span class="tag tag-neutral">✓ {{ c }}</span></sc-for></div>
+          </div>
+          </sc-if>
+
+          <div style="display:flex; flex-wrap:wrap; gap:24px;">
+            <div class="blueprint" style="flex:1 1 360px; padding:24px; display:flex; flex-direction:column; gap:12px;">
+              <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Datos de mercado · al {{ co.priceDate }}</div><h3 style="margin:4px 0 0; font-size:22px;">Mercado (dato, no resultado)</h3></div>
+              <sc-for list="{{ emp.market }}" as="m"><div style="display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size:14px;"><span style="color:var(--color-neutral-800);">{{ m.k }}</span><strong>{{ m.v }}</strong></div></sc-for>
+            </div>
+            <sc-if value="{{ emp.hasDiv }}">
+            <div class="blueprint" style="flex:1 1 360px; padding:24px; display:flex; flex-direction:column; gap:12px;">
+              <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Dividendos documentados</div><h3 style="margin:4px 0 0; font-size:22px;">Monto por acción</h3></div>
+              <sc-for list="{{ emp.div }}" as="d"><div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 80px; gap:8px; padding:6px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size:13px;"><span>Decreto {{ d.a }}</span><span>Pago {{ d.b }}</span><strong style="text-align:right;">{{ d.c }}</strong></div></sc-for>
+            </div>
+            </sc-if>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ ax.valid }}" hint-placeholder-val="{{ false }}">
+        <div data-page style="display:flex; flex-direction:column; gap:24px;">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+              <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">{{ ax.valCode }} · Validación</div><h3 style="margin:4px 0 0; font-size:26px;">¿Los cálculos son consistentes?</h3><span style="font-size:13px; color:var(--color-neutral-700);">{{ val.note }}</span></div>
+              <div style="display:flex; gap:16px;"><sc-for list="{{ val.summary }}" as="s"><div style="display:flex; flex-direction:column; align-items:flex-end;"><span style="font-family:var(--font-heading); font-size:32px; font-weight:600; color:{{ s.color }};">{{ s.v }}</span><span style="font-size:11px; color:var(--color-neutral-700);">{{ s.k }}</span></div></sc-for></div>
+            </div>
+            <sc-for list="{{ val.groups }}" as="g">
+              <div style="display:flex; flex-direction:column;">
+                <div style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700); padding:10px 0 6px;">{{ g.name }}</div>
+                <sc-for list="{{ g.items }}" as="c">
+                  <div style="display:grid; grid-template-columns:110px minmax(0,1fr) minmax(0,auto) minmax(0,auto); gap:12px; padding:8px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size:13px; align-items:center;">
+                    <span style="font-weight:600; color:{{ c.color }};">{{ c.icon }} {{ c.st }}</span><span>{{ c.label }} <span style="color:var(--color-neutral-700);">{{ c.detail }}</span></span><span style="text-align:right; font-weight:600;">{{ c.calc }}</span><span style="text-align:right; color:var(--color-neutral-700);">{{ c.exp }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ val.hasDisc }}">
+          <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:12px;">
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--warn);">⚠ Discrepancias detectadas</div><h3 style="margin:4px 0 0; font-size:22px;">Diferencias entre fuentes</h3><span style="font-size:13px; color:var(--color-neutral-700);">No se elige silenciosamente: el modelo usa el Excel definitivo y documenta la otra versión.</span></div>
+            <sc-for list="{{ val.disc }}" as="d">
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; padding:14px 0; border-top:1px solid var(--color-divider);">
+                <strong style="font-size:15px;">{{ d.topic }}</strong>
+                <span style="display:flex; flex-direction:column; font-size:13px;"><span style="color:var(--color-neutral-700);">Fuente A · {{ d.aK }}</span><strong>{{ d.aV }}</strong></span>
+                <span style="display:flex; flex-direction:column; font-size:13px;"><span style="color:var(--color-neutral-700);">Fuente B · {{ d.bK }}</span><strong>{{ d.bV }}</strong></span>
+                <span style="display:flex; flex-direction:column; font-size:13px;"><span style="color:var(--color-accent-700);">Fuente utilizada</span><strong>{{ d.used }}</strong><span style="color:var(--color-neutral-700);">{{ d.note }}</span></span>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ ax.method }}" hint-placeholder-val="{{ false }}">
+        <div data-page class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">{{ ax.metCode }} · Metodología</div><h3 style="margin:4px 0 0; font-size:26px;">Fórmulas del motor</h3></div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:0; border-top:1px solid var(--color-divider); border-left:1px solid var(--color-divider);">
+            <sc-for list="{{ formulas }}" as="f"><div style="padding:16px; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); display:flex; flex-direction:column; gap:6px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-accent-700);">{{ f.n }} · {{ f.k }}</span><code style="font-family:ui-monospace, Menlo, monospace; font-size:13px; background:var(--color-accent-100); padding:6px 8px;">{{ f.f }}</code><span style="font-size:13px; color:var(--color-neutral-800);">{{ f.d }}</span></div></sc-for>
+          </div>
+          <div style="font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700); padding-top:8px;">Fuentes</div>
+          <sc-for list="{{ sources }}" as="s"><div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.6fr); gap:12px; padding:8px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size:13px;"><strong>{{ s.a }}</strong><span>{{ s.b }}</span><span style="color:var(--color-neutral-700);">{{ s.c }}</span></div></sc-for>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== MIS VALUACIONES ===== -->
+  <sc-if value="{{ v.library }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Mis valuaciones" style="display:flex; flex-direction:column; gap:24px;">
+    <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between;">
+      <div style="display:flex; flex-direction:column; gap:8px;"><span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">Plataforma</span><h1 style="margin:0; font-size:clamp(36px, 4.4vw, 56px); line-height:.95; text-transform:uppercase;">Mis valuaciones</h1></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <label class="btn btn-secondary" style="cursor:pointer;">Importar dataset (.json)<input type="file" accept=".json" onChange="{{ onJsonFile }}" style="display:none;"></label>
+        <button class="btn btn-primary blueprint" onClick="{{ goImport }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>+ Nueva valuación</button>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px;">
+      <sc-for list="{{ libCards }}" as="c" hint-placeholder-count="1">
+        <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:14px; border-color:{{ c.border }};">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; height:44px;">
+            <sc-if value="{{ c.hasLogo }}"><img src="{{ c.logo }}" alt="{{ c.name }}" style="max-height:40px; max-width:160px; object-fit:contain;"></sc-if>
+            <sc-if value="{{ c.noLogo }}"><span style="width:44px; height:44px; display:grid; place-items:center; border:1px solid var(--color-divider); font-family:var(--font-heading); font-size:20px; font-weight:600; color:{{ c.brand }};">{{ c.initials }}</span></sc-if>
+            <span class="tag {{ c.tagCls }}">{{ c.tag }}</span>
+          </div>
+          <div><div style="font-family:var(--font-heading); font-size:22px; font-weight:600;">{{ c.name }}</div><div style="font-size:13px; color:var(--color-neutral-700);">{{ c.meta }}</div></div>
+          <div style="display:flex; gap:20px; align-items:baseline; border-top:1px solid var(--color-divider); padding-top:12px;">
+            <div style="display:flex; flex-direction:column;"><span style="font-size:11px; color:var(--color-neutral-700);">Valor intrínseco</span><span style="font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);">{{ c.valTxt }}</span></div>
+            <div style="display:flex; flex-direction:column;"><span style="font-size:11px; color:var(--color-neutral-700);">Potencial</span><span style="font-family:var(--font-heading); font-size:22px; font-weight:600; color:{{ c.upColor }};">{{ c.upTxt }}</span></div>
+          </div>
+          <span style="font-size:12px; color:var(--color-neutral-700);">{{ c.created }}</span>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onClick="{{ c.onOpen }}">Abrir →</button>
+            <button class="btn btn-secondary" onClick="{{ c.onDup }}">Duplicar</button>
+            <button class="btn btn-ghost" onClick="{{ c.onJson }}">Exportar</button>
+            <sc-if value="{{ c.canDel }}"><button class="btn btn-ghost" onClick="{{ c.onDel }}" style="color:var(--neg);">Eliminar</button></sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== NUEVA VALUACIÓN ===== -->
+  <sc-if value="{{ v.import }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Nueva valuación" style="display:flex; flex-direction:column; gap:24px; max-width:1080px; margin:0 auto; width:100%;">
+    <div style="display:flex; flex-direction:column; gap:8px;"><span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">Nueva valuación</span><h1 style="margin:0; font-size:clamp(36px, 4.4vw, 56px); line-height:.95; text-transform:uppercase;">{{ imp.title }}</h1></div>
+    <div style="display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); border:1px solid var(--color-divider);">
+      <sc-for list="{{ imp.steps }}" as="s" hint-placeholder-count="5">
+        <div style="padding:12px 14px; display:flex; gap:10px; align-items:center; border-right:1px solid var(--color-divider); background:{{ s.bg }}; color:{{ s.color }};"><span style="font-family:var(--font-heading); font-size:22px; font-weight:600;">{{ s.n }}</span><span style="font-size:13px; font-weight:500;">{{ s.label }}</span></div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ imp.s1 }}" hint-placeholder-val="{{ true }}">
+      <label onDragOver="{{ onDragOver }}" onDrop="{{ onDrop }}" class="blueprint" style="padding:64px 24px; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; cursor:pointer; border-style:dashed; background:{{ imp.dropBg }}; transition:background .2s;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M12 18v-6"></path><path d="m9 15 3-3 3 3"></path></svg>
+        <span style="font-family:var(--font-heading); font-size:26px; font-weight:600;">Arrastra tu archivo aquí</span>
+        <span style="font-size:14px; color:var(--color-neutral-700);">o <span style="color:var(--color-accent); text-decoration:underline;">selecciona un archivo</span> · XLS · XLSX · CSV</span>
+        <span style="font-size:13px; color:var(--color-neutral-700);">Compatible con exportaciones de plataformas financieras como Capital IQ (Income Statement, Balance Sheet, Cash Flow, Key Stats…).</span>
+        <input type="file" accept=".xls,.xlsx,.csv" onChange="{{ onFile }}" style="display:none;">
+      </label>
+      <sc-if value="{{ imp.parsing }}"><span class="tag tag-neutral" style="align-self:flex-start;">Leyendo archivo…</span></sc-if>
+      <sc-if value="{{ imp.hasError }}"><div style="padding:12px 16px; border:1px solid var(--neg); color:var(--neg); font-size:14px;">✕ {{ imp.error }}</div></sc-if>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onClick="{{ startManual }}">Introducir datos manualmente</button>
+        <label class="btn btn-ghost" style="cursor:pointer;">Importar dataset ValuFlow (.json)<input type="file" accept=".json" onChange="{{ onJsonFile }}" style="display:none;"></label>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ imp.s2 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-wrap:wrap; gap:24px;">
+        <div class="blueprint" style="flex:1 1 380px; padding:24px; display:flex; flex-direction:column; gap:10px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Archivo detectado</div>
+          <sc-for list="{{ imp.meta }}" as="m"><div style="display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size:14px;"><span style="color:var(--color-neutral-700);">{{ m.k }}</span><strong style="text-align:right;">{{ m.v }}</strong></div></sc-for>
+        </div>
+        <div class="blueprint" style="flex:1 1 380px; padding:24px; display:flex; flex-direction:column; gap:10px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex; justify-content:space-between; align-items:flex-end;"><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Mapeo automático</div><span style="font-family:var(--font-heading); font-size:48px; font-weight:600; line-height:.9; color:var(--color-accent);">{{ imp.coverage }}</span></div>
+          <span style="font-size:13px; color:var(--color-neutral-700);">{{ imp.coverageTxt }}</span>
+          <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px 16px;">
+            <sc-for list="{{ imp.sections }}" as="s"><span style="font-size:13px; color:{{ s.color }};">{{ s.icon }} {{ s.name }}</span></sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ imp.s3 }}" hint-placeholder-val="{{ false }}">
+      <div class="blueprint" style="padding:24px; display:flex; flex-direction:column; gap:12px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <div><h3 style="margin:0; font-size:24px;">Revisar datos antes de crear la valuación</h3><span style="font-size:13px; color:var(--color-neutral-700);">Corrige el campo de origen o el valor de cualquier concepto. Los campos marcados con * son necesarios para el DCF.</span></div>
+        <div style="overflow-x:auto;">
+          <table class="table" style="font-size:13px; min-width:860px;">
+            <thead><tr><th>Campo interno</th><th>Campo de origen</th><th style="text-align:right;">Valor</th><th>Periodo</th><th>Confianza</th><th>Estado</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ imp.fields }}" as="f">
+                <tr>
+                  <td style="font-weight:600;">{{ f.label }}{{ f.reqMark }}</td>
+                  <td><select class="input" value="{{ f.sel }}" onChange="{{ f.onSel }}" style="min-height:30px; padding:4px 6px; font-size:12px; max-width:260px;"><option value="-1">— Sin asignar —</option><sc-for list="{{ f.options }}" as="o"><option value="{{ o.id }}">{{ o.label }}</option></sc-for></select></td>
+                  <td style="text-align:right;"><input class="input" type="number" value="{{ f.value }}" onChange="{{ f.onVal }}" style="min-height:30px; padding:4px 6px; font-size:13px; width:130px; text-align:right;"></td>
+                  <td>{{ f.period }}</td>
+                  <td><span class="tag {{ f.confCls }}">{{ f.conf }}</span></td>
+                  <td style="color:{{ f.stColor }}; font-weight:600;">{{ f.st }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ imp.s4 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+        <div class="blueprint" style="flex:1 1 420px; padding:24px; display:flex; flex-direction:column; gap:14px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <h3 style="margin:0; font-size:22px;">Identidad de la empresa</h3>
+          <div style="display:flex; gap:16px; align-items:center; padding:12px; border:1px solid var(--color-divider);">
+            <span style="width:120px; height:56px; display:grid; place-items:center;">
+              <sc-if value="{{ imp.hasLogo }}"><img src="{{ imp.logo }}" alt="Logo" style="max-width:120px; max-height:56px; object-fit:contain;"></sc-if>
+              <sc-if value="{{ imp.noLogo }}"><span style="font-family:var(--font-heading); font-size:26px; font-weight:600; color:var(--color-neutral-600);">{{ imp.initials }}</span></sc-if>
+            </span>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="font-size:12px; color:var(--color-neutral-700);">{{ imp.logoTxt }}</span>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn btn-secondary" onClick="{{ findLogo }}">Buscar logo</button><label class="btn btn-ghost" style="cursor:pointer;">Subir logo<input type="file" accept="image/*" onChange="{{ onLogoFile }}" style="display:none;"></label></div>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            <sc-for list="{{ imp.idFields }}" as="f"><div class="field"><label>{{ f.label }}{{ f.reqMark }}</label><input class="input" type="text" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}"></div></sc-for>
+          </div>
+        </div>
+        <div class="blueprint" style="flex:1 1 420px; padding:24px; display:flex; flex-direction:column; gap:14px;">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;"><h3 style="margin:0; font-size:22px;">Supuestos de valuación</h3><button class="btn btn-ghost" onClick="{{ copyMarketParams }}" style="font-size:12px;">Copiar Rf/PRM/βU de {{ co.short }}</button></div>
+          <span style="font-size:12px; color:var(--color-neutral-700);">Los drivers de proyección se proponen a partir del archivo. Rf, PRM, beta y g no se infieren: deben capturarse.</span>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+            <sc-for list="{{ imp.aFields }}" as="f"><div class="field"><label>{{ f.label }}{{ f.reqMark }}</label><input class="input" type="number" step="any" value="{{ f.value }}" onChange="{{ f.onChange }}" style="border-color:{{ f.border }};"><span style="font-size:11px; color:var(--color-neutral-700);">{{ f.hint }}</span></div></sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ imp.s5 }}" hint-placeholder-val="{{ false }}">
+      <div class="blueprint" style="padding:28px; display:flex; flex-direction:column; gap:16px;">
+        <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+        <h3 style="margin:0; font-size:24px;">Confirmar</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); border-top:1px solid var(--color-divider); border-left:1px solid var(--color-divider);">
+          <sc-for list="{{ imp.summary }}" as="s"><div style="padding:14px; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); display:flex; flex-direction:column; gap:2px;"><span style="font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-neutral-700);">{{ s.k }}</span><span style="font-family:var(--font-heading); font-size:22px; font-weight:600;">{{ s.v }}</span></div></sc-for>
+        </div>
+        <sc-if value="{{ imp.hasBlock }}"><div style="padding:12px 16px; border:1px solid var(--neg); display:flex; flex-direction:column; gap:4px;"><strong style="color:var(--neg); font-size:14px;">✕ Faltan datos necesarios para calcular el DCF</strong><sc-for list="{{ imp.block }}" as="b"><span style="font-size:13px;">{{ b }}</span></sc-for></div></sc-if>
+        <sc-if value="{{ imp.hasPreview }}"><div style="display:flex; gap:24px; align-items:baseline; flex-wrap:wrap;"><span style="font-size:13px; color:var(--color-neutral-700);">Vista previa del motor</span><span style="font-family:var(--font-heading); font-size:44px; font-weight:600; color:var(--color-accent);">{{ imp.previewValue }}</span><span style="font-family:var(--font-heading); font-size:22px; font-weight:600; color:{{ imp.previewColor }};">{{ imp.previewUp }}</span><span style="font-size:13px; color:var(--color-neutral-700);">WACC {{ imp.previewWacc }}</span></div></sc-if>
+      </div>
+    </sc-if>
+
+    <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <button class="btn btn-secondary" onClick="{{ imp.onBack }}">{{ imp.backTxt }}</button>
+      <sc-if value="{{ imp.showNext }}"><button class="btn btn-primary blueprint" onClick="{{ imp.onNext }}" disabled="{{ imp.nextDisabled }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>{{ imp.nextTxt }}</button></sc-if>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- ===== EQUIPO / ACERCA ===== -->
+  <sc-if value="{{ v.team }}" hint-placeholder-val="{{ false }}">
+  <section data-screen-label="Acerca del proyecto" style="display:flex; flex-direction:column; gap:28px;">
+    <div style="display:flex; flex-wrap:wrap; gap:28px; align-items:flex-start;">
+      <div style="flex:1 1 480px; display:flex; flex-direction:column; gap:16px;">
+        <span style="font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);">Acerca del proyecto</span>
+        <h1 style="margin:0; font-size:clamp(36px, 4.4vw, 56px); line-height:.95; text-transform:uppercase;">Tecnológico de Monterrey · Valuación de Empresas</h1>
+        <p style="margin:0; font-size:16px; line-height:1.6; max-width:640px;">Esta plataforma fue desarrollada como parte del proyecto académico de Valuación de Empresas del Tecnológico de Monterrey. El caso inicial corresponde a Organización Soriana. La plataforma fue diseñada para permitir que el modelo pueda reutilizarse para otras empresas mediante la sustitución de datos y supuestos.</p>
+      </div>
+      <div style="flex:0 1 160px;"><img src="assets/tec.svg" alt="Tecnológico de Monterrey" style="width:140px; height:140px;"></div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); border-top:1px solid var(--color-divider); border-left:1px solid var(--color-divider);">
+      <sc-for list="{{ team }}" as="m" hint-placeholder-count="5">
+        <div style="padding:22px; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); display:flex; flex-direction:column; gap:6px;">
+          <span style="font-family:var(--font-heading); font-size:28px; font-weight:600; color:var(--color-accent-300);">{{ m.n }}</span>
+          <span style="font-family:var(--font-heading); font-size:20px; font-weight:600; line-height:1.15;">{{ m.name }}</span>
+          <span style="font-size:13px; color:var(--color-neutral-700); letter-spacing:.06em;">Matrícula {{ m.id }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div class="blueprint" style="padding:28px; display:flex; flex-direction:column; gap:18px;">
+      <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+      <div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">Arquitectura reutilizable</div><h3 style="margin:4px 0 0; font-size:26px;">Un motor, cualquier empresa compatible</h3></div>
+      <div style="display:flex; flex-wrap:wrap; align-items:stretch; gap:8px;">
+        <sc-for list="{{ arch }}" as="a">
+          <div style="flex:1 1 150px; padding:16px; border:1px solid {{ a.border }}; background:{{ a.bg }}; color:{{ a.color }}; display:flex; flex-direction:column; gap:6px;"><span style="font-size:11px; letter-spacing:.1em; text-transform:uppercase; opacity:.8;">{{ a.n }}</span><strong style="font-family:var(--font-heading); font-size:19px;">{{ a.k }}</strong><span style="font-size:12px; line-height:1.4; opacity:.9;">{{ a.d }}</span></div>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;"><button class="btn btn-primary blueprint" onClick="{{ goImport }}"><i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>Configurar nueva valuación</button><button class="btn btn-secondary" onClick="{{ goAnnexMet }}">Metodología y fuentes</button></div>
+    </div>
+  </section>
+  </sc-if>
+
+  </main>
+
+  <footer data-noprint style="border-top:1px solid var(--color-divider);">
+    <div style="max-width:1360px; margin:0 auto; padding:24px 24px 96px; display:flex; flex-wrap:wrap; gap:12px 32px; font-size:12px; color:var(--color-neutral-700);">
+      <span style="font-weight:600; color:var(--color-text);">Tecnológico de Monterrey · Valuación de Empresas · 2026</span>
+      <span>Caso de estudio: {{ co.legalName }}</span>
+      <span>Equipo: Adrián Fermín Rodríguez Valades · Saúl González Loredo · Miguel Emilio Pérez García · Mauricio Fernandez Juarez · Francisco Aarón Ponce Flores</span>
+    </div>
+  </footer>
+
+  <sc-if value="{{ ui.mobile }}" hint-placeholder-val="{{ false }}">
+    <nav data-noprint style="position:fixed; left:0; right:0; bottom:0; z-index:45; display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); background:var(--color-bg); border-top:1px solid var(--color-divider);">
+      <sc-for list="{{ mobileNav }}" as="it"><button onClick="{{ it.onClick }}" style="height:60px; background:none; border:0; border-top:2px solid {{ it.border }}; color:{{ it.color }}; font-family:var(--font-heading); font-size:14px; font-weight:600; cursor:pointer;">{{ it.label }}</button></sc-for>
+    </nav>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- Drawer ¿Cómo se calculó? -->
+<sc-if value="{{ drawer.open }}" hint-placeholder-val="{{ false }}">
+  <div data-noprint onClick="{{ closeDrawer }}" style="position:fixed; inset:0; z-index:80; background:color-mix(in srgb, var(--color-neutral-900) 40%, transparent);"></div>
+  <aside data-noprint style="position:fixed; top:0; right:0; bottom:0; z-index:81; width:min(520px, 100%); background:var(--color-bg); border-left:1px solid var(--color-divider); box-shadow:var(--shadow-lg); padding:28px; overflow-y:auto; display:flex; flex-direction:column; gap:18px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;"><div><div style="font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);">¿Cómo se calculó?</div><h3 style="margin:4px 0 0; font-size:28px;">{{ drawer.title }}</h3></div><button class="btn btn-secondary btn-icon" onClick="{{ closeDrawer }}" aria-label="Cerrar">✕</button></div>
+    <div style="display:flex; flex-direction:column;">
+      <sc-for list="{{ drawer.steps }}" as="s">
+        <div style="display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; padding:12px 0; border-top:1px solid var(--color-divider);">
+          <strong style="font-size:14px; font-weight:{{ s.fw }};">{{ s.k }}</strong><span style="font-family:var(--font-heading); font-size:20px; font-weight:600; color:{{ s.color }}; text-align:right;">{{ s.v }}</span>
+          <span style="font-size:12px; color:var(--color-neutral-700); grid-column:1 / -1;">{{ s.f }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <span style="font-size:12px; color:var(--color-neutral-700); line-height:1.5;">{{ drawer.note }}</span>
+    <button class="btn btn-secondary" onClick="{{ drawer.goAnnex }}">Ver tabla completa en anexos →</button>
+  </aside>
+</sc-if>
+
+<!-- Presentación -->
+<sc-if value="{{ pres.on }}" hint-placeholder-val="{{ false }}">
+  <div data-noprint style="position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:90; display:flex; align-items:center; gap:4px; padding:6px; background:var(--color-accent-900); color:#fff; box-shadow:var(--shadow-lg);">
+    <button onClick="{{ pres.prev }}" style="width:40px; height:40px; background:none; border:0; color:#fff; cursor:pointer; font-size:18px;" aria-label="Anterior">←</button>
+    <span style="font-family:var(--font-heading); font-size:15px; font-weight:600; padding:0 10px; min-width:170px; text-align:center;">{{ pres.label }}</span>
+    <button onClick="{{ pres.next }}" style="width:40px; height:40px; background:none; border:0; color:#fff; cursor:pointer; font-size:18px;" aria-label="Siguiente">→</button>
+    <button onClick="{{ pres.exit }}" style="height:40px; padding:0 12px; background:none; border:0; border-left:1px solid rgba(255,255,255,.25); color:#fff; cursor:pointer; font-size:13px;">Salir</button>
+  </div>
+  <div data-noprint style="position:fixed; top:0; left:0; height:3px; z-index:91; background:var(--color-accent); width:{{ pres.progress }}; transition:width .5s;"></div>
+</sc-if>
+
+<sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
+  <div data-noprint style="position:fixed; bottom:88px; right:24px; z-index:95; padding:12px 18px; background:var(--color-text); color:var(--color-bg); font-size:14px; box-shadow:var(--shadow-lg);">✓ {{ toast.t }}</div>
+</sc-if>
+  </main>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TEAM = [
+  ['Adrián Fermín Rodríguez Valades', 'A01614820'], ['Saúl González Loredo', 'A016113349'], ['Miguel Emilio Pérez García', 'A01613516'],
+  ['Mauricio Fernandez Juarez', 'A01614732'], ['Francisco Aarón Ponce Flores', 'A01614662']
+];
+const SEQ = ['cover', 'p1', 'p2', 'p3', 'lab'];
+const SEQ_N = ['Portada', '01 · Valor', '02 · Flujos', '03 · Riesgo', 'Laboratorio'];
+const POS = 'var(--pos)', NEG = 'var(--neg)', ACC = 'var(--color-accent)';
+
+class Component extends DCLogic {
+  state = { ready: false, view: 'cover', annexId: null, activeId: 'soriana', companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false };
+
+  componentDidMount() {
+    const boot = () => (window.VF && window.VF.run && window.VF_DATASETS) ? this.boot() : setTimeout(boot, 40); boot();
+    this.mq = window.matchMedia('(max-width: 860px)'); this.onMq = () => this.setState({ mobile: this.mq.matches }); this.onMq(); this.mq.addEventListener('change', this.onMq);
+    this.onKey = (e) => {
+      if (e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+      if (e.key === 'Escape') { if (this.state.drawer) this.setState({ drawer: null }); else if (this.state.presenting) this.exitPresent(); else this.setState({ menu: null }); }
+      if (!this.state.presenting) return;
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); this.presStep(1); }
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); this.presStep(-1); }
+    };
+    window.addEventListener('keydown', this.onKey);
+    this.onAfterPrint = () => this.setState({ printing: null });
+    window.addEventListener('afterprint', this.onAfterPrint);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); window.removeEventListener('afterprint', this.onAfterPrint); this.mq && this.mq.removeEventListener('change', this.onMq); cancelAnimationFrame(this._raf); }
+  componentDidUpdate() {
+    const c = this._c; if (!c) return;
+    const tgt = c.view && c.view.ok ? c.view.value : null;
+    if (tgt != null && tgt !== this._tw) { this._tw = tgt; this.tween(this.state.heroDisp || tgt * 0.7, tgt); }
+  }
+  tween(from, to) {
+    cancelAnimationFrame(this._raf); const t0 = performance.now(), d = 900;
+    const step = (t) => { const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3); this.setState({ heroDisp: from + (to - from) * e }); if (k < 1) this._raf = requestAnimationFrame(step); };
+    this._raf = requestAnimationFrame(step);
+  }
+
+  boot() {
+    const companies = [window.VF_DATASETS.soriana, ...VF.store.list()];
+    let id = VF.store.active(); if (!companies.find(c => c.id === id)) id = 'soriana';
+    let view = 'cover'; try { view = localStorage.getItem('vf.v1.view') || 'cover'; } catch (e) { }
+    if (!['cover', 'p1', 'p2', 'p3', 'lab', 'annex', 'team', 'library'].includes(view)) view = 'cover';
+    const research = {}; companies.forEach(c => { try { const r = JSON.parse(localStorage.getItem('vf.v1.research.' + c.id) || 'null'); if (r) research[c.id] = r; } catch (e) { } });
+    this.setState({ ready: true, companies, activeId: id, A: this.loadA(companies, id), view, research }, () => this.enter());
+  }
+  ds(id) { return this.state.companies.find(c => c.id === (id || this.state.activeId)) || this.state.companies[0]; }
+  loadA(companies, id) { const ds = companies.find(c => c.id === id); return { ...VF.defaults(ds), ...(VF.store.getA(id) || {}) }; }
+  enter() {
+    this.setState({ reveal: false, heroDisp: this._c && this._c.view && this._c.view.ok ? this._c.view.value * 0.72 : 0 }); this._tw = null;
+    clearTimeout(this._rv); this._rv = setTimeout(() => this.setState({ reveal: true }), 90);
+    try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) { }
+  }
+  go(view, annexId) {
+    try { if (view !== 'import') localStorage.setItem('vf.v1.view', view); } catch (e) { }
+    this.setState({ view, annexId: annexId !== undefined ? annexId : this.state.annexId, menu: null, drawer: null }, () => this.enter());
+  }
+  setA(patch, silent) {
+    const A = { ...this.state.A, ...patch }; VF.store.setA(this.state.activeId, A);
+    this.setState({ A, busy: true }); clearTimeout(this._bt); clearTimeout(this._tt);
+    this._bt = setTimeout(() => this.setState({ busy: false, toast: silent ? null : 'Valuación actualizada' }), 420);
+    this._tt = setTimeout(() => this.setState({ toast: null }), 2400);
+  }
+  resetA() { VF.store.setA(this.state.activeId, null); this.setState({ A: VF.defaults(this.ds()), toast: 'Valores base restaurados' }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2200); }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2600); }
+  switchCompany(id) { VF.store.setActive(id); this.setState({ activeId: id, A: this.loadA(this.state.companies, id), menu: null, fcfSel: 0, annexId: null }, () => this.enter()); }
+  saveCompanies(list) { this.setState({ companies: list }); VF.store.save(list.filter(c => !c.builtIn)); }
+
+  // ---------- Presentación / impresión ----------
+  startPresent() { const i = SEQ.indexOf(this.state.view); this.setState({ presenting: true }); this.go(i >= 0 ? this.state.view : 'cover'); try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); } catch (e) { } }
+  exitPresent() { this.setState({ presenting: false }); try { document.fullscreenElement && document.exitFullscreen(); } catch (e) { } }
+  presStep(d) { const i = Math.max(0, SEQ.indexOf(this.state.view)); const n = Math.min(SEQ.length - 1, Math.max(0, i + d)); if (n !== i) this.go(SEQ[n]); }
+  print(mode) { this.setState({ printing: mode, menu: null, reveal: true }); const p = () => { try { window.print(); } catch (e) { } }; setTimeout(() => { p(); VF.printPanel(p); }, 600); }
+
+  // ---------- Cálculo central (una sola fuente de verdad) ----------
+  calc() {
+    const ds = this.ds(), A = this.state.A;
+    const key = ds.id + '|' + ds.updatedAt + '|' + JSON.stringify(A) + '|' + this.state.step;
+    if (this._ck === key) return this._c;
+    const D = VF.defaults(ds), base = VF.run(ds, A);
+    const isBase = Object.keys(D).every(k => (D[k] ?? null) === (A[k] ?? null) || (typeof D[k] === 'number' && Math.abs(D[k] - A[k]) < 1e-9));
+    const base0 = isBase ? base : VF.run(ds, D);
+    if (base.ok) this._lastGood = { id: ds.id, r: base, A };
+    const view = base.ok ? base : (this._lastGood && this._lastGood.id === ds.id ? this._lastGood.r : base0);
+    const VA = base.ok ? A : (this._lastGood && this._lastGood.id === ds.id ? this._lastGood.A : D);
+    const c = { ds, A, D, base, base0, isBase, view, VA };
+    if (view.ok) {
+      c.grid = VF.grid(ds, VA, view, this.state.step, this.state.step);
+      c.torn = VF.tornado(ds, VA, view); c.scen = VF.scenarios(ds, VA, view); c.methods = VF.methods(ds, VA, view);
+      c.ins = VF.insights(ds, VA, view, c.torn); c.valid = VF.validate(ds, VA, view, isBase && base.ok);
+    }
+    this._ck = key; this._c = c; return c;
+  }
+
+  // ---------- Importador ----------
+  newImp(extra) { return { step: 1, parsing: false, error: null, parsed: null, fields: {}, sel: {}, touched: {}, id: { name: '', ticker: '', exchange: '', currency: '', sector: '', domain: '', logo: null, brand: null }, a: {}, hints: {}, logoTxt: 'Sin logo: se mostrará un monograma.', ...(extra || {}) }; }
+  setImp(p) { this.setState({ imp: { ...this.state.imp, ...p } }); }
+  async handleFile(file) {
+    if (!file) return;
+    if (!/\.(xls|xlsx|csv)$/i.test(file.name)) { this.setImp({ error: 'Formato no compatible. Usa un archivo XLS, XLSX o CSV.' }); return; }
+    if (!window.XLSX) { this.setImp({ error: 'El lector de hojas de cálculo aún no está disponible. Intenta de nuevo en unos segundos.' }); return; }
+    this.setImp({ parsing: true, error: null });
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = /\.csv$/i.test(file.name) ? XLSX.read(new TextDecoder().decode(buf), { type: 'string' }) : XLSX.read(buf, { type: 'array' });
+      const P = VF.parseWorkbook(wb, file.name);
+      if (!P.rowsCount) throw new Error('No se encontraron filas con periodos y valores numéricos.');
+      const fields = {}, sel = {}; P.fields.forEach(f => { fields[f.key] = f.value; sel[f.key] = f.cands.length && f.value != null ? 0 : -1; });
+      const id = { ...this.state.imp.id, name: P.meta.name || '', ticker: P.meta.ticker || '', exchange: P.meta.exchange || '', currency: P.meta.currency || '' };
+      const { a, hints } = this.deriveA(P, fields);
+      this.setState({ imp: { ...this.state.imp, step: 2, parsing: false, parsed: P, fields, sel, id, a, hints } });
+      if (id.name) this.findLogo(id.name);
+    } catch (e) { this.setImp({ parsing: false, error: 'No fue posible leer el archivo: ' + (e.message || 'formato desconocido') + '.' }); }
+  }
+  deriveA(P, F) {
+    const a = {}, hints = {}, v = k => F[k] != null ? +F[k] : null, rev = v('revenue');
+    const h = (P.fields.find(f => f.key === 'revenue') || {}).hist || [];
+    const hs = h.filter(x => x.year).sort((x, y) => x.year - y.year).slice(-4);
+    if (hs.length >= 2 && hs[0].v > 0) { const n = hs[hs.length - 1].year - hs[0].year; a.growth = +((Math.pow(hs[hs.length - 1].v / hs[0].v, 1 / n) - 1) * 100).toFixed(2); hints.growth = 'Derivado: CAGR ' + hs[0].year + '–' + hs[hs.length - 1].year + ' del archivo'; }
+    else hints.growth = 'Requerido: no hay suficiente historia';
+    if (rev && v('ebit') != null) { a.margin = +(v('ebit') / rev * 100).toFixed(2); hints.margin = 'Derivado: EBIT / ingresos del último año'; }
+    if (v('incomeTax') != null && v('ebt') > 0) { a.taxF = +(v('incomeTax') / v('ebt') * 100).toFixed(2); hints.taxF = 'Derivado: tasa efectiva del archivo'; } else hints.taxF = 'Requerido';
+    if (rev && v('da') != null) { a.daPct = +(v('da') / rev * 100).toFixed(2); hints.daPct = 'Derivado: D&A / ingresos'; }
+    if (rev && v('capex') != null) { a.capexPct = +(v('capex') / rev * 100).toFixed(2); hints.capexPct = 'Derivado: capex / ingresos'; }
+    if (v('beta') != null) { a.betaL = v('beta'); hints.betaL = 'Detectado en el archivo (apalancada)'; } else hints.betaL = 'Si la conoces; se desapalanca con D/E de mercado';
+    hints.rf = 'Requerido · bono gubernamental del país'; hints.prm = 'Requerido · prima de riesgo de mercado'; hints.g = 'Requerido · debe ser menor que el WACC'; hints.betaU = 'Beta desapalancada (o captura la apalancada)';
+    return { a, hints };
+  }
+  async findLogo(name) {
+    const nm = name || this.state.imp.id.name; if (!nm) return;
+    this.setImp({ logoTxt: 'Buscando logo en Wikidata…' });
+    const r = await VF.findLogo(nm);
+    if (r) { const brand = await VF.brandColor(r.url); this.setState({ imp: { ...this.state.imp, id: { ...this.state.imp.id, logo: r.url, brand: brand || this.state.imp.id.brand }, logoTxt: 'Logo encontrado · ' + r.source + (r.label ? ' (' + r.label + ')' : '') } }); }
+    else if (this.state.imp.id.domain) { this.setState({ imp: { ...this.state.imp, id: { ...this.state.imp.id, logo: 'https://www.google.com/s2/favicons?domain=' + encodeURIComponent(this.state.imp.id.domain) + '&sz=256' }, logoTxt: 'Ícono del sitio ' + this.state.imp.id.domain } }); }
+    else this.setImp({ logoTxt: 'No se encontró logo. Puedes subir uno o indicar el sitio web.' });
+  }
+  impBlock() {
+    const I = this.state.imp, F = I.fields, out = [];
+    VF.FIELDS.filter(f => f.req).forEach(f => { if (F[f.key] == null || F[f.key] === '' || isNaN(+F[f.key])) out.push('Falta ' + f.label.toLowerCase() + '.'); });
+    if (!I.id.name) out.push('Falta el nombre de la empresa.');
+    if (!I.id.ticker) out.push('Falta el ticker.');
+    [['rf', 'Rf'], ['prm', 'PRM'], ['g', 'crecimiento perpetuo (g)'], ['growth', 'crecimiento de ventas'], ['margin', 'margen EBIT'], ['taxF', 'tasa de impuestos'], ['daPct', 'D&A % ventas'], ['capexPct', 'capex % ventas']].forEach(([k, l]) => { if (I.a[k] == null || I.a[k] === '' || isNaN(+I.a[k])) out.push('Falta ' + l + '.'); });
+    if ((I.a.betaU == null || I.a.betaU === '') && (I.a.betaL == null || I.a.betaL === '')) out.push('Falta la beta (desapalancada o apalancada).');
+    if (+F.shares <= 0) out.push('Las acciones en circulación deben ser mayores que cero.');
+    return out;
+  }
+  impBuild() {
+    const I = this.state.imp, num = x => (x === '' || x == null) ? null : +x;
+    const a = {}; Object.keys(I.a).forEach(k => a[k] = num(I.a[k]));
+    const P = I.parsed || { fields: VF.FIELDS.map(f => ({ key: f.key, label: f.label, hist: [], period: 'Manual', srcLabel: 'Captura manual', srcSheet: '', conf: 'Manual' })), meta: {}, fileName: 'Captura manual' };
+    const F = {}; Object.keys(I.fields).forEach(k => F[k] = num(I.fields[k]));
+    return VF.buildFromImport(P, F, { ...I.id, ...a });
+  }
+  createFromImp() {
+    if (this.impBlock().length) return;
+    const ds = this.impBuild(), test = VF.run(ds, VF.defaults(ds));
+    if (!test.ok) { this.setImp({ error: test.errors.join(' ') }); return; }
+    const list = [...this.state.companies, ds]; this.saveCompanies(list);
+    VF.store.setActive(ds.id);
+    this.setState({ activeId: ds.id, A: VF.defaults(ds), imp: null, annexId: null }, () => { this.go('p1'); this.flash('Valuación creada · ' + ds.profile.name); });
+  }
+  async importJson(file) {
+    if (!file) return;
+    try {
+      const j = JSON.parse(await file.text()); const ds = j.dataset || j; if (!ds.forecast || !ds.profile) throw new Error();
+      const copy = { ...ds, id: 'c' + Date.now().toString(36), builtIn: false, updatedAt: new Date().toISOString() };
+      if (j.assumptions) VF.store.setA(copy.id, j.assumptions);
+      this.saveCompanies([...this.state.companies, copy]); this.switchCompany(copy.id); this.go('p1'); this.flash('Dataset importado · ' + copy.profile.name);
+    } catch (e) { this.flash('El archivo no es un dataset ValuFlow válido'); }
+  }
+
+  // ---------- Investigación ----------
+  async runResearch() {
+    const ds = this.ds(), id = ds.id;
+    const set = (r) => { const research = { ...this.state.research, [id]: r }; this.setState({ research }); try { localStorage.setItem('vf.v1.research.' + id, JSON.stringify(r)); } catch (e) { } };
+    set({ ...(this.state.research[id] || {}), status: 'loading', items: (this.state.research[id] || {}).items || [] });
+    try { const r = await VF.research(ds.profile); set({ status: 'done', ...r }); this.flash(r.items.length + ' hallazgos con fuente'); }
+    catch (e) { set({ status: 'error', items: [], via: '', date: '' }); this.flash('No fue posible completar la investigación'); }
+  }
+  setResearchItem(rid, status) {
+    const id = this.state.activeId, r = this.state.research[id]; if (!r) return;
+    const nr = { ...r, items: r.items.map(it => it.id === rid ? { ...it, status } : it) };
+    this.setState({ research: { ...this.state.research, [id]: nr } }); try { localStorage.setItem('vf.v1.research.' + id, JSON.stringify(nr)); } catch (e) { }
+  }
+
+  // ---------- Construcción de anexos ----------
+  annexDefs(ds) {
+    const L = [];
+    if (ds.annex) {
+      L.push(['est', 'A1', 'Estados financieros trimestrales'], ['rat', 'A2', 'Razones financieras'], ['proj', 'A3', 'Proyección de estados financieros']);
+      L.push(['dcf', 'A4', 'Flujo libre y DCF'], ['ls', 'A5', 'Mínimos cuadrados'], ['ext', 'A6', 'Variables externas'], ['pond', 'A7', 'Ponderación de métodos'], ['wacc', 'A8', 'WACC e iteración'], ['sens', 'A9', 'Sensibilidad (Excel)']);
+      L.push(['empresa', 'A10', 'Empresa'], ['valid', 'A11', 'Validación y discrepancias'], ['method', 'A12', 'Metodología y fuentes']);
+    } else {
+      L.push(['imp', 'A1', 'Datos importados'], ['dcf', 'A2', 'Flujo libre y DCF'], ['wacc', 'A3', 'WACC e iteración'], ['empresa', 'A4', 'Empresa'], ['valid', 'A5', 'Validación'], ['method', 'A6', 'Metodología y fuentes']);
+    }
+    return L;
+  }
+  annexTables(c, which) {
+    const ds = c.ds, b = c.view, f = VF.fmt, T = [];
+    const cell = (t, o) => ({ t: t == null ? '—' : t, align: 'right', ws: 'nowrap', mw: 'auto', bg: 'transparent', color: 'var(--color-text)', ...(o || {}) });
+    const txt = (t, mw) => cell(t, { align: 'left', ws: 'normal', mw: mw || '140px' });
+    const row = (label, cells, o) => ({ label, cells, fw: 400, lc: 'var(--color-text)', fs: '13px', ls: 'normal', tt: 'none', ...(o || {}) });
+    const sec = (label, n) => row(label, Array(n).fill(cell('')), { fw: 600, lc: 'var(--color-accent-700)', fs: '11px', ls: '.1em', tt: 'uppercase' });
+    const head = (cols, estFrom, alignLeftUntil) => cols.map((t, i) => ({ t, bg: estFrom != null && i >= estFrom ? 'var(--color-accent-100)' : 'var(--color-bg)', align: alignLeftUntil != null && i < alignLeftUntil ? 'left' : 'right' }));
+    const estBg = (i, from) => from != null && i >= from ? { bg: 'color-mix(in srgb, var(--color-accent-100) 55%, transparent)' } : {};
+    const mm = v => v == null ? '—' : f.m(v, 1);
+    const tb = (id, code, title, question, source, unit, cols, rows, o) => T.push({ id, code, title, question, source, unit, head: cols, rows, minW: (o && o.minW) || '720px', note: (o && o.note) || '', hasNote: !!(o && o.note) });
+    const want = id => which === 'all' || which === id;
+    if (ds.annex) {
+      const S = ds.annex.statements;
+      if (want('est')) tb('est', 'A1', 'Estados financieros trimestrales', 'Datos históricos de entrada: resultados, flujo y balance.', 'Excel · Estados financieros', 'mdp', head(S.cols), S.rows.map(r => row(r[0], r.slice(1).map((v, i) => cell(mm(v), i === 5 ? { bg: 'var(--color-neutral-100)' } : {})))), { note: 'FY2025 = suma de trimestres para flujos y saldo de cierre para balance. Deuda total incluye arrendamientos.' });
+      if (want('rat')) {
+        const P = ds.quarterly.periods, rows = []; let cat = null;
+        ds.ratios.forEach(r => { if (r.cat !== cat) { cat = r.cat; rows.push(sec(cat, P.length + 2)); } const fm = v => r.unit === 'x' ? v.toFixed(2) + 'x' : r.unit === '%' ? v.toFixed(2) + '%' : v.toFixed(1); rows.push(row(r.name, r.v.map(v => cell(fm(v))).concat([cell(fm(r.avg), { bg: 'var(--color-neutral-100)' }), txt(r.read, '260px')]))); });
+        tb('rat', 'A2', 'Razones financieras', 'Liquidez, apalancamiento, eficiencia y rentabilidad (trimestral).', 'Excel · Razones financieras', 'x · % · días', head(P.concat(['Prom. 5T', 'Lectura']), null, null).map((h, i) => i === P.length + 1 ? { ...h, align: 'left' } : h), rows, { minW: '980px' });
+      }
+      if (want('proj')) { const Pj = ds.annex.projected; tb('proj', 'A3', 'Proyección de estados financieros', 'Estado de resultados y balance proyectados con los supuestos finales.', 'Excel · Proyección final', 'mdp', head(Pj.cols, 1), Pj.rows.map(r => r.section ? sec(r.section, Pj.cols.length) : row(r[0], r.slice(1).map((v, i) => cell(mm(v), estBg(i, 1))), /Utilidad neta|EBIT\)|Activo total|Pasivo total/.test(r[0]) ? { fw: 600 } : {}))); }
+    }
+    if (ds.imported && want('imp')) tb('imp', 'A1', 'Datos importados', 'Campos normalizados tal como se confirmaron en la revisión.', ds.source.file || 'Archivo', ds.profile.currency + ' ' + ds.profile.units, head(['Valor', 'Periodo', 'Campo de origen', 'Hoja', 'Confianza'], null, 0).map((h, i) => i === 0 ? { ...h, align: 'right' } : { ...h, align: 'left' }), ds.imported.map(x => row(x.label, [cell(x.value == null ? 'No disponible' : f.m(x.value, 1)), txt(x.period || '—', '90px'), txt(x.srcLabel || '—', '200px'), txt(x.srcSheet || '—', '120px'), txt(x.conf || '—', '80px')])));
+    if (want('dcf') && b.ok) {
+      const yrs = [ds.forecast.baseYear].concat(b.rows.map(r => r.year)), B = ds.forecast.base, R = b.rows;
+      const line = (l, a0, k, fm, o) => row(l, [cell(a0 == null ? '' : fm(a0))].concat(R.map((r, i) => cell(fm(typeof k === 'function' ? k(r) : r[k]), estBg(i, 0)))), o);
+      tb('dcf', ds.annex ? 'A4' : 'A2', 'Flujo libre de efectivo', 'Calculado en vivo por el motor con los supuestos activos.', 'Motor ValuFlow · drivers del ' + (ds.annex ? 'Excel' : 'archivo'), ds.profile.units, head(yrs, 1), [
+        line('Ventas', B.revenue, 'revenue', mm, { fw: 600 }), line('Crecimiento', null, 'growth', v => f.p(v)), line('Utilidad de operación (EBIT)', B.ebit, 'ebit', mm), line('Margen EBIT', B.ebit / B.revenue, 'margin', v => f.p(v)),
+        line('(−) Impuestos sobre EBIT', null, r => -r.tax, mm), line('Tasa de impuestos', null, 'taxRate', v => f.p(v)), line('NOPAT', null, 'nopat', mm, { fw: 600 }),
+        line('(+) Depreciación y amortización', B.da, 'da', mm), line('(−) Capex', B.capex != null ? -B.capex : null, r => -r.capex, mm), line('(−) Inversión en capital de trabajo', null, r => -r.dNwc, mm),
+        line('FCF', B.fcf, 'fcf', mm, { fw: 700 }), line('Factor de descuento', null, 'df', v => v.toFixed(4)), line('Valor presente del FCF', null, 'pv', mm, { fw: 600 })
+      ], { note: 'WACC ' + f.p(b.wacc) + ' · g ' + f.p(b.g) + '. Los drivers (crecimiento, margen, tasa, D&A, capex y capital de trabajo) se derivan de las filas de la proyección fuente.' });
+      const V = [['VPN de los FCF', b.pvSum], ['FCF ' + R[R.length - 1].year + ' × (1 + g)', b.fcfN1], ['Valor terminal (Gordon)', b.tvG], ['VP del valor terminal (Gordon)', b.pvTvG], ['EV · Gordon', b.evG, 1]];
+      if (b.mult) V.push(['EBITDA ' + R[R.length - 1].year + ' × ' + f.x(b.mult), b.tvM], ['VP del valor terminal (múltiplo)', b.pvTvM], ['EV · múltiplos', b.evM, 1], ['EV ponderado (' + Math.round(b.wG * 100) + '% Gordon)', b.evW, 1]);
+      V.push(['(−) Deuda bursátil y bancaria', -ds.valuation.bridge.debt], ['(−) Pasivo por arrendamiento', -ds.valuation.bridge.lease], ['(+) Efectivo', ds.valuation.bridge.cash], ['Equity Value al cierre', b.eqClose, 1]);
+      if (b.roll) V.push(['EV capitalizado × (1+WACC)^' + b.roll.t1, b.roll.evCap], ['(+) FCF ya generado 1S26', b.roll.fcfGenerated], ['EV al 2T26', b.roll.ev2, 1], ['(−) Deuda 2T26', -b.roll.debt], ['(−) Arrendamiento 2T26', -b.roll.lease], ['(+) Efectivo 2T26', b.roll.cash], ['Equity al 2T26', b.roll.eq2, 1], ['× (1+Ke)^' + b.roll.t2 + ' → Equity a la fecha de valuación', b.roll.eq3, 1]);
+      V.push(['Acciones en circulación (mm)', b.shares]);
+      tb('dcf', '', 'Del flujo al valor por acción', 'Puente completo de valuación.', 'Motor ValuFlow', ds.profile.units, head(['Valor']), V.map(v => row(v[0], [cell(f.m(v[1], 1))], v[2] ? { fw: 700 } : {})).concat([row('Valor intrínseco por acción', [cell(f.cur(b.value), { color: 'var(--color-accent)' })], { fw: 700 })]), { minW: '420px' });
+    }
+    const M = ds.method;
+    if (M && want('ls')) {
+      const Q = M.lsQuarters.concat(['a', 'b', 'R²']).concat(M.lsForecastQuarters);
+      tb('ls', 'A5', 'Mínimos cuadrados por partida del FCFF', 'Y = a + b·X con X centrado (X = n − (N+1)/2), sobre 5 trimestres.', 'Excel · FCFF mínimos cuadrados', 'mdp · %', head(Q, 8), M.leastSquares.map(s => { const fm = v => s.unit === '%' ? v.toFixed(2) + '%' : f.m(v, 1); return row(s.label, s.y.map(v => cell(fm(v))).concat([cell(fm(s.a), { bg: 'var(--color-neutral-100)' }), cell(s.unit === '%' ? s.b.toFixed(2) + ' pp' : f.m(s.b, 1), { bg: 'var(--color-neutral-100)' }), cell(s.r2.toFixed(3), { bg: 'var(--color-neutral-100)' })]).concat(s.fc.map(v => cell(fm(v), estBg(0, 0))))); }), { minW: '1100px', note: 'FCFF LTM proyectado (3T26–2T27) ' + f.m(M.fcffLTM.projected, 1) + ' mdp; ajustado por variables externas ' + f.m(M.fcffLTM.adjusted, 1) + ' mdp; LTM actual ' + f.m(M.fcffLTM.actual, 1) + ' mdp.' });
+    }
+    if (M && want('ext')) tb('ext', 'A6', 'Variables externas', 'Canal de transmisión de cada variable al FCFF y ajuste aplicado.', 'Excel · Variables externas', '%', head(['Categoría', 'Dato observado', 'Partida', 'Efecto', 'Δ Ventas', 'Δ Costos', 'Δ Capex'], null, 4), M.external.map(e => row(e[1], [txt(e[0], '130px'), txt(e[2], '260px'), txt(e[3], '120px'), txt(e[4], '60px'), cell(e[5] ? e[5].toFixed(2) + '%' : '—', { color: e[5] < 0 ? NEG : e[5] > 0 ? POS : 'var(--color-text)' }), cell(e[6] ? e[6].toFixed(2) + '%' : '—'), cell(e[7] ? e[7].toFixed(2) + '%' : '—')])).concat([row('Ajuste neto aplicado', [txt(''), txt(''), txt(''), txt(''), cell(M.externalNet.sales.toFixed(2) + '%'), cell(M.externalNet.costs.toFixed(2) + '%'), cell(M.externalNet.capex.toFixed(2) + '%')], { fw: 700 })]), { minW: '1180px' });
+    if (M && want('pond')) {
+      const Y = ds.forecast.years, pr = a => a.map(v => cell(v.toFixed(2) + '%'));
+      tb('pond', 'A7', 'Ponderación de métodos y supuestos finales', 'Cómo se combinan variables externas y mínimos cuadrados en cada año.', 'Excel · Proyección final', '%', head(Y, 0), [
+        row('Peso de variables externas', pr(M.weightsExternal)), row('Peso de mínimos cuadrados', pr(M.weightsExternal.map(v => 100 - v))),
+        sec('Crecimiento de ventas', 5), row('Variables externas', pr(M.growthExternal)), row('Mínimos cuadrados', pr(M.growthLS)), row('Final (ponderado)', pr(M.growthFinal), { fw: 700 }),
+        sec('Margen EBIT', 5), row('Variables externas', pr(M.marginExternal)), row('Mínimos cuadrados', pr(M.marginLS)), row('Final (ponderado)', pr(M.marginFinal), { fw: 700 }),
+        sec('Otros supuestos finales', 5), row('Capex (% ventas)', pr(M.capexFinal)), row('D&A (% ventas)', pr(M.daFinal)), row('Tasa de impuestos', pr(M.taxFinal))
+      ]);
+    }
+    if (want('wacc') && b.ok) {
+      const W = b.W, mk = W.market, it = W.iterated || {};
+      const r2 = (l, a, z, o) => row(l, [cell(a), cell(z)], o);
+      tb('wacc', ds.annex ? 'A8' : 'A3', 'WACC · mercado vs. iterado', 'Componentes del costo de capital en ambos enfoques.', ds.annex ? 'Excel · WACC e iteración' : 'Motor ValuFlow', '% · mdp', head(['Valor de mercado', 'Iterado al DCF']), [
+        r2('Tasa libre de riesgo (Rf)', f.p(W.rf), f.p(W.rf)), r2('Prima de riesgo de mercado', f.p(W.prm), f.p(W.prm)), r2('Beta desapalancada (βU)', W.betaU.toFixed(2), W.betaU.toFixed(2)),
+        r2('Deuda (D)', f.m(mk.D, 1), f.m(it.D, 1)), r2('Capital (E)', f.m(mk.E, 1) + ' · mercado', f.m(it.E, 1) + ' · DCF'), r2('D / E', f.x(mk.de, 3), f.x(it.de, 3)), r2('Beta apalancada βL', mk.beta.toFixed(4), it.beta != null ? it.beta.toFixed(4) : '—'),
+        r2('Ke = Rf + βL × PRM', f.p(mk.ke), f.p(it.ke)), r2('Kd antes de impuestos', f.p(mk.kd), f.p(it.kd)), r2('Tasa fiscal', f.p(mk.tax), f.p(it.tax)), r2('Kd después de impuestos', f.p(mk.kdAT), f.p(it.kdAT)),
+        r2('E / (D + E)', f.p(mk.wE), f.p(it.wE)), r2('D / (D + E)', f.p(mk.wD), f.p(it.wD)), r2('WACC', f.p(mk.wacc), f.p(it.wacc), { fw: 700 })
+      ], { minW: '520px', note: 'Activo en el modelo: ' + (W.mode === 'iterated' ? 'WACC iterado' : W.mode === 'market' ? 'WACC de mercado' : 'WACC manual (' + f.p(b.wacc) + ')') + '.' });
+      tb('wacc', '', 'Iteraciones', 'El equity del DCF alimenta D/E hasta converger.', 'Motor ValuFlow', '%', head(['WACC entrada', 'Equity DCF', 'D / E', 'Beta', 'Ke', 'WACC salida']), W.iters.map(i => row('Iteración ' + i.k, [cell(f.p(i.win)), cell(f.m(i.E, 1)), cell(i.de.toFixed(4)), cell(i.beta.toFixed(4)), cell(f.p(i.ke)), cell(f.p(i.wout), { color: ACC })])), { minW: '640px' });
+    }
+    if (ds.annex && want('sens')) Object.values(ds.annex.sensitivity).forEach((s, k) => tb('sens', k === 0 ? 'A9' : '', s.label, s.rowsLabel + ' (filas) vs. ' + s.colsLabel + ' (columnas) · precio por acción', 'Excel · Sensibilidad', 'MXN por acción', head(s.cols), s.grid.map((r, i) => row(s.rowsLabel + ' ' + s.rowHeads[i], r.map((v, j) => cell('$' + v.toFixed(2), i === 2 && j === 2 ? { bg: 'var(--color-accent-200)', color: 'var(--color-accent-800)' } : { bg: v >= ds.market.price ? 'color-mix(in srgb, var(--pos) 14%, transparent)' : 'color-mix(in srgb, var(--neg) 10%, transparent)' })))), { minW: '560px' }));
+    return T;
+  }
+
+  renderVals() {
+    const S = this.state;
+    if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {} };
+    const f = VF.fmt, c = this.calc(), ds = c.ds, b = c.view, A = c.VA, P = ds.profile, rv = S.reveal || !!S.printing;
+    const view = S.view, pr = S.printing;
+    const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
+    const go = (x, a) => () => this.go(x, a);
+    const upColor = b.ok && b.upside != null ? (b.upside >= 0 ? POS : NEG) : 'var(--color-text)';
+    const initials = (P.short || P.name || '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const co = { ticker: P.ticker || '—', exchange: P.exchange || '—', hasLogo: !!P.logo, noLogo: !P.logo, logo: window.vfRes(P.logo) || '', name: P.name, short: P.short || P.name, legalName: P.legalName || P.name, brand: P.brand || ACC, initials, sector: P.sector || P.industry || '', currency: P.currency, units: P.units === 'mdp' ? 'mdp' : (P.currency + ' mm'), valDate: ds.dates.valuation, priceDate: ds.dates.price };
+    const mu = co.units;
+    const r = b.ok ? {
+      value: f.cur(b.value), price: b.price ? f.cur(b.price) : 'No disponible', upside: b.upside != null ? f.pp(b.upside) : '—', upColor, heroDisp: f.cur(S.heroDisp || 0),
+      diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: b.signal === 'Mantener' ? 'Mantener' : (b.upside > 0 ? 'Sobre umbral' : 'Bajo umbral'), threshold: Math.round(b.threshold * 100) + '%',
+      modelLabel: A.forecastKey && A.forecastKey !== 'final' && ds.altForecasts ? ds.altForecasts[A.forecastKey].label : (ds.builtIn ? 'Proyección final · DCF' : 'DCF base'), tvWeight: f.p(b.tvWeightG, 1)
+    } : { value: '—', price: '—', upside: '—', upColor, heroDisp: '—', diff: '—', signal: '—', threshold: '', modelLabel: '', tvWeight: '—' };
+
+    const cv = { o1: rv ? 1 : 0, o2: rv ? 1 : 0, o3: rv ? 1 : 0, o4: rv ? 1 : 0, t1: rv ? 'none' : 'translateY(-10px)', t2: rv ? 'none' : 'translateY(28px)', t3: rv ? 'none' : 'translateY(36px)' };
+    const team = TEAM.map((m, i) => ({ n: String(i + 1).padStart(2, '0'), name: m[0], id: m[1] }));
+    const ui = {
+      headerT: S.presenting ? 'translateY(-100%)' : 'none', companyMenu: S.menu === 'company', exportMenu: S.menu === 'export', desktop: !S.mobile, mobile: S.mobile,
+      modified: !c.isBase, pageO: rv ? 1 : 0, pageT: rv ? 'none' : 'translateY(14px)', errorsShow: !c.base.ok && ['p1', 'p2', 'p3', 'lab'].includes(view), errors: c.base.errors || [], busy: S.busy
+    };
+    const companyList = S.companies.map(x => { const rr = VF.run(x, x.id === S.activeId ? S.A : { ...VF.defaults(x), ...(VF.store.getA(x.id) || {}) }); return { name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + (x.builtIn ? ' · caso presentado' : ''), value: rr.ok ? f.cur(rr.value) : '—', bg: x.id === S.activeId ? 'var(--color-accent-100)' : 'transparent', onClick: () => this.switchCompany(x.id), rr, x }; });
+    const NAV = [['01', 'Valor', 'p1'], ['02', 'Flujos', 'p2'], ['03', 'Riesgo', 'p3'], ['', 'Laboratorio', 'lab'], ['', 'Anexos', 'annex'], ['', 'Equipo', 'team']];
+    const navItems = NAV.map(([num, label, vw]) => ({ num, label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
+    const mobileNav = [['Inicio', 'cover'], ['Valor', 'p1'], ['Flujos', 'p2'], ['Riesgo', 'p3'], ['Más', 'annex']].map(([label, vw]) => ({ label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
+    const exportItems = [
+      { label: 'PDF · Resumen ejecutivo', desc: 'Valor, flujos, costo de capital y sensibilidad', onClick: () => this.print('summary') },
+      { label: 'PDF · Reporte completo', desc: 'Resumen + todos los anexos y la validación', onClick: () => this.print('full') },
+      { label: 'Excel (.xlsx)', desc: 'Resumen, supuestos, FCF, WACC, sensibilidad, validación', onClick: () => { this.setState({ menu: null }); window.XLSX ? (b.ok && VF.exportXLSX(ds, A, b)) : this.flash('Excel aún no disponible'); } },
+      { label: 'CSV', desc: 'Datos financieros normalizados', onClick: () => { this.setState({ menu: null }); b.ok && VF.exportCSV(ds, b); } },
+      { label: 'Dataset ValuFlow (.json)', desc: 'Para reabrir esta valuación en otra computadora', onClick: () => { this.setState({ menu: null }); VF.exportJSON(ds, S.A); } }
+    ];
+
+    // ----- Página 01 -----
+    let track = {}, football = { rows: [] }, wf = { steps: [] }, kpis = [], insights = [];
+    const ms = c.methods || [];
+    if (b.ok) {
+      const m = ds.market || {}, pts = [b.value, b.price, m.consensus, m.low52, m.high52].filter(x => x > 0);
+      const mn = Math.min(...pts) * 0.9, mx = Math.max(...pts) * 1.06, pos = x => ((x - mn) / (mx - mn) * 100).toFixed(2) + '%';
+      const lo = Math.min(b.value, b.price || b.value), hi = Math.max(b.value, b.price || b.value);
+      track = { has52: !!(m.low52 && m.high52), lo52: pos(m.low52 || 0), w52: m.low52 ? ((m.high52 - m.low52) / (mx - mn) * 100).toFixed(2) + '%' : '0%', hasCons: !!m.consensus, cons: pos(m.consensus || 0), consTxt: m.consensus ? f.cur(m.consensus) : '', price: b.price ? pos(b.price) : '0%', value: rv ? pos(b.value) : (b.price ? pos(b.price) : '0%'), segL: pos(lo), segW: rv ? ((hi - lo) / (mx - mn) * 100).toFixed(2) + '%' : '0%', minTxt: f.cur(mn), maxTxt: f.cur(mx) };
+      const all = []; ms.forEach(x => { [x.value, x.lo, x.hi].forEach(y => { if (y > 0) all.push(y); }); }); if (b.price) all.push(b.price);
+      const fmn = Math.floor(Math.min(...all) * 0.92), fmx = Math.ceil(Math.max(...all) * 1.04), fp = x => ((x - fmn) / (fmx - fmn) * 100).toFixed(2) + '%';
+      football = { priceLeft: b.price ? fp(b.price) : '0%', scaleTxt: 'Escala ' + f.cur(fmn, 0) + ' – ' + f.cur(fmx, 0), rows: ms.map((x, i) => ({ label: x.label, sub: x.sub, weight: x.main ? 700 : 500, hasBar: x.lo != null && x.hi != null, barLeft: x.lo != null ? fp(Math.min(x.lo, x.hi)) : '0%', barWidth: x.lo != null ? (rv ? (Math.abs(x.hi - x.lo) / (fmx - fmn) * 100).toFixed(2) + '%' : '0%') : '0%', barBg: x.main ? 'var(--color-accent)' : x.ref ? 'var(--color-neutral-300)' : 'var(--color-accent-300)', hasDot: x.value != null, dotLeft: x.value != null ? fp(x.value) : '0%', dotBg: x.main ? 'var(--color-accent-900)' : x.ref ? 'var(--color-neutral-700)' : 'var(--color-accent-700)', valueTxt: x.value != null ? f.cur(x.value) : '', rangeTxt: x.lo != null ? f.cur(x.lo) + ' – ' + f.cur(x.hi) : (x.ref ? 'Referencia' : ''), color: x.main ? ACC : 'var(--color-text)', delay: (i * 90) + 'ms' })) };
+      const st = []; const br = ds.valuation.bridge;
+      st.push({ label: 'VP FCF ' + b.rows[0].year + '–' + b.rows[b.rows.length - 1].year, v: b.pvSum }, { label: b.mult ? 'VP valor terminal (ponderado)' : 'VP valor terminal', v: b.pvTvW }, { label: b.roll ? 'EV al cierre 2025' : 'Enterprise Value', total: b.evW });
+      if (b.roll) st.push({ label: 'Capitalización a 2T26', v: b.roll.capGain }, { label: 'FCF generado 1S26', v: b.roll.fcfGenerated }, { label: 'EV al 2T26', total: b.roll.ev2 }, { label: 'Deuda bursátil y bancaria', v: -b.roll.debt }, { label: 'Arrendamientos', v: -b.roll.lease }, { label: 'Efectivo', v: b.roll.cash }, { label: 'Equity al 2T26', total: b.roll.eq2 }, { label: 'Capitalización a Ke', v: b.roll.keGain }, { label: 'Equity a la fecha de valuación', total: b.roll.eq3 });
+      else { st.push({ label: 'Deuda', v: -br.debt }); if (br.lease) st.push({ label: 'Arrendamientos', v: -br.lease }); st.push({ label: 'Efectivo', v: br.cash }, { label: 'Equity Value', total: b.eqClose }); }
+      let cum = 0; st.forEach(s => { if (s.total != null) { s.a = 0; s.z = s.total; cum = s.total; } else { s.a = cum; s.z = cum + s.v; cum = s.z; } });
+      const wmax = Math.max(...st.map(s => Math.max(s.a, s.z))) * 1.08;
+      wf = { minW: (st.length * 78) + 'px', note: '÷ ' + f.n(b.shares, 1) + ' mm de acciones = ' + f.cur(b.value) + ' por acción', steps: st.map((s, i) => { const lo = Math.min(s.a, s.z), hi = Math.max(s.a, s.z); const isT = s.total != null, neg = !isT && s.v < 0; return { label: s.label, valTxt: (isT ? '' : (neg ? '−' : '+')) + f.m(Math.abs(isT ? s.total : s.v), 0), bottom: (lo / wmax * 100).toFixed(2) + '%', height: rv ? ((hi - lo) / wmax * 100).toFixed(2) + '%' : '0%', labelBottom: rv ? (hi / wmax * 100).toFixed(2) + '%' : (lo / wmax * 100).toFixed(2) + '%', op: rv ? 1 : 0, bg: isT ? ACC : neg ? 'color-mix(in srgb, var(--neg) 70%, white)' : 'var(--color-accent-300)', border: 'none', color: isT ? 'var(--color-accent-800)' : neg ? NEG : 'var(--color-text)', delay: (i * 70) + 'ms' }; }) };
+      kpis = [
+        { label: 'WACC', kind: 'Supuesto', value: f.p(b.wacc), unit: '', desc: (A.waccMode === 'iterated' ? 'Iterado al valor DCF. ' : A.waccMode === 'market' ? 'A valor de mercado. ' : 'Manual. ') + 'Tasa para descontar los FCF.', onClick: () => this.setState({ drawer: 'wacc' }) },
+        { label: 'Crecimiento perpetuo', kind: 'Supuesto', value: f.p(b.g), unit: '', desc: 'Crecimiento de los flujos después del periodo explícito.', onClick: () => this.setState({ drawer: 'tv' }) },
+        { label: 'Enterprise Value', kind: 'Cálculo', value: f.m(b.ev), unit: mu, desc: b.roll ? 'Al 2T26 · ' + Math.round(b.wG * 100) + '% Gordon / ' + Math.round((1 - b.wG) * 100) + '% múltiplo.' : 'VP de FCF + VP del valor terminal.', onClick: () => this.setState({ drawer: 'ev' }) },
+        { label: 'Equity Value', kind: 'Resultado', value: f.m(b.eqVal), unit: mu, desc: 'Valor para los accionistas' + (b.roll ? ' a la fecha de valuación.' : '.'), onClick: () => this.setState({ drawer: 'value' }) },
+        { label: 'Peso del valor terminal', kind: 'Cálculo', value: f.p(b.tvWeightG, 1), unit: '', desc: 'Proporción del EV (Gordon) que proviene del valor terminal.', onClick: () => this.setState({ drawer: 'tv' }) },
+        { label: 'FCF ' + b.rows[0].year, kind: 'Cálculo', value: f.m(b.rows[0].fcf), unit: mu, desc: 'Flujo libre disponible para proveedores de capital.', onClick: () => this.go('p2') }
+      ];
+      insights = (c.ins || []).map((x, i) => ({ ...x, op: rv ? 1 : 0, tr: rv ? 'none' : 'translateY(12px)', delay: (200 + i * 90) + 'ms' }));
+    }
+
+    // ----- Página 02 -----
+    let fcfChart = { cols: [] }, fcfSel = { items: [] }, sales = { legend: [], yl: [], paths: [], dots: [], xl: [] }, tv = {}, weights = [], extNet = [], extTop = [], methodSteps = [];
+    if (b.ok) {
+      const B = ds.forecast.base, R = b.rows, mxF = Math.max(...R.map(x => x.fcf), B.fcf || 0) * 1.12;
+      const sel = Math.min(S.fcfSel, R.length - 1);
+      fcfChart.cols = [{ label: ds.forecast.baseYear, fcfTxt: B.fcf != null ? f.m(B.fcf) : '—', pvTxt: '—', hF: rv && B.fcf ? (B.fcf / mxF * 100).toFixed(1) + '%' : '0%', hP: '0%', fBg: 'transparent', fBorder: '1px dashed var(--color-neutral-600)', bg: 'transparent', weight: 500, delay: '0ms', delay2: '0ms', onClick: () => { } }]
+        .concat(R.map((x, i) => ({ label: x.year, fcfTxt: f.m(x.fcf), pvTxt: f.m(x.pv), hF: rv ? (x.fcf / mxF * 100).toFixed(1) + '%' : '0%', hP: rv ? (x.pv / mxF * 100).toFixed(1) + '%' : '0%', fBg: 'var(--color-accent-300)', fBorder: 'none', bg: i === sel ? 'var(--color-accent-100)' : 'transparent', weight: i === sel ? 700 : 500, delay: ((i + 1) * 90) + 'ms', delay2: ((i + 1) * 90 + 300) + 'ms', onClick: () => this.setState({ fcfSel: i }) })));
+      fcfChart.note = 'Suma del valor presente ' + f.m(b.pvSum) + ' ' + mu + ' (' + f.p(1 - b.tvWeightG, 1) + ' del EV Gordon). ' + (B.fcf != null ? ds.forecast.baseYear + ' = flujo actual de referencia.' : '');
+      const x = R[sel], mxB = Math.max(x.ebit, x.nopat + x.da) * 1.05, pc = v => (v / mxB * 100).toFixed(2) + '%';
+      const it = [['EBIT', 0, x.ebit, 'add'], ['(−) Impuestos', x.nopat, x.ebit, 'sub'], ['NOPAT', 0, x.nopat, 'tot'], ['(+) D&A', x.nopat, x.nopat + x.da, 'add'], ['(−) Capex', x.nopat + x.da - x.capex, x.nopat + x.da, 'sub'], ['(−) ΔNWC', Math.min(x.fcf, x.fcf + x.dNwc), Math.max(x.fcf, x.fcf + x.dNwc), x.dNwc > 0 ? 'sub' : 'add'], ['FCF', 0, x.fcf, 'tot']];
+      const vals = [x.ebit, -x.tax, x.nopat, x.da, -x.capex, -x.dNwc, x.fcf];
+      fcfSel = { year: x.year, tax: f.p(x.taxRate), margin: f.p(x.margin), growth: f.pp(x.growth), items: it.map(([l, a, z, k], i) => ({ label: l, left: pc(Math.max(0, a)), width: rv ? pc(Math.abs(z - a)) : '0%', bg: k === 'tot' ? ACC : k === 'sub' ? 'color-mix(in srgb, var(--neg) 70%, white)' : 'var(--color-accent-300)', valTxt: (k === 'tot' ? '' : vals[i] < 0 ? '−' : '+') + f.m(Math.abs(vals[i])), color: k === 'tot' ? ACC : vals[i] < 0 ? NEG : 'var(--color-text)', weight: k === 'tot' ? 700 : 400 })) };
+      const yrs = [ds.forecast.baseYear].concat(R.map(r => r.year)), X0 = 80, X1 = 600, xs = i => X0 + i * (X1 - X0) / (yrs.length - 1);
+      const series = [{ label: 'Proyección final', color: ACC, dash: 'solid', w: 3, data: [B.revenue].concat(R.map(r => r.revenue)), solid: true }];
+      if (ds.method) { series.push({ label: 'Supuestos constantes (3.5%)', color: 'var(--color-neutral-600)', dash: 'dashed', w: 2, data: [B.revenue].concat(ds.method.salesConst) }); series.push({ label: 'Mínimos cuadrados (LTM)', color: 'var(--color-accent-400)', dash: 'dotted', w: 2, data: [ds.method.salesLTM].concat(ds.method.salesLS) }); }
+      const allS = series.flatMap(s => s.data), ymn = Math.min(...allS) * 0.96, ymx = Math.max(...allS) * 1.02, ys = v => 248 - (v - ymn) / (ymx - ymn) * 220;
+      sales = {
+        legend: series.map(s => ({ label: s.label, color: s.color, dash: s.dash })), splitX: ((xs(0) + xs(1)) / 2).toFixed(1), splitTx: ((xs(0) + xs(1)) / 2 + 6).toFixed(1),
+        yl: [0, 1, 2, 3].map(k => { const val = ymn + (ymx - ymn) * k / 3; return { y: ys(val).toFixed(1), ty: (ys(val) + 4).toFixed(1), t: f.m(val / 1000, 0) + 'k' }; }),
+        paths: series.map(s => ({ d: s.data.map((v, i) => (i ? 'L' : 'M') + xs(i).toFixed(1) + ' ' + ys(v).toFixed(1)).join(' '), color: s.color, w: s.w, dash: s.solid ? '1000' : (s.dash === 'dashed' ? '7 6' : '2 5'), off: s.solid ? (rv ? 0 : 1000) : 0 })),
+        dots: series[0].data.map((v, i) => ({ x: xs(i).toFixed(1), y: ys(v).toFixed(1), ty: (ys(v) - 12).toFixed(1), t: f.m(v / 1000, 1) + 'k' })),
+        xl: yrs.map((y, i) => ({ x: xs(i).toFixed(1), t: y, fw: i === 0 ? 700 : 400 })),
+        note: ds.method ? 'Ventas 2030E: ' + f.m(R[R.length - 1].revenue) + ' ' + mu + ' con la proyección final, frente a ' + f.m(ds.method.salesConst[4]) + ' con supuestos constantes y ' + f.m(ds.method.salesLS[4]) + ' con la tendencia lineal pura.' : 'Crecimiento constante de ' + f.p(R[0].growth) + ' anual a partir del último año reportado.'
+      };
+      if (ds.method) {
+        const M = ds.method, ls = M.leastSquares;
+        methodSteps = [
+          { n: '01', title: 'Mínimos cuadrados', text: 'Tendencia lineal sobre cinco trimestres (2T25–2T26) para ventas, costos, impuestos, D&A, capex y capital de trabajo.', meta: 'R²: ventas ' + ls[0].r2.toFixed(3) + ' · D&A ' + ls[3].r2.toFixed(3) + ' · capital de trabajo ' + ls[5].r2.toFixed(3) },
+          { n: '02', title: 'Variables externas', text: M.external.length + ' variables macroeconómicas, regulatorias y sectoriales ajustan la trayectoria de ventas, costos y capex.', meta: 'Ajuste neto: ventas ' + M.externalNet.sales.toFixed(2) + '% · costos +' + M.externalNet.costs.toFixed(2) + '% · capex +' + M.externalNet.capex.toFixed(2) + '%' },
+          { n: '03', title: 'Ponderación', text: 'La proyección final combina ambos métodos: ' + M.weightsExternal[0] + '% variables externas en ' + ds.forecast.years[0] + ', hasta ' + M.weightsExternal[4] + '% en ' + ds.forecast.years[4] + '.', meta: 'Crecimiento final: ' + M.growthFinal[0].toFixed(2) + '% → ' + M.growthFinal[4].toFixed(2) + '%' }
+        ];
+        weights = M.weightsExternal.map((w, i) => ({ year: ds.forecast.years[i], ext: rv ? w + '%' : '0%', extTxt: w + '%', lsTxt: (100 - w) + '%', delay: (i * 80) + 'ms' }));
+        extNet = [{ k: 'Ventas', v: M.externalNet.sales.toFixed(2) + '%', color: M.externalNet.sales < 0 ? NEG : POS }, { k: 'Costos', v: '+' + M.externalNet.costs.toFixed(2) + '%', color: NEG }, { k: 'Capex', v: '+' + M.externalNet.capex.toFixed(2) + '%', color: NEG }];
+        extTop = M.external.filter(e => e[5]).sort((a, z) => Math.abs(z[5]) - Math.abs(a[5])).slice(0, 8).map(e => { const w = Math.abs(e[5]) / 0.5 * 46; return { name: e[1], cat: e[0], v: (e[5] > 0 ? '+' : '') + e[5].toFixed(2) + '%', left: e[5] < 0 ? (50 - (rv ? w : 0)) + '%' : '50%', width: rv ? w + '%' : '0%', color: e[5] < 0 ? NEG : POS }; });
+      } else {
+        methodSteps = [
+          { n: '01', title: 'Base del archivo', text: 'Último año reportado: ventas ' + f.m(B.revenue) + ' ' + mu + ', margen EBIT ' + f.p(B.ebit / B.revenue) + '.', meta: 'Fuente: ' + (ds.source.file || 'captura') },
+          { n: '02', title: 'Drivers constantes', text: 'Crecimiento ' + f.p(R[0].growth) + ', D&A, capex y capital de trabajo como porcentaje de ventas, tasa ' + f.p(R[0].taxRate) + '.', meta: 'Editables en el Laboratorio' },
+          { n: '03', title: 'Mismo motor', text: 'WACC iterado al valor DCF y valor terminal por Gordon' + (b.mult ? ' y múltiplo EV/EBITDA.' : '.'), meta: 'Sin código específico por empresa' }
+        ];
+      }
+      const last = R[R.length - 1];
+      tv = { lastYear: last.year, fcfN: f.m(last.fcf), g: f.p(b.g), denom: f.p(b.wacc - b.g), tv: f.m(b.tvG), pv: f.m(b.pvTvG), wExp: rv ? ((1 - b.tvWeightG) * 100).toFixed(1) + '%' : '0%', expTxt: f.p(1 - b.tvWeightG, 1), tvTxt: f.p(b.tvWeightG, 1) };
+    }
+
+    // ----- Página 03 -----
+    let wb = { keBlocks: [], kdBlocks: [] }, iter = { yl: [], pts: [], stats: [] }, heat = { steps: [], cols: [], rows: [] }, torn = { rows: [] }, scen = [];
+    if (b.ok) {
+      const W = b.W, useM = A.waccMode === 'market', src = useM ? W.market : (W.iterated || W.market);
+      const blk = (k, vv, s, op, hl) => ({ k, v: vv, s, op, bg: hl ? ACC : 'transparent', color: hl ? 'var(--color-bg)' : 'var(--color-text)', border: hl ? ACC : 'var(--color-divider)' });
+      wb = {
+        modeLabel: A.waccMode === 'iterated' ? 'Iterado al valor DCF' : useM ? 'Valor de mercado' : 'Manual · ' + f.p(b.wacc),
+        keBlocks: [blk('Tasa libre de riesgo', f.p(W.rf), 'Bono M 10 años', '+'), blk('Beta apalancada βL', src.beta.toFixed(3), 'βU ' + W.betaU.toFixed(2) + ' · D/E ' + f.x(src.de, 3), '×'), blk('Prima de riesgo', f.p(W.prm), 'PRM aplicada', '='), blk('Ke', f.p(src.ke), 'Costo del capital', '', true)],
+        kdBlocks: [blk('Kd antes de impuestos', f.p(src.kd), useM ? 'Gastos financieros / deuda' : 'Tasa implícita proyectada', '× (1 −'), blk('Tasa fiscal', f.p(src.tax), 'Escudo fiscal', ') ='), blk('Kd(1 − t)', f.p(src.kdAT), 'Costo de la deuda', '', true)],
+        structLabel: useM ? 'capital a valor de mercado (' + f.m(src.E) + ' ' + mu + ')' : 'capital al valor DCF (' + f.m(src.E) + ' ' + mu + ')', wEW: rv ? (src.wE * 100).toFixed(1) + '%' : '50%', wE: f.p(src.wE, 1), wD: f.p(src.wD, 1), ke: f.p(src.ke), kdat: f.p(src.kdAT), wacc: f.p(b.wacc)
+      };
+      const seq = W.iters.length ? [W.iters[0].win].concat(W.iters.slice(0, 6).map(i => i.wout)) : [b.wacc];
+      const imn = Math.min(...seq) - 0.002, imx = Math.max(...seq) + 0.002, iy = v => 150 - (v - imn) / (imx - imn) * 120, ix = i => 60 + i * (280 / Math.max(1, seq.length - 1));
+      iter = { poly: seq.map((v2, i) => ix(i).toFixed(1) + ',' + iy(v2).toFixed(1)).join(' '), pts: seq.map((v2, i) => ({ x: ix(i).toFixed(1), y: iy(v2).toFixed(1), ty: (iy(v2) - 10).toFixed(1), t: (v2 * 100).toFixed(2), k: i === 0 ? 'Mercado' : 'It. ' + i })), yl: [0, 1, 2].map(k => { const vv = imn + (imx - imn) * k / 2; return { y: iy(vv).toFixed(1), ty: (iy(vv) + 3).toFixed(1), t: (vv * 100).toFixed(2) + '%' }; }), stats: [{ k: 'WACC de mercado', v: f.p(W.market.wacc) }, { k: 'WACC convergido', v: W.iterated ? f.p(W.iterated.wacc) : '—' }, { k: 'Iteraciones', v: String(W.iters.length) }] };
+      const G = c.grid; heat = {
+        steps: [0.25, 0.5, 1].map(s => ({ t: s.toFixed(2) + ' pp', onClick: () => this.setState({ step: s }), bg: S.step === s ? ACC : 'transparent', color: S.step === s ? 'var(--color-bg)' : 'var(--color-text)' })),
+        cols: G.gs.map(x => (x).toFixed(2) + '%'),
+        rows: G.ws.map((w, i) => ({ head: w.toFixed(2) + '%', cells: G.cells[i].map((val, j) => { if (val == null) return { t: 'n/a', bg: 'var(--color-neutral-200)', outline: 'none', weight: 400 }; const d = b.price ? val / b.price - 1 : 0, k = Math.min(1, Math.abs(d) / 0.25), pct = Math.round(8 + 30 * k); return { t: f.cur(val), bg: 'color-mix(in srgb, ' + (d >= 0 ? 'var(--pos)' : 'var(--neg)') + ' ' + pct + '%, transparent)', outline: i === 2 && j === 2 ? '2px solid var(--color-text)' : 'none', weight: i === 2 && j === 2 ? 700 : 500 }; }) }))
+      };
+      const T = c.torn || [], dev = Math.max(...T.map(t => Math.max(Math.abs((t.low ?? b.value) - b.value), Math.abs((t.high ?? b.value) - b.value))), 0.01);
+      torn.rows = T.map((t, i) => { const lo = Math.min(t.low, t.high), hi = Math.max(t.low, t.high); return { label: t.label, stepTxt: t.step + (t.unit === 'x' ? 'x' : ' pp'), rangeTxt: f.cur(t.range), lW: rv ? ((b.value - lo) / dev * 44).toFixed(1) + '%' : '0%', rW: rv ? ((hi - b.value) / dev * 44).toFixed(1) + '%' : '0%', lowTxt: f.cur(lo), highTxt: f.cur(hi), delay: (i * 70) + 'ms' }; });
+      scen = (c.scen || []).map(s => ({ label: s.label, desc: s.desc, valTxt: f.cur(s.value), upTxt: s.upside != null ? f.pp(s.upside) : '—', upColor: s.upside >= 0 ? POS : NEG, vColor: s.key === 'base' ? ACC : 'var(--color-text)', bg: 'transparent' }));
+    }
+
+    // ----- Laboratorio -----
+    const D = c.D, ch = k => Math.abs((S.A[k] ?? 0) - (D[k] ?? 0)) > 1e-9 ? '●' : '';
+    const pp = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2) + ' pp';
+    const ctl = (k, label, min, max, step, fmt, impact, source) => ({ label, min, max, step, value: S.A[k] ?? 0, valTxt: fmt(S.A[k] ?? 0), onChange: (e) => this.setA({ [k]: parseFloat(e.target.value) }), impact, source, dot: ch(k) });
+    const pct = v => (+v).toFixed(2) + '%';
+    const srcX = ds.builtIn ? 'Excel' : 'Archivo';
+    const groups = [
+      { title: 'Proyección', desc: 'Cambios en puntos porcentuales sobre la proyección fuente, aplicados a todos los años', controls: [ctl('dGrowth', 'Δ Crecimiento anual de ventas', -3, 3, 0.25, pp, 'Afecta ventas, EBIT y FCF', srcX + ' · proyección'), ctl('dMargin', 'Δ Margen EBIT', -1, 1, 0.05, pp, 'Afecta EBIT, NOPAT y FCF', srcX + ' · proyección'), ctl('dCapex', 'Δ Capex (% ventas)', -1, 1, 0.05, pp, 'Reduce el FCF uno a uno', srcX + ' · proyección'), ctl('dTax', 'Δ Tasa de impuestos sobre EBIT', -6, 6, 0.5, pp, 'Afecta NOPAT', srcX + ' · proyección')] },
+      { title: 'Valor terminal', desc: 'Afectan principalmente el valor terminal', controls: [ctl('g', 'Crecimiento perpetuo (g)', 0.5, 6, 0.05, pct, 'Afecta principalmente el valor terminal', srcX + ' · supuesto terminal')].concat(A.exitMultiple ? [ctl('exitMultiple', 'Múltiplo de salida EV/EBITDA', 3, 12, 0.05, v => (+v).toFixed(2) + 'x', 'Valor terminal por múltiplos', ds.builtIn ? 'Excel · mediana comparables −10%' : 'Archivo · EV/EBITDA actual'), ctl('wGordon', 'Peso del método Gordon', 0, 100, 5, v => Math.round(v) + '%', 'Ponderación Gordon vs. múltiplo', srcX)] : []) },
+      { title: 'Costo de capital', desc: 'Cambian Ke, el WACC y el descuento de todos los flujos', controls: (A.waccMode === 'manual' ? [ctl('waccManual', 'WACC manual', 6, 20, 0.05, pct, 'Descuento de todos los flujos', 'Supuesto manual')] : []).concat([ctl('rf', 'Tasa libre de riesgo (Rf)', 2, 15, 0.01, pct, 'Sube Ke y el WACC', srcX + ' · Bono M 10 años'), ctl('prm', 'Prima de riesgo de mercado', 2, 10, 0.01, pct, 'Sube Ke y el WACC', srcX + ' · PRM'), ctl('betaU', 'Beta desapalancada (βU)', 0.3, 1.8, 0.01, v => (+v).toFixed(2), 'Riesgo sistemático', srcX + ' · beta sectorial'), ctl('kdPre', 'Kd antes de impuestos', 2, 20, 0.05, pct, 'Costo de la deuda (WACC iterado)', srcX + ' · tasa implícita'), ctl('taxShield', 'Tasa del escudo fiscal', 0, 40, 0.1, pct, 'Kd después de impuestos y βL', srcX)]) }
+    ];
+    const b0 = c.base0;
+    const lab = {
+      hasAlt: !!ds.altForecasts,
+      fcOpts: [['Proyección final', 'final']].concat(ds.altForecasts ? Object.keys(ds.altForecasts).map(k => ['Supuestos constantes', k]) : []).map(([t, k]) => ({ t, onClick: () => { const Dd = VF.defaults(ds); this.setA(k === 'final' ? Dd : { ...Dd, ...ds.altForecasts[k].overrides, forecastKey: k }); }, bg: (S.A.forecastKey || 'final') === k ? ACC : 'transparent', color: (S.A.forecastKey || 'final') === k ? 'var(--color-bg)' : 'var(--color-text)' })),
+      waccOpts: [['Iterado', 'iterated'], ['Mercado', 'market'], ['Manual', 'manual']].map(([t, k]) => ({ t, onClick: () => this.setA(k === 'manual' ? { waccMode: k, waccManual: +(b.ok ? b.wacc * 100 : 12).toFixed(2), keFixed: b.ok ? b.ke * 100 : null } : { waccMode: k, keFixed: null }), bg: S.A.waccMode === k ? ACC : 'transparent', color: S.A.waccMode === k ? 'var(--color-bg)' : 'var(--color-text)' })),
+      scenOpts: [['Pesimista', 1], ['Base', 0], ['Optimista', -1]].map(([t, s]) => ({ t, onClick: () => { const Dd = VF.defaults(ds); if (!s || !b0.ok) { this.setA(Dd); return; } this.setA({ ...Dd, waccMode: 'manual', waccManual: +(b0.wacc * 100 + s * 0.5).toFixed(4), keFixed: b0.ke * 100, g: Dd.g - s * 0.5, dGrowth: -s, dMargin: -s * 0.25 }); } })),
+      groups, price: S.A.price ?? '', shares: S.A.shares ?? '',
+      onPrice: e => this.setA({ price: parseFloat(e.target.value) }), onShares: e => this.setA({ shares: parseFloat(e.target.value) }),
+      delta: b.ok && b0.ok ? (b.value - b0.value >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b0.value).toFixed(2) : '—', deltaColor: b.ok && b0.ok ? (b.value - b0.value >= 0 ? POS : NEG) : 'var(--color-text)',
+      stats: b.ok ? [{ k: 'Enterprise Value', v: f.m(b.ev) }, { k: 'Equity Value', v: f.m(b.eqVal) }, { k: 'WACC', v: f.p(b.wacc) }, { k: 'Peso valor terminal', v: f.p(b.tvWeightG, 1) }] : []
+    };
+
+    // ----- Anexos -----
+    const defs = this.annexDefs(ds), aid = defs.find(d => d[0] === S.annexId) ? S.annexId : defs[0][0];
+    const annexNav = defs.map(([id, code, title]) => ({ code, title, onClick: () => this.setState({ annexId: id }, () => { try { window.scrollTo({ top: 0 }); } catch (e) { } }), bg: id === aid ? 'var(--color-accent-100)' : 'transparent', border: id === aid ? ACC : 'transparent', fw: id === aid ? 600 : 400 }));
+    const full = pr === 'full';
+    const annexTables = v.annex ? this.annexTables(c, full ? 'all' : aid) : [];
+    const codeOf = id => (defs.find(d => d[0] === id) || [])[1];
+    const ax = { empresa: v.annex && (full || aid === 'empresa'), valid: v.annex && (full || aid === 'valid'), method: v.annex && (full || aid === 'method'), empCode: codeOf('empresa'), valCode: codeOf('valid'), metCode: codeOf('method') };
+    const RS = S.research[ds.id] || null, applied = RS ? (RS.items || []).filter(i => i.status === 'applied') : [];
+    const m = ds.market || {};
+    const facts = [['Ticker', P.ticker], ['Mercado', P.exchange], ['País', P.country], ['Moneda', P.currency], ['Sector', P.sector], ['Fundación', P.founded], ['Sede', P.hq], ['Bursatilidad', P.listed], ['Tiendas (2T26)', P.stores ? f.n(P.stores) : null], ['Colaboradores', P.employees ? f.n(P.employees) : null], ['Acciones (millones)', m.shares ? f.n(m.shares, 1) : null]].filter(x => x[1]).map(([k, vv]) => ({ k, v: vv }))
+      .concat(applied.filter(i => i.section !== 'Historia').map(i => ({ k: i.field, v: i.value })));
+    const gv = ds.governance;
+    const emp = {
+      hasDesc: !!P.description, desc: P.description, facts, hasFormats: !!(P.formats && P.formats.length), formats: P.formats || [],
+      timeline: (ds.timeline || []).map(t => ({ date: t[0], title: t[1], desc: t[2], src: t[3] })).concat(applied.filter(i => i.section === 'Historia').map(i => ({ date: i.date || '', title: i.field, desc: i.value, src: 'Investigación · ' + (i.url || '') }))),
+      hasGov: !!gv, gov: gv ? { board: gv.board, patrimonial: gv.patrimonial, related: gv.related, independent: gv.independent, ind: gv.independencePct.toFixed(2) + '%', best: gv.bestPractice + '%', pW: (gv.patrimonial / gv.board * 100) + '%', rW: (gv.related / gv.board * 100) + '%', chair: gv.chair, ceo: gv.ceo, committees: gv.committees.map(x => ({ k: x[0], v: x[1] })), controls: gv.controls } : {},
+      market: [['Precio', m.price ? f.cur(m.price) : null], ['Acciones en circulación', m.shares ? f.n(m.shares, 1) + ' mm' : null], ['Capitalización de mercado', m.marketCap ? f.m(m.marketCap) + ' ' + mu : null], ['P/U', m.pe ? f.x(m.pe) : null], ['P/VL', m.pbv ? f.x(m.pbv) : null], ['Rendimiento por dividendo', m.divYield ? m.divYield.toFixed(2) + '%' : null], ['Variación 1 año', m.chg1y ? '+' + m.chg1y.toFixed(1) + '%' : null], ['Rango 52 semanas', m.low52 ? f.cur(m.low52) + ' – ' + f.cur(m.high52) : null], ['Consenso de analistas', m.consensus ? f.cur(m.consensus) + ' · ' + m.consensusLabel : null], ['Calificación crediticia', m.rating], ['Señal técnica · RSI (14)', m.technical ? m.technical + ' · ' + m.rsi : null]].filter(x => x[1]).map(([k, vv]) => ({ k, v: vv })),
+      hasDiv: !!(ds.dividends && ds.dividends.length), div: (ds.dividends || []).map(d => ({ a: d[0], b: d[1], c: '$' + d[2].toFixed(4) }))
+    };
+    emp.hasTimeline = emp.timeline.length > 0;
+    const res = { btn: RS && RS.status === 'loading' ? 'Investigando…' : (RS && RS.items && RS.items.length ? 'Investigar de nuevo' : 'Investigar con IA'), has: !!(RS && RS.items && RS.items.length), meta: RS ? 'Investigado el ' + (RS.date || '—') + ' · ' + (RS.via || '') + ' · fuente con fecha de consulta; verificar antes de aplicar.' : '', items: RS ? (RS.items || []).map(it => ({ ...it, date: it.date || '', url: it.url || '#', confidence: it.confidence || '—', pending: it.status === 'pending', stTxt: it.status === 'applied' ? '✓ Aplicada' : it.status === 'discarded' ? '— Descartada' : 'Pendiente', stColor: it.status === 'applied' ? POS : 'var(--color-neutral-700)', onApply: () => this.setResearchItem(it.id, 'applied'), onDiscard: () => this.setResearchItem(it.id, 'discarded') })) : [] };
+    const VC = c.valid || [];
+    const icon = s => s === 'pass' ? '✓' : s === 'review' ? '⚠' : '–', stl = s => s === 'pass' ? 'Validado' : s === 'review' ? 'Revisar' : 'N/A', col = s => s === 'pass' ? POS : s === 'review' ? 'var(--warn)' : 'var(--color-neutral-700)';
+    const gnames = [...new Set(VC.map(x => x.group))];
+    const val = {
+      note: c.isBase ? (ds.expected ? 'Resultados del motor comparados contra el Excel definitivo (tolerancia de redondeo).' : 'Comprobaciones internas del motor.') : 'Supuestos modificados: la comparación contra el Excel se habilita al restaurar la base.',
+      summary: [{ k: 'Validado', v: VC.filter(x => x.status === 'pass').length, color: POS }, { k: 'Revisar', v: VC.filter(x => x.status === 'review').length, color: 'var(--warn)' }],
+      groups: gnames.map(g => ({ name: g === 'Excel' ? 'Comparación contra el Excel · calculado vs. Excel' : g, items: VC.filter(x => x.group === g).map(x => ({ icon: icon(x.status), st: stl(x.status), color: col(x.status), label: x.label, detail: x.detail || '', calc: x.calc || '', exp: x.exp ? 'Excel ' + x.exp : '' })) })),
+      hasDisc: !!(ds.discrepancies && ds.discrepancies.length), disc: (ds.discrepancies || []).map(d => ({ topic: d.topic, aK: d.a[0], aV: d.a[1], bK: d.b[0], bV: d.b[1], used: d.used, note: d.note }))
+    };
+    const formulas = [
+      ['CAPM', 'Ke = Rf + βL × PRM', 'Costo del capital propio.'], ['Beta apalancada', 'βL = βU × [1 + (1 − t) × D/E]', 'Ajusta el riesgo sistemático por la estructura de capital.'],
+      ['WACC', 'WACC = E/(D+E)·Ke + D/(D+E)·Kd(1−t)', 'Tasa de descuento de los FCF.'], ['WACC iterado', 'E = EV(WACC) − deuda neta → D/E → βL → Ke → WACC', 'Se repite hasta converger.'],
+      ['NOPAT', 'NOPAT = EBIT × (1 − t)', 'Utilidad operativa después de impuestos.'], ['FCF', 'FCF = NOPAT + D&A − Capex − ΔNWC', 'Flujo libre para proveedores de capital.'],
+      ['Valor terminal · Gordon', 'TV = FCFₙ × (1 + g) / (WACC − g)', 'Flujos posteriores al periodo explícito.'], ['Valor terminal · múltiplo', 'TV = EBITDAₙ × múltiplo EV/EBITDA', 'Método de salida por comparables.'],
+      ['Enterprise Value', 'EV = Σ FCFₜ/(1+WACC)ᵗ + TV/(1+WACC)ⁿ', 'Valor de la operación.'], ['Ponderación', 'EV = w·EV Gordon + (1 − w)·EV múltiplo', 'Combina ambos métodos.'],
+      ['Fecha de valuación', 'EV₂ = EV × (1+WACC)^t₁ + FCF generado; E = (EV₂ − D + C) × (1+Ke)^t₂', 'Lleva el valor del cierre a la fecha de valuación.'], ['Valor por acción', 'Valor = Equity / acciones; Potencial = Valor / Precio − 1', 'Resultado e interpretación.']
+    ].map((x, i) => ({ n: String(i + 1).padStart(2, '0'), k: x[0], f: x[1], d: x[2] }));
+    const sources = (ds.sources || []).map(s => ({ a: s[0], b: s[1], c: s[2] }));
+
+    // ----- Mis valuaciones -----
+    const libCards = companyList.map(({ x, rr }) => ({ name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + ' · ' + x.profile.currency, hasLogo: !!x.profile.logo, noLogo: !x.profile.logo, logo: window.vfRes(x.profile.logo) || '', brand: x.profile.brand || ACC, initials: (x.profile.short || x.profile.name).split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase(), tag: x.builtIn ? 'Caso presentado' : 'Importada', tagCls: x.builtIn ? 'tag-accent' : 'tag-neutral', valTxt: rr.ok ? f.cur(rr.value) : '—', upTxt: rr.ok && rr.upside != null ? f.pp(rr.upside) : '—', upColor: rr.ok && rr.upside >= 0 ? POS : NEG, created: (x.builtIn ? 'Modelo académico · ' : 'Creada ') + String(x.createdAt).slice(0, 10) + ' · ' + x.version, border: x.id === S.activeId ? ACC : 'var(--color-divider)', canDel: !x.builtIn,
+      onOpen: () => { this.switchCompany(x.id); this.go('p1'); },
+      onDup: () => { const cp = JSON.parse(JSON.stringify(x)); cp.id = 'c' + Date.now().toString(36); cp.builtIn = false; cp.profile.name = x.profile.name + ' (copia)'; cp.createdAt = new Date().toISOString(); cp.updatedAt = cp.createdAt; cp.version = 'Copia de ' + x.version; VF.store.setA(cp.id, VF.store.getA(x.id)); this.saveCompanies([...this.state.companies, cp]); this.flash('Valuación duplicada'); },
+      onJson: () => VF.exportJSON(x, x.id === S.activeId ? S.A : { ...VF.defaults(x), ...(VF.store.getA(x.id) || {}) }),
+      onDel: () => { if (!confirm('¿Eliminar la valuación de ' + x.profile.name + '?')) return; VF.store.setA(x.id, null); const list = this.state.companies.filter(y => y.id !== x.id); this.saveCompanies(list); if (S.activeId === x.id) this.switchCompany('soriana'); }
+    }));
+
+    // ----- Importación -----
+    const I = S.imp || this.newImp();
+    const STEPS = ['Archivo', 'Detectar', 'Mapear', 'Supuestos', 'Crear'];
+    const block = S.imp ? this.impBlock() : [];
+    let preview = null; if (S.imp && I.step === 5 && !block.length) { try { const dsx = this.impBuild(); preview = VF.run(dsx, VF.defaults(dsx)); } catch (e) { preview = null; } }
+    const setF = (k, val) => this.setImp({ fields: { ...this.state.imp.fields, [k]: val }, touched: { ...this.state.imp.touched, [k]: true } });
+    const PF = I.parsed ? I.parsed.fields : VF.FIELDS.map(F => ({ ...F, cands: [], conf: 'Sin dato', period: '—' }));
+    const imp = {
+      title: I.step === 1 ? '¿Cómo quieres comenzar?' : I.step === 2 ? 'Datos detectados' : I.step === 3 ? 'Revisar y mapear' : I.step === 4 ? 'Identidad y supuestos' : 'Crear valuación',
+      steps: STEPS.map((l, i) => ({ n: i + 1, label: l, bg: I.step === i + 1 ? ACC : I.step > i + 1 ? 'var(--color-accent-100)' : 'transparent', color: I.step === i + 1 ? 'var(--color-bg)' : I.step > i + 1 ? 'var(--color-accent-800)' : 'var(--color-neutral-700)' })),
+      s1: I.step === 1, s2: I.step === 2, s3: I.step === 3, s4: I.step === 4, s5: I.step === 5, parsing: !!I.parsing, hasError: !!I.error, error: I.error || '', dropBg: S.drag ? 'var(--color-accent-100)' : 'transparent',
+      meta: I.parsed ? [['Empresa', I.parsed.meta.name || 'No detectada'], ['Ticker', I.parsed.meta.ticker || 'No detectado'], ['Mercado', I.parsed.meta.exchange || 'No detectado'], ['Moneda', I.parsed.meta.currency || 'No detectada'], ['Unidades', I.parsed.meta.units || 'No detectadas'], ['Periodos', I.parsed.periods.length + ' detectados · ' + I.parsed.periods.slice(-4).join(', ')], ['Hojas', I.parsed.sheets.length + ' · ' + I.parsed.sheets.map(s => s.name).slice(0, 6).join(', ')], ['Archivo', I.parsed.fileName]].map(([k, vv]) => ({ k, v: vv })) : [],
+      coverage: I.parsed ? Math.round(I.parsed.coverage * 100) + '%' : '—', coverageTxt: I.parsed ? I.parsed.mapped + ' de ' + I.parsed.total + ' campos fueron identificados automáticamente con confianza alta o media.' : '',
+      sections: I.parsed ? I.parsed.detected.map(s => ({ name: s.name, icon: s.found ? '✓' : '—', color: s.found ? POS : 'var(--color-neutral-600)' })) : [],
+      fields: PF.map(F => { const has = I.fields[F.key] != null && I.fields[F.key] !== ''; const conf = I.touched[F.key] ? 'Manual' : F.conf; return { label: F.label, reqMark: F.req ? ' *' : '', sel: String(I.sel[F.key] ?? -1), options: (F.cands || []).map(o => ({ id: String(o.id), label: o.label + ' · ' + o.sheet + ' · ' + o.period })), onSel: (e) => { const id = +e.target.value; const cand = (F.cands || [])[id]; this.setImp({ sel: { ...this.state.imp.sel, [F.key]: id }, fields: { ...this.state.imp.fields, [F.key]: cand ? cand.value : null }, touched: { ...this.state.imp.touched, [F.key]: true } }); }, value: has ? I.fields[F.key] : '', onVal: (e) => setF(F.key, e.target.value === '' ? null : e.target.value), period: F.period || '—', conf, confCls: conf === 'Alta' ? 'tag-accent' : conf === 'Media' || conf === 'Manual' ? 'tag-neutral' : 'tag-outline', st: has ? (conf === 'Alta' || conf === 'Manual' ? '✓ Listo' : '⚠ Requiere revisión') : (F.req ? '✕ Falta' : '— Opcional'), stColor: has ? (conf === 'Alta' || conf === 'Manual' ? POS : 'var(--warn)') : (F.req ? NEG : 'var(--color-neutral-700)') }; }),
+      hasLogo: !!I.id.logo, noLogo: !I.id.logo, logo: window.vfRes(I.id.logo) || '', initials: (I.id.name || '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase(), logoTxt: I.logoTxt,
+      idFields: [['name', 'Nombre de la empresa', true, 'Microsoft Corporation'], ['ticker', 'Ticker', true, 'MSFT'], ['exchange', 'Mercado', false, 'NasdaqGS'], ['currency', 'Moneda', false, 'USD'], ['sector', 'Sector', false, 'Software'], ['domain', 'Sitio web', false, 'microsoft.com']].map(([k, l, req, ph]) => ({ label: l, reqMark: req ? ' *' : '', value: I.id[k] || '', ph, onChange: e => this.setImp({ id: { ...this.state.imp.id, [k]: e.target.value } }) })),
+      aFields: [['rf', 'Tasa libre de riesgo (%)', true], ['prm', 'Prima de riesgo de mercado (%)', true], ['betaU', 'Beta desapalancada', false], ['betaL', 'Beta apalancada', false], ['g', 'Crecimiento perpetuo g (%)', true], ['growth', 'Crecimiento anual de ventas (%)', true], ['margin', 'Margen EBIT (%)', true], ['taxF', 'Tasa de impuestos (%)', true], ['daPct', 'D&A (% ventas)', true], ['capexPct', 'Capex (% ventas)', true]].map(([k, l, req]) => ({ label: l, reqMark: req ? ' *' : '', value: I.a[k] ?? '', hint: I.hints[k] || '', border: req && (I.a[k] == null || I.a[k] === '') ? 'var(--warn)' : 'var(--color-divider)', onChange: e => this.setImp({ a: { ...this.state.imp.a, [k]: e.target.value === '' ? null : e.target.value } }) })),
+      summary: [['Empresa', I.id.name || '—'], ['Ticker', (I.id.ticker || '—') + ' · ' + (I.id.exchange || '—')], ['Moneda', I.id.currency || '—'], ['Periodo base', (PF.find(x => x.key === 'revenue') || {}).period || 'Manual'], ['Campos con dato', Object.values(I.fields).filter(x => x != null && x !== '').length + ' / ' + VF.FIELDS.length], ['Pendientes', String(block.length)]].map(([k, vv]) => ({ k, v: vv })),
+      hasBlock: block.length > 0, block, hasPreview: !!(preview && preview.ok), previewValue: preview && preview.ok ? f.cur(preview.value) : '', previewUp: preview && preview.ok && preview.upside != null ? f.pp(preview.upside) : '', previewColor: preview && preview.ok && preview.upside >= 0 ? POS : NEG, previewWacc: preview && preview.ok ? f.p(preview.wacc) : '',
+      backTxt: I.step === 1 ? 'Cancelar' : '← Atrás', onBack: () => I.step === 1 ? (this.setState({ imp: null }), this.go('library')) : this.setImp({ step: I.step - 1 }),
+      showNext: I.step > 1, nextTxt: I.step === 5 ? 'Crear valuación' : 'Continuar →', nextDisabled: I.step === 5 && block.length > 0,
+      onNext: () => I.step === 5 ? this.createFromImp() : this.setImp({ step: I.step + 1 })
+    };
+
+    // ----- Drawer -----
+    let drawer = { open: false, steps: [] };
+    if (S.drawer && b.ok) {
+      const W = b.W, src = A.waccMode === 'market' ? W.market : (W.iterated || W.market), st = (k, vv, fx, o) => ({ k, v: vv, f: fx || '', fw: 500, color: 'var(--color-text)', ...(o || {}) }), tot = { fw: 700, color: ACC };
+      const map = {
+        value: ['Valor intrínseco por acción', [st('EV · Gordon', f.m(b.evG, 1), 'VPN FCF + VP valor terminal Gordon')].concat(b.mult ? [st('EV · múltiplos', f.m(b.evM, 1), 'VPN FCF + VP de EBITDA × ' + f.x(b.mult)), st('EV ponderado', f.m(b.evW, 1), Math.round(b.wG * 100) + '% Gordon + ' + Math.round((1 - b.wG) * 100) + '% múltiplo')] : []).concat(b.roll ? [st('EV al 2T26', f.m(b.roll.ev2, 1), 'EV × (1+WACC)^' + b.roll.t1 + ' + FCF 1S26 ' + f.m(b.roll.fcfGenerated, 1)), st('Equity al 2T26', f.m(b.roll.eq2, 1), '− deuda ' + f.m(b.roll.debt, 1) + ' − arrendamiento ' + f.m(b.roll.lease, 1) + ' + efectivo ' + f.m(b.roll.cash, 1)), st('Equity a la fecha de valuación', f.m(b.eqVal, 1), '× (1 + Ke ' + f.p(b.ke) + ')^' + b.roll.t2)] : [st('Equity Value', f.m(b.eqVal, 1), 'EV − deuda neta ' + f.m(b.nd, 1))]).concat([st('Acciones en circulación', f.n(b.shares, 1) + ' mm', 'Dato de mercado'), st('Valor intrínseco por acción', f.cur(b.value), 'Equity / acciones', tot), st('Potencial', b.upside != null ? f.pp(b.upside) : '—', 'Valor / precio ' + f.cur(b.price) + ' − 1')]), 'dcf'],
+        ev: ['Enterprise Value', [st('VPN FCF ' + b.rows[0].year + '–' + b.rows[b.rows.length - 1].year, f.m(b.pvSum, 1), 'Σ FCFₜ / (1 + WACC)ᵗ'), st('VP valor terminal · Gordon', f.m(b.pvTvG, 1), 'TV ' + f.m(b.tvG, 1) + ' × factor ' + b.rows[b.rows.length - 1].df.toFixed(4)), st('EV · Gordon', f.m(b.evG, 1), '', tot)].concat(b.mult ? [st('VP valor terminal · múltiplo', f.m(b.pvTvM, 1), 'EBITDA ' + f.m(b.rows[b.rows.length - 1].ebitda, 1) + ' × ' + f.x(b.mult)), st('EV · múltiplos', f.m(b.evM, 1), '', tot), st('EV ponderado', f.m(b.evW, 1), Math.round(b.wG * 100) + '% / ' + Math.round((1 - b.wG) * 100) + '%', tot)] : []).concat([st('Deuda neta', f.m(b.nd, 1), 'Deuda + arrendamientos − efectivo'), st('Equity Value al cierre', f.m(b.eqClose, 1), 'EV − deuda neta', tot)]), 'dcf'],
+        wacc: ['WACC', [st('Tasa libre de riesgo', f.p(W.rf), 'Rf'), st('Beta desapalancada', W.betaU.toFixed(2), 'βU sectorial'), st('D / E', f.x(src.de, 4), A.waccMode === 'market' ? 'Deuda / capital de mercado' : 'Deuda / equity del DCF'), st('Beta apalancada', src.beta.toFixed(4), 'βU × [1 + (1 − t) × D/E]'), st('Prima de riesgo', f.p(W.prm), 'PRM'), st('Ke', f.p(src.ke), 'Rf + βL × PRM', tot), st('Kd después de impuestos', f.p(src.kdAT), f.p(src.kd) + ' × (1 − ' + f.p(src.tax) + ')'), st('Pesos', f.p(src.wE, 1) + ' / ' + f.p(src.wD, 1), 'E/(D+E) · D/(D+E)'), st('WACC', f.p(b.wacc), A.waccMode === 'manual' ? 'Supuesto manual' : 'E/(D+E)·Ke + D/(D+E)·Kd(1−t)', tot)], 'wacc'],
+        tv: ['Valor terminal', [st('FCF ' + b.rows[b.rows.length - 1].year, f.m(b.rows[b.rows.length - 1].fcf, 1), 'Último año explícito'), st('FCF siguiente año', f.m(b.fcfN1, 1), '× (1 + g ' + f.p(b.g) + ')'), st('WACC − g', f.p(b.wacc - b.g), f.p(b.wacc) + ' − ' + f.p(b.g)), st('Valor terminal', f.m(b.tvG, 1), 'FCFₙ₊₁ / (WACC − g)', tot), st('Valor presente', f.m(b.pvTvG, 1), '× 1/(1+WACC)ⁿ'), st('Peso en el EV', f.p(b.tvWeightG, 1), 'VP TV / EV Gordon')], 'dcf']
+      };
+      const d = map[S.drawer] || map.value;
+      drawer = { open: true, title: d[0], steps: d[1], note: 'Todos los valores se recalculan con los supuestos activos. Cifras en ' + mu + ' salvo indicación.', goAnnex: () => { this.setState({ drawer: null }); this.go('annex', d[2]); } };
+    }
+    const pi = SEQ.indexOf(view);
+    const arch = [['01', 'Datos', 'Dataset por empresa: perfil, estados, mercado, fuentes'], ['02', 'Supuestos', 'Drivers, WACC, g, múltiplo; editables y persistentes'], ['03', 'Motor', 'Proyección → WACC iterado → TV → EV → Equity'], ['04', 'Análisis', 'Sensibilidad, tornado, escenarios, validación'], ['05', 'Presentación', 'Dashboard, anexos y exportación']].map(([n, k, d], i) => ({ n, k, d, bg: i === 2 ? ACC : 'transparent', color: i === 2 ? 'var(--color-bg)' : 'var(--color-text)', border: i === 2 ? ACC : 'var(--color-divider)' }));
+
+    return {
+      loading: false, v, cv, co, r, team, ui, companyList, navItems, mobileNav, exportItems, track, kpis, football, wf, insights,
+      fcfChart, fcfSel, sales, methodSteps, hasMethod: !!ds.method, weights, extNet, extTop, tv, wb, iter, heat, torn, scen, lab,
+      annexNav, annexTables, ax, emp, res, val, formulas, sources, libCards, imp, drawer, arch,
+      pres: { on: S.presenting, label: (pi >= 0 ? SEQ_N[pi] : 'Fuera de secuencia') + ' · ' + (pi + 1) + '/' + SEQ.length, progress: ((pi + 1) / SEQ.length * 100) + '%', prev: () => this.presStep(-1), next: () => this.presStep(1), exit: () => this.exitPresent() },
+      toast: { show: !!S.toast, t: S.toast || '' },
+      startTour: () => this.go('p1'), startPresent: () => this.startPresent(), goCover: go('cover'), goImport: () => { this.setState({ imp: this.newImp() }); this.go('import'); }, goLibrary: go('library'),
+      goP1: go('p1'), goP2: go('p2'), goP3: go('p3'), goLab: go('lab'), goAnnexMethod: go('annex', ds.method ? 'ls' : 'dcf'), goAnnexMet: go('annex', 'method'),
+      toggleCompanyMenu: () => this.setState({ menu: S.menu === 'company' ? null : 'company' }), toggleExportMenu: () => this.setState({ menu: S.menu === 'export' ? null : 'export' }),
+      resetA: () => this.resetA(), openDrawerValue: () => this.setState({ drawer: 'value' }), openDrawerEV: () => this.setState({ drawer: 'ev' }), openDrawerWacc: () => this.setState({ drawer: 'wacc' }), closeDrawer: () => this.setState({ drawer: null }),
+      runResearch: () => this.runResearch(),
+      onFile: e => this.handleFile(e.target.files && e.target.files[0]),
+      onDragOver: e => { e.preventDefault(); if (!S.drag) this.setState({ drag: true }); },
+      onDrop: e => { e.preventDefault(); this.setState({ drag: false }); this.handleFile(e.dataTransfer.files && e.dataTransfer.files[0]); },
+      onJsonFile: e => this.importJson(e.target.files && e.target.files[0]),
+      startManual: () => { const fields = {}; VF.FIELDS.forEach(F => fields[F.key] = null); this.setImp({ step: 3, parsed: null, fields, sel: {}, hints: { rf: 'Requerido', prm: 'Requerido', g: 'Requerido · menor que el WACC' } }); },
+      findLogo: () => this.findLogo(), onLogoFile: e => { const fl = e.target.files && e.target.files[0]; if (!fl) return; const rd = new FileReader(); rd.onload = async () => { const brand = await VF.brandColor(rd.result); this.setImp({ id: { ...this.state.imp.id, logo: rd.result, brand: brand || this.state.imp.id.brand }, logoTxt: 'Logo cargado manualmente' }); }; rd.readAsDataURL(fl); },
+      copyMarketParams: () => this.setImp({ a: { ...this.state.imp.a, rf: S.A.rf, prm: S.A.prm, betaU: S.A.betaU }, hints: { ...this.state.imp.hints, rf: 'Copiado de ' + P.short + ' · verificar país', prm: 'Copiado de ' + P.short, betaU: 'Copiado de ' + P.short + ' · beta sectorial retail' } })
+    };
+  }
+}
+</script>
+</body>
+</html>

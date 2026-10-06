@@ -1,0 +1,455 @@
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 1
+MATERIAL MAESTRO DE CONTEXTO Y ESPECIFICACIÓN
+VALUACIÓN DE EMPRESAS — SORIANA
+Documento base para reconstruir la aplicación en Base44
+Propósito: entregar a Base44 un contexto consolidado del proyecto, las fuentes académicas
+disponibles, la lógica de valuación, los datos de referencia de Soriana y las reglas de
+producto/UX que deben guiar la nueva aplicación.
+Institución Tecnológico de Monterrey
+Materia / bloque Valuación de Empresas
+Empresa presentada Organización Soriana, S.A.B. de C.V. — SORIANA B
+Fecha de referencia Información y entregas académicas de 2026; principalmente 2T26
+Aplicación anterior https://app-valuacion-intrinseca-empresas.vercel.app/
+Archivo indispensable que se
+cargará aparte
+Excel maestro de valuación y datos financieros
+Nota de alcance: este documento consolida el contexto y las reglas necesarias para construir la app. El Excel sigue siendo la
+fuente operativa principal de números y debe cargarse por separado. Este PDF no sustituye al Excel.
+
+-- 1 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 2
+1. BRIEF EJECUTIVO PARA BASE44
+El proyecto no consiste en construir una página estática que solamente muestre una valuación de Soriana. El objetivo es
+reconstruir desde cero una herramienta reutilizable de valuación empresarial que se presente y se demuestre
+inicialmente con Soriana.
+La app debe comportarse como un sistema profesional de análisis financiero: Soriana es el caso preconfigurado, pero la
+arquitectura, los inputs, las fórmulas y la interfaz deben permitir que posteriormente se sustituya la empresa, industria y
+datos sin rehacer la aplicación.
+La prioridad del proyecto es la interpretación y presentación de información, no añadir complejidad matemática
+innecesaria. La matemática debe existir y ser consistente, pero debe quedar organizada detrás de una experiencia clara,
+visual y progresiva.
+La nueva versión debe partir de cero. La aplicación actual sirve como referencia funcional para entender qué hace el modelo
+existente; no debe tomarse como plantilla visual ni como código base.
+URL de referencia funcional:
+https://app-valuacion-intrinseca-empresas.vercel.app/
+Principios no negociables
+l Soriana como caso de demostración: toda la experiencia inicial debe sentirse como una evaluación de Soriana.
+l Arquitectura reutilizable: los datos de Soriana deben ser un conjunto de valores cargados, no una estructura rígida.
+l Dos niveles de información: primero resultados e interpretación; después metodología, inputs, tablas y detalle.
+l Diseño de producto: debe parecer una aplicación financiera construida por un equipo de desarrollo, no una hoja de
+Excel convertida en página web.
+l Información primero: dashboard, KPIs, visualizaciones y explicaciones breves antes que tablas extensas.
+l Transparencia: cualquier resultado debe poder rastrearse hasta sus inputs y metodología.
+l No mezclar actividades: las empresas comparables de la actividad de benchmarking no deben convertirse en parte del
+producto final.
+2. JERARQUÍA DE FUENTES Y REGLAS DE USO
+Base44 debe tratar los materiales del proyecto como fuentes con distinta función. No debe inventar datos ni sustituir datos
+del Excel por estimaciones propias.
+Priorida
+d Fuente Uso
+1 Excel maestro que se cargará aparte Fuente operativa de números, inputs, cálculos y resultados de la valuación.
+2 AE 1 Etapa 1 (PDF) Contexto de empresa, historia, gobierno corporativo, estructura de capital, WACC, acciones y
+dividendos.
+3 Sesión 2 — Valuación y Comparativas de Soriana
+y Mercado (PDF) Resumen de valuación, DCF, WACC usado en el ejercicio, razones financieras y conclusiones.
+4 Aplicación anterior Referencia funcional: navegación, información mostrada y lógica general del producto.
+Regla de oro: cuando exista una cifra en el Excel, la aplicación debe tomarla del Excel. Cuando exista una diferencia entre
+entregas, debe conservarse como una diferencia de versión/metodología y no corregirse silenciosamente.
+3. QUÉ DEBE QUEDAR FUERA DEL PRODUCTO FINAL
+
+-- 2 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 3
+La segunda entrega contiene comparativas con Walmex, Chedraui y La Comer. Esas empresas fueron utilizadas para una
+actividad de benchmarking/entorno. No deben aparecer como empresas preconfiguradas, competidoras obligatorias
+ni parte del dashboard principal de la aplicación final.
+l No crear un selector inicial de Walmex, Chedraui o La Comer.
+l No convertir el benchmarking de la actividad en una sección principal del producto.
+l No presentar rankings sectoriales como parte esencial de la calculadora.
+l Si la arquitectura permite comparables en el futuro, debe existir como módulo opcional y vacío/configurable, no como
+contenido fijo.
+l Los datos comparativos pueden permanecer únicamente como contexto histórico de cómo se realizó la actividad
+académica.
+La única empresa que debe estar cargada y presentada por defecto en la experiencia entregable es Soriana.
+4. IDENTIDAD ACADÉMICA Y DE PRESENTACIÓN
+La aplicación debe identificar claramente el contexto académico sin parecer una diapositiva o un documento de Word.
+Integrante Matrícula
+Adrián Fermín Rodríguez Valades A01614820
+Saúl González Loredo A016113349
+Miguel Emilio Pérez García A01613516
+Mauricio Fernandez Juarez A01614732
+Francisco Aarón Ponce Flores A01614662
+Elementos visuales institucionales
+l Logo del Tecnológico de Monterrey en la portada/header institucional.
+l Logo de Soriana en la experiencia de la empresa seleccionada.
+l Predominio visual del lenguaje institucional del Tec, combinado con acentos de la identidad de Soriana.
+l La identidad de marca debe ser elegante y contenida: no convertir la interfaz en una pieza publicitaria.
+l Utilizar assets oficiales o de alta calidad; no deformar logos ni recrearlos de manera incorrecta.
+5. ARQUITECTURA DE PRODUCTO — DOS NIVELES
+La navegación debe seguir una lógica de divulgación progresiva: mostrar primero lo que el usuario necesita entender y
+después permitirle profundizar.
+Nivel Objetivo Contenido
+Nivel 1 — Resumen Entender el resultado en segundos. Portada, dashboard, KPIs, valor intrínseco, precio actual, potencial, EV/Equity Value,
+WACC, crecimiento, FCF, alertas/insights.
+Nivel 2 — Análisis Auditar y modificar el modelo.
+Inputs, supuestos, WACC, CAPM, estructura de capital, proyección FCF, DCF, valor
+terminal, sensibilidad, razones financieras, gobierno corporativo, histórico, dividendos y
+trazabilidad.
+La página de inicio no debe ser una pared de tablas. Debe responder, visualmente, preguntas como: ¿cuánto vale la
+acción?, ¿cuánto cotiza?, ¿cuál es la diferencia?, ¿qué tan sensible es el resultado?, ¿qué supuestos explican el
+valor?
+
+-- 3 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 4
+6. MAPA DE PANTALLAS RECOMENDADO
+Pantalla Función principal Nivel
+01. Portada / Inicio Identidad del proyecto + acceso al análisis de Soriana. 1
+02. Dashboard Resultado de valuación y KPIs principales. 1
+03. Diagnóstico Lectura ejecutiva: crecimiento, rentabilidad, deuda, eficiencia y riesgos. 1
+04. Modelo de valuación Explicación visual del DCF y puente hacia Equity Value. 2
+05. Proyección Ventas, EBIT, NOPAT, D&A;, Capex, capital de trabajo y FCF. 2
+06. WACC / CAPM Inputs, fórmulas y composición del costo de capital. 2
+07. Sensibilidad WACC vs. g y escenarios del valor intrínseco. 2
+08. Razones financieras Liquidez, apalancamiento, eficiencia y rentabilidad. 2
+09. Estructura de capital Capital de mercado, deuda, estructura óptima y efectos. 2
+10. Gobierno corporativo Consejo, comités, independencia y mecanismos de control. 2
+11. Histórico / eventos Cronología de eventos relevantes de Soriana. 2
+12. Dividendos Histórico de dividendos documentado. 2
+13. Inputs / Configuración Modificar empresa y datos para reutilizar el modelo. 2
+14. Metodología / Fuentes Definiciones, fórmulas, fuentes y fecha de corte. 2
+7. DIRECCIÓN UX/UI
+La interfaz debe sentirse como un producto financiero moderno: limpia, jerárquica, rápida de leer, con microinteracciones y
+navegación coherente.
+Lenguaje visual
+l Base neutra: blanco, gris muy claro, gris oscuro y azul institucional.
+l Tec: azul institucional como color estructural para navegación, encabezados y elementos de identidad.
+l Soriana: rojo, verde y amarillo únicamente como acentos de marca o estados específicos; evitar saturación.
+l Cards con bordes suaves, sombras discretas y mucho espacio negativo.
+l Tipografía sans-serif moderna y consistente.
+l Números financieros grandes, con jerarquía clara entre cifra principal, unidad y explicación.
+l Gráficas limpias, con pocos colores y leyendas directas.
+l Tablas únicamente cuando sean necesarias para auditar datos; nunca como primer recurso.
+l Diseño responsive para desktop y tablet; el dashboard debe seguir siendo legible en pantallas menores.
+l Transiciones rápidas y discretas: entrada de páginas, cambio de tabs, expansión de detalles y actualización de KPIs.
+Patrones de visualización recomendados
+l KPI cards para valor intrínseco, precio de mercado, potencial, WACC y EV.
+l Bullet/bar de valor intrínseco vs. precio actual.
+l Waterfall para pasar de PV de FCF + PV de terminal a EV, deuda, efectivo y Equity Value.
+l Line chart para ventas y FCF histórico/proyectado.
+
+-- 4 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 5
+l Área o barras para composición del capital.
+l Sensitivity matrix para WACC/g.
+l Mini-trends en cada KPI cuando haya suficientes observaciones.
+l Semáforos solo como apoyo; siempre acompañados de una explicación textual.
+8. ARQUITECTURA DE DATOS REUTILIZABLE
+La aplicación debe separar estrictamente datos de empresa, supuestos, cálculos y presentación. Esto es lo que
+permitirá sustituir Soriana por otra empresa en el futuro.
+Entidad Ejemplos
+Company name, ticker, sector, country, currency, shares outstanding, logo
+Historical Financials period, revenue, gross profit, EBIT, net income, assets, liabilities, equity, debt, CFO, capex
+Valuation Inputs Rf, beta, ERP/PRM, tax rate, Kd, D/E, WACC, terminal growth
+Forecast year, revenue, EBIT, NOPAT, D&A;, capex, ∆NWC, FCF
+Market Data current price, analyst target if available, date/source
+Ratios current ratio, quick ratio, D/A, interest coverage, inventory days, margins, ROA, ROE, ROI
+Governance board composition, committees, independence, control mechanisms
+Events date, event, description, impact/relevance, source
+Dividends declaration date, payment date, amount/share, source
+Sources source name, URL, date, scope, notes
+9. SORIANA — CONTEXTO EMPRESARIAL BASE
+Los siguientes elementos son el contexto que debe alimentar la experiencia de Soriana. Se derivan de las entregas
+académicas proporcionadas.
+Dato Referencia
+Razón social Organización Soriana, S.A.B. de C.V.
+Ticker SORIANA B
+Actividad Comercio al detalle; tiendas de autoservicio y clubes de precios
+Industria Retail / tiendas de autoservicio
+Formatos Híper, Súper, Mercado, Express y City Club
+Tiendas 812 al 2T26
+Colaboradores 82,064 al 2T26
+Acciones 1,800 millones; ordinarias serie B
+Ingresos 2T26 $43,559 mdp
+Ingresos 1S26 $84,003 mdp
+FY2025 ingresos $177,515 mdp
+Capex 1S26 $1,638 mdp
+Contexto operativo
+l El modelo es multiformato y atiende diferentes hábitos y segmentos de consumo.
+
+-- 5 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 6
+l La operación incluye venta directa, comercio electrónico, servicios relacionados con establecimientos y negocios
+asociados.
+l La empresa administra una red extensa de tiendas, inventarios, proveedores, infraestructura y procesos logísticos.
+l Al 2T26 se reportan 812 tiendas y participación en la operación de Sodimac en México.
+10. HISTÓRICO Y EVENTOS RELEVANTES
+Fecha Evento Relevancia para la app
+1987 Listado en BMV Inicio de la vida pública de SORIANA B.
+2007 Adquisición de Grupo Gigante Expansión relevante y aumento de deuda.
+2012–2014 Controversia electoral por tarjetas Soriana Evento reputacional/regulatorio; sin impacto financiero documentado en la
+fuente.
+2015–2016 Adquisición de Comercial Mexicana Mayor adquisición histórica; expansión y posterior ciclo de apalancamiento.
+2016 Joint venture con Falabella / Sodimac Diversificación hacia mejoramiento del hogar y servicios financieros.
+2016 Compra del 50% de Soriban Fortalecimiento del negocio financiero propio.
+2020 Programa de CEBURES y refinanciamiento Refinanciamiento de deuda y extensión de vencimientos.
+2023 Mejoras de calificación Menor deuda, mayor flujo y menor costo de fondeo.
+2023 SORIANA 23 Refinanciamiento a menor diferencial.
+2024 SORIANA 24 Manejo de vencimientos / refinanciamiento.
+2025–2026 Desapalancamiento Deuda LP y deuda neta bancaria/bursátil en descenso.
+2026 Racionalización de tiendas Cambio de enfoque hacia productividad por m²; parte de los detalles provienen
+de prensa.
+11. GOBIERNO CORPORATIVO
+Elemento Dato base
+Consejo 13 consejeros al 2T26
+Composición 9 patrimoniales, 1 relacionado, 3 independientes
+Independencia 23.08% del Consejo; la entrega señala 25% como referencia de Mejor Práctica 18
+Presidencia Francisco Javier Martín Bringas
+Dirección General / Presidencia suplente Ricardo Martín Bringas
+Comité de Auditoría y Prácticas Societarias 3 integrantes independientes
+Comité de Riesgos y Continuidad Operativa Constituido en abril de 2026; 13 miembros de alta dirección
+Control / ética Auditoría interna, Código de Ética, Línea Directa y mecanismos de conflictos de interés
+Capacitación ética 96% de plantilla capacitada en 2025, según la entrega
+La aplicación debe mostrar esta información como una ficha de gobierno corporativo, no como un bloque de texto. Se
+recomienda utilizar cards para Consejo, independencia, comités y mecanismos de control.
+12. ESTRUCTURA DE CAPITAL Y WACC
+Las entregas contienen dos versiones de WACC. Esto debe tratarse como una diferencia de versión/metodología y no
+ocultarse.
+
+-- 6 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 7
+Fuente / versión WACC Datos asociados Uso recomendado en app
+AE 1 10.22% Estructura de mercado: 69.65% equity / 30.35% deuda; Ke 11.66%;
+Kd 9.87%; Kd after-tax 6.91%.
+Mostrar como cálculo/documento previo
+de estructura de capital.
+Sesión 2 / DCF 12.50% Rf 9.52%; PRM 4.2%; beta U 0.80; D/E 0.39; Ke 13.83%; Kd 13.02%;
+WACC 12.50%.
+Usar como WACC del DCF presentado
+en la segunda entrega, salvo que el
+Excel maestro indique otra cosa.
+AE 1 también reporta una estructura óptima alrededor de 38% deuda / 62% equity, con WACC mínimo aproximado de
+10.05%, y 40%/60% con WACC de 10.14%.
+Regla de implementación: el usuario debe poder identificar qué WACC está usando el escenario actual y de dónde proviene.
+No mezclar automáticamente el 10.22% con el DCF de 12.50%.
+13. MODELO DCF DE SORIANA — BASE DE LA SEGUNDA
+ENTREGA
+Concepto 2025A 2026E 2027E 2028E 2029E 2030E
+Ventas 177,515 183,728 190,159 196,814 203,703 210,832
+EBIT 7,552 7,816 8,090 8,373 8,666 8,969
+NOPAT 5,286 5,471 5,663 5,861 6,066 6,279
+D&A; 4,342 4,494 4,651 4,814 4,983 5,157
+Capex -2,867 -2,967 -3,071 -3,179 -3,290 -3,405
+Inversión en capital de trabajo 0 0 0 0 0 0
+FCF 6,761 6,998 7,243 7,496 7,759 8,030
+Resultado del DCF documentado
+Puente de valuación Valor
+VPN FCF 2026E–2030E 26,508 mdp
+Valor terminal 2030 (g=3.5%) 92,342 mdp
+Valor presente del valor terminal 51,241 mdp
+Enterprise Value 77,749 mdp
+(-) Deuda total -23,618 mdp
+(+) Efectivo 9,295 mdp
+Equity Value 63,426 mdp
+Acciones 1,800 millones
+Valor intrínseco por acción $35.24 MXN
+Precio de referencia $33.48 MXN
+Potencial vs. precio +5.2%
+Peso del TV en EV 65.9%
+La aplicación debe explicar visualmente que el valor terminal representa 65.9% del EV y, por tanto, que el resultado depende
+materialmente de WACC y g. Esta sensibilidad debe estar disponible en la segunda capa.
+14. RAZONES FINANCIERAS — SORIANA
+
+-- 7 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 8
+Razón 2T25 3T25 4T25 1T26 2T26 Prom. 5T
+Circulante 1.27x 1.30x 1.24x 1.29x 1.17x 1.25x
+Prueba ácida 0.36x 0.35x 0.41x 0.32x 0.33x 0.35x
+Deuda / Activo 47.5% 46.3% 45.7% 43.3% 44.7% 45.5%
+Capitalización LP 21.8% 22.1% 20.6% 20.9% 18.0% 20.7%
+Cobertura de intereses 2.30x 1.87x 4.04x 3.10x 3.19x 2.90x
+Rotación inventario 0.93x 0.88x 1.11x 0.93x 0.93x 0.96x
+Inventario en días 98.0 103.8 82.3 97.7 98.4 96.0
+Rotación activo 0.29x 0.27x 0.31x 0.27x 0.28x 0.28x
+Margen bruto 23.9% 25.0% 24.8% 24.7% 24.4% 24.6%
+Margen neto 1.6% 1.4% 2.7% 2.1% 2.5% 2.1%
+ROA 0.5% 0.4% 0.8% 0.6% 0.7% 0.6%
+ROE 0.9% 0.7% 1.5% 1.0% 1.3% 1.1%
+ROI 1.2% 0.9% 1.6% 1.2% 1.2% 1.2%
+Lectura que la interfaz puede convertir en insights
+l Liquidez: el promedio de razón circulante es 1.25x, mientras que la prueba ácida es 0.35x; la liquidez depende
+significativamente del inventario.
+l Apalancamiento: deuda/activo baja de 47.5% a 44.7% entre 2T25 y 2T26; cobertura de intereses mejora de 2.30x a
+3.19x.
+l Eficiencia: inventario promedio de 96 días; es una de las variables operativas críticas del análisis.
+l Rentabilidad: margen bruto promedio 24.6%, pero margen neto 2.1%, ROA 0.6%, ROE 1.1% y ROI 1.2% trimestrales
+promedio.
+l La segunda entrega anualiza/relaciona algunas métricas para interpretar el costo de capital; la app debe mostrar
+claramente si una cifra es trimestral, promedio o anualizada.
+15. DATOS DE MERCADO Y PERFIL BURSÁTIL
+Indicador Soriana
+Precio usado en Sesión 2 $33.48 MXN
+P/U 14.25x
+Rendimiento por dividendo 1.8%
+Variación 1 año +21.3%
+Consenso reportado en la entrega Venta
+Distribución C/M/V 0 C / 1 M / 6 V
+Precio objetivo consenso $23.36 MXN
+Calificación crediticia HR+1 (HR Ratings, CP)
+Señal técnica reportada Compra fuerte
+RSI (14) 75
+Valor de mercado indicado 60,264 mdp
+
+-- 8 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 9
+Estos datos son contextuales y fechados. La app debe mostrar siempre la fecha de corte de mercado y evitar presentar
+información histórica como si fuera tiempo real.
+16. HISTÓRICO DE DIVIDENDOS DOCUMENTADO
+# Fecha de decreto Fecha de pago Monto / acción
+1 11 dic. 2025 23 dic. 2025 $0.5556
+2 28 abr. 2023 15 dic. 2023 $0.5556
+3 29 abr. 2021 15 dic. 2021 $0.5556
+4 2019 2019 $0.3889
+El documento fuente señala que los tres registros más recientes cuentan con fecha exacta de decreto y pago confirmadas en comunicados oficiales
+de la BMV; el registro de 2019 se confirma en cuanto a año y monto por acción mediante el Reporte Anual 2021.
+17. CONTROL DE INTEGRIDAD Y CONSISTENCIA
+Hay varias cifras que deben manejarse con disciplina para evitar que la nueva app mezcle versiones.
+Tema Situación Regla para Base44
+WACC 10.22% en AE1 vs 12.50% en Sesión 2 No combinar. Etiquetar versión/escenario y usar el Excel como
+fuente operativa.
+Deuda DCF 23,618 mdp en Sesión 2 vs 23,721 mdp en datos 2T26 Mantener el valor exacto del escenario DCF documentado;
+permitir rastrear al dato de entrada.
+Precio $33.48 como referencia de Sesión 2 Mostrar fecha de corte; no asumir precio en tiempo real.
+Otras empresas Presentes en benchmarking No incorporarlas al producto inicial.
+Datos de prensa Algunos eventos 2026 provienen de medios Marcar fuente y distinguir dato oficial de prensa.
+Nunca inventar una reconciliación. Si dos documentos difieren, la app debe poder explicar qué escenario o versión produce
+cada número.
+18. REQUERIMIENTOS FUNCIONALES PARA LA
+RECONSTRUCCIÓN
+Dashboard
+Mostrar el resultado de la valuación primero: valor intrínseco por acción, precio de referencia, potencial, EV, Equity Value,
+WACC, g, FCF y una lectura ejecutiva.
+Inputs
+Permitir editar supuestos mediante controles claros. Separar inputs históricos, inputs de mercado, supuestos de WACC y
+supuestos de proyección.
+Recalculation
+Todo resultado dependiente de un input debe actualizarse automáticamente. Evitar valores hardcodeados en componentes
+visuales.
+Audit trail
+Cada resultado debe poder rastrearse a un input o cálculo. Incluir tooltips o paneles de 'cómo se calcula'.
+DCF
+
+-- 9 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 10
+Mostrar FCF, descuento, terminal value, EV, deuda, efectivo, equity y valor por acción. Incluir waterfall.
+Sensitivity
+Permitir modificar WACC y g y visualizar cómo cambia el valor intrínseco.
+Scenario management
+Permitir escenarios Base / Optimista / Pesimista si el modelo lo soporta, sin alterar permanentemente los datos base.
+Import / replacement
+La arquitectura debe permitir sustituir el dataset de Soriana por otro dataset compatible.
+Validation
+Validar campos numéricos, porcentajes, periodos, signos, unidades y dependencias antes de aceptar cambios.
+Sources
+Mantener fuentes y fecha de corte visibles en la sección metodológica.
+19. PRINCIPIOS DE REDACCIÓN DENTRO DE LA APP
+l Evitar párrafos largos en el dashboard.
+l Usar títulos que respondan a preguntas: “¿Cuánto vale Soriana?”, “¿Qué explica el valor?”, “¿Qué tan sensible es el
+modelo?”.
+l Cada gráfica debe tener una conclusión de una o dos frases.
+l No obligar al usuario a interpretar una tabla sin contexto.
+l Usar MXN y mdp de manera consistente.
+l Diferenciar claramente Actual / Estimado / Supuesto.
+l Mostrar fecha de corte cuando un dato pueda quedar obsoleto.
+l Mantener lenguaje académico-profesional, no lenguaje de marketing.
+20. DIRECTIVA FINAL PARA BASE44
+Usa este documento como material maestro de contexto y el Excel que se cargará aparte como fuente operativa de
+datos. También inspecciona la aplicación anterior indicada en este documento para entender su funcionalidad.
+Construye una aplicación nueva desde cero. No copies la apariencia de la aplicación anterior. Conserva lo útil de su lógica
+conceptual y mejora radicalmente la experiencia de usuario.
+El producto final debe verse como una aplicación financiera académica moderna, no como un spreadsheet. La complejidad
+debe existir detrás de una interfaz progresiva: resultado → interpretación → detalle → inputs → metodología.
+Soriana debe ser la empresa seleccionada por defecto y el caso que se presenta. Sin embargo, la arquitectura debe ser
+reutilizable para otra empresa e industria simplemente reemplazando el dataset y los parámetros.
+Prioridad absoluta: exactitud de datos + trazabilidad + claridad + diseño + reutilización. No sacrificar legibilidad por
+mostrar más información.
+21. MAPA DE FUENTES ACADÉMICAS PROPORCIONADAS
+
+-- 10 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 11
+Documento Contenido relevante
+AE 1 Etapa 1 (1).pdf
+Perfil, modelo de negocio, industria, operaciones, bursatilidad e historia, eventos
+relevantes, gobierno corporativo, estructura de capital, WACC 10.22%, acciones en
+circulación y dividendos.
+SESIOnN 2 VALUACIOnN Y COMPARATIVAS DE
+SORIANA Y MERCADO.docx (1).pdf
+Resumen ejecutivo, datos bursátiles, estados financieros trimestrales, balance/flujo, WACC
+12.50%, DCF 2026E–2030E, valor intrínseco, razones financieras, benchmarking y
+conclusiones.
+Excel maestro Debe cargarse aparte. Es la fuente principal para los números y cálculos que alimentarán la
+aplicación.
+Aplicación anterior https://app-valuacion-intrinseca-empresas.vercel.app/ — referencia funcional para entender
+la versión existente.
+22. QUÉ DEBE CARGAR EL USUARIO EN BASE44
+1 Este PDF como contexto maestro.
+2 El Excel de valuación como archivo de datos indispensable.
+3 El prompt Pro Max como instrucción de construcción.
+4 El link de la aplicación anterior puede copiarse también en el prompt o en el chat de Base44, aunque ya queda
+documentado aquí.
+No es necesario volver a cargar todas las actividades antiguas si este PDF ya se utiliza como contexto consolidado. Si Base44
+necesita verificar una cifra específica, el documento fuente original sigue siendo la referencia.
+23. APÉNDICE — LÓGICA FINANCIERA QUE LA APP DEBE
+PODER EXPLICAR
+Concepto Lógica conceptual
+CAPM Ke = Rf + βL × PRM
+Beta apalancada βL = βU × [1 + (1 − t) × D/E]
+WACC WACC = Ke × E/(D+E) + Kd × (1−t) × D/(D+E)
+NOPAT EBIT × (1−t)
+FCF NOPAT + D&A; − Capex − inversión en capital de trabajo
+Valor terminal FCF siguiente periodo / (WACC − g)
+Enterprise Value PV de FCF explícitos + PV del valor terminal
+Equity Value Enterprise Value − deuda + efectivo
+Valor por acción Equity Value / acciones en circulación
+Potencial (Valor intrínseco / precio actual) − 1
+Estas fórmulas son una representación conceptual para la interfaz y la trazabilidad. El Excel maestro tiene prioridad sobre
+cualquier reconstrucción de fórmula cuando exista una definición específica utilizada en el proyecto.
+
+-- 11 of 12 --
+
+Material maestro de contexto — Valuación de Empresas — Soriana / Base44 12
+24. CHECKLIST DE ACEPTACIÓN ANTES DE DAR LA APP POR
+TERMINADA
+l La app inicia con una experiencia limpia y visual, no con una tabla gigante.
+l Soriana está cargada como caso inicial.
+l La arquitectura permite reemplazar Soriana por otra empresa sin reconstruir componentes.
+l El Excel alimenta los datos y los cálculos relevantes.
+l El dashboard muestra primero los resultados.
+l Existe una segunda capa con metodología e inputs.
+l El DCF puede auditarse paso a paso.
+l El WACC y sus componentes pueden consultarse.
+l La sensibilidad WACC/g es visible.
+l Los KPIs tienen unidades y fecha de corte.
+l Las cifras Actual / Estimado / Supuesto están diferenciadas.
+l Las discrepancias entre entregas no se mezclan silenciosamente.
+l Las otras empresas del benchmarking no aparecen como contenido principal.
+l Tec y Soriana tienen presencia de marca adecuada y no invasiva.
+l La interfaz funciona correctamente en desktop y tablet.
+l Las transiciones son suaves y no ralentizan el uso.
+l No existen inputs o resultados hardcodeados donde deberían depender del dataset.
+l No hay errores de redondeo visibles en cifras financieras.
+l Las fuentes están documentadas.
+l La experiencia se siente como un sistema financiero profesional y no como una hoja de cálculo.
+FIN DEL MATERIAL MAESTRO
+Documento preparado para acompañar el prompt de construcción y el Excel maestro.
+
+-- 12 of 12 --
+
