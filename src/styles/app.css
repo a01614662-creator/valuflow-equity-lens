@@ -1,0 +1,7 @@
+/* Ajustes de ValuFlow sobre el sistema de diseño "Industry" (copiados del <style> del prototipo). */
+:root{--color-accent:#0039A6;--color-accent-100:#eef3fc;--color-accent-200:#d8e3f8;--color-accent-300:#b0c6ef;--color-accent-400:#7c9ddf;--color-accent-500:#3d6bc6;--color-accent-600:#002f8c;--color-accent-700:#00276f;--color-accent-800:#001e57;--color-accent-900:#00153d;--pos:#16794a;--neg:#b42318;--warn:#a15c07;}
+html,body{margin:0;background:var(--color-bg);}
+body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
+a{color:var(--color-accent);} a:hover{color:var(--color-accent-600);}
+input[type=range]{accent-color:var(--color-accent);width:100%;}
+@media print{[data-noprint]{display:none !important;} [data-page]{break-after:page;} body{background:#fff;}}

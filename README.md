@@ -1,25 +1,58 @@
-# CODING AGENTS: READ THIS FIRST
+# ValuFlow · Equity Lens
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+Plataforma de valuación empresarial por flujos descontados (DCF) del proyecto de **Valuación de Empresas · Tecnológico de Monterrey**.
+El caso inicial es **Organización Soriana**, pero el motor no tiene nada específico de Soriana: cualquier empresa se puede valuar
+cargando un archivo de Capital IQ / Excel / CSV, capturando datos a mano o importando un dataset `.json`.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+## Cómo usarla
 
-## What you should do — IMPORTANT
+Necesitas [Node.js](https://nodejs.org) 20 o superior.
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+```bash
+npm install        # una sola vez
+npm run dev        # abre la app en http://localhost:5173
+npm test           # comprueba el motor contra el Excel y contra el prototipo original
+npm run build      # genera la versión publicable en dist/
+```
 
-**Read `project/ValuFlow.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+La carpeta `dist/` es un sitio estático: se puede publicar tal cual en GitHub Pages, Netlify, Vercel o cualquier servidor.
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Cómo está organizada
 
-## About the design files
+```
+src/
+  engine/      Motor de valuación (solo cálculo, sin pantallas, sin datos de empresas)
+    model.ts     drivers → proyección FCFF → WACC (mercado / iterado / manual) → valor terminal → EV → Equity → valor por acción
+    analysis.ts  sensibilidad WACC×g, tornado, escenarios, comparación de métodos
+    validate.ts  comprobaciones internas + comparación contra resultados de referencia (Excel)
+    labels.ts    etiquetas que dependen de la empresa (fechas, fuentes), con valores por defecto
+    types.ts     forma exacta de un "dataset" de empresa y de los supuestos
+  data/        Empresas incluidas
+    soriana.ts   datos del Excel "VALUACIÓN DEFINITIVA SORIANA"
+    registry.ts  lista de empresas incluidas + revisión de estructura de un dataset
+  services/    Importador (Capital IQ/XLSX/CSV), exportación (Excel/CSV/JSON/PDF), almacenamiento local, logo e investigación
+  ui/          Pantallas (React). viewmodel.ts prepara lo que se muestra; pages/*.tsx solo dibuja
+  config.ts    Equipo e institución
+tests/         Pruebas automáticas (ver abajo)
+project/       Prototipo original de Claude Design (referencia; las pruebas lo usan para comparar)
+docs/          Guías: cómo agregar una empresa, notas del traspaso del diseño
+```
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+## Garantías de precisión
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+`npm test` ejecuta 24 pruebas:
 
-## Bundle contents
+- **Contra el Excel**: las 34 comprobaciones de la capa de validación pasan (valor intrínseco **$31.16**, WACC iterado 11.88 %, Ke 13.95 %,
+  FCF 2026E–2030E, EV, sensibilidad, escenario de supuestos constantes $34.44).
+- **Contra el prototipo original**: el motor nuevo da resultados *idénticos* al de `project/vf-engine.js` en el caso base y en
+  3,000 combinaciones aleatorias de supuestos (WACC iterado/mercado/manual, múltiplo, fecha de valuación, escenarios de error).
+  Lo mismo para sensibilidad, tornado, escenarios y métodos.
+- **Identidades financieras**: FCF = NOPAT + D&A − Capex − ΔNWC; EV = Σ VP(FCF) + VP(TV); el WACC iterado es un punto fijo.
+- **Otra empresa**: un archivo tipo Capital IQ de una empresa ficticia se importa, se valúa y pasa la validación interna.
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Valuflow equity lens dashboard` project files (HTML prototypes, assets, components)
+Diferencia conocida y documentada: el WACC iterado del motor converge a 11.8793 % y el del Excel a ≈11.877 % (diferencia de 0.002 pp).
+Se refleja en ≈0.03 % del EV y en ≤ $0.01 por acción; todas las cifras quedan dentro de la tolerancia de redondeo.
+
+## Agregar otra empresa
+
+Ver [docs/DATASET.md](docs/DATASET.md).
