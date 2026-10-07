@@ -1,6 +1,7 @@
 // ValuFlow · Motor de valuación reutilizable. No contiene datos de ninguna empresa.
 // Capas: drivers → proyección FCFF → WACC (CAPM + iteración) → valor terminal (Gordon / múltiplo) → EV → Equity → valor por acción.
 // Traducción 1:1 de project/vf-engine.js; tests/parity.test.ts verifica que los resultados sean idénticos.
+import { buildFor } from './build';
 import { fin } from './format';
 import type { Assumptions, Dataset, DriverSet, ProjRow, Ratio, RollResult, RunResult, Series, WaccIter, WaccLeg, WaccResult } from './types';
 
@@ -22,21 +23,26 @@ export function defaults(ds: Dataset): Assumptions {
     rf: w.rf, prm: w.prm, betaU: w.betaU, kdPre: w.kdPre, kdMarket: w.kdMarket ?? w.kdPre, taxShield: w.taxShield, taxMarket: w.taxMarket ?? w.taxShield,
     exitMultiple: v.exitMultiple ?? null, wGordon: Math.round((v.wGordon ?? 1) * 100),
     price: m.price, shares: m.shares, rollEnabled: !!r.enabled,
-    bridgeDebt: b.debt ?? 0, bridgeLease: b.lease ?? 0, bridgeCash: b.cash ?? 0
+    bridgeDebt: b.debt ?? 0, bridgeLease: b.lease ?? 0, bridgeCash: b.cash ?? 0,
+    // Solo existe si el dataset documenta escenarios de inflación (si no, la clave queda indefinida).
+    inflation: ds.inflation ? ds.inflation.default : undefined
   };
 }
 
 // ---------- Drivers de proyección ----------
-export function drivers(ds: Dataset, key?: string): DriverSet {
+export function drivers(ds: Dataset, key?: string, inflation?: string): DriverSet {
   const f = ds.forecast, n = f.years.length, rev0 = f.base.revenue as number;
   const alt = key && key !== 'final' && ds.altForecasts && ds.altForecasts[key];
-  if (alt || !f.rows) {
+  // Proyección por drivers (réplica de la hoja del Excel): las filas dependen del escenario de inflación.
+  const built = !alt ? buildFor(ds, inflation) : null;
+  if (alt || (!f.rows && !built)) {
     const d = alt ? alt.drivers : f.drivers!;
     const nwcPct = arr(d.nwcPct, n);
     return { years: f.years, n, rev0, nwc0: f.base.nwc ?? nwcPct[0] * rev0, growth: arr(d.growth, n), margin: arr(d.margin, n), tax: arr(d.tax, n), da: arr(d.da, n), capex: arr(d.capex, n), nwcPct, derived: false };
   }
-  const R = f.rows;
+  const R = built ? built.rows : f.rows!;
   const out: DriverSet = { years: f.years, n, rev0, nwc0: f.base.nwc as number, growth: [], margin: [], tax: [], da: [], capex: [], nwcPct: [], derived: true };
+  if (built) out.build = built;
   let prev = rev0, nwc = f.base.nwc as number;
   for (let i = 0; i < n; i++) {
     const rv = R.revenue[i];
@@ -49,7 +55,7 @@ export function drivers(ds: Dataset, key?: string): DriverSet {
 }
 
 export function project(ds: Dataset, A: Assumptions): { rows: ProjRow[]; drivers: DriverSet } {
-  const D = drivers(ds, A.forecastKey), rows: ProjRow[] = [];
+  const D = drivers(ds, A.forecastKey, A.inflation), rows: ProjRow[] = [];
   let rev = D.rev0, nwcPrev = D.nwc0;
   for (let i = 0; i < D.n; i++) {
     const gr = D.growth[i] + A.dGrowth / 100;
@@ -81,7 +87,9 @@ export function wacc(ds: Dataset, A: Assumptions, rows: ProjRow[]): WaccResult {
   market.wacc = market.wE * keM + market.wD * market.kdAT;
   const t = A.taxShield / 100, kdAT = A.kdPre / 100 * (1 - t);
   const iters: WaccIter[] = []; let w = fin(market.wacc) ? market.wacc : 0.12, conv: WaccIter | null = null;
-  for (let k = 0; k < 14; k++) {
+  // El Excel itera un número fijo de veces (wacc.iterations); sin ese dato se itera hasta converger.
+  const maxIt = W.iterations ?? 14;
+  for (let k = 0; k < maxIt; k++) {
     if (!(w > g)) break;
     const E = evGordon(rows, w, g) - nd; if (!(E > 0)) break;
     const de = D / E, beta = bu * (1 + (1 - t) * de), ke = rf + beta * prm;

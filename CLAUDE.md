@@ -8,8 +8,11 @@ cambio que altere la arquitectura o el resultado financiero.
 - `npm run typecheck`, `npm run build`, `npm run dev`.
 
 ## Reglas
+- **Excel = fuente maestra; ValuFlow = implementación.** Los números de Soriana salen de `src/data/soriana.excel.ts`, generado con
+  `tools/excel/extract_dataset.py` desde `excel/`. No se editan a mano. `tests/excel-master.test.ts` exige Excel = app.
+- Sin números mágicos, supuestos sin fuente, deslizadores sin rango documentado, conversiones de moneda sin fuente ni escenarios inventados.
 - `src/engine/` es la única fuente de las fórmulas. No contiene datos de empresas ni código de interfaz.
-- No cambies una fórmula sin aprobación explícita. `tests/parity.test.ts` exige resultados idénticos a `project/vf-engine.js`;
+- No cambies una fórmula sin aprobación explícita. `tests/parity.test.ts` exige resultados idénticos a `project/vf-engine.js` (con el dataset histórico de `tests/fixtures/`);
   si un cambio aprobado altera resultados, actualiza la prueba explicando por qué y vuelve a comprobar `tests/excel.test.ts`.
 - Nada específico de una empresa en el motor ni en la interfaz: fechas, fuentes y textos van en el dataset (`labels`, `method`…)
   con valores por defecto en `src/engine/labels.ts`.

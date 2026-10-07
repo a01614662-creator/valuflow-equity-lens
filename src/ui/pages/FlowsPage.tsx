@@ -2,10 +2,11 @@
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';
+import { TableCard } from '../components/TableCard';
 
 /** 02 · ¿Cuánto efectivo genera? */
 export function FlowsPage({ vm }: { vm: VM }) {
-  const { co, extCount, extNet, extTop, fcfChart, fcfSel, goAnnexMethod, goP3, hasMethod, methodSteps, sales, tv, v, weights } = vm;
+  const { co, extCount, extNet, extTop, fcfChart, fcfSel, goAnnexInfl, goAnnexMethod, goP3, hasInflFlow, hasMethod, inflFlow, methodSteps, sales, tv, v, weights } = vm;
   return (<>
     {v.p2 ? (<>
       <section data-page data-screen-label="02 Flujos" style={css('display:flex; flex-direction:column; gap:28px;')}>
@@ -153,6 +154,15 @@ export function FlowsPage({ vm }: { vm: VM }) {
                     <span style={css(`text-align:right; font-family:var(--font-heading); font-size:16px; font-weight:600; color:${x.color};`)}>{x.v}</span></div>
                 </Fragment>))}</div></div></div>
         </>) : null}
+        {hasInflFlow ? (
+          <div style={css('display:flex; flex-direction:column; gap:14px;')}>
+            <div style={css('display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; justify-content:space-between;')}>
+              <div style={css('display:flex; flex-direction:column; gap:4px;')}>
+                <span style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>Inflación → ventas → FCF</span>
+                <h3 style={css('margin:0; font-size:26px;')}>¿Cómo entra la inflación al modelo?</h3></div>
+              <button className="btn btn-ghost" onClick={goAnnexInfl} style={css('font-size:13px;')}>Modelos, serie y fuentes →</button></div>
+            {(inflFlow || []).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}</div>
+        ) : null}
         <div className="blueprint" style={css('padding:28px; display:flex; flex-wrap:wrap; gap:28px; align-items:center;')}>
           <i className="corner tl"></i>
           <i className="corner tr"></i>

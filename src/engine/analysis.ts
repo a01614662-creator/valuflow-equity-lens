@@ -1,8 +1,10 @@
 // Sensibilidad, tornado, escenarios y comparación de métodos. Todo se calcula re-ejecutando el motor.
 import { fmt } from './format';
 import { labelsOf } from './labels';
+import { inflationScenarios } from './inflation';
+import { isNum, relative } from './multiples';
 import { run } from './model';
-import type { Assumptions, Dataset, RunOk } from './types';
+import type { Assumptions, Dataset, RunOk, SensTable } from './types';
 
 export interface Grid { ws: number[]; gs: number[]; cells: (number | null)[][] }
 
@@ -33,17 +35,44 @@ export function tornado(ds: Dataset, A: Assumptions, base: RunOk): TornadoRow[] 
   }).sort((a, b) => b.range - a.range);
 }
 
-export interface Scenario { key: string; label: string; desc: string; value: number | null; upside: number | null }
+export interface Scenario {
+  key: string; label: string; kind: string; desc: string; source: string; inflation: number; constant: boolean; active: boolean;
+  value: number | null; upside: number | null; wacc: number | null; revenueLast: number | null; fcfLast: number | null;
+}
 
+/**
+ * Escenarios DOCUMENTADOS del dataset (inflación). Cada uno re-ejecuta el modelo completo con los demás supuestos activos.
+ * Si el dataset no documenta escenarios, no se inventan: la lista queda vacía.
+ */
 export function scenarios(ds: Dataset, A: Assumptions, base: RunOk): Scenario[] {
-  const fix = { waccMode: 'manual' as const, keFixed: base.ke * 100 };
-  const mk = (s: number): Assumptions => ({ ...A, ...fix, waccManual: base.wacc * 100 + s * 0.5, g: A.g - s * 0.5, dGrowth: A.dGrowth - s * 1.0, dMargin: A.dMargin - s * 0.25 });
-  const p = run(ds, mk(1)), o = run(ds, mk(-1));
-  return [
-    { key: 'pes', label: 'Pesimista', desc: 'WACC +0.5 pp · g −0.5 pp · ventas −1 pp · margen −0.25 pp', value: p.ok ? p.value : null, upside: p.ok ? p.upside : null },
-    { key: 'base', label: 'Base', desc: 'Supuestos activos del modelo', value: base.value, upside: base.upside },
-    { key: 'opt', label: 'Optimista', desc: 'WACC −0.5 pp · g +0.5 pp · ventas +1 pp · margen +0.25 pp', value: o.ok ? o.value : null, upside: o.ok ? o.upside : null }
+  if (!ds.inflation) return [];
+  const n = ds.forecast.years.length;
+  return inflationScenarios(ds.inflation, n).map(s => {
+    const active = (A.inflation ?? ds.inflation!.default) === s.key;
+    const r = active ? base : run(ds, { ...A, inflation: s.key });
+    const desc = s.constant ? 'Inflación ' + fmt.p(s.path[0]) + ' constante ' + ds.forecast.years[0] + '–' + ds.forecast.years[n - 1] : 'Trayectoria ' + s.path.map(v => (v * 100).toFixed(2) + '%').join(' · ');
+    return {
+      key: s.key, label: s.label, kind: s.kind, desc, source: s.source, inflation: s.path[0], constant: s.constant, active,
+      value: r.ok ? r.value : null, upside: r.ok ? r.upside : null, wacc: r.ok ? r.wacc : null,
+      revenueLast: r.ok ? r.rows[n - 1].revenue : null, fcfLast: r.ok ? r.rows[n - 1].fcf : null
+    };
+  });
+}
+
+/** Tablas de sensibilidad recalculadas con el motor (pasos de la tabla del Excel: 0.5 pp en WACC y g). */
+export function sensTables(ds: Dataset, A: Assumptions, base: RunOk): SensTable[] {
+  const fix = { waccMode: 'manual' as const, keFixed: base.ke * 100 }, K = [-2, -1, 0, 1, 2];
+  const val = (p: Partial<Assumptions>) => { const r = run(ds, { ...A, ...fix, waccManual: base.wacc * 100, ...p }); return r.ok ? r.value : NaN; };
+  const sg = (v: number, d = 2) => (v >= 0 ? '+' : '') + v.toFixed(d);
+  const T = (label: string, rowsLabel: string, colsLabel: string, rs: number[], cs: number[], rh: (v: number) => string, ch: (v: number) => string, fn: (r: number, c: number) => Partial<Assumptions>): SensTable =>
+    ({ label, rowsLabel, colsLabel, rowHeads: rs.map(rh), cols: cs.map(ch), grid: rs.map(r => cs.map(c => val(fn(r, c)))) });
+  const out = [
+    T('WACC vs. g', 'WACC', 'g', K.map(k => base.wacc * 100 + k * 0.5), K.map(k => A.g + k * 0.5), v => v.toFixed(2) + '%', v => v.toFixed(2) + '%', (w, g) => ({ waccManual: w, g })),
+    T('Δ Ventas vs. Δ Margen EBIT', 'Δ ventas', 'Δ margen', K.map(k => A.dGrowth + k), K.map(k => A.dMargin + k * 0.25), v => sg(v), v => sg(v), (dg, dm) => ({ dGrowth: dg, dMargin: dm })),
+    T('Δ Capex vs. Δ Tasa de impuestos', 'Δ capex', 'Δ tasa', K.map(k => A.dCapex + k * 0.25), K.map(k => A.dTax + k * 2), v => sg(v), v => sg(v), (dc, dt) => ({ dCapex: dc, dTax: dt }))
   ];
+  if (base.mult) out.splice(2, 0, T('WACC vs. múltiplo EV/EBITDA', 'WACC', 'Múltiplo', K.map(k => base.wacc * 100 + k * 0.5), K.map(k => (A.exitMultiple as number) + k * 0.5), v => v.toFixed(2) + '%', v => v.toFixed(2) + 'x', (w, m) => ({ waccManual: w, exitMultiple: m })));
+  return out;
 }
 
 export interface MethodRow { key: string; label: string; sub: string; value: number | null; lo: number | null; hi: number | null; main?: boolean; ref?: boolean }
@@ -60,8 +89,16 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
     out.push({ key: 'mult', label: 'DCF · múltiplo de salida', sub: 'EV/EBITDA ' + fmt.x(A.exitMultiple), value: base.priceM, lo: ml.ok ? ml.priceM : null, hi: mh.ok ? mh.priceM : null });
     out.push({ key: 'w', label: 'Ponderado', sub: Math.round(base.wG * 100) + '% Gordon · ' + Math.round((1 - base.wG) * 100) + '% múltiplo', value: base.priceClose, lo: lo.ok ? lo.priceClose : null, hi: hi.ok ? hi.priceClose : null });
   }
-  if (base.roll) out.push({ key: 'final', label: 'Precio objetivo', sub: 'A la fecha de valuación', value: base.value, lo: lo.ok ? lo.value : null, hi: hi.ok ? hi.value : null, main: true });
+  // Rango del DCF: escenarios documentados del dataset si existen (como en el Excel); si no, WACC ±0.5 pp y g ∓0.5 pp.
+  const sc = scenarios(ds, A, base).map(s => s.value).filter((v): v is number => v != null);
+  const dLo = sc.length > 1 ? Math.min(...sc) : (lo.ok ? lo.value : null), dHi = sc.length > 1 ? Math.max(...sc) : (hi.ok ? hi.value : null);
+  if (base.roll) out.push({ key: 'final', label: ds.combined ? 'DCF · precio objetivo' : 'Precio objetivo', sub: 'A la fecha de valuación' + (sc.length > 1 ? ' · rango: escenarios de inflación' : ''), value: base.value, lo: dLo, hi: dHi, main: true });
   else out[out.length - 1].main = true;
+  const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;
+  const num = (p: unknown) => isNum(p) ? p : null;
+  if (RV && RV.comps) out.push({ key: 'comps', label: 'Trading Comps', sub: RV.comps.n + ' comparables · rango P25–P75', value: num(RV.comps.value), lo: num(RV.comps.p25), hi: num(RV.comps.p75) });
+  if (RV && RV.transactions) out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'Referencia · ' + RV.transactions.n + ' operaciones · mín–máx', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
+  if (RV && RV.combined) out.push({ key: 'combined', label: 'Valuación combinada', sub: RV.combined.rows.map(r => Math.round(r.weight * 100) + '%').join(' / ') + ' · DCF / Comps / Transactions', value: num(RV.combined.value), lo: null, hi: null, main: true });
   if (ds.altForecasts) Object.keys(ds.altForecasts).forEach(k => {
     const af = ds.altForecasts![k], r = run(ds, { ...A, ...af.overrides, forecastKey: k, dGrowth: 0, dMargin: 0, dCapex: 0, dTax: 0 });
     if (r.ok) out.push({ key: k, label: 'Proyección base anterior', sub: af.short || 'Supuestos constantes', value: r.value, lo: null, hi: null, ref: true });

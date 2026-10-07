@@ -5,7 +5,7 @@ import type { VM } from '../viewmodel';
 
 /** 03 · Costo de capital y sensibilidad. */
 export function RiskPage({ vm }: { vm: VM }) {
-  const { co, goLab, heat, iter, openDrawerWacc, r, scen, scenNote, torn, v, wb } = vm;
+  const { co, goLab, goAnnexInfl, hasScen, heat, iter, openDrawerWacc, r, scen, scenNote, torn, v, wb } = vm;
   return (<>
     {v.p3 ? (<>
       <section data-page data-screen-label="03 Riesgo" style={css('display:flex; flex-direction:column; gap:28px;')}>
@@ -137,7 +137,7 @@ export function RiskPage({ vm }: { vm: VM }) {
             <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Centro: valor base {r.value}. Rojo: dirección que reduce el valor; azul: dirección que lo aumenta.</span></div></div>
         <div style={css('display:flex; flex-direction:column; gap:14px;')}>
           <div style={css('display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;')}>
-            <h3 style={css('margin:0; font-size:28px;')}>Escenarios</h3>
+            <h3 style={css('margin:0; font-size:28px;')}>Escenarios de inflación</h3>
             <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{scenNote}</span></div>
           <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px;')}>
             {(scen || []).map((s: any, $i: number) => (<Fragment key={$i}>
@@ -146,11 +146,17 @@ export function RiskPage({ vm }: { vm: VM }) {
                 <i className="corner tr"></i>
                 <i className="corner bl"></i>
                 <i className="corner br"></i>
-                <span style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>{s.label}</span>
+                <span style={css('display:flex; justify-content:space-between; gap:8px; align-items:baseline;')}>
+                  <span style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>{s.label}</span>
+                  <span className="tag tag-neutral" style={css('font-size:10px; padding:1px 6px;')} title={s.source}>{s.kind}</span></span>
                 <span style={css(`font-family:var(--font-heading); font-size:56px; font-weight:600; line-height:.95; color:${s.vColor};`)}>{s.valTxt}</span>
                 <span style={css(`font-family:var(--font-heading); font-size:20px; font-weight:600; color:${s.upColor};`)}>{s.upTxt} vs. precio</span>
-                <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{s.desc}</span></div>
+                <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{s.desc}</span>
+                <button className="btn btn-ghost" onClick={s.onClick} disabled={s.active} style={css('align-self:flex-start; font-size:13px; padding:4px 0;')}>{s.btnTxt}</button></div>
             </Fragment>))}</div>
+          {hasScen ? (
+            <button className="btn btn-ghost" onClick={goAnnexInfl} style={css('align-self:flex-start; font-size:13px;')}>Ver modelos y fuentes de la inflación →</button>
+          ) : null}
           <div style={css('display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; padding-top:8px;')}>
             <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Riesgos / sensibilidades del modelo: peso del valor terminal {r.tvWeight}; el WACC y la proyección de capex y margen concentran el rango de valor.</span>
             <button className="btn btn-primary blueprint" onClick={goLab}>

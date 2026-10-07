@@ -1,25 +1,13 @@
-// ValuFlow · Dataset del caso Soriana. Fuente maestra: Excel "EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO"
-// (carpeta excel/). Los números del modelo (drivers, WACC, puente, inflación, múltiplos, transacciones, pesos y
-// resultados esperados) se leen de src/data/soriana.excel.ts, generado desde el Excel con tools/excel/extract_dataset.py.
+// FIXTURE de pruebas: dataset ORIGINAL de Soriana (copia exacta de project/vf-data-soriana.js + etiquetas).
+// Se conserva para comprobar que el motor sigue idéntico al prototipo ($31.16 con la trayectoria Citi y filas redondeadas).
+// La app usa src/data/soriana.ts (conectado al Excel maestro integrado).
 // Este archivo es solo DATOS. El motor (src/engine) no conoce a Soriana.
-// El dataset original del prototipo ($31.16, filas redondeadas) vive en tests/fixtures/soriana-legacy.ts.
-import type { BuildSpec, CompsSpec, Dataset, Expected, InflationSpec, TransactionsSpec } from '../engine/types';
-import { SORIANA_XL as XL } from './soriana.excel';
+// Los números son idénticos a project/vf-data-soriana.js (tests/parity.test.ts lo comprueba).
+import type { Dataset } from '../../src/engine/types';
 
-type XLExp = typeof XL.expected.dcf.base;
-const pts = (x: number) => x * 100;
-/** Resultados del Excel (un escenario de inflación) en el formato de la capa de validación. */
-const expectedOf = (e: XLExp): Expected => ({
-  fcf: [...e.fcf], pvFcf: e.pvFcf, tvG: e.tvG, pvTvG: e.pvTvG, evG: e.evG, tvM: e.tvM, pvTvM: e.pvTvM, evM: e.evM, evW: e.evW, ev2: e.ev2, eq2: e.eq2, eqVal: e.eqVal,
-  price: e.price, upside: e.upside, wacc: e.wacc, ke: e.ke, priceG: e.priceG, priceM: e.priceM, priceW: e.priceW, tvWeight: e.tvWeight,
-  waccMarket: e.waccMarket, keMarket: e.keMarket, betaMarket: e.betaMarket,
-  comps: XL.expected.comps.value, transactions: XL.expected.transactions.value, combined: e.combined
-});
-const XE = XL.expected.dcf;
-
-export const soriana: Dataset = {
-  id: 'soriana', builtIn: true, version: 'Excel maestro integrado · DCF + inflación + múltiplos', createdAt: '2026-10-01', updatedAt: '2026-10-07',
-  source: { kind: 'Excel', file: XL.file },
+export const sorianaLegacy: Dataset = {
+  id: 'soriana', builtIn: true, version: 'Excel definitivo · Proyección final', createdAt: '2026-10-01', updatedAt: '2026-10-01',
+  source: { kind: 'Excel', file: 'VALUACION DEFINITIVA SORIANA.xlsx' },
   profile: {
     name: 'Organización Soriana', short: 'Soriana', legalName: 'Organización Soriana, S.A.B. de C.V.',
     ticker: 'SORIANA B', exchange: 'BMV', country: 'México', currency: 'MXN', units: 'mdp',
@@ -31,25 +19,25 @@ export const soriana: Dataset = {
   },
   // Etiquetas de fechas y fuentes que la interfaz muestra (antes estaban fijas en el código).
   labels: { closeDate: 'cierre de 2025', rollDate: '2T26', rollFcf: '1S26', rfSource: 'Bono M 10 años', sourceShort: 'Excel', multipleSource: 'Excel · mediana comparables −10%' },
-  // Escenarios de inflación documentados (hoja Inflación) y valuación relativa (hojas Trading Comps,
-  // Precedent Transactions y Valuación Combinada del Excel maestro).
-  inflation: XL.inflation as unknown as InflationSpec,
-  comps: XL.comps as unknown as CompsSpec,
-  transactions: XL.transactions as unknown as TransactionsSpec,
-  combined: { weights: { ...XL.combined.weights }, reasons: { ...XL.combined.reasons }, classRule: XL.combined.classRule },
   dates: { base: '31-dic-2025', balance: '30-jun-2026 (2T26)', valuation: '01-oct-2026', price: '25-sep-2026', nextReport: '23-oct-2026' },
   market: {
-    price: XL.market.price, shares: XL.market.shares, marketCap: 60264, consensus: 23.36, consensusLabel: 'Venta · 0 C / 1 M / 6 V',
+    price: 33.48, shares: 1800, marketCap: 60264, consensus: 23.36, consensusLabel: 'Venta · 0 C / 1 M / 6 V',
     low52: 23.90, high52: 42.70, pe: 18.08, pbv: 0.71, bvps: 47.07, divYield: 1.66, lastDiv: 0.5556,
     chg1y: 21.3, rating: 'HR+1 (HR Ratings, corto plazo)', rsi: 75, macd: 1.154, ma50: 29.68, ma200: 29.71, technical: 'Compra fuerte',
     hrRevenue2027: 196480
   },
-  // Proyección final construida desde sus drivers (hoja "Proyección Final Soriana"): la inflación del escenario
-  // elegido entra al crecimiento nominal de ventas y se propaga a la proyección, el FCF y la valuación.
+  // Proyección final (hoja "Proyección final Soriana"). Los drivers se derivan de estas filas.
   forecast: {
     baseYear: '2025A', years: ['2026E', '2027E', '2028E', '2029E', '2030E'],
     base: { revenue: 177515.0, ebit: 7551.0, da: 4342.0, capex: 2867.0, nwc: 3691.0, fcf: 6761.4, ebitda: 11893.0 },
-    build: XL.build as unknown as BuildSpec
+    rows: {
+      revenue: [170043.1, 167793.9, 169496.0, 173233.0, 178318.2],
+      ebit: [7719.4, 7582.1, 7647.8, 7810.3, 8038.5],
+      taxEbit: [2065.1, 2054.9, 2116.0, 2205.2, 2315.2],
+      da: [4142.7, 4087.9, 4132.1, 4226.0, 4353.0],
+      capex: [3835.2, 3318.3, 3345.7, 3413.1, 3506.7],
+      nwcRelease: [86.0, 7.2, 274.6, -73.3, -99.7]
+    }
   },
   // Escenario alterno documentado en el Excel (hoja "Valuación base"): supuestos constantes.
   altForecasts: {
@@ -60,27 +48,33 @@ export const soriana: Dataset = {
       expected: { price: 34.44, ev: 76313.9, equity: 61990.9 }
     }
   },
-  // Insumos del WACC con precisión completa (en puntos porcentuales para el motor). Fuentes: hoja Fuentes del Excel.
   wacc: {
-    rf: pts(XL.wacc.rf), prm: pts(XL.wacc.prm), prmMature: pts(XL.wacc.prmMature), countryRisk: pts(XL.wacc.countryRisk), betaU: XL.wacc.betaU,
-    taxMarket: pts(XL.wacc.taxMarket), taxShield: pts(XL.wacc.taxShield), kdPre: pts(XL.wacc.kdPre), kdMarket: pts(XL.wacc.kdMarket), interestFY: XL.wacc.interestFY,
-    debt: XL.wacc.debt, equityMarket: 60264.0, mode: 'iterated', start: pts(XL.wacc.start), iterations: XL.wacc.iterations
+    rf: 9.52, prm: 4.23, prmMature: 4.23, countryRisk: 2.46, betaU: 0.80,
+    taxMarket: 30.0, taxShield: 28.80, kdPre: 10.00, kdMarket: 13.02, interestFY: 3074.0,
+    debt: 23618.0, equityMarket: 60264.0, mode: 'iterated', start: 12.50
   },
   valuation: {
-    g: pts(XL.valuation.g), exitMultiple: XL.valuation.exitMultiple, comparablesMedian: XL.valuation.comparablesMedian, multipleDiscount: pts(XL.valuation.multipleDiscount), wGordon: XL.valuation.wGordon,
-    bridge: { ...XL.valuation.bridge },
-    roll: { ...XL.valuation.roll },
+    g: 3.50, exitMultiple: 5.8108, comparablesMedian: 6.4564, multipleDiscount: 10.0, wGordon: 0.50,
+    bridge: { debt: 11500.0, lease: 12118.0, cash: 9295.0 },
+    roll: { enabled: true, t1: 0.50, t2: 0.2528, fcfGenerated: 1060.5, debt: 11500.0, lease: 12220.6, cash: 6875.4 },
     signalThreshold: 15
   },
-  // Resultados del Excel para la capa de validación: escenario por defecto (Base) y cada escenario de inflación.
-  expected: expectedOf(XE.base),
-  expectedScenarios: { citi: expectedOf(XE.citi), cautela: expectedOf(XE.cautela), base: expectedOf(XE.base), alcista: expectedOf(XE.alcista) },
-  // Iteración del WACC del Excel (filas 214–219): [k, WACC entrada %, Equity DCF, D/E, βL, Ke %, WACC salida %].
-  waccIterationExcel: XE.base.waccIterations.map((r, k) => [k, pts(r[0]), r[1], r[2], r[3], pts(r[4]), pts(r[5])]),
+  // Resultados del Excel para la capa de validación.
+  expected: {
+    fcf: [6047.8, 6304.0, 6592.9, 6344.8, 6470.0], pvFcf: 22891.8, tvG: 79934.9, pvTvG: 45606.4, evG: 68498.1,
+    tvM: 72004.4, pvTvM: 41081.7, evM: 63973.5, evW: 66235.8, ev2: 71119.5, eq2: 54274.3, eqVal: 56095.9,
+    price: 31.16, upside: -6.9, wacc: 11.88, ke: 13.95, priceG: 30.10, priceM: 27.58, priceW: 28.84, tvWeight: 66.6,
+    waccMarket: 12.50, keMarket: 13.83, betaMarket: 1.02,
+    sensRow: [29.57, 30.32, 31.16, 32.11, 33.19]
+  },
+  waccIterationExcel: [
+    [0, 12.50, 49499.3, 0.4771, 1.0718, 14.05, 11.81], [1, 11.81, 54706.7, 0.4317, 1.0459, 13.94, 11.88],
+    [2, 11.88, 54119.2, 0.4364, 1.0486, 13.95, 11.88], [3, 11.88, 54181.1, 0.4359, 1.0483, 13.95, 11.88],
+    [4, 11.88, 54174.5, 0.4360, 1.0483, 13.95, 11.88], [5, 11.88, 54175.2, 0.4360, 1.0483, 13.95, 11.88]
+  ],
   method: {
-    // Ponderación y crecimiento del escenario Base (la pantalla usa la proyección en vivo del escenario activo).
-    weightsExternal: XL.build.weightsExternal.map(pts),
-    growthExternal: XE.base.growthExternal.map(pts), growthLS: [-5.9, -6.6, -7.0, -7.6, -8.2], growthFinal: XE.base.growthFinal.map(pts),
+    weightsExternal: [70, 70, 75, 80, 85],
+    growthExternal: [-3.47, 0.93, 3.70, 4.65, 4.90], growthLS: [-5.9, -6.6, -7.0, -7.6, -8.2], growthFinal: [-4.21, -1.32, 1.01, 2.20, 2.94],
     marginExternal: [4.37, 4.34, 4.37, 4.40, 4.43], marginLS: [4.93, 4.93, 4.93, 4.93, 4.93], marginFinal: [4.54, 4.52, 4.51, 4.51, 4.51],
     capexFinal: [2.26, 1.98, 1.97, 1.97, 1.97], taxFinal: [26.75, 27.10, 27.67, 28.23, 28.80], daFinal: [2.44, 2.44, 2.44, 2.44, 2.44],
     salesLS: [163937, 153151, 142365, 131580, 120794], salesConst: [183728.0, 190158.5, 196814.1, 203702.5, 210832.1], salesLTM: 174278,
@@ -163,22 +157,16 @@ export const soriana: Dataset = {
   ],
   news: [['31-jul-2026', 'Resultados 2T26: menos ventas, más utilidad'], ['26-ago-2026', 'Cierre de 20 tiendas en 2026'], ['2-sep-2026', 'Reducción de plantilla y automatización'], ['sep-2026', 'Plan de inversión 2S26']],
   discrepancies: [
-    { topic: 'Valor intrínseco por acción (DCF)', a: ['Proyección base preliminar / Material maestro', '$34.44 · $35.24'], b: ['Excel maestro · DCF con inflación Base 3.51%', '$30.83'], used: 'Excel maestro · escenario Base', note: '$34.44 es la proyección preliminar (supuestos constantes, WACC 12.50%, solo Gordon). $31.16 es el baseline histórico con la trayectoria Citi y se reproduce exactamente con ese escenario.' },
-    { topic: 'Inflación en la proyección', a: ['Excel definitivo anterior', 'Encuesta Citi 22-sep-2026: 3.93% / 3.83% / 3.75%'], b: ['Excel maestro', 'Escenarios Cautela 3.26% · Base 3.51% · Alcista 4.00%'], used: 'Base 3.51% (resultado del modelo exponencial trimestral de clase)', note: 'La trayectoria Citi se conserva como escenario seleccionable para reproducir el baseline histórico.' },
-    { topic: 'WACC', a: ['AE 1 · Sesión 2', '10.22% · 12.50%'], b: ['Excel maestro · WACC iterado (Base)', '11.87%'], used: 'Excel · 11.87% (iterado al valor DCF, 6 iteraciones)', note: '12.50% es el WACC a valor de mercado; la iteración usa el equity del propio DCF.' },
+    { topic: 'Valor intrínseco por acción', a: ['Material maestro / app Base44 (DCF Sesión 2)', '$35.24 · $34.44'], b: ['Excel · Proyección final', '$31.16'], used: 'Excel · Proyección final', note: 'El caso base anterior usa supuestos constantes (3.5% ventas, WACC 12.50%, solo Gordon). La proyección final pondera métodos, itera el WACC y lleva el valor a la fecha de valuación.' },
+    { topic: 'WACC', a: ['AE 1 · Sesión 2', '10.22% · 12.50%'], b: ['Excel · WACC iterado', '11.88%'], used: 'Excel · 11.88% (iterado al valor DCF)', note: '12.50% es el WACC a valor de mercado; la iteración usa el equity del propio DCF.' },
     { topic: 'Deuda total', a: ['Cierre 2025', '23,618 mdp'], b: ['2T26', '23,720.6 mdp'], used: 'Cierre 2025 para el EV; 2T26 para el puente a la fecha de valuación', note: 'El modelo usa ambos saldos en etapas distintas.' },
     { topic: 'Múltiplo P/U', a: ['Material maestro', '14.25x'], b: ['Excel · ratios de mercado', '18.08x'], used: 'Excel · 18.08x', note: 'Diferente fecha de corte de la utilidad.' },
     { topic: 'Capex 1S26', a: ['Material maestro', '1,638 mdp'], b: ['Excel · reporte 2T26', '1,411 mdp'], used: 'Excel', note: 'Sin impacto en el DCF (el modelo usa FCF 1S26 = CFO − Capex real).' },
     { topic: 'Rendimiento por dividendo', a: ['Material maestro', '1.8%'], b: ['Excel', '1.66%'], used: 'Excel · 1.66%', note: 'Distinto precio de referencia.' },
     { topic: 'Capitalización de mercado', a: ['Reportada (precio $30.10)', '54,180 mdp'], b: ['Precio actual × acciones', '60,264 mdp'], used: '60,264 mdp para el WACC de mercado', note: 'El Excel recalcula E con el precio vigente.' }
   ],
-  inputs: XL.registry.map(r => r.map(x => String(x ?? '')) as [string, string, string, string, string, string, string]),
   sources: [
-    ['Excel maestro integrado', XL.file, 'Fuente maestra: DCF, inflación, Trading Comps, Precedent Transactions, valuación combinada y validación (29 controles)'],
-    ['Banco de México', 'Serie SP74833 · INPC variación anual quincenal', 'Datos de los modelos de inflación (consulta 07-oct-2026)'],
-    ['S&P Capital IQ', 'Quick Comparable Analysis (as-of 30-jun-2026)', 'Múltiplos publicados de 10 comparables (extracto con atribución)'],
-    ['S&P Capital IQ', 'Comparable M&A Transactions', '3 operaciones con múltiplos implícitos (extracto con atribución)'],
-    ['Excel definitivo', 'EXCEL DEFINITIVO DE VALUACIÓN DE SORIANA (anterior)', 'Base del modelo DCF; trayectoria Citi y baseline histórico $31.16'],
+    ['Excel definitivo', 'VALUACIÓN DEFINITIVA SORIANA.xlsx', 'Fuente primaria de números, supuestos y resultados'],
     ['AE 1 · Etapa 1', 'PDF académico', 'Perfil, historia, gobierno corporativo, estructura de capital, dividendos'],
     ['Sesión 2', 'Valuación y comparativas de Soriana y mercado', 'DCF de la segunda entrega y razones financieras'],
     ['Material maestro', 'Material maestro de contexto (PDF)', 'Contexto consolidado, equipo y reglas de producto'],

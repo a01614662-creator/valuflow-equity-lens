@@ -3,6 +3,7 @@ import { grid, scenarios, type TornadoRow } from './analysis';
 import { fin, fmt } from './format';
 import { labelsOf } from './labels';
 import { defaults, run } from './model';
+import { isNum, relative } from './multiples';
 import type { Assumptions, Dataset, RunOk, RunResult } from './types';
 
 export type CheckStatus = 'pass' | 'review' | 'na';
@@ -12,7 +13,8 @@ export interface Check { group: string; label: string; status: CheckStatus; deta
 export const SOURCE_GROUP = 'Excel';
 
 export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: boolean): Check[] {
-  const E = ds.expected, checks: Check[] = [];
+  // Con escenarios de inflación, la referencia es la columna del Excel del escenario activo.
+  const E = (A.inflation && ds.expectedScenarios && ds.expectedScenarios[A.inflation]) || ds.expected, checks: Check[] = [];
   const add = (group: string, label: string, ok: boolean | null, detail?: string, calc?: string, exp?: string) =>
     checks.push({ group, label, status: ok === null ? 'na' : (ok ? 'pass' : 'review'), detail, calc, exp });
   const L = labelsOf(ds), Y = ds.forecast.years;
@@ -26,8 +28,26 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
   add('Modelo', 'Σ VP de FCF = VPN explícito', Math.abs(b - base.pvSum) < 1e-6, fmt.m(base.pvSum, 1));
   add('Modelo', 'EV = VPN FCF + VP valor terminal', Math.abs(base.evG - base.pvSum - base.pvTvG) < 1e-6, fmt.m(base.evG, 1));
   add('Modelo', 'Equity = EV − deuda neta', Math.abs(base.eqClose - (base.evW - base.nd)) < 1e-6, fmt.m(base.eqClose, 1));
-  const s = scenarios(ds, A, base);
-  add('Modelo', 'Escenarios ordenados (pesimista < base < optimista)', (s[0].value as number) < (s[1].value as number) && (s[1].value as number) < (s[2].value as number), s.map(x => fmt.cur(x.value)).join(' · '));
+  const bd = base.drivers.build;
+  if (bd) {
+    add('Modelo', 'Balance proyectado cuadra (activo = pasivo + capital)', bd.years.every(y => Math.abs(y.check) < 0.5), 'Máx. diferencia ' + fmt.m(Math.max(...bd.years.map(y => Math.abs(y.check))), 6));
+    add('Modelo', 'FCF de la proyección = FCF descontado', bd.years.every((y, i) => Math.abs(y.fcf - base.rows[i].fcf) < 1e-6), 'Proyección por drivers vs. motor DCF');
+  }
+  const s = scenarios(ds, A, base).filter(x => x.constant);
+  if (s.length > 1) add('Modelo', 'Escenarios de inflación ordenados (menor inflación → menor valor)', s.every((x, i) => i === 0 || (x.inflation > s[i - 1].inflation) === ((x.value as number) > (s[i - 1].value as number))), s.map(x => x.label + ' ' + fmt.cur(x.value)).join(' · '));
+  // Valuación relativa y combinada (solo si el dataset la documenta).
+  const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;
+  if (RV && RV.comps) {
+    const C = RV.comps;
+    add('Múltiplos', 'Trading Comps · muestra con al menos 3 comparables', C.n >= 3, C.n + ' comparables incluidos');
+    add('Múltiplos', 'Trading Comps · al menos un múltiplo usado con precio', C.used > 0, C.used + ' múltiplos usados');
+  }
+  if (RV && RV.transactions) add('Múltiplos', 'Precedent Transactions · operaciones incluidas', RV.transactions.n > 0, RV.transactions.n + ' operaciones · ' + RV.transactions.checks.filter(c => c.inWindow).length + ' dentro de la ventana');
+  if (RV && RV.combined) {
+    const K = RV.combined;
+    add('Múltiplos', 'Valuación combinada · pesos suman 100%', Math.abs(K.weightSum - 1) < 1e-9, K.rows.map(r => r.label + ' ' + Math.round(r.weight * 100) + '%').join(' · '));
+    add('Múltiplos', 'Valuación combinada · todo método con peso tiene precio', K.errors.length === 0, K.errors.join(' ') || 'Sin métodos en NA con peso');
+  }
   if (E && isBase) {
     const tol = (c: number, e: number, t: number) => Math.abs(c - e) <= t;
     base.rows.forEach((r, i) => add(SOURCE_GROUP, 'FCF ' + r.year, tol(r.fcf, E.fcf[i], 1.0), '', fmt.m(r.fcf, 1), fmt.m(E.fcf[i], 1)));
@@ -44,8 +64,17 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
       ['WACC a valor de mercado', base.W.market.wacc * 100, E.waccMarket, 0.01, pct], ['Ke a valor de mercado', base.W.market.ke * 100, E.keMarket, 0.01, pct]
     ];
     rows.forEach(([l, c, e, t, f]) => add(SOURCE_GROUP, l, fin(c) ? tol(c, e, t) : null, '', fin(c) ? f(c) : '—', f(e)));
-    const gr = grid(ds, A, base);
-    add(SOURCE_GROUP, 'Sensibilidad · fila WACC base', gr.cells[2].every((v, i) => v != null && tol(v, E.sensRow[i], 0.02)), '', gr.cells[2].map(v => (v as number).toFixed(2)).join(' · '), E.sensRow.map(v => v.toFixed(2)).join(' · '));
+    // Valuación relativa: solo se compara si la muestra y los pesos son los del dataset.
+    const noOverrides = !A.compsInclude && !A.compsUse && !A.dealsInclude && !A.dealsUse && !A.weights;
+    if (RV && noOverrides) {
+      const rel: [string, unknown, number | undefined][] = [['Trading Comps', RV.comps && RV.comps.value, E.comps], ['Precedent Transactions', RV.transactions && RV.transactions.value, E.transactions], ['Valuación combinada', RV.combined && RV.combined.value, E.combined]];
+      rel.forEach(([l, c, e]) => { if (e != null) add(SOURCE_GROUP, l, isNum(c) ? tol(c, e, 0.02) : false, '', isNum(c) ? cur(c) : String(c), cur(e)); });
+    }
+    const sr = E.sensRow;
+    if (sr) {
+      const gr = grid(ds, A, base);
+      add(SOURCE_GROUP, 'Sensibilidad · fila WACC base', gr.cells[2].every((v, i) => v != null && tol(v, sr[i], 0.02)), '', gr.cells[2].map(v => (v as number).toFixed(2)).join(' · '), sr.map(v => v.toFixed(2)).join(' · '));
+    }
     if (ds.altForecasts) Object.keys(ds.altForecasts).forEach(k => {
       const af = ds.altForecasts![k];
       if (!af.expected) return;

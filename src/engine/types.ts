@@ -96,7 +96,95 @@ export interface Forecast {
   base: ForecastBase;
   rows?: ForecastRows;
   drivers?: Drivers;
+  /** Proyección construida desde sus drivers (réplica de la hoja de proyección del Excel). Tiene prioridad sobre rows. */
+  build?: BuildSpec;
 }
+
+/** Un ajuste por año con su etiqueta y celda de origen. */
+export interface LabeledSeries { label: string; cell?: string; values: number[] }
+
+/**
+ * Drivers de la proyección por variables externas + mínimos cuadrados (hoja "Proyección Final" del Excel).
+ * Todos los porcentajes son fracciones (0.035 = 3.5%). Un valor por año proyectado salvo donde se indica.
+ */
+export interface BuildSpec {
+  source?: string;
+  /** Peso de variables externas; el de mínimos cuadrados es 1 − peso. */
+  weightsExternal: number[];
+  sales: {
+    gdp: number[]; elasticity: number[]; consumptionAdj: number[];
+    adjustments: LabeledSeries[];
+    /** Ventas por mínimos cuadrados: año base + un valor por año proyectado. */
+    lsSales: number[];
+  };
+  margin: { base: number; adjustments: LabeledSeries[]; ls: number[] };
+  da: { ext: number[]; ls: number[] };
+  /** Capex: monto guía (mdp) si existe para el año; si no, basePct × (1 + extAdj) + add. */
+  capex: { guide: (number | null)[]; add: number[]; basePct: number; extAdj: number; ls: number[] };
+  tax: { base: number; adj: number[]; ls: number[] };
+  invDays: number[]; otherCAPct: number[]; opCLPct: number[]; costPct: number[];
+  interestRate: number[]; debtAmort: number[]; payout: number[]; otherIncome: number[];
+  base: { revenue: number; cash: number; inventory: number; otherCA: number; nonCurrent: number; opCL: number; debt: number; lease: number; otherLT: number; equity: number; ebit?: number; da?: number };
+}
+
+/** Escenario de inflación documentado: trayectoria por año (path) o valor constante (value). */
+export interface InflationScenario { label: string; kind: string; source?: string; cell?: string; path?: number[]; value?: number }
+
+export interface InflationModel { a: number | null; b: number | null; r2: number | null; xNext: number | null; forecast: number | null; n: number | null }
+
+export interface InflationSpec {
+  source?: string;
+  default: string;
+  order: string[];
+  scenarios: Record<string, InflationScenario>;
+  /** Serie observada [fecha ISO, % anual]. */
+  series?: [string, number][];
+  /** Resultados de los modelos en el Excel (para validar el cálculo propio de la app). */
+  models?: Record<string, InflationModel>;
+  quarterlyAverages?: number[];
+  chain?: [string, string, string][];
+  beta?: { historical: number; r2: number; n: number; reported: number; wacc: number; damodaranUnverified?: number };
+}
+
+/** Múltiplos de un comparable (null = NA). */
+export interface PeerMultiples { evSales: number | null; evEbitda: number | null; evEbit: number | null; pe: number | null; ptbv?: number | null; evEbitdaNtm?: number | null; peNtm?: number | null }
+
+export interface Peer {
+  name: string; country?: string; industry?: string; model?: string; tevUsd?: number | null; salesUsd?: number | null;
+  ebitdaMargin?: number | null; growth?: number | null; leverage?: number | null;
+  classification: string; include: number; reason: string; multiples: PeerMultiples;
+}
+
+export type MultipleKey = 'evSales' | 'evEbitda' | 'evEbit' | 'pe' | 'ptbv' | 'evEbitdaNtm' | 'peNtm';
+export type MetricKey = 'revenue' | 'ebitda' | 'ebit' | 'eps';
+
+export interface MultipleDef { key: MultipleKey; label: string; kind?: string; metric: MetricKey | null; use: number; status: string; reason: string }
+
+/** Métricas de la empresa objetivo y puente EV → capital (misma fecha que los múltiplos). */
+export interface CompsTarget {
+  revenue: number; ebit: number; da?: number; ebitda: number; netIncome?: number; shares: number; eps: number;
+  cash: number; debt: number; lease: number; minority: number; preferred: number; sources?: Record<string, string>;
+}
+
+export interface CompsSpec {
+  source?: string; asOf?: string; note?: string;
+  peers: Peer[]; ciqMean?: Partial<Record<MultipleKey, number>>;
+  target: CompsTarget; multiples: MultipleDef[];
+}
+
+export interface Deal {
+  date: string; id: string; target: string; buyer?: string; seller?: string; tev?: number; size?: number;
+  evSales: number | null; evEbitda: number | null; country?: string; control?: string; include: number; note?: string;
+}
+
+export interface TransactionsSpec {
+  source?: string; warning?: string;
+  criteria: { valuationDate: string; windowYears: number; geography: string; minMultiples: number };
+  deals: Deal[]; ciqMean?: { evSales?: number; evEbitda?: number };
+  multiples: MultipleDef[];
+}
+
+export interface CombinedSpec { weights: { dcf: number; comps: number; transactions: number }; reasons?: Record<string, string>; classRule?: string }
 
 export interface AltForecast {
   label: string;
@@ -124,6 +212,8 @@ export interface WaccInputs {
   equityMarket?: number | null;
   mode?: WaccMode;
   start?: number;
+  /** Número fijo de iteraciones del WACC (el Excel usa 6 filas). Por defecto: hasta converger (máx. 14). */
+  iterations?: number;
 }
 
 export interface Roll {
@@ -154,7 +244,10 @@ export interface Expected {
   tvM?: number; pvTvM?: number; evM: number; evW: number; ev2: number; eq2?: number; eqVal: number;
   price: number; upside: number; wacc: number; ke: number; priceG: number; priceM: number; priceW: number; tvWeight: number;
   waccMarket: number; keMarket: number; betaMarket?: number;
-  sensRow: number[];
+  /** Fila central de la tabla WACC × g del precio final (opcional). */
+  sensRow?: number[];
+  /** Valuación relativa y combinada (precio por acción). */
+  comps?: number; transactions?: number; combined?: number;
 }
 
 /**
@@ -235,6 +328,12 @@ export interface Dataset {
   valuation: Valuation;
   labels?: Labels;
   expected?: Expected;
+  /** Resultados de referencia por escenario de inflación (la clave es el escenario). */
+  expectedScenarios?: Record<string, Expected>;
+  inflation?: InflationSpec;
+  comps?: CompsSpec;
+  transactions?: TransactionsSpec;
+  combined?: CombinedSpec;
   waccIterationExcel?: number[][];
   method?: Method;
   quarterly?: { periods: string[]; [k: string]: string[] | number[] };
@@ -245,6 +344,8 @@ export interface Dataset {
   news?: [string, string][];
   discrepancies?: Discrepancy[];
   sources?: [string, string, string][];
+  /** Registro de insumos: [insumo, dónde se usa, valor, fecha, unidad, tipo (Observado/Supuesto/Modelo/Pendiente), fuente]. */
+  inputs?: [string, string, string, string, string, string, string][];
   annex?: Annex;
   history?: Record<string, { year: number | null; label: string; v: number }[]>;
   imported?: ImportedField[];
@@ -269,13 +370,35 @@ export interface Assumptions {
   price: number | null; shares: number | null;
   rollEnabled: boolean;
   bridgeDebt: number; bridgeLease: number; bridgeCash: number;
+  /** Escenario de inflación documentado (solo si el dataset trae inflation). */
+  inflation?: string;
+  /** Inclusión de comparables / operaciones y uso de múltiplos (solo cambios respecto al dataset). */
+  compsInclude?: Record<string, number>; compsUse?: Record<string, number>;
+  dealsInclude?: Record<string, number>; dealsUse?: Record<string, number>;
+  /** Pesos de la valuación combinada (fracciones). */
+  weights?: { dcf: number; comps: number; transactions: number };
 }
 
 export interface DriverSet {
   years: string[]; n: number; rev0: number; nwc0: number;
   growth: number[]; margin: number[]; tax: number[]; da: number[]; capex: number[]; nwcPct: number[];
   derived: boolean;
+  /** Detalle de la proyección construida desde drivers (si aplica). */
+  build?: BuildResult;
 }
+
+export interface BuildYear {
+  year: string; inflation: number; marketGrowth: number; growthExternal: number; growthLS: number; growth: number;
+  marginExternal: number; margin: number; daPct: number; capexPctExternal: number; capexPct: number; taxRate: number;
+  revenue: number; cogs: number; gross: number; opex: number; ebitda: number; da: number; ebit: number; interest: number; otherIncome: number;
+  ebt: number; taxes: number; netIncome: number; dividends: number;
+  cash: number; inventory: number; otherCA: number; currentAssets: number; nonCurrent: number; totalAssets: number;
+  opCL: number; debt: number; lease: number; otherLT: number; totalLiabilities: number; equity: number; liabEquity: number; check: number;
+  dInventory: number; dOtherCA: number; capex: number; dOpCL: number; dDebt: number; cashChange: number;
+  taxEbit: number; nopat: number; nwcRelease: number; fcf: number;
+}
+
+export interface BuildResult { scenario: string | null; inflation: number[]; years: BuildYear[]; rows: ForecastRows }
 
 export interface ProjRow {
   year: string; n: number; growth: number; revenue: number; margin: number; ebit: number; taxRate: number; tax: number; nopat: number;

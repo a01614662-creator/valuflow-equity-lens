@@ -1,10 +1,12 @@
-// Validación contra el Excel "VALUACIÓN DEFINITIVA SORIANA" (resultados de referencia en el dataset).
+// Validación contra el Excel "VALUACIÓN DEFINITIVA SORIANA" anterior (baseline histórico $31.16, dataset original
+// del prototipo en tests/fixtures). El Excel maestro integrado se valida en tests/excel-master.test.ts.
 import { describe, expect, it } from 'vitest';
 import * as E from '../src/engine';
-import { soriana } from '../src/data/soriana';
+import { sorianaLegacy as soriana } from './fixtures/soriana-legacy';
+import { soriana as sorianaMaster } from '../src/data/soriana';
 import { BUILT_IN, checkDataset } from '../src/data/registry';
 
-describe('Soriana vs. Excel', () => {
+describe('Soriana (dataset histórico) vs. Excel definitivo anterior', () => {
   const A = E.defaults(soriana), b = E.run(soriana, A);
 
   it('la valuación base es válida', () => { expect(b.ok).toBe(true); });
@@ -25,11 +27,12 @@ describe('Soriana vs. Excel', () => {
     b.rows.forEach((r, i) => expect(Math.abs(r.fcf - soriana.expected!.fcf[i])).toBeLessThanOrEqual(1));
   });
 
-  it('las 34 comprobaciones de la capa de validación pasan', () => {
+  // 33 = las 34 originales menos la de escenarios inventados (pesimista/optimista), retirada por la decisión oficial 5.
+  it('las 33 comprobaciones de la capa de validación pasan', () => {
     const checks = E.validate(soriana, A, b, true);
     const review = checks.filter(c => c.status !== 'pass');
     expect(review).toEqual([]);
-    expect(checks.length).toBe(34);
+    expect(checks.length).toBe(33);
   });
 
   it('escenario de supuestos constantes reproduce $34.44', () => {
@@ -64,6 +67,23 @@ describe('identidades financieras', () => {
     const it = b.W.iterated!, t = A.taxShield / 100;
     const beta = A.betaU * (1 + (1 - t) * it.D / it.E), ke = A.rf / 100 + beta * A.prm / 100;
     expect(it.E / (it.D + it.E) * ke + it.D / (it.D + it.E) * it.kdAT).toBeCloseTo(b.wacc, 9);
+  });
+});
+
+describe('Soriana (Excel maestro) · capa de validación de la app', () => {
+  const A = E.defaults(sorianaMaster), b = E.run(sorianaMaster, A);
+  it('todas las comprobaciones pasan con los supuestos base', () => {
+    const checks = E.validate(sorianaMaster, A, b, true);
+    expect(checks.filter(c => c.status !== 'pass')).toEqual([]);
+    expect(checks.filter(c => c.group === E.SOURCE_GROUP).length).toBeGreaterThan(20);
+  });
+  it('cada escenario de inflación se compara contra su columna del Excel', () => {
+    ['citi', 'cautela', 'alcista'].forEach(k => {
+      const A2 = { ...A, inflation: k }, b2 = E.run(sorianaMaster, A2);
+      const checks = E.validate(sorianaMaster, A2, b2, E.isDefault(sorianaMaster, { ...A2, inflation: A.inflation }));
+      expect(checks.filter(c => c.status === 'review')).toEqual([]);
+      expect(checks.some(c => c.group === E.SOURCE_GROUP && c.status === 'pass')).toBe(true);
+    });
   });
 });
 

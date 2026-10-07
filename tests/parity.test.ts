@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import * as E from '../src/engine';
 import type { Assumptions, Dataset } from '../src/engine';
-import { soriana } from '../src/data/soriana';
+import { sorianaLegacy as soriana } from './fixtures/soriana-legacy';
 import { loadLegacy } from './legacy';
 
 const { VF, dataset: legacyDs } = loadLegacy();
@@ -71,7 +71,10 @@ describe('paridad con el motor original', () => {
       expect(plain(E.grid(ds, A, b, 0.25, 0.5))).toEqual(plain(VF.grid(legacyDs, plain(A), lb, 0.25, 0.5)));
       const t = E.tornado(ds, A, b);
       expect(plain(t)).toEqual(plain(VF.tornado(legacyDs, plain(A), lb)));
-      expect(plain(E.scenarios(ds, A, b))).toEqual(plain(VF.scenarios(legacyDs, plain(A), lb)));
+      // Cambio aprobado (decisión oficial 5): los escenarios pesimista/optimista del prototipo eran inventados
+      // (±0.5 pp WACC y g, ±1 pp ventas, ±0.25 pp margen, sin fuente). Ahora solo existen escenarios documentados
+      // del dataset; el dataset original no trae ninguno, así que la lista queda vacía.
+      expect(E.scenarios(ds, A, b)).toEqual([]);
       expect(plain(E.methods(ds, A, b))).toEqual(plain(VF.methods(legacyDs, plain(A), lb)));
       // La lectura rápida solo difiere cuando el FCF es negativo (antes mostraba "NaN%").
       if (b.rows[0].fcf > 0 && b.rows[b.rows.length - 1].fcf > 0) expect(plain(E.insights(ds, A, b, t))).toEqual(plain(VF.insights(legacyDs, plain(A), lb, t)));
@@ -80,8 +83,10 @@ describe('paridad con el motor original', () => {
 
   it('validación: mismos estados y cifras (solo cambian etiquetas de fecha)', () => {
     const A = E.defaults(ds), b = E.run(ds, A), lb = VF.run(legacyDs, A);
-    const strip = (cs: { status: string; calc?: string; exp?: string; group: string }[]) => cs.map(c => [c.group, c.status, c.calc || '', c.exp || '']);
-    expect(strip(E.validate(ds, A, b, true))).toEqual(strip(VF.validate(legacyDs, A, lb, true)));
+    const strip = (cs: { status: string; calc?: string; exp?: string; group: string; label: string }[]) => cs.map(c => [c.group, c.status, c.calc || '', c.exp || '']);
+    // Única diferencia aprobada: desaparece la comprobación de los escenarios inventados (ver arriba).
+    const legacy = (VF.validate(legacyDs, A, lb, true) as { label: string }[]).filter(c => !/^Escenarios ordenados/.test(c.label));
+    expect(strip(E.validate(ds, A, b, true))).toEqual(strip(legacy as never));
   });
 
   it('formato numérico idéntico', () => {

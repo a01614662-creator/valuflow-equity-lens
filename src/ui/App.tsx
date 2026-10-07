@@ -11,9 +11,9 @@ import { brandColor, findLogo, research, type Research } from '../services/resea
 import { buildView, type Calc } from './viewmodel';
 import { Shell } from './Shell';
 
-export const SEQ = ['cover', 'p1', 'p2', 'p3', 'lab'];
-export const SEQ_N = ['Portada', '01 · Valor', '02 · Flujos', '03 · Riesgo', 'Laboratorio'];
-const VIEWS = ['cover', 'p1', 'p2', 'p3', 'lab', 'annex', 'team', 'library'];
+export const SEQ = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'lab'];
+export const SEQ_N = ['Portada', '01 · Valor', '02 · Flujos', '03 · Riesgo', '04 · Múltiplos', '05 · Combinada', 'Laboratorio'];
+const VIEWS = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'lab', 'annex', 'team', 'library'];
 
 export interface ImpState {
   step: number; parsing: boolean; error: string | null; parsed: Parsed | null;
@@ -104,7 +104,11 @@ export class App extends Component<object, AppState> {
   // ---------- Presentación / impresión ----------
   startPresent() { const i = SEQ.indexOf(this.state.view); this.setState({ presenting: true }); this.go(i >= 0 ? this.state.view : 'cover'); try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); } catch { /* no permitido */ } }
   exitPresent() { this.setState({ presenting: false }); try { document.fullscreenElement && document.exitFullscreen(); } catch { /* no permitido */ } }
-  presStep(d: number) { const i = Math.max(0, SEQ.indexOf(this.state.view)); const n = Math.min(SEQ.length - 1, Math.max(0, i + d)); if (n !== i) this.go(SEQ[n]); }
+  presStep(d: number) {
+    // Las páginas de múltiplos solo forman parte de la presentación si el dataset las documenta.
+    const ds = this.ds(), seq = SEQ.filter(x => (x !== 'p4' && x !== 'p5') || !!(ds.comps || ds.combined));
+    const i = Math.max(0, seq.indexOf(this.state.view)); const n = Math.min(seq.length - 1, Math.max(0, i + d)); if (n !== i) this.go(seq[n]);
+  }
   print(mode: 'summary' | 'full') { this.setState({ printing: mode, menu: null, reveal: true }); const p = () => { try { window.print(); } catch { /* bloqueado */ } }; setTimeout(() => { p(); printPanel(p); }, 600); }
 
   // ---------- Cálculo central (una sola fuente de verdad) ----------
@@ -123,7 +127,9 @@ export class App extends Component<object, AppState> {
     if (view.ok) {
       c.grid = E.grid(ds, VA, view, this.state.step, this.state.step);
       c.torn = E.tornado(ds, VA, view); c.scen = E.scenarios(ds, VA, view); c.methods = E.methods(ds, VA, view);
-      c.ins = E.insights(ds, VA, view, c.torn); c.valid = E.validate(ds, VA, view, isBase && base.ok);
+      // La comparación contra el Excel también aplica a cada escenario de inflación documentado (tiene su columna de referencia).
+      const cmp = base.ok && E.isDefault(ds, { ...A, inflation: D.inflation }) && (!A.inflation || !ds.expectedScenarios || !!ds.expectedScenarios[A.inflation]);
+      c.ins = E.insights(ds, VA, view, c.torn); c.valid = E.validate(ds, VA, view, cmp);
     }
     this._ck = key; this._c = c; return c;
   }

@@ -37,12 +37,15 @@ export function LabPage({ vm }: { vm: VM }) {
                   {(lab.waccOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
                     <button onClick={o.onClick} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
                   </Fragment>))}</div></div>
-              <div style={css('display:flex; flex-direction:column; gap:6px;')}>
-                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Escenario rápido</span>
-                <div className="seg">
-                  {(lab.scenOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
-                    <button onClick={o.onClick} style={css('padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:none; color:var(--color-text); cursor:pointer; font-size:13px;')}>{o.t}</button>
-                  </Fragment>))}</div></div></div>
+              {lab.hasInfl ? (<>
+                <div style={css('display:flex; flex-direction:column; gap:6px;')}>
+                  <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Escenario de inflación (documentado)</span>
+                  <div className="seg">
+                    {(lab.inflOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
+                      <button onClick={o.onClick} title={o.kind} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
+                    </Fragment>))}</div>
+                  <span style={css('font-size:11px; color:var(--color-neutral-700);')}>{lab.inflKind} · no hay valores libres fuera de estos escenarios</span></div>
+              </>) : null}</div>
             {(lab.groups || []).map((gr: any, $i: number) => (<Fragment key={$i}>
               <div className="blueprint" style={css('padding:24px; display:flex; flex-direction:column; gap:18px;')}>
                 <i className="corner tl"></i>
@@ -59,7 +62,11 @@ export function LabPage({ vm }: { vm: VM }) {
                         <span style={css('font-size:14px; font-weight:500;')}>{c.label}{' '}
                           <span style={css('color:var(--color-accent);')}>{c.dot}</span></span>
                         <span style={css('font-family:var(--font-heading); font-size:22px; font-weight:600;')}>{c.valTxt}</span></span>
-                      <input type="range" min={c.min} max={c.max} step={c.step} value={c.value} onChange={c.onChange} aria-label={c.label} />
+                      {c.range ? (
+                        <input type="range" min={c.min} max={c.max} step={c.step} value={c.value} onChange={c.onChange} aria-label={c.label} />
+                      ) : (
+                        <input className="input" type="number" step={c.step} value={c.value} onChange={c.onChange} aria-label={c.label} />
+                      )}
                       <span style={css('display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--color-neutral-700);')}>
                         <span>{c.impact}</span>
                         <span className="tag tag-neutral" style={css('padding:1px 6px; font-size:10px;')}>{c.source}</span></span></label>

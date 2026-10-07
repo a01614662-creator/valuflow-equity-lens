@@ -23,7 +23,8 @@ export function checkDataset(ds: unknown): string[] {
   if (!f || !Array.isArray(f.years) || !f.years.length) out.push('Falta forecast.years (años de proyección).');
   else {
     if (!f.base || !isNum(f.base.revenue)) out.push('Falta forecast.base.revenue (ventas del año base).');
-    if (!f.rows && !f.drivers) out.push('La proyección necesita forecast.rows o forecast.drivers.');
+    if (!f.rows && !f.drivers && !f.build) out.push('La proyección necesita forecast.rows, forecast.drivers o forecast.build.');
+    if (f.build && !(d.inflation && d.inflation.scenarios && d.inflation.scenarios[d.inflation.default])) out.push('forecast.build requiere escenarios de inflación (inflation.default).');
     if (f.rows) (['revenue', 'ebit', 'taxEbit', 'da', 'capex', 'nwcRelease'] as const).forEach(k => {
       if (!Array.isArray(f.rows![k]) || f.rows![k].length < f.years.length) out.push('forecast.rows.' + k + ' debe tener ' + f.years.length + ' valores.');
     });

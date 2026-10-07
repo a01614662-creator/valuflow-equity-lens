@@ -6,6 +6,8 @@ import { ValuePage } from './pages/ValuePage';
 import { FlowsPage } from './pages/FlowsPage';
 import { RiskPage } from './pages/RiskPage';
 import { LabPage } from './pages/LabPage';
+import { MultiplesPage } from './pages/MultiplesPage';
+import { CombinedPage } from './pages/CombinedPage';
 import { AnnexPage } from './pages/AnnexPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { ImportPage } from './pages/ImportPage';
@@ -25,6 +27,8 @@ export function Shell({ vm }: { vm: VM }) {
             <ValuePage vm={vm} />
             <FlowsPage vm={vm} />
             <RiskPage vm={vm} />
+            <MultiplesPage vm={vm} />
+            <CombinedPage vm={vm} />
             <LabPage vm={vm} />
             <AnnexPage vm={vm} />
             <LibraryPage vm={vm} />
