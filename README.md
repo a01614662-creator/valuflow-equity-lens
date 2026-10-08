@@ -46,11 +46,12 @@ docs/          Guías: cómo agregar una empresa, notas del traspaso del diseño
 
 ## Garantías de precisión
 
-`npm test` ejecuta 57 pruebas:
+`npm test` ejecuta 68 pruebas:
 
 - **Excel maestro = app** (`tests/excel-master.test.ts`): en los cuatro escenarios de inflación la app reproduce la proyección
   (estados, balance, FCF), el WACC iterado, el EV, el equity y el precio del Excel con tolerancias de 1e‑9 a 1e‑12; también los modelos de
-  inflación, Trading Comps, Precedent Transactions y la valuación combinada. El baseline histórico **$31.164416** sale con la trayectoria Citi.
+  inflación, la beta (Damodaran reapalancada), Trading Comps, Precedent Transactions y la valuación combinada. El baseline histórico
+  **$31.164416** sale con la trayectoria Citi y la beta heredada 0.80. El Excel maestro pasa sus 39 controles.
 - **Contra el prototipo original** (dataset histórico en `tests/fixtures/`): motor idéntico al de `project/vf-engine.js` en 3,000
   combinaciones aleatorias. Única diferencia aprobada: se retiraron los escenarios inventados pesimista/optimista.
 - **Identidades financieras** y pruebas aleatorias de los métodos nuevos.

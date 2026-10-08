@@ -45,11 +45,13 @@ export function inflationModels(spec: InflationSpec): InflationModels | null {
   return { immediate, quarterly, long, quarterlyAverages: qa, classRounded, classS113, baseFromModel: Math.round(quarterly.forecast * 1e4) / 1e4 };
 }
 
-export interface ScenarioInfo { key: string; label: string; kind: string; source: string; path: number[]; constant: boolean }
+export interface ScenarioInfo { key: string; label: string; kind: string; source: string; path: number[]; constant: boolean; reference: boolean }
 
-export function inflationScenarios(spec: InflationSpec, n: number): ScenarioInfo[] {
-  return spec.order.map(k => {
+/** Escenarios oficiales y, si se piden, las trayectorias de referencia (marcadas como tales). */
+export function inflationScenarios(spec: InflationSpec, n: number, withReferences = false): ScenarioInfo[] {
+  const keys = spec.order.concat(withReferences ? (spec.references || []) : []);
+  return keys.map(k => {
     const s = spec.scenarios[k];
-    return { key: k, label: s.label, kind: s.kind, source: s.source || '', path: s.path ? s.path.slice(0, n) : Array(n).fill(s.value as number), constant: !s.path };
+    return { key: k, label: s.label, kind: s.kind, source: s.source || '', path: s.path ? s.path.slice(0, n) : Array(n).fill(s.value as number), constant: !s.path, reference: !!s.reference || !spec.order.includes(k) };
   });
 }

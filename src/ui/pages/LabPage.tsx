@@ -2,6 +2,8 @@
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';
+import { TableCard } from '../components/TableCard';
+import { TraceCard } from '../components/TraceCard';
 
 /** Laboratorio: editar supuestos. */
 export function LabPage({ vm }: { vm: VM }) {
@@ -40,12 +42,44 @@ export function LabPage({ vm }: { vm: VM }) {
               {lab.hasInfl ? (<>
                 <div style={css('display:flex; flex-direction:column; gap:6px;')}>
                   <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Escenario de inflación (documentado)</span>
-                  <div className="seg">
+                  <div className="seg" style={css('align-self:flex-start;')}>
                     {(lab.inflOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
                       <button onClick={o.onClick} title={o.kind} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
                     </Fragment>))}</div>
-                  <span style={css('font-size:11px; color:var(--color-neutral-700);')}>{lab.inflKind} · no hay valores libres fuera de estos escenarios</span></div>
+                  <span style={css('font-size:11px; color:var(--color-neutral-700);')}>{lab.inflKind} · no hay valores libres fuera de estos escenarios</span>
+                  {(lab.inflRefs || []).map((x: any, $i: number) => (<Fragment key={$i}>
+                    <span style={css('font-size:11px; color:var(--color-neutral-700);')} title={x.desc}>{x.label}: DCF {x.valTxt} (no es escenario)</span>
+                  </Fragment>))}</div>
               </>) : null}</div>
+            {lab.inflChart ? (
+              <div className="blueprint" style={css('padding:24px; display:flex; flex-direction:column; gap:14px;')}>
+                <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+                <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;')}>
+                  <h3 style={css('margin:0; font-size:22px;')}>Modelo de inflación</h3>
+                  <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Datos históricos → modelo → forecast / referencia → escenario → proyección</span></div>
+                <svg viewBox={'0 0 ' + lab.inflChart.W + ' ' + lab.inflChart.H} style={css('width:100%; height:auto; overflow:visible;')} role="img" aria-label="Inflación observada y escenarios">
+                  {lab.inflChart.ticks.map((t: any, $i: number) => (<Fragment key={$i}>
+                    <line x1="44" x2={lab.inflChart.X2} y1={t.y} y2={t.y} stroke="currentColor" strokeOpacity=".1"></line>
+                    <text x="38" y={t.ty} textAnchor="end" fontSize="10" fill="currentColor" fillOpacity=".65">{t.t}</text>
+                  </Fragment>))}
+                  {lab.inflChart.years.map((t: any, $i: number) => (<Fragment key={$i}>
+                    <text x={t.x} y="214" textAnchor="middle" fontSize="10" fill="currentColor" fillOpacity=".65">{t.t}</text>
+                  </Fragment>))}
+                  <line x1={lab.inflChart.X1} x2={lab.inflChart.X1} y1="12" y2="200" stroke="currentColor" strokeOpacity=".25" strokeDasharray="3 3"></line>
+                  <text x={(lab.inflChart.X1 + lab.inflChart.X2) / 2} y="214" textAnchor="middle" fontSize="10" fill="currentColor" fillOpacity=".65">2026–30</text>
+                  <path d={lab.inflChart.path} fill="none" stroke="var(--color-text)" strokeWidth="1.6"></path>
+                  {lab.inflChart.q.map((p: any, $i: number) => (<Fragment key={$i}>
+                    <circle cx={p.x} cy={p.y} r="4" fill="var(--color-bg)" stroke="var(--color-accent)" strokeWidth="2"><title>Promedio trimestral (insumo del modelo Base)</title></circle>
+                  </Fragment>))}
+                  {lab.inflChart.lines.map((l: any, $i: number) => (<Fragment key={$i}>
+                    <line x1={lab.inflChart.X1} x2={lab.inflChart.X2} y1={l.y} y2={l.y} stroke={l.color} strokeWidth={l.w} strokeDasharray={l.dash}><title>{l.label}</title></line>
+                    <line x1={lab.inflChart.X2} x2={lab.inflChart.X2 + 8} y1={l.y} y2={l.ly} stroke={l.color} strokeOpacity=".5"></line>
+                    <text x={lab.inflChart.X2 + 11} y={l.lty} fontSize="10" fill={l.color} fontWeight={l.w > 2 ? 700 : 400}>{l.label}</text>
+                  </Fragment>))}</svg>
+                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{lab.inflChart.note}</span>
+                <div style={css('display:flex; flex-wrap:wrap; gap:20px;')}>{lab.inflChain ? <TraceCard c={lab.inflChain} /> : null}</div>
+                {(lab.inflModels || []).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}</div>
+            ) : null}
             {(lab.groups || []).map((gr: any, $i: number) => (<Fragment key={$i}>
               <div className="blueprint" style={css('padding:24px; display:flex; flex-direction:column; gap:18px;')}>
                 <i className="corner tl"></i>

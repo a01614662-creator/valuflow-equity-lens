@@ -36,7 +36,7 @@ export function tornado(ds: Dataset, A: Assumptions, base: RunOk): TornadoRow[] 
 }
 
 export interface Scenario {
-  key: string; label: string; kind: string; desc: string; source: string; inflation: number; constant: boolean; active: boolean;
+  key: string; label: string; kind: string; desc: string; source: string; inflation: number; constant: boolean; active: boolean; reference: boolean;
   value: number | null; upside: number | null; wacc: number | null; revenueLast: number | null; fcfLast: number | null;
 }
 
@@ -47,12 +47,12 @@ export interface Scenario {
 export function scenarios(ds: Dataset, A: Assumptions, base: RunOk): Scenario[] {
   if (!ds.inflation) return [];
   const n = ds.forecast.years.length;
-  return inflationScenarios(ds.inflation, n).map(s => {
+  return inflationScenarios(ds.inflation, n, true).map(s => {
     const active = (A.inflation ?? ds.inflation!.default) === s.key;
     const r = active ? base : run(ds, { ...A, inflation: s.key });
     const desc = s.constant ? 'Inflación ' + fmt.p(s.path[0]) + ' constante ' + ds.forecast.years[0] + '–' + ds.forecast.years[n - 1] : 'Trayectoria ' + s.path.map(v => (v * 100).toFixed(2) + '%').join(' · ');
     return {
-      key: s.key, label: s.label, kind: s.kind, desc, source: s.source, inflation: s.path[0], constant: s.constant, active,
+      key: s.key, label: s.label, kind: s.kind, desc, source: s.source, inflation: s.path[0], constant: s.constant, active, reference: s.reference,
       value: r.ok ? r.value : null, upside: r.ok ? r.upside : null, wacc: r.ok ? r.wacc : null,
       revenueLast: r.ok ? r.rows[n - 1].revenue : null, fcfLast: r.ok ? r.rows[n - 1].fcf : null
     };
@@ -90,9 +90,9 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
     out.push({ key: 'w', label: 'Ponderado', sub: Math.round(base.wG * 100) + '% Gordon · ' + Math.round((1 - base.wG) * 100) + '% múltiplo', value: base.priceClose, lo: lo.ok ? lo.priceClose : null, hi: hi.ok ? hi.priceClose : null });
   }
   // Rango del DCF: escenarios documentados del dataset si existen (como en el Excel); si no, WACC ±0.5 pp y g ∓0.5 pp.
-  const sc = scenarios(ds, A, base).map(s => s.value).filter((v): v is number => v != null);
+  const sc = scenarios(ds, A, base).filter(s => !s.reference).map(s => s.value).filter((v): v is number => v != null);
   const dLo = sc.length > 1 ? Math.min(...sc) : (lo.ok ? lo.value : null), dHi = sc.length > 1 ? Math.max(...sc) : (hi.ok ? hi.value : null);
-  if (base.roll) out.push({ key: 'final', label: ds.combined ? 'DCF · precio objetivo' : 'Precio objetivo', sub: 'A la fecha de valuación' + (sc.length > 1 ? ' · rango: escenarios de inflación' : ''), value: base.value, lo: dLo, hi: dHi, main: true });
+  if (base.roll) out.push({ key: 'final', label: ds.combined ? 'DCF · precio objetivo' : 'Precio objetivo', sub: 'A la fecha de valuación' + (sc.length > 1 ? ' · rango: Cautela–Alcista' : ''), value: base.value, lo: dLo, hi: dHi, main: true });
   else out[out.length - 1].main = true;
   const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;
   const num = (p: unknown) => isNum(p) ? p : null;

@@ -22,18 +22,26 @@ def recalc(path, outdir):
     return os.path.join(outdir, os.path.basename(path))
 
 
-def with_selector(sel, wd):
+def with_selector(sel, beta, wd):
     wb = openpyxl.load_workbook(SRC)
     wb[INF]['B6'] = sel
-    p = os.path.join(wd, f'sel{sel}.xlsx')
+    wb['Beta y Kd']['B27'] = beta
+    p = os.path.join(wd, f'sel{sel}{beta}.xlsx')
     wb.save(p)
-    return openpyxl.load_workbook(recalc(p, os.path.join(wd, f'r{sel}')), data_only=True)
+    return openpyxl.load_workbook(recalc(p, os.path.join(wd, f'r{sel}{beta}')), data_only=True)
 
 
+# Combinaciones (selector de inflación, selector de beta): igual que la tabla A de la hoja Validación.
+COMBOS = {'historico': (0, 0), 'citi': (0, 1), 'cautela': (1, 1), 'base': (2, 1), 'alcista': (3, 1), 'base_beta080': (2, 0)}
 wd = tempfile.mkdtemp(prefix='vf-extract-')
-books = {s: with_selector(s, wd) for s in range(4)}
-fx = openpyxl.load_workbook(SRC)          # fórmulas (para documentar)
-X = books[2]                               # escenario Base (por defecto)
+books = {k: with_selector(i, b, wd) for k, (i, b) in COMBOS.items()}
+X = books['base']                          # escenario Base con la beta oficial (por defecto)
+
+
+def find_row(ws, text, col='A', start=1, end=400):
+    for r in range(start, end):
+        if str(ws[f'{col}{r}'].value or '').startswith(text): return r
+    raise KeyError(text)
 
 
 def v(wb, sh, ref):
@@ -86,12 +94,13 @@ while X[INF][f'A{r}'].value is not None and isinstance(X[INF][f'B{r}'].value, (i
 inflation = {
     'source': X[INF]['A2'].value,
     'default': 'base',
-    'order': ['citi', 'cautela', 'base', 'alcista'],
+    'order': ['cautela', 'base', 'alcista'],
+    'references': ['citi'],
     'scenarios': {
-        'citi': {'label': 'Trayectoria Citi (histórico)', 'kind': 'Pronóstico de consenso (insumo heredado)', 'path': row(X, INF, 9, 'BCDEF'), 'source': X[INF]['H9'].value, 'cell': 'Inflación!B9:F9'},
-        'cautela': {'label': 'Cautela', 'kind': 'Escenario / referencia de tendencia larga', 'value': num(v(X, INF, 'B47')), 'source': X[INF]['H47'].value, 'cell': 'Inflación!B47'},
-        'base': {'label': 'Base', 'kind': 'Resultado de modelo (pronóstico)', 'value': num(v(X, INF, 'B48')), 'source': X[INF]['H48'].value, 'cell': 'Inflación!B48 = ROUND(G33, 4)'},
-        'alcista': {'label': 'Alcista', 'kind': 'Supuesto de escenario (no es pronóstico)', 'value': num(v(X, INF, 'B49')), 'source': X[INF]['H49'].value, 'cell': 'Inflación!B49'},
+        'citi': {'label': 'Trayectoria Citi — Referencia', 'kind': 'Referencia histórica (no es escenario)', 'path': row(X, INF, 9, 'BCDEF'), 'source': X[INF]['H9'].value, 'cell': 'Inflación!B9:F9', 'reference': True},
+        'cautela': {'label': 'Cautela', 'kind': 'Escenario derivado de la tendencia larga', 'value': num(v(X, INF, 'B47')), 'source': X[INF]['H47'].value, 'cell': 'Inflación!B47'},
+        'base': {'label': 'Base', 'kind': 'Forecast / resultado de modelo', 'value': num(v(X, INF, 'B48')), 'source': X[INF]['H48'].value, 'cell': 'Inflación!B48 = ROUND(G33, 4)'},
+        'alcista': {'label': 'Alcista', 'kind': 'Supuesto de escenario (no es pronóstico estadístico)', 'value': num(v(X, INF, 'B49')), 'source': X[INF]['H49'].value, 'cell': 'Inflación!B49'},
     },
     'series': series,
     'models': {k: {'a': X[INF][f'C{r}'].value, 'b': X[INF][f'D{r}'].value, 'r2': X[INF][f'E{r}'].value, 'xNext': X[INF][f'F{r}'].value, 'forecast': X[INF][f'G{r}'].value, 'n': X[INF][f'B{r}'].value}
@@ -101,7 +110,18 @@ inflation = {
 }
 bs = next(r for r in range(170, 400) if str(X[INF][f'A{r}'].value or '').startswith('BETA HISTÓRICA'))
 inflation['beta'] = {'historical': X[INF][f'B{bs+1}'].value, 'r2': X[INF][f'B{bs+2}'].value, 'n': X[INF][f'B{bs+3}'].value, 'reported': X[INF][f'B{bs+4}'].value,
-                     'wacc': X[INF][f'B{bs+7}'].value, 'damodaranUnverified': X[INF][f'B{bs+8}'].value}
+                     'wacc': X[INF][f'B{bs+7}'].value}
+
+# ---------------------------------------------------------------- beta (hoja Beta y Kd)
+BKs = X['Beta y Kd']
+beta = {
+    'source': BKs['B7'].value, 'url': BKs['E7'].value, 'date': BKs['B8'].value, 'industry': BKs['B9'].value, 'firms': BKs['B10'].value,
+    'levered': BKs['B11'].value, 'de': BKs['B12'].value, 'effTax': BKs['B13'].value, 'marginalTax': BKs['B14'].value, 'unlevered': BKs['B15'].value,
+    'cashFirm': BKs['B16'].value, 'unleveredCash': BKs['B17'].value, 'check': BKs['B18'].value, 'inherited': BKs['B26'].value, 'used': BKs['B28'].value,
+    'treatment': [BKs[f'A{r}'].value for r in range(21, 25)],
+    'kd': {'value': BKs['B57'].value, 'check': BKs['B58'].value, 'fy2025': BKs['B60'].value, 'source': BKs['E57'].value, 'checkNote': BKs['E58'].value},
+}
+assert beta['used'] == beta['unlevered'] == 0.65, beta
 
 # ---------------------------------------------------------------- WACC / valuación
 wacc = {'rf': num(v(X, PF, 'B210')), 'prm': num(v(X, PF, 'B211')), 'betaU': num(v(X, PF, 'B212')), 'kdPre': num(v(X, PF, 'B206')), 'taxShield': num(v(X, PF, 'B207')),
@@ -128,13 +148,14 @@ def expected(b):
         'wacc': g('B126') * 100, 'ke': g('B221') * 100, 'priceG': g('B150'), 'priceM': g('B240'), 'priceW': g('B246'), 'tvWeight': g('B137') * 100,
         'waccMarket': num(v(b, WA, 'B33')) * 100, 'keMarket': num(v(b, WA, 'B29')) * 100, 'betaMarket': num(v(b, WA, 'B28')),
         'waccIterations': [[num(b[PF][f'{c}{r}'].value) for c in 'BCDEFG'] for r in range(214, 220)],
+        'betaU': num(b['Beta y Kd']['B28'].value), 'betaLMarket': num(v(b, WA, 'B28')), 'betaLIter': num(b[PF]['E219'].value),
         'sensGordonClose': {'waccs': [num(b[PF][f'A{r}'].value) for r in range(163, 168)], 'gs': [num(b[PF][f'{c}162'].value) for c in 'BCDEF'],
                             'grid': [[num(b[PF][f'{c}{r}'].value) for c in 'BCDEF'] for r in range(163, 168)]},
         'combined': num(v(b, VC, 'B11')),
     }
 
 
-exp = {k: expected(books[s]) for s, k in enumerate(['citi', 'cautela', 'base', 'alcista'])}
+exp = {k: expected(books[k]) for k in COMBOS}
 
 # ---------------------------------------------------------------- Trading Comps
 T = X[TC]
@@ -169,22 +190,24 @@ compsExp = {
 
 # ---------------------------------------------------------------- Precedent Transactions
 P = X[PT]
+PD = find_row(P, 'Detalle a la MEDIA'); PU = find_row(P, 'EV/EBITDA', start=PD + 7); PV = find_row(P, 'PRECEDENT TRANSACTIONS — precio')
 deals = []
 for r in range(14, 17):
     deals.append({'date': v(X, PT, f'A{r}'), 'id': P[f'B{r}'].value, 'target': P[f'C{r}'].value, 'buyer': P[f'D{r}'].value, 'seller': P[f'E{r}'].value,
                   'tev': P[f'F{r}'].value, 'size': P[f'G{r}'].value, 'evSales': P[f'H{r}'].value, 'evEbitda': P[f'I{r}'].value,
-                  'country': P[f'J{r}'].value, 'control': P[f'N{r}'].value, 'include': int(P[f'O{r}'].value), 'note': P[f'P{r}'].value})
+                  'country': P[f'J{r}'].value, 'industry': P[f'Q{r}'].value, 'control': P[f'N{r}'].value, 'include': int(P[f'O{r}'].value), 'note': P[f'P{r}'].value})
 transactions = {
     'source': P['A2'].value,
     'criteria': {'valuationDate': v(X, PT, 'C6'), 'windowYears': P['C7'].value, 'geography': P['C9'].value, 'minMultiples': P['C10'].value},
     'deals': deals, 'ciqMean': {'evSales': P['H17'].value, 'evEbitda': P['I17'].value},
-    'multiples': [{'key': 'evEbitda', 'label': 'EV/EBITDA', 'metric': 'ebitda', 'use': int(P['C43'].value), 'status': P['D43'].value, 'reason': P['E43'].value},
-                  {'key': 'evSales', 'label': 'EV/Ventas', 'metric': 'revenue', 'use': int(P['C44'].value), 'status': P['D44'].value, 'reason': P['E44'].value}],
-    'warning': P['A49'].value,
+    'multiples': [{'key': 'evEbitda', 'label': 'EV/EBITDA', 'metric': 'ebitda', 'use': int(P[f'C{PU}'].value), 'status': P[f'D{PU}'].value, 'reason': P[f'E{PU}'].value},
+                  {'key': 'evSales', 'label': 'EV/Ventas', 'metric': 'revenue', 'use': int(P[f'C{PU+1}'].value), 'status': P[f'D{PU+1}'].value, 'reason': P[f'E{PU+1}'].value}],
+    'warning': P[f'A{find_row(P, "ADVERTENCIA")}'].value,
 }
 transExp = {'stats': {k: [P[f'{c}{r}'].value for r in range(32, 39)] for c, k in zip('HI', ['evSales', 'evEbitda'])},
             'prices': {k: [P[f'{c}{r}'].value for r in range(32, 38)] for c, k in zip('JK', ['evSales', 'evEbitda'])},
-            'value': P['E46'].value, 'lo': P['E47'].value, 'hi': P['F47'].value, 'windowStart': v(X, PT, 'C8')}
+            'value': P[f'E{PV}'].value, 'lo': P[f'E{PV+1}'].value, 'hi': P[f'F{PV+1}'].value, 'windowStart': v(X, PT, 'C8'),
+            'detail': {k: [P[f'{c}{r}'].value for r in range(PD + 1, PD + 7)] for c, k in zip('HI', ['evSales', 'evEbitda'])}}
 
 # ---------------------------------------------------------------- combinada
 C = X[VC]
@@ -193,14 +216,18 @@ combined = {'weights': {'dcf': C['C6'].value, 'comps': C['C7'].value, 'transacti
             'classRule': 'Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Transactions 0% por decisión del proyecto.'}
 combExp = {'value': C['B11'].value, 'classRule': C['B16'].value, 'dcfLo': C['B20'].value, 'dcfHi': C['D20'].value}
 
-registry = [[X['Fuentes'].cell(r, c).value for c in range(1, 8)] for r in range(6, 30) if X['Fuentes'].cell(r, 1).value]
-validation = {'summary': X['Validación']['B48'].value,
-              'checks': [[X['Validación'][f'A{r}'].value, X['Validación'][f'G{r}'].value] for r in range(18, 47)]}
+FU = X['Fuentes']; NR = find_row(FU, 'NOTAS METODOLÓGICAS')
+registry = [[FU.cell(r, c).value for c in range(1, 8)] for r in range(6, NR) if FU.cell(r, 1).value]
+notes = [FU.cell(r, 1).value for r in range(NR + 1, NR + 10) if FU.cell(r, 1).value]
+VA = X['Validación']; RS = find_row(VA, 'RESUMEN')
+validation = {'summary': VA[f'B{RS}'].value,
+              'checks': [[VA[f'A{r}'].value, VA[f'G{r}'].value] for r in range(23, RS - 1) if VA[f'A{r}'].value]}
 
 data = {'file': os.path.basename(SRC), 'build': build, 'inflation': inflation, 'wacc': wacc, 'valuation': valuation, 'market': market,
-        'comps': comps, 'transactions': transactions, 'combined': combined, 'registry': registry,
+        'comps': comps, 'transactions': transactions, 'combined': combined, 'registry': registry, 'beta': beta, 'notes': notes,
         'expected': {'dcf': exp, 'comps': compsExp, 'transactions': transExp, 'combined': combExp, 'validation': validation}}
-assert validation['summary'].startswith('29 PASS'), validation['summary']
+n_checks = len(validation['checks'])
+assert validation['summary'] == f'{n_checks} PASS de {n_checks}', validation['summary']
 with open(OUT, 'w', encoding='utf-8') as fh:
     fh.write('// ARCHIVO GENERADO por tools/excel/extract_dataset.py a partir del Excel maestro integrado. No editar a mano.\n')
     fh.write('// Valores con precisión completa (sin redondear). Las referencias de celda viven en los campos source/cell.\n')

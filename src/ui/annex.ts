@@ -1,7 +1,7 @@
 // Anexos (segunda capa): definición del índice y construcción de las tablas.
 import * as E from '../engine';
 import { fmt as f, labelsOf, type Dataset, type RunOk } from '../engine';
-import { inflationTables, projectedTable } from './relative';
+import { betaTables, inflationTables, projectedTable } from './relative';
 import type { Calc } from './viewmodel';
 
 const POS = 'var(--pos)', NEG = 'var(--neg)', ACC = 'var(--color-accent)';
@@ -14,6 +14,7 @@ export function annexDefs(ds: Dataset): [string, string, string][] {
     L.push(['dcf', 'A4', 'Flujo libre y DCF']);
     if (ds.method) L.push(['ls', 'A5', 'Mínimos cuadrados'], ['ext', 'A6', 'Variables externas'], ['pond', 'A7', 'Ponderación de métodos']);
     if (ds.inflation) L.push(['infl', '', 'Inflación: escenarios y modelos']);
+    if (ds.beta) L.push(['beta', '', 'Beta y costo de la deuda']);
     L.push(['wacc', '', 'WACC e iteración'], ['sens', '', ds.forecast.build ? 'Sensibilidad (recalculada)' : 'Sensibilidad (' + labelsOf(ds).sourceShort + ')']);
     L.push(['empresa', '', 'Empresa'], ['valid', '', 'Validación y discrepancias'], ['method', '', 'Metodología y fuentes']);
   } else {
@@ -97,6 +98,8 @@ export function annexTables(c: Calc, which: string): any[] {
     tb('wacc', '', 'Iteraciones', 'El equity del DCF alimenta D/E hasta converger.', 'Motor ValuFlow', '%', head(['WACC entrada', 'Equity DCF', 'D / E', 'Beta', 'Ke', 'WACC salida']), W.iters.map(i => row('Iteración ' + i.k, [cell(f.p(i.win)), cell(f.m(i.E, 1)), cell(i.de.toFixed(4)), cell(i.beta.toFixed(4)), cell(f.p(i.ke)), cell(f.p(i.wout), { color: ACC })])), { minW: '640px' });
   }
   if (want('method') && ds.inputs && ds.inputs.length) tb('method', '', 'Registro de insumos y fuentes', 'Cada insumo del modelo con su origen. Tipo: Observado · Supuesto · Modelo · Pendiente (input heredado sin fuente verificada).', src + ' · hoja Fuentes', '', head(['Dónde se usa', 'Valor', 'Fecha', 'Unidad', 'Tipo', 'Fuente'], null, 6), ds.inputs.map(r => row(r[0], [txt(r[1], '170px'), txt(r[2], '90px'), txt(r[3], '90px'), txt(r[4], '80px'), cell(r[5], { align: 'left', ws: 'normal', mw: '80px', color: r[5] === 'Pendiente' ? 'var(--warn)' : 'var(--color-text)' }), txt(r[6], '380px')])), { minW: '1300px' });
+  if (want('beta') && b.ok && ds.beta) betaTables(ds, c.VA, b, code('beta')).forEach(t => T.push(t));
+  if (want('method') && ds.notes && ds.notes.length) tb('method', '', 'Notas metodológicas', 'DCF principal, referencia de Capital IQ y métodos relativos.', src + ' · hoja Fuentes', '', head(['Nota'], null, 1), ds.notes.map((n, i) => row(String(i + 1), [txt(n, '760px')])), { minW: '860px' });
   if (want('infl') && b.ok && ds.inflation) inflationTables(ds, c.VA, b, code('infl')).forEach(t => T.push(t));
   // Con proyección por drivers, las tablas se recalculan con el motor (la versión estática sería de otro escenario).
   const sensT = ds.forecast.build && b.ok ? E.sensTables(ds, c.VA, b) : null;

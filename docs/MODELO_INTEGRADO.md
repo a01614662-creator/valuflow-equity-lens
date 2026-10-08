@@ -1,73 +1,109 @@
-# Modelo integrado: DCF + inflación + múltiplos (Excel maestro = ValuFlow)
+# Modelo integrado de Soriana: DCF + inflación + Trading Comps + Precedent Transactions
 
-**Fuente maestra:** `excel/EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO.xlsx`.
-ValuFlow implementa el mismo modelo con tecnología: cada número del Excel se reproduce en la app
-(`tests/excel-master.test.ts`, tolerancias de 1e‑9 a 1e‑12 en los cuatro escenarios de inflación).
+**Fuente maestra:** `excel/EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO.xlsx` (39 de 39 controles PASS).
+ValuFlow implementa el mismo modelo. Las pruebas (`tests/excel-master.test.ts`) exigen Excel = app con tolerancias de 1e‑9 a 1e‑12.
 
-## Resultados oficiales (supuestos base, inflación Base 3.51 %)
+Cadena trazable: **datos → metodología → fórmula → cálculo → resultado → validación**.
 
-| Método | Precio por acción (MXN) | Peso | Rango |
-|---|---|---|---|
-| DCF (precio objetivo al 01‑oct‑2026) | **$30.83** | 50 % | $30.56 – $31.37 (escenarios de inflación) |
-| Trading Comps (7 comparables, 3 múltiplos) | **$33.49** | 50 % | $27.03 – $40.07 (P25 – P75) |
-| Precedent Transactions (referencia) | $40.73 | 0 % | $24.76 – $65.44 (mín – máx) |
-| **Valuación combinada** | **$32.16** | | −3.9 % vs. precio $33.48 |
+## 1. Resultados oficiales (inflación Base 3.51 %, βU Damodaran 0.65; precio de mercado $33.48 al 25‑sep‑2026)
 
-Memo con la regla de clase de pesos iguales (⅓ cada método): $35.02 (incluye la muestra de transacciones no defendible).
+| Método | Precio por acción (MXN) | Peso | Rango | vs. precio |
+|---|---|---|---|---|
+| DCF (precio objetivo al 01‑oct‑2026) | **$32.41** | 50 % | $32.13 – $32.98 (Cautela – Alcista) | −3.2 % |
+| Trading Comps (7 comparables · EV/EBITDA, EV/EBIT, P/U) | **$33.49** | 50 % | $27.03 – $40.07 (P25 – P75) | +0.0 % |
+| Precedent Transactions (referencia) | $40.73 | 0 % | $24.76 – $65.44 (mín – máx) | +21.6 % |
+| **Valuación combinada (valor oficial)** | **$32.95** | 100 % | | **−1.6 %** |
 
-**Escenarios de inflación (DCF):** Citi (histórico) $31.16 · Cautela 3.26 % $30.56 · Base 3.51 % $30.83 · Alcista 4.00 % $31.37.
-El baseline histórico **$31.164416** se reproduce exactamente con la trayectoria Citi.
+| DCF por escenario de inflación | Precio |
+|---|---|
+| Cautela 3.26 % (escenario derivado de la tendencia larga) | $32.13 |
+| **Base 3.51 % (forecast / resultado de modelo)** | **$32.41** |
+| Alcista 4.00 % (supuesto de escenario, no es pronóstico estadístico) | $32.98 |
+| Trayectoria Citi — Referencia (no es escenario) | $32.76 |
+| Baseline histórico (Citi + βU 0.80) | $31.16 (se reproduce exactamente: $31.164416) |
 
-## Qué se agregó al Excel (hojas nuevas)
+Memo con la regla de clase de pesos iguales (⅓ cada método): $35.55 (incluye la muestra de transacciones no defendible).
 
-- **Inflación**: selector de escenario (solo 4 valores documentados), datos Banxico SP74833 (113 quincenas), modelos
-  exponenciales de clase calculados con fórmulas (`SLOPE`/`INTERCEPT`/`RSQ` sobre ln y), cadena de transmisión, estudio de mercado
-  (beta histórica sin el factor ×10). La fila 13 alimenta `Proyección Final Soriana!C10:G10`.
-- **Trading Comps**: 10 empresas de CIQ con clasificación y razón; muestra de 7 (Chedraui incluida; Grupo Mateus, Walmex, La Comer,
-  Assaí, Cencosud e InRetail con reserva; Liverpool, FEMSA y Falabella excluidas). Múltiplos publicados por CIQ (sin recalcular ni
-  convertir divisas), 6 estadísticos, puente EV → capital al 2T26, NM/NA, valor = promedio de precios a la media de EV/EBITDA, EV/EBIT y P/U.
-- **Precedent Transactions**: 3 operaciones de CIQ con evaluación de criterios (ventana 3 años, geografía, ≥2 múltiplos, control).
-  Valor con EV/EBITDA; advertencia visible. Peso 0 %.
-- **Valuación Combinada**: pesos visibles (50/50/0) y regla de clase ⅓ como memo; rangos por método.
-- **Validación**: tabla de escenarios y 29 controles independientes → **29 PASS de 29**.
-- **Fuentes**: registro de insumos (Observado / Supuesto / Modelo / Pendiente).
+**Del baseline $31.16 al DCF oficial $32.41:** inflación Base en lugar de Citi −$0.33 ($31.16 → $30.83 con βU 0.80) y beta
+Damodaran +$1.58 ($30.83 → $32.41). WACC iterado 11.87 % → 11.35 %; Ke 13.96 % → 13.06 %; βL iterada 1.051 → 0.838.
 
-Cambios en hojas existentes: `Proyección Final!C10:G10` ahora toma la inflación de la hoja Inflación; etiquetas corregidas
-(A10, A257 "(−) FCF de 1S26 … al ser negativo, restarlo aumenta el EV", WACC!A9 beta sectorial heredada). Ninguna otra fórmula cambió.
+## 2. Qué cambió en el Excel
 
-## Cómo se regenera
+Hojas nuevas: **Inflación**, **Beta y Kd**, **Trading Comps**, **Precedent Transactions**, **Valuación Combinada**, **Validación**, **Fuentes**.
+
+- **Inflación:** serie Banxico SP74833 (113 quincenas), modelos exponenciales de clase con fórmulas (`SLOPE`/`INTERCEPT`/`RSQ` sobre ln y),
+  tres escenarios oficiales (selector 1–3; Base por defecto) y la trayectoria Citi como referencia (selector 0). La fila 13 alimenta
+  `Proyección Final Soriana!C10:G10`. Estudio de mercado con la beta histórica (sin el factor ×10).
+- **Beta y Kd:** datos de Damodaran (Betas by Sector, Global, enero 2026, Retail (Grocery and Food): 215 empresas, βL 0.87, D/E 45.96 %,
+  t marginal 25.37 %, βU 0.65; corregida por caja 0.69), control de desapalancamiento, selector de beta (1 = Damodaran oficial,
+  0 = heredada 0.80 solo para el histórico), reapalancamiento con la estructura de Soriana, impacto registrado y sección de Kd.
+- **Trading Comps / Precedent Transactions:** muestra, criterios, múltiplos publicados por CIQ, 6 estadísticos, precio implícito,
+  detalle múltiplo → EV → Equity → precio, NM/NA y valor del método. Transactions con industria y evaluación de criterios.
+- **Valuación Combinada:** pesos 50/50/0 editables; **deben sumar 100 %** (si no, el resultado muestra el mensaje); columna "¿Contribuye?".
+- **Validación:** tabla A con 6 combinaciones recalculadas (Histórico, Referencia Citi, Cautela, Base, Alcista, Base con βU 0.80) y 39 controles.
+- **Fuentes:** registro de insumos (Observado / Modelo / Supuesto / Referencia / Pendiente) y notas metodológicas.
+
+### Fórmulas que cambiaron en hojas existentes
+| Celda | Antes | Ahora |
+|---|---|---|
+| `Proyección Final Soriana!C10:G10` | valores de la Encuesta Citi | `='Inflación'!B13:F13` (escenario seleccionado) |
+| `WACC!B9` | 0.80 capturado | `='Beta y Kd'!B28` (βU seleccionada: Damodaran 0.65) |
+| Etiquetas `Proyección Final!A10`, `A257`, `WACC!A9` | — | Texto corregido (A257: el FCF de 1S26 fue −1,060.5; restarlo aumenta el EV) |
+
+### Fórmulas que NO cambiaron
+Toda la mecánica del DCF: proyección por variables externas + mínimos cuadrados, estados financieros, FCFF, iteración del WACC (6 filas),
+Hamada, CAPM, valor terminal 50 % Gordon / 50 % múltiplo, traslado a la fecha de valuación y el tratamiento del FCF de 1S26 (B257).
+
+## 3. Qué cambió en la aplicación
+
+- **Motor** (`src/engine`): proyección por drivers (réplica de Proyección Final), modelos de inflación, Trading Comps, Precedent Transactions y
+  combinada (`multiples.ts`), WACC con 6 iteraciones como el Excel, datos con precisión completa generados desde el Excel
+  (`src/data/soriana.excel.ts`, por `tools/excel/extract_dataset.py`).
+- **Pantallas:** 04 Múltiplos (Trading Comps), 05 Transacciones, 06 Combinada; Laboratorio con el modelo de inflación (gráfica, cadena
+  datos → precio, modelos y transmisión); Riesgo con la beta (fuente, reapalancamiento, impacto) y los escenarios oficiales + referencia Citi;
+  anexos de inflación, beta/Kd, registro de insumos y notas metodológicas.
+- **Trazabilidad:** cada resultado tiene su cadena "¿De dónde salió este número?" (comparable/transacción → múltiplo → estadístico → métrica →
+  EV → Equity → precio; datos → modelo → forecast → escenario → inflación → ventas → FCF → EV → Equity → precio; contribución por método).
+- **Controles de entrada:** muestra y múltiplos con Sí/No; pesos editables que deben sumar 100 %; escenarios solo documentados; deslizadores
+  solo con rango del Excel; Rf, PRM, βU, Kd y escudo fiscal como números con su fuente.
+- **Eliminado:** escenarios inventados pesimista/optimista y la etiqueta "FCF generado +1,061".
+
+## 4. Metodología
+
+- **DCF principal:** el de ValuFlow (fin de periodo, 50 % Gordon / 50 % múltiplo de salida, WACC iterado, traslado a la fecha de valuación).
+  La metodología de Capital IQ (mid‑year, exit multiple) queda documentada solo como referencia.
+- **Beta:** βU sectorial reapalancada con Hamada: βL = βU × [1 + (1 − t) × D/E]. Se elige la βU (no la βL 0.87) porque el modelo reapalanca
+  con la estructura de Soriana; usar 0.87 aplicaría el apalancamiento dos veces. Se usa la βU sin corrección por caja porque Damodaran desapalanca
+  con D/E bruta y el modelo reapalanca con deuda bruta; la caja se suma en el puente.
+- **Inflación:** solo por el canal documentado inflación → crecimiento nominal de ventas → proyección → FCFF → valuación. Sin relación con WACC, beta ni g.
+- **Múltiplos:** metodología de la presentación de clase (CIQ Valuations): percentiles inclusivos, puente EV → capital, NM/NA, promedio a la media.
+- **Combinada:** Σ (peso × precio) con pesos que suman 100 %.
+
+## 5. Fuentes
+
+Banxico SP74833 (inflación) · Encuesta Citi de Expectativas 22‑sep‑2026 (referencia Citi; Kd) · Damodaran, Betas by Sector (Global), enero 2026 ·
+S&P Capital IQ (múltiplos al 30‑jun‑2026 y transacciones; extractos con atribución) · Dossier y Avances de valuación (escenarios Cautela y Alcista) ·
+libro de clase de inflación · reportes trimestrales de Soriana (hoja Datos) · presentación de clase de múltiplos y transacciones.
+
+## 6. Supuestos que permanecen
+
+g 3.5 %, Rf 9.517 %, PRM 4.23 % (inputs heredados con fecha/fuente exacta pendiente); Kd 10 % (Citi + gastos 1S26; control 9.86 %);
+escenarios constantes 2026–2030; pesos 50/50/0; interés minoritario 0 (solo existe en USD; convertirlo requeriría un tipo de cambio sin fuente).
+
+## 7. Limitaciones
+
+- Valores de Damodaran transcritos de la fuente indicada; el sitio no fue accesible desde el entorno de construcción, por lo que se incluye
+  un control de consistencia interna (0.87 desapalancada = 0.648 ≈ 0.65).
+- Más inflación eleva el valor porque el WACC nominal no cambia (no hay relación documentada).
+- Múltiplos al 30‑jun‑2026 vs. DCF al 01‑oct‑2026 (la metodología de clase no prevé ajustarlo).
+- Transacciones: 1 de 3 dentro de la ventana, ninguna en México, 2 con control dudoso (peso 0 %).
+- Beta histórica de regresión con R² ≈ 0: no se usa.
+
+## 8. Cómo se regenera
 
 ```bash
-# 1) Excel maestro (requiere los archivos fuente originales, incluidos los exports de CIQ, que no se redistribuyen)
-python3 -I tools/excel/build_master.py <carpeta_fuentes> build/master.xlsx
+python3 -I tools/excel/build_master.py <carpeta_fuentes> build/master.xlsx     # requiere los archivos fuente (CIQ no se redistribuye)
 python3 -I tools/excel/scenarios.py build/master.xlsx build/scen <perfil_libreoffice> build/master_final.xlsx
-# 2) Datos de la app a partir del Excel (recalcula los 4 escenarios con LibreOffice)
 python3 -I tools/excel/extract_dataset.py "excel/EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO.xlsx" src/data/soriana.excel.ts
 npm test
 ```
-
-## Decisiones metodológicas tomadas (menores, documentadas)
-
-1. **Iteración del WACC:** el Excel itera 6 veces (filas 214–219); la app usa `wacc.iterations = 6` para igualarlo (antes iteraba hasta converger).
-2. **Precisión completa:** el dataset ya no usa cifras redondeadas (Rf 9.517 %, Kd de mercado 13.0155 %, escudo fiscal 28.801 %, etc.);
-   por eso el WACC de la app coincide con el del Excel (antes 11.8793 % vs 11.8773 %).
-3. **EV/Ventas excluido** en Comps y Transactions: ignora el margen y los márgenes del grupo varían mucho (no es NM ni NA).
-4. **Interés minoritario = 0 (NA en MXN):** CIQ lo reporta en USD (8.4 mm, ≈0.3 % del capital); convertirlo requeriría un tipo de cambio sin fuente.
-5. **Fechas:** los múltiplos son al 30‑jun‑2026 (as‑of CIQ) y el puente al 2T26; el DCF está al 01‑oct‑2026. La metodología de clase no prevé
-   llevar los múltiplos a la fecha del DCF; la diferencia queda documentada.
-6. **Pesos 50/50/0:** regla de pesos iguales de la clase entre los métodos activos; Transactions 0 % por decisión del proyecto.
-7. **Escenarios constantes:** Cautela, Base y Alcista se aplican igual a 2026–2030 (un pronóstico de un periodo extendido: supuesto documentado).
-8. **Sin escenarios inventados:** se eliminaron los escenarios pesimista/optimista del prototipo (±0.5 pp WACC y g, etc.).
-9. **Deslizadores:** solo donde el Excel define un rango de sensibilidad (Δ ventas ±2 pp, Δ margen ±0.5 pp, Δ capex ±0.5 pp, Δ tasa ±4 pp,
-   g y WACC ±1 pp, múltiplo ±1x). Rf, PRM, βU, Kd y escudo fiscal se capturan como número, con su fuente.
-10. **Un método con peso y sin precio** deja la combinada en NA (no se trata como cero, a diferencia de `SUMPRODUCT`).
-
-## Limitaciones y pendientes (visibles en la app y en la hoja Fuentes)
-
-- **Beta 0.80**: input heredado del Excel / Material Maestro, sin fuente verificada. Damodaran (global, ene‑2026, Retail Grocery & Food)
-  reportaría 0.65 según un resumen de búsqueda, pero el sitio no fue accesible para verificarlo; no se usa.
-- **Rf 9.517 %, PRM 4.23 % y g 3.5 %**: inputs heredados con fecha/fuente exacta pendiente.
-- **Kd 10 %**: comentario original de la celda C61 (Encuesta Citi, tasa Banxico 6.50 %, gastos financieros 1S26); intereses 1S26
-  anualizados / deuda 2T26 ≈ 9.9 %.
-- **Inflación → WACC/g**: no hay relación documentada; con WACC nominal fijo, más inflación eleva el valor.
-- **Transacciones**: 1 de 3 dentro de la ventana, ninguna en México, 2 con control dudoso; no es estadísticamente defendible.

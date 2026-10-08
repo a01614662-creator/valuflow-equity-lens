@@ -33,7 +33,7 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
     add('Modelo', 'Balance proyectado cuadra (activo = pasivo + capital)', bd.years.every(y => Math.abs(y.check) < 0.5), 'Máx. diferencia ' + fmt.m(Math.max(...bd.years.map(y => Math.abs(y.check))), 6));
     add('Modelo', 'FCF de la proyección = FCF descontado', bd.years.every((y, i) => Math.abs(y.fcf - base.rows[i].fcf) < 1e-6), 'Proyección por drivers vs. motor DCF');
   }
-  const s = scenarios(ds, A, base).filter(x => x.constant);
+  const s = scenarios(ds, A, base).filter(x => x.constant && !x.reference);
   if (s.length > 1) add('Modelo', 'Escenarios de inflación ordenados (menor inflación → menor valor)', s.every((x, i) => i === 0 || (x.inflation > s[i - 1].inflation) === ((x.value as number) > (s[i - 1].value as number))), s.map(x => x.label + ' ' + fmt.cur(x.value)).join(' · '));
   // Valuación relativa y combinada (solo si el dataset la documenta).
   const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;

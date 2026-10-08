@@ -128,14 +128,17 @@ export interface BuildSpec {
 }
 
 /** Escenario de inflación documentado: trayectoria por año (path) o valor constante (value). */
-export interface InflationScenario { label: string; kind: string; source?: string; cell?: string; path?: number[]; value?: number }
+export interface InflationScenario { label: string; kind: string; source?: string; cell?: string; path?: number[]; value?: number; /** Referencia (p. ej. histórica): se calcula para comparar, no es escenario. */ reference?: boolean }
 
 export interface InflationModel { a: number | null; b: number | null; r2: number | null; xNext: number | null; forecast: number | null; n: number | null }
 
 export interface InflationSpec {
   source?: string;
   default: string;
+  /** Escenarios oficiales (seleccionables). */
   order: string[];
+  /** Trayectorias de referencia (se muestran para comparar; no son escenarios). */
+  references?: string[];
   scenarios: Record<string, InflationScenario>;
   /** Serie observada [fecha ISO, % anual]. */
   series?: [string, number][];
@@ -143,7 +146,19 @@ export interface InflationSpec {
   models?: Record<string, InflationModel>;
   quarterlyAverages?: number[];
   chain?: [string, string, string][];
-  beta?: { historical: number; r2: number; n: number; reported: number; wacc: number; damodaranUnverified?: number };
+  beta?: { historical: number; r2: number; n: number; reported: number; wacc: number };
+}
+
+/** Beta sectorial de referencia externa y su tratamiento en el WACC. */
+export interface BetaSpec {
+  source: string; url?: string; date: string; industry: string; firms?: number;
+  levered: number; de: number; effTax?: number; marginalTax: number; unlevered: number; cashFirm?: number; unleveredCash?: number;
+  /** βU recalculada = βL / [1 + (1 − t) × D/E] con los datos publicados. */
+  check?: number;
+  /** Beta del modelo anterior (solo para reproducir el baseline histórico). */
+  inherited?: number;
+  used: number; treatment: string[];
+  kd?: { value: number; check: number; fy2025?: number; source: string; checkNote?: string };
 }
 
 /** Múltiplos de un comparable (null = NA). */
@@ -174,7 +189,7 @@ export interface CompsSpec {
 
 export interface Deal {
   date: string; id: string; target: string; buyer?: string; seller?: string; tev?: number; size?: number;
-  evSales: number | null; evEbitda: number | null; country?: string; control?: string; include: number; note?: string;
+  evSales: number | null; evEbitda: number | null; country?: string; industry?: string; control?: string; include: number; note?: string;
 }
 
 export interface TransactionsSpec {
@@ -331,6 +346,9 @@ export interface Dataset {
   /** Resultados de referencia por escenario de inflación (la clave es el escenario). */
   expectedScenarios?: Record<string, Expected>;
   inflation?: InflationSpec;
+  beta?: BetaSpec;
+  /** Notas metodológicas del modelo (p. ej. referencia del DCF de Capital IQ). */
+  notes?: string[];
   comps?: CompsSpec;
   transactions?: TransactionsSpec;
   combined?: CombinedSpec;

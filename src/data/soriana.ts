@@ -3,7 +3,7 @@
 // resultados esperados) se leen de src/data/soriana.excel.ts, generado desde el Excel con tools/excel/extract_dataset.py.
 // Este archivo es solo DATOS. El motor (src/engine) no conoce a Soriana.
 // El dataset original del prototipo ($31.16, filas redondeadas) vive en tests/fixtures/soriana-legacy.ts.
-import type { BuildSpec, CompsSpec, Dataset, Expected, InflationSpec, TransactionsSpec } from '../engine/types';
+import type { BetaSpec, BuildSpec, CompsSpec, Dataset, Expected, InflationSpec, TransactionsSpec } from '../engine/types';
 import { SORIANA_XL as XL } from './soriana.excel';
 
 type XLExp = typeof XL.expected.dcf.base;
@@ -34,6 +34,8 @@ export const soriana: Dataset = {
   // Escenarios de inflación documentados (hoja Inflación) y valuación relativa (hojas Trading Comps,
   // Precedent Transactions y Valuación Combinada del Excel maestro).
   inflation: XL.inflation as unknown as InflationSpec,
+  beta: XL.beta as unknown as BetaSpec,
+  notes: XL.notes,
   comps: XL.comps as unknown as CompsSpec,
   transactions: XL.transactions as unknown as TransactionsSpec,
   combined: { weights: { ...XL.combined.weights }, reasons: { ...XL.combined.reasons }, classRule: XL.combined.classRule },
@@ -74,6 +76,7 @@ export const soriana: Dataset = {
   },
   // Resultados del Excel para la capa de validación: escenario por defecto (Base) y cada escenario de inflación.
   expected: expectedOf(XE.base),
+  // Solo con la beta oficial (la columna "Histórico" usa βU 0.80 y se valida en las pruebas).
   expectedScenarios: { citi: expectedOf(XE.citi), cautela: expectedOf(XE.cautela), base: expectedOf(XE.base), alcista: expectedOf(XE.alcista) },
   // Iteración del WACC del Excel (filas 214–219): [k, WACC entrada %, Equity DCF, D/E, βL, Ke %, WACC salida %].
   waccIterationExcel: XE.base.waccIterations.map((r, k) => [k, pts(r[0]), r[1], r[2], r[3], pts(r[4]), pts(r[5])]),
@@ -163,9 +166,10 @@ export const soriana: Dataset = {
   ],
   news: [['31-jul-2026', 'Resultados 2T26: menos ventas, más utilidad'], ['26-ago-2026', 'Cierre de 20 tiendas en 2026'], ['2-sep-2026', 'Reducción de plantilla y automatización'], ['sep-2026', 'Plan de inversión 2S26']],
   discrepancies: [
-    { topic: 'Valor intrínseco por acción (DCF)', a: ['Proyección base preliminar / Material maestro', '$34.44 · $35.24'], b: ['Excel maestro · DCF con inflación Base 3.51%', '$30.83'], used: 'Excel maestro · escenario Base', note: '$34.44 es la proyección preliminar (supuestos constantes, WACC 12.50%, solo Gordon). $31.16 es el baseline histórico con la trayectoria Citi y se reproduce exactamente con ese escenario.' },
-    { topic: 'Inflación en la proyección', a: ['Excel definitivo anterior', 'Encuesta Citi 22-sep-2026: 3.93% / 3.83% / 3.75%'], b: ['Excel maestro', 'Escenarios Cautela 3.26% · Base 3.51% · Alcista 4.00%'], used: 'Base 3.51% (resultado del modelo exponencial trimestral de clase)', note: 'La trayectoria Citi se conserva como escenario seleccionable para reproducir el baseline histórico.' },
-    { topic: 'WACC', a: ['AE 1 · Sesión 2', '10.22% · 12.50%'], b: ['Excel maestro · WACC iterado (Base)', '11.87%'], used: 'Excel · 11.87% (iterado al valor DCF, 6 iteraciones)', note: '12.50% es el WACC a valor de mercado; la iteración usa el equity del propio DCF.' },
+    { topic: 'Valor intrínseco por acción (DCF)', a: ['Baseline histórico (Citi + βU 0.80) · proyección preliminar', '$31.16 · $34.44'], b: ['Excel maestro · DCF oficial (inflación Base 3.51%, βU Damodaran 0.65)', '$32.41'], used: 'Excel maestro · escenario Base con βU 0.65', note: '$34.44 es la proyección preliminar (supuestos constantes). $31.16 es el baseline histórico y se reproduce exactamente con la trayectoria Citi y la beta heredada 0.80. El cambio a $32.41 se explica por la beta (+$1.58) y por la inflación Base en lugar de la trayectoria Citi.' },
+    { topic: 'Inflación en la proyección', a: ['Excel definitivo anterior', 'Encuesta Citi 22-sep-2026: 3.93% / 3.83% / 3.75%'], b: ['Excel maestro', 'Escenarios Cautela 3.26% · Base 3.51% · Alcista 4.00%'], used: 'Base 3.51% (forecast del modelo exponencial trimestral de clase)', note: 'La trayectoria Citi queda como referencia histórica, no como escenario.' },
+    { topic: 'Beta del WACC', a: ['Excel definitivo anterior', 'βU 0.80 (sin fuente documentada)'], b: ['Damodaran global ene-2026 · Retail (Grocery and Food)', 'βL 0.87 · βU 0.65'], used: 'βU 0.65 reapalancada con la estructura de capital de Soriana (βL iterada 0.838)', note: 'La βL de 0.87 refleja el apalancamiento promedio de la industria; el modelo reapalanca con el de Soriana, por lo que el insumo correcto es la βU.' },
+    { topic: 'WACC', a: ['AE 1 · Sesión 2', '10.22% · 12.50%'], b: ['Excel maestro · WACC iterado (Base, βU 0.65)', '11.35%'], used: 'Excel · 11.35% (iterado al valor DCF, 6 iteraciones)', note: 'El WACC a valor de mercado (11.92%) es solo el punto de partida de la iteración, que usa el equity del propio DCF.' },
     { topic: 'Deuda total', a: ['Cierre 2025', '23,618 mdp'], b: ['2T26', '23,720.6 mdp'], used: 'Cierre 2025 para el EV; 2T26 para el puente a la fecha de valuación', note: 'El modelo usa ambos saldos en etapas distintas.' },
     { topic: 'Múltiplo P/U', a: ['Material maestro', '14.25x'], b: ['Excel · ratios de mercado', '18.08x'], used: 'Excel · 18.08x', note: 'Diferente fecha de corte de la utilidad.' },
     { topic: 'Capex 1S26', a: ['Material maestro', '1,638 mdp'], b: ['Excel · reporte 2T26', '1,411 mdp'], used: 'Excel', note: 'Sin impacto en el DCF (el modelo usa FCF 1S26 = CFO − Capex real).' },
@@ -177,6 +181,7 @@ export const soriana: Dataset = {
     ['Excel maestro integrado', XL.file, 'Fuente maestra: DCF, inflación, Trading Comps, Precedent Transactions, valuación combinada y validación (29 controles)'],
     ['Banco de México', 'Serie SP74833 · INPC variación anual quincenal', 'Datos de los modelos de inflación (consulta 07-oct-2026)'],
     ['S&P Capital IQ', 'Quick Comparable Analysis (as-of 30-jun-2026)', 'Múltiplos publicados de 10 comparables (extracto con atribución)'],
+    ['Damodaran (NYU Stern)', 'Betas by Sector (Global), enero 2026 · Retail (Grocery and Food)', 'Beta sectorial: βL 0.87, βU 0.65 (reapalancada con la estructura de Soriana)'],
     ['S&P Capital IQ', 'Comparable M&A Transactions', '3 operaciones con múltiplos implícitos (extracto con atribución)'],
     ['Excel definitivo', 'EXCEL DEFINITIVO DE VALUACIÓN DE SORIANA (anterior)', 'Base del modelo DCF; trayectoria Citi y baseline histórico $31.16'],
     ['AE 1 · Etapa 1', 'PDF académico', 'Perfil, historia, gobierno corporativo, estructura de capital, dividendos'],

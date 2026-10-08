@@ -8,6 +8,7 @@ import { RiskPage } from './pages/RiskPage';
 import { LabPage } from './pages/LabPage';
 import { MultiplesPage } from './pages/MultiplesPage';
 import { CombinedPage } from './pages/CombinedPage';
+import { TransactionsPage } from './pages/TransactionsPage';
 import { AnnexPage } from './pages/AnnexPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { ImportPage } from './pages/ImportPage';
@@ -28,6 +29,7 @@ export function Shell({ vm }: { vm: VM }) {
             <FlowsPage vm={vm} />
             <RiskPage vm={vm} />
             <MultiplesPage vm={vm} />
+            <TransactionsPage vm={vm} />
             <CombinedPage vm={vm} />
             <LabPage vm={vm} />
             <AnnexPage vm={vm} />

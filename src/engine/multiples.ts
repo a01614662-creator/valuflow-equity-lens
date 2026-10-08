@@ -113,8 +113,8 @@ export interface CombinedRow { key: 'dcf' | 'comps' | 'transactions'; label: str
 export interface CombinedResult { rows: CombinedRow[]; weightSum: number; value: Price; classValue: Price; errors: string[] }
 
 /**
- * Precio combinado = Σ (peso × precio) / Σ pesos. Si un método con peso > 0 no tiene precio numérico,
- * el resultado es NA (no se trata como cero).
+ * Precio combinado = Σ (peso × precio), con pesos que deben sumar 100%. Si un método con peso > 0 no tiene
+ * precio numérico, el resultado es NA (no se trata como cero). Igual que 'Valuación Combinada'!B11 del Excel.
  */
 export function combine(prices: Record<CombinedRow['key'], Price>, weights: Record<CombinedRow['key'], number>): CombinedResult {
   const labels = { dcf: 'DCF', comps: 'Trading Comps', transactions: 'Precedent Transactions' };
@@ -122,8 +122,9 @@ export function combine(prices: Record<CombinedRow['key'], Price>, weights: Reco
   const rows = keys.map(k => ({ key: k, label: labels[k], price: prices[k], weight: weights[k], classWeight: 1 / 3, contribution: isNum(prices[k]) ? (prices[k] as number) * weights[k] : 0 }));
   const ws = rows.reduce((s, r) => s + r.weight, 0);
   rows.forEach(r => { if (r.weight > 0 && !isNum(r.price)) errors.push(r.label + ' tiene peso pero no tiene precio (' + r.price + ').'); });
-  if (!(ws > 0)) errors.push('La suma de pesos debe ser mayor que cero.');
-  const value: Price = errors.length ? 'NA' : rows.reduce((s, r) => s + r.contribution, 0) / ws;
+  if (rows.some(r => !(r.weight >= 0))) errors.push('Los pesos no pueden ser negativos.');
+  if (!(Math.abs(ws - 1) <= 1e-9)) errors.push('Los pesos deben sumar 100% (suman ' + (ws * 100).toFixed(2) + '%).');
+  const value: Price = errors.length ? 'NA' : rows.reduce((s, r) => s + r.contribution, 0);
   const cls = rows.every(r => isNum(r.price)) ? rows.reduce((s, r) => s + (r.price as number) * r.classWeight, 0) / rows.reduce((s, r) => s + r.classWeight, 0) : 'NA';
   return { rows, weightSum: ws, value, classValue: cls, errors };
 }

@@ -2,10 +2,11 @@
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';
+import { TableCard } from '../components/TableCard';
 
 /** 03 · Costo de capital y sensibilidad. */
 export function RiskPage({ vm }: { vm: VM }) {
-  const { co, goLab, goAnnexInfl, hasScen, heat, iter, openDrawerWacc, r, scen, scenNote, torn, v, wb } = vm;
+  const { betaT, co, goAnnexBeta, goLab, goAnnexInfl, hasBeta, hasScen, heat, iter, openDrawerWacc, r, scen, scenNote, torn, v, wb } = vm;
   return (<>
     {v.p3 ? (<>
       <section data-page data-screen-label="03 Riesgo" style={css('display:flex; flex-direction:column; gap:28px;')}>
@@ -135,6 +136,13 @@ export function RiskPage({ vm }: { vm: VM }) {
                     <span style={css(`position:absolute; left:calc(50% + ${t.rW} + 6px); top:1px; font-size:11px; font-weight:600;`)}>{t.highTxt}</span></div></div>
               </Fragment>))}</div>
             <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Centro: valor base {r.value}. Rojo: dirección que reduce el valor; azul: dirección que lo aumenta.</span></div></div>
+        {hasBeta ? (
+          <div style={css('display:flex; flex-direction:column; gap:14px;')}>
+            <div style={css('display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; justify-content:space-between;')}>
+              <h3 style={css('margin:0; font-size:28px;')}>Beta del WACC: fuente, tratamiento e impacto</h3>
+              <button className="btn btn-ghost" onClick={goAnnexBeta} style={css('font-size:13px;')}>Beta histórica y Kd →</button></div>
+            {(betaT || []).slice(0, 3).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}</div>
+        ) : null}
         <div style={css('display:flex; flex-direction:column; gap:14px;')}>
           <div style={css('display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;')}>
             <h3 style={css('margin:0; font-size:28px;')}>Escenarios de inflación</h3>
@@ -152,7 +160,7 @@ export function RiskPage({ vm }: { vm: VM }) {
                 <span style={css(`font-family:var(--font-heading); font-size:56px; font-weight:600; line-height:.95; color:${s.vColor};`)}>{s.valTxt}</span>
                 <span style={css(`font-family:var(--font-heading); font-size:20px; font-weight:600; color:${s.upColor};`)}>{s.upTxt} vs. precio</span>
                 <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{s.desc}</span>
-                <button className="btn btn-ghost" onClick={s.onClick} disabled={s.active} style={css('align-self:flex-start; font-size:13px; padding:4px 0;')}>{s.btnTxt}</button></div>
+                <button className="btn btn-ghost" onClick={s.onClick} disabled={!s.canUse} style={css('align-self:flex-start; font-size:13px; padding:4px 0;')}>{s.btnTxt}</button></div>
             </Fragment>))}</div>
           {hasScen ? (
             <button className="btn btn-ghost" onClick={goAnnexInfl} style={css('align-self:flex-start; font-size:13px;')}>Ver modelos y fuentes de la inflación →</button>

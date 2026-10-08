@@ -9,7 +9,7 @@ import { brandColor } from '../services/research';
 import { DEFAULT_ID } from '../data/registry';
 import { PROJECT } from '../config';
 import { annexDefs, annexTables } from './annex';
-import { inflationTables, overridesActive, relativeView } from './relative';
+import { betaTables, inflationChain, inflationChart, inflationTables, overridesActive, relativeView } from './relative';
 import type { App } from './App';
 import { SEQ, SEQ_N } from './App';
 
@@ -28,7 +28,7 @@ export function buildView(app: App): VM {
   if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pres: {}, toast: {} };
   const c = app.calc(), ds = c.ds, b = c.view as RunOk, A = c.VA, P = ds.profile, rv = S.reveal || !!S.printing, L = labelsOf(ds);
   const view = S.view, pr = S.printing;
-  const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, p4: view === 'p4' || !!pr, p5: view === 'p5' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
+  const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, p4: view === 'p4' || !!pr, p5: view === 'p5' || !!pr, p6: view === 'p6' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
   const go = (x: string, a?: string | null) => () => app.go(x, a);
   const upColor = b.ok && b.upside != null ? (b.upside >= 0 ? POS : NEG) : 'var(--color-text)';
   const co = { ticker: P.ticker || '—', exchange: P.exchange || '—', hasLogo: !!P.logo, noLogo: !P.logo, logo: P.logo || '', name: P.name, short: P.short || P.name, legalName: P.legalName || P.name, brand: P.brand || ACC, initials: initialsOf(P.short || P.name || '?'), sector: P.sector || P.industry || '', currency: P.currency, units: unitsOf(ds), valDate: ds.dates.valuation, priceDate: ds.dates.price };
@@ -43,11 +43,11 @@ export function buildView(app: App): VM {
   const team = PROJECT.team.map((m, i) => ({ n: String(i + 1).padStart(2, '0'), name: m[0], id: m[1] }));
   const ui = {
     headerT: S.presenting ? 'translateY(-100%)' : 'none', companyMenu: S.menu === 'company', exportMenu: S.menu === 'export', desktop: !S.mobile, mobile: S.mobile,
-    modified: !c.isBase || overridesActive(c.A), pageO: rv ? 1 : 0, pageT: rv ? 'none' : 'translateY(14px)', errorsShow: !c.base.ok && ['p1', 'p2', 'p3', 'p4', 'p5', 'lab'].includes(view), errors: c.base.errors || [], busy: S.busy
+    modified: !c.isBase || overridesActive(c.A), pageO: rv ? 1 : 0, pageT: rv ? 'none' : 'translateY(14px)', errorsShow: !c.base.ok && ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab'].includes(view), errors: c.base.errors || [], busy: S.busy
   };
   const companyList = S.companies.map(x => { const rr = E.run(x, x.id === S.activeId ? S.A as Assumptions : { ...E.defaults(x), ...(store.getA(x.id) || {}) }); return { name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + (x.builtIn ? ' · caso presentado' : ''), value: rr.ok ? f.cur(rr.value) : '—', bg: x.id === S.activeId ? 'var(--color-accent-100)' : 'transparent', onClick: () => app.switchCompany(x.id), rr, x }; });
   const hasRel = !!(ds.comps || ds.combined);
-  const NAV = [['01', 'Valor', 'p1'], ['02', 'Flujos', 'p2'], ['03', 'Riesgo', 'p3']].concat(hasRel ? [['04', 'Múltiplos', 'p4'], ['05', 'Combinada', 'p5']] : []).concat([['', 'Laboratorio', 'lab'], ['', 'Anexos', 'annex'], ['', 'Equipo', 'team']]);
+  const NAV = [['01', 'Valor', 'p1'], ['02', 'Flujos', 'p2'], ['03', 'Riesgo', 'p3']].concat(hasRel ? [['04', 'Múltiplos', 'p4'], ['05', 'Transacciones', 'p5'], ['06', 'Combinada', 'p6']] : []).concat([['', 'Laboratorio', 'lab'], ['', 'Anexos', 'annex'], ['', 'Equipo', 'team']]);
   const navItems = NAV.map(([num, label, vw]) => ({ num, label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
   const mobileNav = [['Inicio', 'cover'], ['Valor', 'p1'], ['Flujos', 'p2'], ['Riesgo', 'p3'], ['Más', 'annex']].map(([label, vw]) => ({ label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
   const exportItems = [
@@ -85,7 +85,7 @@ export function buildView(app: App): VM {
       { label: 'FCF ' + b.rows[0].year, kind: 'Cálculo', value: f.m(b.rows[0].fcf), unit: mu, desc: 'Flujo libre disponible para proveedores de capital.', onClick: () => app.go('p2') }
     ];
     const RVk = (ds.comps || ds.combined) ? E.relative(ds, A, b.value) : null;
-    if (RVk && RVk.combined && E.isNum(RVk.combined.value)) kpis.push({ label: 'Valuación combinada', kind: 'Resultado', value: f.cur(RVk.combined.value), unit: '', desc: RVk.combined.rows.map(x => x.label + ' ' + Math.round(x.weight * 100) + '%').join(' · ') + '.', onClick: () => app.go('p5') });
+    if (RVk && RVk.combined && E.isNum(RVk.combined.value)) kpis.push({ label: 'Valuación combinada', kind: 'Resultado', value: f.cur(RVk.combined.value), unit: '', desc: RVk.combined.rows.map(x => x.label + ' ' + Math.round(x.weight * 100) + '%').join(' · ') + '.', onClick: () => app.go('p6') });
     if (RVk && RVk.comps && E.isNum(RVk.comps.value)) kpis.push({ label: 'Trading Comps', kind: 'Resultado', value: f.cur(RVk.comps.value), unit: '', desc: RVk.comps.n + ' comparables · promedio de ' + RVk.comps.used + ' múltiplos a la media.', onClick: () => app.go('p4') });
     insights = (c.ins || []).map((x, i) => ({ ...x, op: rv ? 1 : 0, tr: rv ? 'none' : 'translateY(12px)', delay: (200 + i * 90) + 'ms' }));
   }
@@ -145,7 +145,7 @@ export function buildView(app: App): VM {
     const blk = (k: string, vv: string, s: string, op: string, hl?: boolean) => ({ k, v: vv, s, op, bg: hl ? ACC : 'transparent', color: hl ? 'var(--color-bg)' : 'var(--color-text)', border: hl ? ACC : 'var(--color-divider)' });
     wb = {
       modeLabel: A.waccMode === 'iterated' ? 'Iterado al valor DCF' : useM ? 'Valor de mercado' : 'Manual · ' + f.p(b.wacc),
-      keBlocks: [blk('Tasa libre de riesgo', f.p(W.rf), L.rfSource, '+'), blk('Beta apalancada βL', src.beta.toFixed(3), 'βU ' + W.betaU.toFixed(2) + ' · D/E ' + f.x(src.de, 3), '×'), blk('Prima de riesgo', f.p(W.prm), 'PRM aplicada', '='), blk('Ke', f.p(src.ke), 'Costo del capital', '', true)],
+      keBlocks: [blk('Tasa libre de riesgo', f.p(W.rf), L.rfSource, '+'), blk('Beta apalancada βL', src.beta.toFixed(3), 'βU ' + W.betaU.toFixed(2) + (ds.beta && Math.abs(W.betaU - ds.beta.unlevered) < 1e-12 ? ' (Damodaran)' : '') + ' · D/E ' + f.x(src.de, 3), '×'), blk('Prima de riesgo', f.p(W.prm), 'PRM aplicada', '='), blk('Ke', f.p(src.ke), 'Costo del capital', '', true)],
       kdBlocks: [blk('Kd antes de impuestos', f.p(src.kd), useM ? 'Gastos financieros / deuda' : 'Tasa implícita proyectada', '× (1 −'), blk('Tasa fiscal', f.p(src.tax), 'Escudo fiscal', ') ='), blk('Kd(1 − t)', f.p(src.kdAT), 'Costo de la deuda', '', true)],
       structLabel: useM ? 'capital a valor de mercado (' + f.m(src.E) + ' ' + mu + ')' : 'capital al valor DCF (' + f.m(src.E) + ' ' + mu + ')', wEW: rv ? (src.wE * 100).toFixed(1) + '%' : '50%', wE: f.p(src.wE, 1), wD: f.p(src.wD, 1), ke: f.p(src.ke), kdat: f.p(src.kdAT), wacc: f.p(b.wacc)
     };
@@ -159,9 +159,9 @@ export function buildView(app: App): VM {
     };
     const T = c.torn || [], dev = Math.max(...T.map(t => Math.max(Math.abs((t.low ?? b.value) - b.value), Math.abs((t.high ?? b.value) - b.value))), 0.01);
     torn.rows = T.map((t, i) => { const lo = Math.min(t.low as number, t.high as number), hi = Math.max(t.low as number, t.high as number); return { label: t.label, stepTxt: t.step + (t.unit === 'x' ? 'x' : ' pp'), rangeTxt: f.cur(t.range), lW: rv ? ((b.value - lo) / dev * 44).toFixed(1) + '%' : '0%', rW: rv ? ((hi - b.value) / dev * 44).toFixed(1) + '%' : '0%', lowTxt: f.cur(lo), highTxt: f.cur(hi), delay: (i * 70) + 'ms' }; });
-    scen = (c.scen || []).map(s => ({ label: s.label, kind: s.kind, desc: s.desc, source: s.source, valTxt: f.cur(s.value), upTxt: s.upside != null ? f.pp(s.upside) : '—', upColor: (s.upside ?? 0) >= 0 ? POS : NEG, vColor: s.active ? ACC : 'var(--color-text)', bg: s.active ? 'var(--color-accent-100)' : 'transparent', active: s.active, btnTxt: s.active ? 'Escenario activo' : 'Usar este escenario', onClick: () => app.setA({ inflation: s.key }) }));
+    scen = (c.scen || []).map(s => ({ label: s.label, kind: s.kind, desc: s.desc, source: s.source, valTxt: f.cur(s.value), upTxt: s.upside != null ? f.pp(s.upside) : '—', upColor: (s.upside ?? 0) >= 0 ? POS : NEG, vColor: s.reference ? 'var(--color-neutral-700)' : (s.active ? ACC : 'var(--color-text)'), bg: s.active ? 'var(--color-accent-100)' : (s.reference ? 'color-mix(in srgb, var(--color-neutral-300) 25%, transparent)' : 'transparent'), active: s.active, reference: s.reference, canUse: !s.reference && !s.active, btnTxt: s.reference ? 'Referencia: no es escenario' : (s.active ? 'Escenario activo' : 'Usar este escenario'), onClick: () => { if (!s.reference) app.setA({ inflation: s.key }); } }));
   }
-  const scenNote = ds.inflation ? 'Escenarios de inflación documentados en el ' + L.sourceShort + ' (hoja Inflación). Cada uno re-ejecuta el modelo completo; solo cambia la inflación.' : 'Este dataset no documenta escenarios: no se generan escenarios arbitrarios.';
+  const scenNote = ds.inflation ? 'Tres escenarios oficiales del ' + L.sourceShort + ' (hoja Inflación) y la trayectoria Citi como referencia histórica. Cada uno re-ejecuta el modelo completo; solo cambia la inflación.' : 'Este dataset no documenta escenarios: no se generan escenarios arbitrarios.';
   const hasScen = (c.scen || []).length > 0;
 
   // ----- Laboratorio -----
@@ -177,7 +177,7 @@ export function buildView(app: App): VM {
   const groups = [
     { title: 'Proyección', desc: 'Cambios en puntos porcentuales sobre la proyección fuente, aplicados a todos los años. Rango = tablas de sensibilidad', controls: [ctl('dGrowth', 'Δ Crecimiento anual de ventas', -2, 2, 0.25, pp, 'Afecta ventas, EBIT y FCF', 'Rango: sensibilidad Δ ventas ±2 pp'), ctl('dMargin', 'Δ Margen EBIT', -0.5, 0.5, 0.05, pp, 'Afecta EBIT, NOPAT y FCF', 'Rango: sensibilidad Δ margen ±0.5 pp'), ctl('dCapex', 'Δ Capex (% ventas)', -0.5, 0.5, 0.05, pp, 'Reduce el FCF uno a uno', 'Rango: sensibilidad Δ capex ±0.5 pp'), ctl('dTax', 'Δ Tasa de impuestos sobre EBIT', -4, 4, 0.5, pp, 'Afecta NOPAT', 'Rango: sensibilidad Δ tasa ±4 pp')] },
     { title: 'Valor terminal', desc: 'Afectan principalmente el valor terminal', controls: [ctl('g', 'Crecimiento perpetuo (g)', +(D.g - 1).toFixed(4), +(D.g + 1).toFixed(4), 0.05, pct, 'Afecta principalmente el valor terminal', SRCS.g || 'Rango: tabla WACC × g del ' + srcX + ' (±1 pp)')].concat(A.exitMultiple ? [ctl('exitMultiple', 'Múltiplo de salida EV/EBITDA', +(D.exitMultiple - 1).toFixed(4), +(D.exitMultiple + 1).toFixed(4), 0.05, vv => (+vv).toFixed(2) + 'x', 'Valor terminal por múltiplos', L.multipleSource + ' · rango ±1x'), ctl('wGordon', 'Peso del método Gordon', 0, 100, 5, vv => Math.round(vv) + '%', 'Ponderación Gordon vs. múltiplo', srcX + ' · 50% / 50%')] : []) },
-    { title: 'Costo de capital', desc: 'Cambian Ke, el WACC y el descuento de todos los flujos. Insumos sin rango documentado: se capturan como número', controls: (A.waccMode === 'manual' ? [ctl('waccManual', 'WACC manual', +((b.ok ? b.wacc * 100 : 12) - 1).toFixed(2), +((b.ok ? b.wacc * 100 : 12) + 1).toFixed(2), 0.05, pct, 'Descuento de todos los flujos', 'Rango: tabla WACC × g (±1 pp)')] : []).concat([inp('rf', 'Tasa libre de riesgo (Rf, %)', 0.001, pct, 'Sube Ke y el WACC', SRCS.rf || srcX + ' · ' + L.rfSource), inp('prm', 'Prima de riesgo de mercado (%)', 0.01, pct, 'Sube Ke y el WACC', SRCS.prm || srcX + ' · PRM'), inp('betaU', 'Beta desapalancada (βU)', 0.01, vv => (+vv).toFixed(2), 'Riesgo sistemático', SRCS.betaU || srcX + ' · beta sectorial'), inp('kdPre', 'Kd antes de impuestos (%)', 0.05, pct, 'Costo de la deuda (WACC iterado)', SRCS.kdPre || srcX + ' · tasa implícita'), inp('taxShield', 'Tasa del escudo fiscal (%)', 0.1, pct, 'Kd después de impuestos y βL', srcX)]) }
+    { title: 'Costo de capital', desc: 'Cambian Ke, el WACC y el descuento de todos los flujos. Insumos sin rango documentado: se capturan como número', controls: (A.waccMode === 'manual' ? [ctl('waccManual', 'WACC manual', +((b.ok ? b.wacc * 100 : 12) - 1).toFixed(2), +((b.ok ? b.wacc * 100 : 12) + 1).toFixed(2), 0.05, pct, 'Descuento de todos los flujos', 'Rango: tabla WACC × g (±1 pp)')] : []).concat([inp('rf', 'Tasa libre de riesgo (Rf, %)', 0.001, pct, 'Sube Ke y el WACC', SRCS.rf || srcX + ' · ' + L.rfSource), inp('prm', 'Prima de riesgo de mercado (%)', 0.01, pct, 'Sube Ke y el WACC', SRCS.prm || srcX + ' · PRM'), inp('betaU', 'Beta desapalancada (βU)', 0.01, vv => (+vv).toFixed(2), 'Se reapalanca con la D/E de la empresa', ds.beta ? 'Damodaran ' + ds.beta.date + ' · ' + ds.beta.industry + ' (βL ' + ds.beta.levered.toFixed(2) + ' → βU ' + ds.beta.unlevered.toFixed(2) + ')' : (SRCS.betaU || srcX + ' · beta sectorial')), inp('kdPre', 'Kd antes de impuestos (%)', 0.05, pct, 'Costo de la deuda (WACC iterado)', ds.beta && ds.beta.kd ? 'Encuesta Citi (Banxico 6.50%) y gastos financieros 1S26 · control ' + f.p(ds.beta.kd.check) : (SRCS.kdPre || srcX + ' · tasa implícita')), inp('taxShield', 'Tasa del escudo fiscal (%)', 0.1, pct, 'Kd después de impuestos y βL', srcX)]) }
   ];
   const b0 = c.base0;
   const lab = {
@@ -187,6 +187,9 @@ export function buildView(app: App): VM {
     hasInfl: !!ds.inflation,
     inflOpts: ds.inflation ? ds.inflation.order.map(k => { const sc = ds.inflation!.scenarios[k], on = (SA.inflation ?? ds.inflation!.default) === k; return { t: sc.label + (sc.value != null ? ' ' + f.p(sc.value) : ''), kind: sc.kind, onClick: () => app.setA({ inflation: k }), bg: on ? ACC : 'transparent', color: on ? 'var(--color-bg)' : 'var(--color-text)' }; }) : [],
     inflKind: ds.inflation ? ds.inflation.scenarios[SA.inflation ?? ds.inflation.default].kind : '',
+    inflRefs: ds.inflation ? (c.scen || []).filter(x => x.reference).map(x => ({ label: x.label, valTxt: f.cur(x.value), desc: x.desc })) : [],
+    inflChart: b.ok ? inflationChart(ds, SA) : null, inflChain: b.ok ? inflationChain(ds, SA, b) : null,
+    inflModels: b.ok && ds.inflation ? inflationTables(ds, SA, b).filter(t => /Modelos|Transmisión/.test(t.title)) : [],
     groups, price: numIn(SA.price), shares: numIn(SA.shares),
     onPrice: (e: { target: { value: string } }) => app.setA({ price: parseFloat(e.target.value) }), onShares: (e: { target: { value: string } }) => app.setA({ shares: parseFloat(e.target.value) }),
     delta: b.ok && b0.ok ? (b.value - b0.value >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b0.value).toFixed(2) : '—', deltaColor: b.ok && b0.ok ? (b.value - b0.value >= 0 ? POS : NEG) : 'var(--color-text)',
@@ -284,13 +287,15 @@ export function buildView(app: App): VM {
   }
   const rel = b.ok ? relativeView(app, ds, A, b) : { has: false, mult: { has: false }, comb: { has: false } };
   const inflFlow = b.ok && ds.inflation ? inflationTables(ds, A, b).slice(0, 2) : [];
+  const betaT = b.ok && ds.beta ? betaTables(ds, A, b) : [];
   const pi = SEQ.indexOf(view);
   const arch = [['01', 'Datos', 'Dataset por empresa: perfil, estados, mercado, fuentes'], ['02', 'Supuestos', 'Drivers, WACC, g, múltiplo; editables y persistentes'], ['03', 'Motor', 'Proyección → WACC iterado → TV → EV → Equity'], ['04', 'Análisis', 'Sensibilidad, tornado, escenarios, validación'], ['05', 'Presentación', 'Dashboard, anexos y exportación']].map(([n, k, d], i) => ({ n, k, d, bg: i === 2 ? ACC : 'transparent', color: i === 2 ? 'var(--color-bg)' : 'var(--color-text)', border: i === 2 ? ACC : 'var(--color-divider)' }));
 
   return {
     loading: false, v, cv, co, r, team, teamNames: PROJECT.team.map(t => t[0]).join(' · '), project: PROJECT, ui, companyList, navItems, mobileNav, exportItems, track, kpis, football, wf, insights,
     fcfChart, fcfSel, sales, methodSteps, hasMethod: !!ds.method, weights, extNet, extTop, extCount, tv, wb, iter, heat, torn, scen, scenNote, hasScen, lab,
-    mult: rel.mult, comb: rel.comb, inflFlow, hasInflFlow: inflFlow.length > 0, goP4: go('p4'), goP5: go('p5'), goAnnexInfl: go('annex', 'infl'),
+    mult: rel.mult, trans: (rel as any).trans || { has: false }, comb: rel.comb, inflFlow, hasInflFlow: inflFlow.length > 0, betaT, hasBeta: betaT.length > 0,
+    goP4: go('p4'), goP5: go('p5'), goP6: go('p6'), goAnnexInfl: go('annex', 'infl'), goAnnexBeta: go('annex', 'beta'),
     annexNav, annexTables: annexTablesV, ax, emp, res, val, formulas, sources, libCards, imp, drawer, arch,
     pres: { on: S.presenting, label: (pi >= 0 ? SEQ_N[pi] : 'Fuera de secuencia') + ' · ' + (pi + 1) + '/' + SEQ.length, progress: ((pi + 1) / SEQ.length * 100) + '%', prev: () => app.presStep(-1), next: () => app.presStep(1), exit: () => app.exitPresent() },
     toast: { show: !!S.toast, t: S.toast || '' },

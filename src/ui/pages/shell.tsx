@@ -112,8 +112,8 @@ export function Header({ vm }: { vm: VM }) {
                 <span style={css(`font-family:var(--font-heading); font-weight:600; font-size:16px; color:${co.brand};`)}>{co.initials}</span>
               </>) : null}</span>
             <span style={css('display:flex; flex-direction:column; align-items:flex-start; line-height:1.15;')}>
-              <span style={css('font-weight:600; font-size:14px;')}>{co.name}</span>
-              <span style={css('font-size:11px; color:var(--color-neutral-700); letter-spacing:.06em;')}>{co.ticker} · {co.exchange}</span></span>
+              <span style={css('font-weight:600; font-size:14px; white-space:nowrap;')}>{co.short}</span>
+              <span style={css('font-size:11px; color:var(--color-neutral-700); letter-spacing:.06em; white-space:nowrap;')}>{co.ticker} · {co.exchange}</span></span>
             <span style={css('font-size:10px; color:var(--color-neutral-700);')}>▼</span></button>
           {ui.companyMenu ? (<>
             <div className="blueprint" style={css('position:absolute; top:52px; left:0; width:320px; background:var(--color-bg); box-shadow:var(--shadow-lg); padding:8px; display:flex; flex-direction:column; gap:2px; z-index:60;')}>
@@ -136,7 +136,7 @@ export function Header({ vm }: { vm: VM }) {
         {ui.desktop ? (<>
           <nav style={css('display:flex; align-items:stretch; height:64px; margin-left:12px;')}>
             {(navItems || []).map((it: any, $i: number) => (<Fragment key={$i}>
-              <button className={cx(hv('color:var(--color-accent);'))} onClick={it.onClick} style={css(`display:flex; align-items:center; gap:6px; padding:0 14px; background:none; border:0; border-bottom:2px solid ${it.border}; cursor:pointer; font-family:var(--font-heading); font-size:16px; font-weight:600; color:${it.color}; transition:color .2s, border-color .2s;`)}>
+              <button className={cx(hv('color:var(--color-accent);'))} onClick={it.onClick} style={css(`display:flex; align-items:center; gap:5px; padding:0 9px; background:none; border:0; border-bottom:2px solid ${it.border}; cursor:pointer; font-family:var(--font-heading); font-size:15px; white-space:nowrap; font-weight:600; color:${it.color}; transition:color .2s, border-color .2s;`)}>
                 <span style={css('font-size:12px; font-family:var(--font-body); font-weight:500; opacity:.7;')}>{it.num}</span>{it.label}</button>
             </Fragment>))}</nav>
         </>) : null}
