@@ -12,7 +12,8 @@ import { TransactionsPage } from './pages/TransactionsPage';
 import { AnnexPage } from './pages/AnnexPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { ImportPage } from './pages/ImportPage';
-import { TeamPage } from './pages/TeamPage';
+import { AuthorPage } from './pages/AuthorPage';
+import { StudyPage } from './pages/StudyPage';
 
 export function Shell({ vm }: { vm: VM }) {
   const { v, ui } = vm;
@@ -31,11 +32,12 @@ export function Shell({ vm }: { vm: VM }) {
             <MultiplesPage vm={vm} />
             <TransactionsPage vm={vm} />
             <CombinedPage vm={vm} />
+            <StudyPage vm={vm} />
             <LabPage vm={vm} />
             <AnnexPage vm={vm} />
             <LibraryPage vm={vm} />
             <ImportPage vm={vm} />
-            <TeamPage vm={vm} />
+            <AuthorPage vm={vm} />
           </main>
           <Footer vm={vm} />
           <MobileNav vm={vm} />

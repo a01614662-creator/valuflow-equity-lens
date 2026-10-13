@@ -1,10 +1,23 @@
-// Datos del proyecto académico (no de la empresa valuada). Cambia aquí el equipo o la institución.
-export const PROJECT = {
+// Datos del estudio académico (no de la empresa valuada). Estudio individual: un solo autor.
+export const AUTHOR = {
+  name: 'Francisco Aarón Ponce Flores',
+  id: 'A01614662',
+  program: 'Licenciatura en Finanzas',
   institution: 'Tecnológico de Monterrey',
-  course: 'Valuación de Empresas',
-  year: 2026,
-  team: [
-    ['Adrián Fermín Rodríguez Valades', 'A01614820'], ['Saúl González Loredo', 'A016113349'], ['Miguel Emilio Pérez García', 'A01613516'],
-    ['Mauricio Fernandez Juarez', 'A01614732'], ['Francisco Aarón Ponce Flores', 'A01614662']
-  ] as [string, string][]
+  campus: 'Campus San Luis Potosí',
+  course: 'Valuación de Empresas (Bloque de Valuación de Empresas)',
+  activity: 'Actividad Sesión 3: Valuación Intrínseca',
+  professor: 'Francisco Javier Rueda Castillón',
+  context: 'Reto de Valuación de Empresas, Banamex × Tec de Monterrey',
+  role: 'Analista de Equity Research',
+  /** Apellidos para los nombres de archivo exportados. */
+  fileTag: 'Ponce_Flores',
+  year: 2026
 };
+
+export const APP_TITLE = 'ValuFlow · Estudio individual de Soriana';
+export const APP_VERSION = '2.0.0';
+/** Pie de página de los documentos exportados. */
+export const FOOTER = AUTHOR.name + ' · ' + AUTHOR.id + ' · Tec de Monterrey, ' + AUTHOR.campus;
+/** Fuente que acompaña cada tabla y gráfica exportada. */
+export const SOURCE = 'Fuente: motor ValuFlow, dataset del Excel SORIANA_FINAL';

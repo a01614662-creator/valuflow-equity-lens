@@ -1,261 +1,100 @@
-// ValuFlow · Dataset del caso Soriana. Fuente maestra: Excel "EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO"
-// (carpeta excel/). Los números del modelo (drivers, WACC, puente, inflación, múltiplos, transacciones, pesos y
-// resultados esperados) se leen de src/data/soriana.excel.ts, generado desde el Excel con tools/excel/extract_dataset.py.
-// Este archivo es solo DATOS. El motor (src/engine) no conoce a Soriana.
-// El dataset original del prototipo ($31.16, filas redondeadas) vive en tests/fixtures/soriana-legacy.ts.
-import type { BetaSpec, BuildSpec, CompsSpec, Dataset, Expected, InflationSpec, TransactionsSpec } from '../engine/types';
-import { SORIANA_XL as XL } from './soriana.excel';
+// ValuFlow · Dataset del estudio individual de Soriana. Fuente única: SORIANA_FINAL.xlsx (carpeta excel-final/).
+// Todos los números salen de src/data/soriana.final.ts, generado desde el Excel con scripts/build-dataset.py (no se teclean).
+// Este archivo solo acomoda esos datos al formato del motor y agrega textos descriptivos. El motor (src/engine) no conoce a Soriana.
+import type { BuildSpec, CompsSpec, Dataset, Expected, ExpectedScenario, Ratio5, StudySpec, TransactionsSpec } from '../engine/types';
+import { SORIANA_FINAL as X } from './soriana.final';
+import { SORIANA_TEXTS } from './soriana.texts';
+import { LOGO_URI } from '../assets/logos';
 
-type XLExp = typeof XL.expected.dcf.base;
 const pts = (x: number) => x * 100;
-/** Resultados del Excel (un escenario de inflación) en el formato de la capa de validación. */
-const expectedOf = (e: XLExp): Expected => ({
-  fcf: [...e.fcf], pvFcf: e.pvFcf, tvG: e.tvG, pvTvG: e.pvTvG, evG: e.evG, tvM: e.tvM, pvTvM: e.pvTvM, evM: e.evM, evW: e.evW, ev2: e.ev2, eq2: e.eq2, eqVal: e.eqVal,
-  price: e.price, upside: e.upside, wacc: e.wacc, ke: e.ke, priceG: e.priceG, priceM: e.priceM, priceW: e.priceW, tvWeight: e.tvWeight,
-  waccMarket: e.waccMarket, keMarket: e.keMarket, betaMarket: e.betaMarket,
-  comps: XL.expected.comps.value, transactions: XL.expected.transactions.value, combined: e.combined
+const D = X.expected.dcf, M = X.market, C = X.company;
+/** Fecha ISO → "07-oct-2026". */
+const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+const dmy = (iso: string) => iso.slice(8, 10) + '-' + MES[+iso.slice(5, 7) - 1] + '-' + iso.slice(0, 4);
+
+/** Resultados del Excel (escenario Base) en el formato de la capa de validación (porcentajes en puntos). */
+const expected: Expected = {
+  fcf: [...D.fcf], pvFcf: D.pvFcf, tvG: D.tvG, pvTvG: D.pvTvG, evG: D.evG, tvM: D.tvM, pvTvM: D.pvTvM, evM: D.evM, evW: D.evW, ev2: D.ev2, eq2: D.eq2, eqVal: D.eqVal,
+  price: D.price, upside: pts(D.upside), wacc: pts(D.wacc), ke: pts(D.ke), priceG: D.priceG, priceM: D.priceM, priceW: D.priceW, tvWeight: pts(D.tvWeight),
+  waccMarket: pts(D.waccMarket), keMarket: pts(D.keMarket), betaMarket: D.betaMarket, tvBlend: D.tvBlend, impliedG: D.impliedG,
+  comps: X.expected.comps.value, transactions: X.expected.transactions.value, combined: X.expected.combined.value
+};
+const expectedScenarios: Record<string, ExpectedScenario> = Object.fromEntries(Object.entries(X.expected.scenarios).map(([k, s]) => [k, {
+  inflation: s.inflation, salesCagr: s.salesCagr, marginAvg: s.marginAvg, betaIter: s.betaIter, rf: s.rf, ke: s.ke, wacc: s.wacc, g: s.g, fcf2030: s.fcf2030,
+  pvFcf: s.pvFcf, tvG: s.tvG, tvBlend: s.tvBlend, ev: s.ev, equity: s.equity, price: s.price, diff: s.diff, diffPct: s.diffPct, recommendation: s.recommendation, betaLevered: s.betaLevered
+}]));
+
+// Categoría y unidad de cada razón (hoja Razones, filas 7 a 19, en el mismo orden).
+const RATIO_META: [string, string][] = [
+  ['Liquidez', 'x'], ['Liquidez', 'x'], ['Apalancamiento', '%'], ['Apalancamiento', '%'], ['Apalancamiento', 'x'], ['Eficiencia', 'x'], ['Eficiencia', 'd'],
+  ['Eficiencia', 'x'], ['Rentabilidad', '%'], ['Rentabilidad', '%'], ['Rentabilidad', '%'], ['Rentabilidad', '%'], ['Rentabilidad', '%']
+];
+const ratios: Ratio5[] = X.ratios.rows.map((r, i) => {
+  const [cat, unit] = RATIO_META[i], k = unit === '%' ? 100 : 1, v = (r.slice(1, 6) as number[]).map(x => x * k);
+  return { cat, name: r[0] as string, unit, v, avg: (r[6] as number) * k };
 });
-const XE = XL.expected.dcf;
 
 export const soriana: Dataset = {
-  id: 'soriana', builtIn: true, version: 'Excel maestro integrado · DCF + inflación + múltiplos', createdAt: '2026-10-01', updatedAt: '2026-10-07',
-  source: { kind: 'Excel', file: XL.file },
+  id: 'soriana', builtIn: true, version: 'Estudio individual · SORIANA_FINAL', createdAt: '2026-10-07', updatedAt: '2026-10-13',
+  source: { kind: 'Excel', file: X.file },
   profile: {
     name: 'Organización Soriana', short: 'Soriana', legalName: 'Organización Soriana, S.A.B. de C.V.',
     ticker: 'SORIANA B', exchange: 'BMV', country: 'México', currency: 'MXN', units: 'mdp',
-    sector: 'Retail · Autoservicio', industry: 'Tiendas de autoservicio y clubes de membresía (multiformato)',
-    founded: '1968 · Torreón, Coahuila', hq: 'Monterrey, Nuevo León', listed: 'BMV desde 1987',
-    stores: 812, employees: 82064, formats: ['Híper', 'Súper', 'Mercado', 'Express', 'City Club'],
-    logo: 'assets/soriana.svg', brand: '#d52b1e', brand2: '#b6bf00', domain: 'soriana.com',
-    description: 'Comercio al detalle multiformato: tiendas de autoservicio y clubes de precios. La operación incluye venta directa, comercio electrónico, servicios en establecimientos y negocios asociados, con participación en la operación de Sodimac en México.'
+    sector: 'Retail · Autoservicio', industry: C.business,
+    founded: C.founded, hq: C.hq, listed: 'BMV desde 1987',
+    stores: C.stores, employees: C.employees, formats: ['Híper', 'Súper', 'Mercado', 'Express', 'City Club'],
+    logo: LOGO_URI.soriana, brand: '#d52b1e', brand2: '#b6bf00',
+    description: 'Comercio al detalle multiformato: tiendas de autoservicio y clubes de precios. La operación incluye venta directa, comercio electrónico, servicios en establecimientos y negocios asociados.'
   },
-  // Etiquetas de fechas y fuentes que la interfaz muestra (antes estaban fijas en el código).
-  labels: { closeDate: 'cierre de 2025', rollDate: '2T26', rollFcf: '1S26', rfSource: 'Bono M 10 años', sourceShort: 'Excel', multipleSource: 'Excel · mediana comparables −10%' },
-  // Escenarios de inflación documentados (hoja Inflación) y valuación relativa (hojas Trading Comps,
-  // Precedent Transactions y Valuación Combinada del Excel maestro).
-  inflation: XL.inflation as unknown as InflationSpec,
-  beta: XL.beta as unknown as BetaSpec,
-  notes: XL.notes,
-  comps: XL.comps as unknown as CompsSpec,
-  transactions: XL.transactions as unknown as TransactionsSpec,
-  combined: { weights: { ...XL.combined.weights }, reasons: { ...XL.combined.reasons }, classRule: XL.combined.classRule },
-  dates: { base: '31-dic-2025', balance: '30-jun-2026 (2T26)', valuation: '01-oct-2026', price: '25-sep-2026', nextReport: '23-oct-2026' },
+  labels: { closeDate: 'cierre de 2025', rollDate: '2T26', rollFcf: '1S26', rfSource: 'Bono M 10 años', sourceShort: 'Excel', multipleSource: 'Mediana de ' + X.valuation.peerNames.join(', ') + ' con ' + pts(X.valuation.multipleDiscount) + '% de descuento' },
+  dates: { base: dmy(X.valuation.roll.dateClose), balance: dmy(X.valuation.roll.dateBalance) + ' (2T26)', valuation: dmy(M.valuationDate), price: dmy(M.priceDate), nextReport: C.nextReport },
   market: {
-    price: XL.market.price, shares: XL.market.shares, marketCap: 60264, consensus: 23.36, consensusLabel: 'Venta · 0 C / 1 M / 6 V',
-    low52: 23.90, high52: 42.70, pe: 18.08, pbv: 0.71, bvps: 47.07, divYield: 1.66, lastDiv: 0.5556,
-    chg1y: 21.3, rating: 'HR+1 (HR Ratings, corto plazo)', rsi: 75, macd: 1.154, ma50: 29.68, ma200: 29.71, technical: 'Compra fuerte',
-    hrRevenue2027: 196480
+    price: M.price, shares: M.shares, marketCap: M.marketCap, consensus: C.consensusTarget, consensusLabel: C.consensusDetail,
+    pe: M.pe, pbv: M.pbv, bvps: M.bvps, divYield: pts(M.divYield), lastDiv: C.lastDividend,
+    chg1y: pts(C.chg1y), rating: C.rating, rsi: C.rsi, macd: C.macd, ma50: C.ma50, ma200: C.ma200, technical: C.technical,
+    low52: +C.range52w.split('–')[0], high52: +C.range52w.split('–')[1], priceSource: M.priceSource, sssg: C.sssg2T26, peers: M.peers
   },
-  // Proyección final construida desde sus drivers (hoja "Proyección Final Soriana"): la inflación del escenario
-  // elegido entra al crecimiento nominal de ventas y se propaga a la proyección, el FCF y la valuación.
+  // Proyección construida desde sus drivers (hoja "Proyección Final Soriana").
   forecast: {
     baseYear: '2025A', years: ['2026E', '2027E', '2028E', '2029E', '2030E'],
-    base: { revenue: 177515.0, ebit: 7551.0, da: 4342.0, capex: 2867.0, nwc: 3691.0, fcf: 6761.4, ebitda: 11893.0 },
-    build: XL.build as unknown as BuildSpec
+    base: { ...X.base2025 },
+    build: X.build as unknown as BuildSpec
   },
-  // Escenario alterno documentado en el Excel (hoja "Valuación base"): supuestos constantes.
-  altForecasts: {
-    constante: {
-      label: 'Proyección base · supuestos constantes', short: 'Supuestos constantes', source: 'Excel · DCF base (3.5% ventas)',
-      drivers: { growth: [0.035, 0.035, 0.035, 0.035, 0.035], margin: 'r:7552/177515', tax: [0.30, 0.30, 0.30, 0.30, 0.30], da: 'r:4342/177515', capex: 'r:2867/177515', nwcPct: 'r:3691/177515' },
-      overrides: { waccMode: 'manual', waccManual: 12.50, wGordon: 100, rollEnabled: false, bridgeDebt: 23618, bridgeLease: 0 },
-      expected: { price: 34.44, ev: 76313.9, equity: 61990.9 }
-    }
-  },
-  // Insumos del WACC con precisión completa (en puntos porcentuales para el motor). Fuentes: hoja Fuentes del Excel.
+  // Insumos del WACC (puntos porcentuales para el motor). La inflación del escenario mueve Rf y Kd (Fisher).
   wacc: {
-    rf: pts(XL.wacc.rf), prm: pts(XL.wacc.prm), prmMature: pts(XL.wacc.prmMature), countryRisk: pts(XL.wacc.countryRisk), betaU: XL.wacc.betaU,
-    taxMarket: pts(XL.wacc.taxMarket), taxShield: pts(XL.wacc.taxShield), kdPre: pts(XL.wacc.kdPre), kdMarket: pts(XL.wacc.kdMarket), interestFY: XL.wacc.interestFY,
-    debt: XL.wacc.debt, equityMarket: 60264.0, mode: 'iterated', start: pts(XL.wacc.start), iterations: XL.wacc.iterations
+    rf: pts(X.wacc.rf), prm: pts(X.wacc.prm), prmMature: pts(X.wacc.prmMature), countryRisk: pts(X.wacc.countryRisk), betaU: D.betaU,
+    taxMarket: pts(X.wacc.taxMarket), taxShield: pts(X.wacc.taxShield), kdPre: pts(X.wacc.kdPre), kdMarket: pts(X.wacc.kdMarket), interestFY: X.wacc.interestFY,
+    debt: X.wacc.debt, equityMarket: M.marketCap, mode: 'iterated', start: pts(X.wacc.iterStart), iterations: X.wacc.iterations, fisher: {}
   },
   valuation: {
-    g: pts(XL.valuation.g), exitMultiple: XL.valuation.exitMultiple, comparablesMedian: XL.valuation.comparablesMedian, multipleDiscount: pts(XL.valuation.multipleDiscount), wGordon: XL.valuation.wGordon,
-    bridge: { ...XL.valuation.bridge },
-    roll: { ...XL.valuation.roll },
-    signalThreshold: 15
+    g: pts(X.valuation.g), exitMultiple: X.valuation.exitMultiple, multipleDiscount: pts(X.valuation.multipleDiscount), wGordon: X.valuation.wGordon,
+    bridge: { ...X.valuation.bridge },
+    roll: { enabled: true, t1: X.valuation.roll.t1, t2: X.valuation.roll.t2, fcfGenerated: X.valuation.roll.fcfGenerated, debt: X.valuation.roll.debt, lease: X.valuation.roll.lease, cash: X.valuation.roll.cash, dateClose: X.valuation.roll.dateClose, dateBalance: X.valuation.roll.dateBalance, dateValuation: X.valuation.roll.dateValuation },
+    signalThreshold: pts(X.valuation.threshold)
   },
-  // Resultados del Excel para la capa de validación: escenario por defecto (Base) y cada escenario de inflación.
-  expected: expectedOf(XE.base),
-  // Solo con la beta oficial (la columna "Histórico" usa βU 0.80 y se valida en las pruebas).
-  expectedScenarios: { citi: expectedOf(XE.citi), cautela: expectedOf(XE.cautela), base: expectedOf(XE.base), alcista: expectedOf(XE.alcista) },
-  // Iteración del WACC del Excel (filas 214–219): [k, WACC entrada %, Equity DCF, D/E, βL, Ke %, WACC salida %].
-  waccIterationExcel: XE.base.waccIterations.map((r, k) => [k, pts(r[0]), r[1], r[2], r[3], pts(r[4]), pts(r[5])]),
-  method: {
-    // Ponderación y crecimiento del escenario Base (la pantalla usa la proyección en vivo del escenario activo).
-    weightsExternal: XL.build.weightsExternal.map(pts),
-    growthExternal: XE.base.growthExternal.map(pts), growthLS: [-5.9, -6.6, -7.0, -7.6, -8.2], growthFinal: XE.base.growthFinal.map(pts),
-    marginExternal: [4.37, 4.34, 4.37, 4.40, 4.43], marginLS: [4.93, 4.93, 4.93, 4.93, 4.93], marginFinal: [4.54, 4.52, 4.51, 4.51, 4.51],
-    capexFinal: [2.26, 1.98, 1.97, 1.97, 1.97], taxFinal: [26.75, 27.10, 27.67, 28.23, 28.80], daFinal: [2.44, 2.44, 2.44, 2.44, 2.44],
-    salesLS: [163937, 153151, 142365, 131580, 120794], salesConst: [183728.0, 190158.5, 196814.1, 203702.5, 210832.1], salesLTM: 174278,
-    salesConstLabel: 'Supuestos constantes (3.5%)', salesLSLabel: 'Mínimos cuadrados (LTM)',
-    externalNet: { sales: -0.90, costs: 0.52, capex: 2.50 },
-    leastSquares: [
-      { key: 'ventas', label: 'Ventas', unit: 'mdp', y: [45810.0, 42683.0, 47592.0, 40444.0, 43559.0], a: 44017.6, b: -674.1, r2: 0.148, fc: [41995.3, 41321.2, 40647.1, 39973.0] },
-      { key: 'costos', label: 'Costos y gastos operativos', unit: 'mdp', y: [43901.0, 41215.0, 45106.0, 38622.0, 41704.0], a: 42109.6, b: -698.7, r2: 0.193, fc: [40013.5, 39314.8, 38616.1, 37917.4] },
-      { key: 'tasa', label: 'Tasa de impuesto', unit: '%', y: [38.32, 23.43, 25.81, 37.10, 20.55], a: 29.04, b: -2.19, r2: 0.180, fc: [22.49, 20.30, 18.11, 15.93] },
-      { key: 'da', label: 'Depreciación y amortización', unit: 'mdp', y: [1105.9, 1049.3, 1051.0, 1048.9, 1030.6], a: 1057.2, b: -15.1, r2: 0.702, fc: [1011.9, 996.8, 981.7, 966.6] },
-      { key: 'capex', label: 'Capex', unit: 'mdp', y: [663.2, 775.2, 816.0, 501.0, 909.9], a: 733.1, b: 21.9, r2: 0.049, fc: [798.8, 820.7, 842.7, 864.6] },
-      { key: 'nwc', label: 'Capital de trabajo neto', unit: 'mdp', y: [11066.0, 11577.0, 9310.0, 9712.0, 7301.9], a: 9793.4, b: -939.3, r2: 0.784, fc: [6975.4, 6036.1, 5096.8, 4157.5] }
-    ],
-    lsQuarters: ['2T25', '3T25', '4T25', '1T26', '2T26'], lsForecastQuarters: ['3T26', '4T26', '1T27', '2T27'],
-    fcffLTM: { projected: 10301.0, actual: 10516.5, adjusted: 9510.6 },
-    external: [
-      ['Macroeconomía México', 'Crecimiento del PIB', 'Banxico (abr–jun 2026): PIB 2026 1.5%; 2027 2.0%', 'Ventas', '+', 0.50, 0, 0],
-      ['Macroeconomía México', 'Inflación', 'General 3.42% y subyacente 3.79% (1a qna. sep-2026)', 'Ventas y costos', 'Neutral', 0, 0, 0],
-      ['Política monetaria', 'Tasa Banxico / Fed', 'Banxico 6.50% (24-sep-2026); Fed +25 pb en septiembre', 'WACC / gastos financieros', '−', 0, 0, 0],
-      ['Macroeconomía México', 'Tipo de cambio', '18.08 MXN/USD al 30-sep-2026', 'Costos y capex', '−', 0, 0.10, 1.00],
-      ['Macroeconomía México', 'Remesas', '2025: USD 61,791 mm (−4.6%); 1T26 +1.4%', 'Ventas', '−', -0.30, 0, 0],
-      ['Política laboral', 'Salario mínimo 2026 +13%', 'De 278.80 a 315.04 $/día', 'Costos y ventas', 'Mixto', 0.20, 0.15, 0],
-      ['Política laboral', 'Jornada de 40 horas', 'Reducción gradual de 48 a 40 h a partir de 2027', 'Costos', '−', 0, 0.05, 0],
-      ['Política fiscal', 'IEPS a bebidas y tabaco', 'Bebidas de 1.64 a 3.08 $/litro; tabaco 160% → 200%', 'Ventas', '−', -0.20, 0, 0],
-      ['Política comercial', 'Aranceles a países sin tratado', 'Hasta 50% a importaciones de Asia desde 1-ene-2026', 'Costos y capex', '−', 0, 0.05, 0.50],
-      ['T-MEC', 'Revisión del T-MEC', 'Revisiones anuales activadas; inversión débil', 'Ventas', '−', -0.30, 0, 0],
-      ['T-MEC / EU', 'Aranceles sectoriales de EU', 'Acero, aluminio y automotriz', 'Ventas', '−', -0.20, 0, 0],
-      ['Geopolítica', 'Medio Oriente / petróleo', 'Petróleo arriba de USD 100 (sep-2026)', 'Costos', '−', 0, 0.05, 0],
-      ['Sector retail', 'Ventas ANTAD', 'Ago-2026: autoservicio −0.7% tiendas iguales', 'Ventas', '−', -0.50, 0, 0],
-      ['Megatendencia', 'Hard discount', 'Tiendas 3B de 4% (2019) a 14% (2025) del mercado de descuento', 'Ventas y costos', '−', -0.50, 0.10, 0],
-      ['Megatendencia', 'Omnicanalidad', 'Inversión en surtido en línea y última milla', 'Ventas y capex', 'Mixto', 0.20, 0, 1.00],
-      ['Inmobiliario', 'Rentas comerciales', '+11.09% en 1S26; USD 28.93/m²', 'Costos y otros ingresos', 'Mixto', 0.10, 0.02, 0],
-      ['Inmobiliario', 'Ocupación de FIBRAs', 'Ocupación arriba de 91% al 2T26', 'Ventas (otros ingresos)', '+', 0.10, 0, 0]
-    ]
-  },
-  quarterly: {
-    periods: ['2T25', '3T25', '4T25', '1T26', '2T26'],
-    revenue: [45810, 42683, 47592, 40444, 43559], grossProfit: [10954, 10685, 11797, 9978, 10640],
-    ebit: [1909, 1468, 2486, 1822, 1855], netIncome: [743, 584, 1308, 834, 1090],
-    debtTotal: [30154, 30218, 23618, 23723, 23720.6], cash: [7540, 5798, 9295, 4589, 6875.4],
-    cfo: [4013.1, -205.9, 13017.0, -3565.6, 3916.0], capex: [663.2, 775.2, 816.0, 501.0, 909.9]
-  },
-  ratios: [
-    { cat: 'Liquidez', name: 'Razón circulante', unit: 'x', v: [1.27, 1.30, 1.24, 1.29, 1.17], avg: 1.25, read: 'La liquidez depende del inventario: la prueba ácida promedio es 0.35x.' },
-    { cat: 'Liquidez', name: 'Prueba ácida', unit: 'x', v: [0.36, 0.35, 0.41, 0.32, 0.33], avg: 0.35, read: 'Sin inventario, los activos circulantes cubren 0.35 veces el pasivo circulante.' },
-    { cat: 'Apalancamiento', name: 'Deuda / Activo total', unit: '%', v: [47.5, 46.3, 45.7, 43.3, 44.7], avg: 45.5, read: 'Baja de 47.5% a 44.7% entre 2T25 y 2T26.' },
-    { cat: 'Apalancamiento', name: 'Capitalización LP', unit: '%', v: [21.8, 22.1, 20.6, 20.9, 18.0], avg: 20.7, read: 'Menor peso del pasivo de largo plazo en la estructura.' },
-    { cat: 'Apalancamiento', name: 'Cobertura de intereses', unit: 'x', v: [2.30, 1.87, 4.04, 3.10, 3.19], avg: 2.90, read: 'Mejora de 2.30x a 3.19x en cinco trimestres.' },
-    { cat: 'Eficiencia', name: 'Inventario en días', unit: 'd', v: [98.0, 103.8, 82.3, 97.7, 98.4], avg: 96.0, read: 'Variable operativa crítica: 96 días en promedio.' },
-    { cat: 'Eficiencia', name: 'Rotación de inventario', unit: 'x', v: [0.93, 0.88, 1.11, 0.93, 0.93], avg: 0.96, read: 'Rotación trimestral.' },
-    { cat: 'Eficiencia', name: 'Rotación del activo', unit: 'x', v: [0.29, 0.27, 0.31, 0.27, 0.28], avg: 0.28, read: 'Rotación trimestral.' },
-    { cat: 'Rentabilidad', name: 'Margen bruto', unit: '%', v: [23.9, 25.0, 24.8, 24.7, 24.4], avg: 24.6, read: 'Estable alrededor de 24.6%.' },
-    { cat: 'Rentabilidad', name: 'Margen neto', unit: '%', v: [1.6, 1.4, 2.7, 2.1, 2.5], avg: 2.1, read: 'Brecha amplia entre margen bruto y neto.' },
-    { cat: 'Rentabilidad', name: 'ROA (trimestral)', unit: '%', v: [0.46, 0.37, 0.84, 0.55, 0.70], avg: 0.58, read: 'FY2025 anual: 2.14%.' },
-    { cat: 'Rentabilidad', name: 'ROE (trimestral)', unit: '%', v: [0.88, 0.69, 1.54, 0.97, 1.26], avg: 1.07, read: 'FY2025 anual: 3.93%.' },
-    { cat: 'Rentabilidad', name: 'ROI (trimestral)', unit: '%', v: [1.17, 0.90, 1.61, 1.17, 1.18], avg: 1.20, read: 'FY2025 anual: 4.88%.' }
-  ],
-  governance: {
-    board: 13, patrimonial: 9, related: 1, independent: 3, independencePct: 23.08, bestPractice: 25,
-    chair: 'Francisco Javier Martín Bringas', ceo: 'Ricardo Martín Bringas',
-    committees: [
-      ['Comité de Auditoría y Prácticas Societarias', '3 integrantes independientes'],
-      ['Comité de Riesgos y Continuidad Operativa', 'Constituido en abril de 2026 · 13 miembros de alta dirección']
-    ],
-    controls: ['Auditoría interna', 'Código de Ética', 'Línea Directa', 'Mecanismos de conflicto de interés', '96% de la plantilla capacitada en ética (2025)']
-  },
+  study: X as unknown as StudySpec,
+  comps: X.comps as unknown as CompsSpec,
+  transactions: X.transactions as unknown as TransactionsSpec,
+  combined: { weights: { ...X.combined.weights }, reasons: { ...X.combined.reasons } },
+  expected, expectedScenarios,
+  ratios,
+  quarterly: { periods: [...X.ratios.periods] },
+  news: C.news.map(n => [n[1], n[0]] as [string, string]),
   timeline: [
-    ['1968', 'Fundación en Torreón, Coahuila', 'Origen de la empresa.', 'Excel · Información general'],
-    ['1987', 'Listado en la BMV', 'Inicio de la vida pública de SORIANA B.', 'AE 1'],
-    ['2007', 'Adquisición de Grupo Gigante', 'Expansión relevante y aumento de deuda.', 'AE 1'],
-    ['2015–16', 'Adquisición de Comercial Mexicana', 'Mayor adquisición histórica; ciclo de apalancamiento posterior.', 'AE 1'],
-    ['2016', 'JV con Falabella / Sodimac y 50% de Soriban', 'Diversificación hacia mejoramiento del hogar y servicios financieros.', 'AE 1'],
-    ['2020', 'Programa de CEBURES', 'Refinanciamiento y extensión de vencimientos.', 'AE 1'],
-    ['2023–24', 'Mejoras de calificación · SORIANA 23 y 24', 'Menor deuda, mayor flujo y menor costo de fondeo.', 'AE 1'],
-    ['2025–26', 'Desapalancamiento', 'Deuda LP y deuda neta bancaria/bursátil en descenso.', 'Sesión 2'],
+    ['1968', 'Fundación en Torreón, Coahuila', 'Origen de la empresa.', 'Excel · Generales'],
+    ['1987', 'Listado en la BMV', 'Inicio de la vida pública de SORIANA B.', 'Excel · Generales'],
     ['2026', 'Racionalización de tiendas', 'Cierre de 20 tiendas; enfoque en productividad por m² (prensa).', 'Excel · Noticias']
   ],
-  dividends: [
-    ['11-dic-2025', '23-dic-2025', 0.5556], ['28-abr-2023', '15-dic-2023', 0.5556], ['29-abr-2021', '15-dic-2021', 0.5556], ['2019', '2019', 0.3889]
-  ],
-  news: [['31-jul-2026', 'Resultados 2T26: menos ventas, más utilidad'], ['26-ago-2026', 'Cierre de 20 tiendas en 2026'], ['2-sep-2026', 'Reducción de plantilla y automatización'], ['sep-2026', 'Plan de inversión 2S26']],
-  discrepancies: [
-    { topic: 'Valor intrínseco por acción (DCF)', a: ['Baseline histórico (Citi + βU 0.80) · proyección preliminar', '$31.16 · $34.44'], b: ['Excel maestro · DCF oficial (inflación Base 3.51%, βU Damodaran 0.65)', '$32.41'], used: 'Excel maestro · escenario Base con βU 0.65', note: '$34.44 es la proyección preliminar (supuestos constantes). $31.16 es el baseline histórico y se reproduce exactamente con la trayectoria Citi y la beta heredada 0.80. El cambio a $32.41 se explica por la beta (+$1.58) y por la inflación Base en lugar de la trayectoria Citi.' },
-    { topic: 'Inflación en la proyección', a: ['Excel definitivo anterior', 'Encuesta Citi 22-sep-2026: 3.93% / 3.83% / 3.75%'], b: ['Excel maestro', 'Escenarios Cautela 3.26% · Base 3.51% · Alcista 4.00%'], used: 'Base 3.51% (forecast del modelo exponencial trimestral de clase)', note: 'La trayectoria Citi queda como referencia histórica, no como escenario.' },
-    { topic: 'Beta del WACC', a: ['Excel definitivo anterior', 'βU 0.80 (sin fuente documentada)'], b: ['Damodaran global ene-2026 · Retail (Grocery and Food)', 'βL 0.87 · βU 0.65'], used: 'βU 0.65 reapalancada con la estructura de capital de Soriana (βL iterada 0.838)', note: 'La βL de 0.87 refleja el apalancamiento promedio de la industria; el modelo reapalanca con el de Soriana, por lo que el insumo correcto es la βU.' },
-    { topic: 'WACC', a: ['AE 1 · Sesión 2', '10.22% · 12.50%'], b: ['Excel maestro · WACC iterado (Base, βU 0.65)', '11.35%'], used: 'Excel · 11.35% (iterado al valor DCF, 6 iteraciones)', note: 'El WACC a valor de mercado (11.92%) es solo el punto de partida de la iteración, que usa el equity del propio DCF.' },
-    { topic: 'Deuda total', a: ['Cierre 2025', '23,618 mdp'], b: ['2T26', '23,720.6 mdp'], used: 'Cierre 2025 para el EV; 2T26 para el puente a la fecha de valuación', note: 'El modelo usa ambos saldos en etapas distintas.' },
-    { topic: 'Múltiplo P/U', a: ['Material maestro', '14.25x'], b: ['Excel · ratios de mercado', '18.08x'], used: 'Excel · 18.08x', note: 'Diferente fecha de corte de la utilidad.' },
-    { topic: 'Capex 1S26', a: ['Material maestro', '1,638 mdp'], b: ['Excel · reporte 2T26', '1,411 mdp'], used: 'Excel', note: 'Sin impacto en el DCF (el modelo usa FCF 1S26 = CFO − Capex real).' },
-    { topic: 'Rendimiento por dividendo', a: ['Material maestro', '1.8%'], b: ['Excel', '1.66%'], used: 'Excel · 1.66%', note: 'Distinto precio de referencia.' },
-    { topic: 'Capitalización de mercado', a: ['Reportada (precio $30.10)', '54,180 mdp'], b: ['Precio actual × acciones', '60,264 mdp'], used: '60,264 mdp para el WACC de mercado', note: 'El Excel recalcula E con el precio vigente.' }
-  ],
-  inputs: XL.registry.map(r => r.map(x => String(x ?? '')) as [string, string, string, string, string, string, string]),
+  inputs: X.expected.validation.assumptions.map(a => [a[0], 'Modelo principal', typeof a[1] === 'number' ? String(a[1]) : a[1], dmy(M.valuationDate), '', 'Excel', a[2]] as [string, string, string, string, string, string, string]),
   sources: [
-    ['Excel maestro integrado', XL.file, 'Fuente maestra: DCF, inflación, Trading Comps, Precedent Transactions, valuación combinada y validación (29 controles)'],
-    ['Banco de México', 'Serie SP74833 · INPC variación anual quincenal', 'Datos de los modelos de inflación (consulta 07-oct-2026)'],
-    ['S&P Capital IQ', 'Quick Comparable Analysis (as-of 30-jun-2026)', 'Múltiplos publicados de 10 comparables (extracto con atribución)'],
-    ['Damodaran (NYU Stern)', 'Betas by Sector (Global), enero 2026 · Retail (Grocery and Food)', 'Beta sectorial: βL 0.87, βU 0.65 (reapalancada con la estructura de Soriana)'],
-    ['S&P Capital IQ', 'Comparable M&A Transactions', '3 operaciones con múltiplos implícitos (extracto con atribución)'],
-    ['Excel definitivo', 'EXCEL DEFINITIVO DE VALUACIÓN DE SORIANA (anterior)', 'Base del modelo DCF; trayectoria Citi y baseline histórico $31.16'],
-    ['AE 1 · Etapa 1', 'PDF académico', 'Perfil, historia, gobierno corporativo, estructura de capital, dividendos'],
-    ['Sesión 2', 'Valuación y comparativas de Soriana y mercado', 'DCF de la segunda entrega y razones financieras'],
-    ['Material maestro', 'Material maestro de contexto (PDF)', 'Contexto consolidado, equipo y reglas de producto'],
-    ['Reportes trimestrales', 'Soriana 2T25–2T26 (BMV)', 'Estados financieros trimestrales capturados en el Excel']
+    ['Excel del estudio', X.file, 'Fuente única de las cifras: series, supuestos, DCF, escenarios, múltiplos y validación'],
+    ['Banco de México', 'Serie SP74833 · inflación general anual, quincenal', 'Modelos de tendencia de la inflación (113 quincenas)'],
+    ['Banco de México', 'Encuesta de Expectativas de los Especialistas del Sector Privado, septiembre 2026', 'Referencias del crecimiento perpetuo'],
+    ['Investing.com', 'Precios semanales de Soriana B y del S&P/BMV IPC', 'Regresión de la beta, rendimientos y precio de mercado'],
+    ['S&P Capital IQ', 'Quick Comparable Analysis y Comparable M&A Transactions', 'Trading Comps y Precedent Transactions (extracto con atribución)'],
+    ['Organización Soriana', 'Reportes trimestrales 2T25 a 2T26 (BMV)', 'Estados financieros y razones'],
+    ['Fondo Monetario Internacional', 'World Economic Outlook, abril 2026', 'Crecimiento real de largo plazo (referencia)']
   ],
-  // Tablas de anexo (capa 2). Valores tal como aparecen en el Excel.
-  annex: {
-    statements: {
-      cols: ['2T25', '3T25', '4T25', '1T26', '2T26', 'FY2025'],
-      rows: [
-        ['Ingresos totales', 45810.0, 42683.0, 47592.0, 40444.0, 43559.0, 177515.0],
-        ['Costo de ventas', 34856.0, 31998.0, 35795.0, 30466.0, 32919.0, 134752.0],
-        ['Utilidad bruta', 10954.0, 10685.0, 11797.0, 9978.0, 10640.0, 42764.0],
-        ['Utilidad de operación (EBIT)', 1909.0, 1468.0, 2486.0, 1822.0, 1855.0, 7552.0],
-        ['Gastos financieros', 829.0, 786.0, 616.0, 588.0, 582.0, 3074.0],
-        ['Utilidad antes de impuestos', 1203.0, 764.0, 1763.0, 1326.0, 1372.0, 4766.0],
-        ['Impuestos a la utilidad', 461.0, 179.0, 455.0, 492.0, 282.0, 1433.0],
-        ['Utilidad neta consolidada', 743.0, 584.0, 1308.0, 834.0, 1090.0, 3334.0],
-        ['Depreciación y amortización', 1105.9, 1049.3, 1051.0, 1048.9, 1030.6, 4342.0],
-        ['Flujo neto de operación (CFO)', 4013.1, -205.9, 13017.0, -3565.6, 3916.0, 13738.0],
-        ['Capex', 663.2, 775.2, 816.0, 501.0, 909.9, 2867.0],
-        ['Efectivo y equivalentes', 7540.0, 5798.0, 9295.0, 4589.0, 6875.4, 9295.0],
-        ['Inventarios', 37421.0, 36394.0, 32283.0, 32635.0, 35486.7, 32283.0],
-        ['Activo circulante', 52131.0, 49767.0, 48529.0, 43562.0, 49259.8, 48529.0],
-        ['Activo total', 159842.0, 157502.0, 156038.0, 150941.0, 156813.0, 156038.0],
-        ['Pasivo circulante', 41065.0, 38190.0, 39219.0, 33850.0, 41957.9, 39219.0],
-        ['Pasivo a largo plazo', 34801.0, 34753.0, 32086.0, 31527.0, 28201.1, 32086.0],
-        ['Pasivo total', 75866.0, 72943.0, 71306.0, 65377.0, 70159.0, 71306.0],
-        ['Capital contable', 83976.0, 84559.0, 84732.0, 85564.0, 86654.0, 84732.0],
-        ['Deuda bursátil y bancaria CP', 6627.0, 6553.0, 3000.0, 3000.0, 6500.0, 3000.0],
-        ['Deuda bursátil y bancaria LP', 11500.0, 11500.0, 8500.0, 8500.0, 5000.0, 8500.0],
-        ['Pasivo por arrendamiento CP', 638.0, 659.0, 676.0, 683.0, 640.0, 676.0],
-        ['Pasivo por arrendamiento LP', 11389.0, 11506.0, 11442.0, 11540.0, 11580.6, 11442.0],
-        ['Deuda total (financiera + arrendamientos)', 30154.0, 30218.0, 23618.0, 23723.0, 23720.6, 23618.0]
-      ]
-    },
-    projected: {
-      cols: ['2025A', '2026E', '2027E', '2028E', '2029E', '2030E'],
-      rows: [
-        { section: 'Estado de resultados' },
-        ['Ventas', 177515.0, 170043.1, 167793.9, 169496.0, 173233.0, 178318.2],
-        ['Costo de ventas', -134752.0, -128552.6, -127020.0, -128477.9, -131310.6, -135165.2],
-        ['Utilidad bruta', 42763.0, 41490.5, 40773.9, 41018.0, 41922.4, 43153.0],
-        ['Gastos de operación (sin D&A)', -30870.0, -29628.4, -29103.9, -29238.0, -29886.1, -30761.5],
-        ['EBITDA', 11893.0, 11862.1, 11670.0, 11780.0, 12036.3, 12391.5],
-        ['Depreciación y amortización', -4342.0, -4142.7, -4087.9, -4132.1, -4226.0, -4353.0],
-        ['Utilidad de operación (EBIT)', 7551.0, 7719.4, 7582.1, 7647.8, 7810.3, 8038.5],
-        ['Gastos financieros', -3074.0, -2361.8, -2302.8, -2156.5, -2010.3, -1864.0],
-        ['Utilidad antes de impuestos', 4765.0, 5357.6, 5279.3, 5491.3, 5800.0, 6174.5],
-        ['Impuestos a la utilidad', -1433.0, -1433.3, -1430.8, -1519.4, -1637.6, -1778.3],
-        ['Utilidad neta', 3332.0, 3924.3, 3848.5, 3972.0, 4162.4, 4396.2],
-        ['Dividendos pagados', null, -1177.9, -1155.1, -1192.2, -1249.3, -1319.5],
-        { section: 'Balance general' },
-        ['Efectivo y equivalentes', 9295.0, 12435.0, 14405.2, 16746.1, 18898.9, 21222.2],
-        ['Inventarios', 32283.0, 30993.5, 30624.0, 30623.5, 31298.7, 32217.5],
-        ['Otros activos circulantes', 6951.0, 6658.4, 6570.3, 6637.0, 6783.3, 6982.5],
-        ['Activo no circulante', 107509.0, 107201.5, 106431.9, 105645.4, 104832.5, 103986.2],
-        ['Activo total', 156038.0, 157288.4, 158031.5, 159652.1, 161813.4, 164408.3],
-        ['Pasivo circulante operativo', 35543.0, 34046.9, 33596.6, 33937.4, 34685.6, 35703.8],
-        ['Deuda bursátil y bancaria', 11500.0, 11500.0, 10000.0, 8500.0, 7000.0, 5500.0],
-        ['Pasivo por arrendamiento', 12118.0, 12118.0, 12118.0, 12118.0, 12118.0, 12118.0],
-        ['Otros pasivos a largo plazo', 12145.0, 12145.0, 12145.0, 12145.0, 12145.0, 12145.0],
-        ['Pasivo total', 71306.0, 69809.9, 67859.6, 66700.4, 65948.6, 65466.8],
-        ['Capital contable', 84732.0, 87478.5, 90171.9, 92951.7, 95864.8, 98941.5],
-        ['Comprobación (A − P − C)', 0, 0, 0, 0, 0, 0]
-      ]
-    },
-    sensitivity: {
-      waccG: { label: 'WACC vs. g', rowsLabel: 'WACC', colsLabel: 'g', cols: ['2.50%', '3.00%', '3.50%', '4.00%', '4.50%'], rowHeads: ['10.88%', '11.38%', '11.88%', '12.38%', '12.88%'], grid: [[32.40, 33.38, 34.50, 35.77, 37.25], [30.92, 31.78, 32.74, 33.84, 35.09], [29.57, 30.32, 31.16, 32.11, 33.19], [28.33, 28.99, 29.73, 30.56, 31.50], [27.18, 27.77, 28.43, 29.16, 29.98]] },
-      salesMargin: { label: 'Δ Ventas vs. Δ Margen EBIT', rowsLabel: 'Δ ventas', colsLabel: 'Δ margen', cols: ['-0.50', '-0.25', '0.00', '+0.25', '+0.50'], rowHeads: ['-2.00', '-1.00', '0.00', '+1.00', '+2.00'], grid: [[24.82, 26.48, 28.15, 29.81, 31.47], [26.16, 27.89, 29.63, 31.36, 33.10], [27.55, 29.36, 31.16, 32.97, 34.78], [28.98, 30.87, 32.75, 34.64, 36.53], [30.47, 32.43, 34.40, 36.36, 38.33]] },
-      waccMult: { label: 'WACC vs. múltiplo EV/EBITDA', rowsLabel: 'WACC', colsLabel: 'Múltiplo', cols: ['4.81x', '5.31x', '5.81x', '6.31x', '6.81x'], rowHeads: ['10.88%', '11.38%', '11.88%', '12.38%', '12.88%'], grid: [[32.26, 33.38, 34.50, 35.61, 36.73], [30.55, 31.65, 32.74, 33.84, 34.93], [29.02, 30.09, 31.16, 32.24, 33.31], [27.63, 28.68, 29.73, 30.79, 31.84], [26.37, 27.40, 28.43, 29.46, 30.49]] },
-      capexTax: { label: 'Δ Capex vs. Δ Tasa de impuestos', rowsLabel: 'Δ capex', colsLabel: 'Δ tasa', cols: ['-4.00', '-2.00', '0.00', '+2.00', '+4.00'], rowHeads: ['-0.50', '-0.25', '0.00', '+0.25', '+0.50'], grid: [[36.32, 35.64, 34.95, 34.27, 33.59], [34.43, 33.74, 33.06, 32.38, 31.69], [32.53, 31.85, 31.16, 30.48, 29.80], [30.64, 29.95, 29.27, 28.59, 27.90], [28.74, 28.06, 27.37, 26.69, 26.01]] }
-    }
-  }
+  annex: { statements: { cols: [...X.statements.cols], rows: X.statements.rows.map(r => [...r]) as (string | number)[][] }, projected: { cols: [], rows: [] }, sensitivity: {} },
+  texts: SORIANA_TEXTS
 };

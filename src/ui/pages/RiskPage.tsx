@@ -1,12 +1,12 @@
-// Generado a partir de project/ValuFlow.dc.html y revisado a mano. Estilos copiados tal cual del diseño.
+// 03 · Costo de capital, escenarios y sensibilidad.
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';
-import { TableCard } from '../components/TableCard';
+import { ReportBlocks } from '../components/ReportBlocks';
 
 /** 03 · Costo de capital y sensibilidad. */
 export function RiskPage({ vm }: { vm: VM }) {
-  const { betaT, co, goAnnexBeta, goLab, goAnnexInfl, hasBeta, hasScen, heat, iter, openDrawerWacc, r, scen, scenNote, torn, v, wb } = vm;
+  const { co, goLab, goStudy, hasScen, heat, iter, openDrawerWacc, r, risk, scen, scenNote, torn, v, wb } = vm;
   return (<>
     {v.p3 ? (<>
       <section data-page data-screen-label="03 Riesgo" style={css('display:flex; flex-direction:column; gap:28px;')}>
@@ -127,7 +127,7 @@ export function RiskPage({ vm }: { vm: VM }) {
                 <div style={css('display:flex; flex-direction:column; gap:4px;')}>
                   <div style={css('display:flex; justify-content:space-between; font-size:13px;')}>
                     <span style={css('font-weight:500;')}>{t.label}</span>
-                    <span style={css('color:var(--color-neutral-700);')}>± {t.stepTxt} · rango {t.rangeTxt}</span></div>
+                    <span style={css('color:var(--color-neutral-700);')}>{t.stepTxt} · rango {t.rangeTxt}</span></div>
                   <div style={css('position:relative; height:20px;')}>
                     <span style={css('position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:var(--color-text);')}></span>
                     <span style={css(`position:absolute; top:2px; bottom:2px; right:50%; width:${t.lW}; background:color-mix(in srgb, var(--neg) 60%, white); transition:width .8s cubic-bezier(.2,.7,.2,1) ${t.delay};`)}></span>
@@ -135,17 +135,10 @@ export function RiskPage({ vm }: { vm: VM }) {
                     <span style={css(`position:absolute; right:calc(50% + ${t.lW} + 6px); top:1px; font-size:11px; font-weight:600;`)}>{t.lowTxt}</span>
                     <span style={css(`position:absolute; left:calc(50% + ${t.rW} + 6px); top:1px; font-size:11px; font-weight:600;`)}>{t.highTxt}</span></div></div>
               </Fragment>))}</div>
-            <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Centro: valor base {r.value}. Rojo: dirección que reduce el valor; azul: dirección que lo aumenta.</span></div></div>
-        {hasBeta ? (
-          <div style={css('display:flex; flex-direction:column; gap:14px;')}>
-            <div style={css('display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; justify-content:space-between;')}>
-              <h3 style={css('margin:0; font-size:28px;')}>Beta del WACC: fuente, tratamiento e impacto</h3>
-              <button className="btn btn-ghost" onClick={goAnnexBeta} style={css('font-size:13px;')}>Beta histórica y Kd →</button></div>
-            {(betaT || []).slice(0, 3).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}</div>
-        ) : null}
+            <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Centro: valor del caso activo {r.value}. Cada variable se mueve sola a su valor Conservador (rojo) y Optimista (azul); el modelo completo se vuelve a correr.</span></div></div>
         <div style={css('display:flex; flex-direction:column; gap:14px;')}>
           <div style={css('display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;')}>
-            <h3 style={css('margin:0; font-size:28px;')}>Escenarios de inflación</h3>
+            <h3 style={css('margin:0; font-size:28px;')}>Escenarios: Conservador, Base y Optimista</h3>
             <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{scenNote}</span></div>
           <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:20px;')}>
             {(scen || []).map((s: any, $i: number) => (<Fragment key={$i}>
@@ -162,11 +155,12 @@ export function RiskPage({ vm }: { vm: VM }) {
                 <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{s.desc}</span>
                 <button className="btn btn-ghost" onClick={s.onClick} disabled={!s.canUse} style={css('align-self:flex-start; font-size:13px; padding:4px 0;')}>{s.btnTxt}</button></div>
             </Fragment>))}</div>
-          {hasScen ? (
-            <button className="btn btn-ghost" onClick={goAnnexInfl} style={css('align-self:flex-start; font-size:13px;')}>Ver modelos y fuentes de la inflación →</button>
-          ) : null}
+          {hasScen ? (<>
+            <ReportBlocks blocks={risk.blocks} act={risk.act} />
+            <button className="btn btn-ghost" onClick={goStudy} style={css('align-self:flex-start; font-size:13px;')}>Ver inflación, beta y crecimiento perpetuo en el Estudio →</button>
+          </>) : null}
           <div style={css('display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; padding-top:8px;')}>
-            <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Riesgos / sensibilidades del modelo: peso del valor terminal {r.tvWeight}; el WACC y la proyección de capex y margen concentran el rango de valor.</span>
+            <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Riesgos / sensibilidades del modelo: el valor terminal pesa {r.tvWeight} del EV; margen, beta y g concentran el rango de valor.</span>
             <button className="btn btn-primary blueprint" onClick={goLab}>
               <i className="corner tl"></i>
               <i className="corner tr"></i>

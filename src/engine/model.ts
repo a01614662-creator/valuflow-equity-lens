@@ -1,8 +1,9 @@
 // ValuFlow · Motor de valuación reutilizable. No contiene datos de ninguna empresa.
 // Capas: drivers → proyección FCFF → WACC (CAPM + iteración) → valor terminal (Gordon / múltiplo) → EV → Equity → valor por acción.
-// Traducción 1:1 de project/vf-engine.js; tests/parity.test.ts verifica que los resultados sean idénticos.
+// tests/final.test.ts verifica que los resultados sean idénticos a los del Excel del estudio.
 import { buildFor } from './build';
 import { fin } from './format';
+import { baseInflation, presetPatch, scenarioPresets } from './study';
 import type { Assumptions, Dataset, DriverSet, ProjRow, Ratio, RollResult, RunResult, Series, WaccIter, WaccLeg, WaccResult } from './types';
 
 const ratio = (s: Ratio): number => (typeof s === 'string' && s.startsWith('r:'))
@@ -22,21 +23,27 @@ export function defaults(ds: Dataset): Assumptions {
     g: v.g, waccMode: w.mode || 'iterated', waccManual: w.start ?? 12, keFixed: null,
     rf: w.rf, prm: w.prm, betaU: w.betaU, kdPre: w.kdPre, kdMarket: w.kdMarket ?? w.kdPre, taxShield: w.taxShield, taxMarket: w.taxMarket ?? w.taxShield,
     exitMultiple: v.exitMultiple ?? null, wGordon: Math.round((v.wGordon ?? 1) * 100),
-    price: m.price, shares: m.shares, rollEnabled: !!r.enabled,
+    price: m.price, shares: m.shares, rollEnabled: !!r.enabled, valuationDate: r.dateValuation,
     bridgeDebt: b.debt ?? 0, bridgeLease: b.lease ?? 0, bridgeCash: b.cash ?? 0,
     // Solo existe si el dataset documenta escenarios de inflación (si no, la clave queda indefinida).
-    inflation: ds.inflation ? ds.inflation.default : undefined
+    inflation: ds.inflation ? ds.inflation.default : undefined,
+    // Con estudio de soporte, el punto de partida es el escenario por defecto (inflación, ajustes, beta de regresión y g).
+    ...defaultPreset(ds)
   };
 }
 
+function defaultPreset(ds: Dataset): Partial<Assumptions> {
+  const p = ds.study ? scenarioPresets(ds).find(x => x.key === ds.study!.scenarios.default) : undefined;
+  return p ? presetPatch(p) : {};
+}
+
 // ---------- Drivers de proyección ----------
-export function drivers(ds: Dataset, key?: string, inflation?: string): DriverSet {
+export function drivers(ds: Dataset, _key?: string, A?: Partial<Assumptions>): DriverSet {
   const f = ds.forecast, n = f.years.length, rev0 = f.base.revenue as number;
-  const alt = key && key !== 'final' && ds.altForecasts && ds.altForecasts[key];
-  // Proyección por drivers (réplica de la hoja del Excel): las filas dependen del escenario de inflación.
-  const built = !alt ? buildFor(ds, inflation) : null;
-  if (alt || (!f.rows && !built)) {
-    const d = alt ? alt.drivers : f.drivers!;
+  // Proyección por drivers (réplica de la hoja del Excel): las filas dependen de la inflación y de los ajustes del escenario.
+  const built = buildFor(ds, A);
+  if (!f.rows && !built) {
+    const d = f.drivers!;
     const nwcPct = arr(d.nwcPct, n);
     return { years: f.years, n, rev0, nwc0: f.base.nwc ?? nwcPct[0] * rev0, growth: arr(d.growth, n), margin: arr(d.margin, n), tax: arr(d.tax, n), da: arr(d.da, n), capex: arr(d.capex, n), nwcPct, derived: false };
   }
@@ -55,7 +62,7 @@ export function drivers(ds: Dataset, key?: string, inflation?: string): DriverSe
 }
 
 export function project(ds: Dataset, A: Assumptions): { rows: ProjRow[]; drivers: DriverSet } {
-  const D = drivers(ds, A.forecastKey, A.inflation), rows: ProjRow[] = [];
+  const D = drivers(ds, A.forecastKey, A), rows: ProjRow[] = [];
   let rev = D.rev0, nwcPrev = D.nwc0;
   for (let i = 0; i < D.n; i++) {
     const gr = D.growth[i] + A.dGrowth / 100;
@@ -78,14 +85,19 @@ function evGordon(rows: ProjRow[], w: number, g: number) {
 
 // ---------- WACC: mercado, iterado al valor DCF, o manual ----------
 export function wacc(ds: Dataset, A: Assumptions, rows: ProjRow[]): WaccResult {
-  const W = ds.wacc || ({} as Dataset['wacc']), g = A.g / 100, rf = A.rf / 100, prm = A.prm / 100, bu = A.betaU;
+  const W = ds.wacc || ({} as Dataset['wacc']), g = A.g / 100, rf0 = A.rf / 100, prm = A.prm / 100;
   const D = W.debt ?? (A.bridgeDebt + A.bridgeLease);
   const nd = A.bridgeDebt + A.bridgeLease - A.bridgeCash;
-  const tm = A.taxMarket / 100, Em = (A.price as number) * (A.shares as number);
-  const deM = D / Em, betaM = bu * (1 + (1 - tm) * deM), keM = rf + betaM * prm, kdM = A.kdMarket / 100;
+  const tm = A.taxMarket / 100, Em = (A.price as number) * (A.shares as number), deM = D / Em;
+  // Beta: si los supuestos traen la beta apalancada a la estructura de mercado (regresión), se desapalanca con el D/E de mercado.
+  const bu = A.betaLevered != null ? A.betaLevered / (1 + (1 - tm) * deM) : A.betaU;
+  // Fisher: la inflación de los supuestos mueve la tasa libre de riesgo y, en la misma magnitud, el Kd del DCF.
+  let rf = rf0, kdShift = 0;
+  if (W.fisher && A.inflationRate != null) { const real = (1 + rf0) / (1 + (W.fisher.baseInflation ?? baseInflation(ds))) - 1; rf = (1 + real) * (1 + A.inflationRate) - 1; kdShift = rf - rf0; }
+  const betaM = bu * (1 + (1 - tm) * deM), keM = rf0 + betaM * prm, kdM = A.kdMarket / 100;
   const market: WaccLeg = { E: Em, D, de: deM, beta: betaM, ke: keM, kd: kdM, kdAT: kdM * (1 - tm), wE: Em / (D + Em), wD: D / (D + Em), tax: tm, wacc: NaN };
   market.wacc = market.wE * keM + market.wD * market.kdAT;
-  const t = A.taxShield / 100, kdAT = A.kdPre / 100 * (1 - t);
+  const t = A.taxShield / 100, kd = A.kdPre / 100 + kdShift, kdAT = kd * (1 - t);
   const iters: WaccIter[] = []; let w = fin(market.wacc) ? market.wacc : 0.12, conv: WaccIter | null = null;
   // El Excel itera un número fijo de veces (wacc.iterations); sin ese dato se itera hasta converger.
   const maxIt = W.iterations ?? 14;
@@ -98,12 +110,12 @@ export function wacc(ds: Dataset, A: Assumptions, rows: ProjRow[]): WaccResult {
     conv = iters[iters.length - 1];
     if (Math.abs(wout - w) < 1e-10) break; w = wout;
   }
-  const iterated: WaccLeg | null = conv ? { wacc: conv.wout, ke: conv.ke, beta: conv.beta, de: conv.de, E: conv.E, D, wE: conv.wE, wD: conv.wD, kd: A.kdPre / 100, kdAT, tax: t, converged: iters.length > 1 && Math.abs(conv.wout - conv.win) < 1e-6 } : null;
+  const iterated: WaccLeg | null = conv ? { wacc: conv.wout, ke: conv.ke, beta: conv.beta, de: conv.de, E: conv.E, D, wE: conv.wE, wD: conv.wD, kd, kdAT, tax: t, converged: iters.length > 1 && Math.abs(conv.wout - conv.win) < 1e-6 } : null;
   let wv: number, ke: number, src: WaccLeg | null;
   if (A.waccMode === 'market') { wv = market.wacc; ke = market.ke; src = market; }
   else if (A.waccMode === 'manual') { wv = A.waccManual / 100; ke = A.keFixed != null ? A.keFixed / 100 : (iterated ? iterated.ke : market.ke); src = iterated || market; }
   else { wv = iterated ? iterated.wacc : NaN; ke = iterated ? iterated.ke : NaN; src = iterated; }
-  return { wacc: wv, ke, mode: A.waccMode, market, iterated, iters, src, rf, prm, betaU: bu };
+  return { wacc: wv, ke, mode: A.waccMode, market, iterated, iters, src, rf, prm, betaU: bu, rfBase: rf0, kdShift };
 }
 
 // ---------- Ejecución completa ----------
@@ -134,7 +146,7 @@ export function run(ds: Dataset, A: Assumptions): RunResult {
   const R = (ds.valuation && ds.valuation.roll) || ({} as NonNullable<Dataset['valuation']['roll']>);
   let roll: RollResult | null = null, eqVal = eqClose, value = priceClose;
   if (A.rollEnabled && R.enabled !== undefined) {
-    const t1 = R.t1 as number, t2 = R.t2 as number, fcfGenerated = R.fcfGenerated as number;
+    const t1 = R.t1 as number, t2 = A.valuationDate && R.dateBalance ? days360(R.dateBalance, A.valuationDate) / 360 : R.t2 as number, fcfGenerated = R.fcfGenerated as number;
     const debt = R.debt as number, lease = R.lease as number, cash = R.cash as number;
     const cap = Math.pow(1 + w, t1), evCap = evW * cap, ev2 = evCap + fcfGenerated;
     const eq2 = ev2 - debt - lease + cash, keCap = Math.pow(1 + W.ke, t2), eq3 = eq2 * keCap;
@@ -143,7 +155,7 @@ export function run(ds: Dataset, A: Assumptions): RunResult {
   }
   const upside = price > 0 ? value / price - 1 : null;
   const th = ((ds.valuation && ds.valuation.signalThreshold) ?? 15) / 100;
-  const signal = upside == null ? null : (Math.abs(upside) <= th ? 'Mantener' : (upside > 0 ? 'Valor por encima del umbral' : 'Valor por debajo del umbral'));
+  const signal = recommendation(upside, th);
   return {
     ok: true, errors, warnings, rows: drows, drivers: P.drivers, W, wacc: w, ke: W.ke, g,
     pvSum, fcfN1, tvG, pvTvG, evG, mult, tvM, pvTvM, evM, wG, evW, nd, eqClose, priceClose, priceG, priceM,
@@ -151,6 +163,20 @@ export function run(ds: Dataset, A: Assumptions): RunResult {
     roll, eqVal, ev: roll ? roll.ev2 : evW, value, price, shares, upside, signal, threshold: th,
     impliedMultiple: tvG / last.ebitda
   };
+}
+
+/** DAYS360 de Excel (método de EE. UU./NASD) entre dos fechas ISO. */
+export function days360(a: string, b: string): number {
+  let [y1, m1, d1] = a.split('-').map(Number), [y2, m2, d2] = b.split('-').map(Number);
+  const last = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const feb1 = m1 === 2 && d1 === last(y1, 2), feb2 = m2 === 2 && d2 === last(y2, 2);
+  if (feb1 && feb2) d2 = 30; if (feb1) d1 = 30; if (d2 === 31 && d1 >= 30) d2 = 30; if (d1 === 31) d1 = 30;
+  return (y2 - y1) * 360 + (m2 - m1) * 30 + (d2 - d1);
+}
+
+/** Recomendación por umbral: COMPRAR / VENDER si la diferencia contra el precio pasa del umbral; si no, MANTENER. */
+export function recommendation(upside: number | null, th: number): string | null {
+  return upside == null ? null : (Math.abs(upside) <= th ? 'MANTENER' : (upside > 0 ? 'COMPRAR' : 'VENDER'));
 }
 
 /** ¿Los supuestos son exactamente los del dataset? (habilita la comparación contra la fuente). */

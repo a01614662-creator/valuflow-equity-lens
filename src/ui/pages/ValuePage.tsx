@@ -1,4 +1,4 @@
-// Generado a partir de project/ValuFlow.dc.html y revisado a mano. Estilos copiados tal cual del diseño.
+// 01 · Valor: resultado, campo de fútbol, puente y lectura rápida.
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';
@@ -90,7 +90,7 @@ export function ValuePage({ vm }: { vm: VM }) {
             <div>
               <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>Métodos de valuación</div>
               <h3 style={css('margin:4px 0 0; font-size:28px;')}>¿Qué dicen los distintos métodos?</h3></div>
-            <span style={css('font-size:13px; color:var(--color-neutral-700); max-width:520px;')}>Barras: rango con WACC ±0.5 pp y g ±0.5 pp (múltiplo ±0.5x). Línea vertical: precio de mercado. {co.currency} por acción.</span></div>
+            <span style={css('font-size:13px; color:var(--color-neutral-700); max-width:520px;')}>Barras: DCF = rango de los tres escenarios; múltiplos = percentil 25 a 75; transacciones = mínimo a máximo (referencia, peso 0%). Línea vertical: precio de mercado. {co.currency} por acción.</span></div>
           <div style={css('display:flex; flex-direction:column;')}>
             {(football.rows || []).map((f: any, $i: number) => (<Fragment key={$i}>
               <div style={css('display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; padding:10px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent);')}>

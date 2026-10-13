@@ -1,8 +1,7 @@
 // Capa de validación (consistencia interna + comparación contra la fuente) y lectura rápida.
-import { grid, scenarios, type TornadoRow } from './analysis';
+import { appVsExcel, type TornadoRow } from './analysis';
 import { fin, fmt } from './format';
 import { labelsOf } from './labels';
-import { defaults, run } from './model';
 import { isNum, relative } from './multiples';
 import type { Assumptions, Dataset, RunOk, RunResult } from './types';
 
@@ -13,8 +12,7 @@ export interface Check { group: string; label: string; status: CheckStatus; deta
 export const SOURCE_GROUP = 'Excel';
 
 export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: boolean): Check[] {
-  // Con escenarios de inflación, la referencia es la columna del Excel del escenario activo.
-  const E = (A.inflation && ds.expectedScenarios && ds.expectedScenarios[A.inflation]) || ds.expected, checks: Check[] = [];
+  const E = ds.expected, checks: Check[] = [];
   const add = (group: string, label: string, ok: boolean | null, detail?: string, calc?: string, exp?: string) =>
     checks.push({ group, label, status: ok === null ? 'na' : (ok ? 'pass' : 'review'), detail, calc, exp });
   const L = labelsOf(ds), Y = ds.forecast.years;
@@ -33,8 +31,6 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
     add('Modelo', 'Balance proyectado cuadra (activo = pasivo + capital)', bd.years.every(y => Math.abs(y.check) < 0.5), 'Máx. diferencia ' + fmt.m(Math.max(...bd.years.map(y => Math.abs(y.check))), 6));
     add('Modelo', 'FCF de la proyección = FCF descontado', bd.years.every((y, i) => Math.abs(y.fcf - base.rows[i].fcf) < 1e-6), 'Proyección por drivers vs. motor DCF');
   }
-  const s = scenarios(ds, A, base).filter(x => x.constant && !x.reference);
-  if (s.length > 1) add('Modelo', 'Escenarios de inflación ordenados (menor inflación → menor valor)', s.every((x, i) => i === 0 || (x.inflation > s[i - 1].inflation) === ((x.value as number) > (s[i - 1].value as number))), s.map(x => x.label + ' ' + fmt.cur(x.value)).join(' · '));
   // Valuación relativa y combinada (solo si el dataset la documenta).
   const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;
   if (RV && RV.comps) {
@@ -70,17 +66,7 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
       const rel: [string, unknown, number | undefined][] = [['Trading Comps', RV.comps && RV.comps.value, E.comps], ['Precedent Transactions', RV.transactions && RV.transactions.value, E.transactions], ['Valuación combinada', RV.combined && RV.combined.value, E.combined]];
       rel.forEach(([l, c, e]) => { if (e != null) add(SOURCE_GROUP, l, isNum(c) ? tol(c, e, 0.02) : false, '', isNum(c) ? cur(c) : String(c), cur(e)); });
     }
-    const sr = E.sensRow;
-    if (sr) {
-      const gr = grid(ds, A, base);
-      add(SOURCE_GROUP, 'Sensibilidad · fila WACC base', gr.cells[2].every((v, i) => v != null && tol(v, sr[i], 0.02)), '', gr.cells[2].map(v => (v as number).toFixed(2)).join(' · '), sr.map(v => v.toFixed(2)).join(' · '));
-    }
-    if (ds.altForecasts) Object.keys(ds.altForecasts).forEach(k => {
-      const af = ds.altForecasts![k];
-      if (!af.expected) return;
-      const r = run(ds, { ...defaults(ds), ...af.overrides, forecastKey: k });
-      add(SOURCE_GROUP, af.label, r.ok ? tol(r.value, af.expected.price, 0.02) : false, '', r.ok ? fmt.cur(r.value) : '—', fmt.cur(af.expected.price));
-    });
+    appVsExcel(ds, A, base).filter(r => r.label.includes('·')).forEach(r => add(SOURCE_GROUP, r.label, r.ok, '', r.app == null ? '—' : fmt.cur(r.app), fmt.cur(r.excel)));
   } else if (E) add(SOURCE_GROUP, 'Comparación contra el ' + L.sourceShort, null, 'Disponible solo con los supuestos base');
   return checks;
 }

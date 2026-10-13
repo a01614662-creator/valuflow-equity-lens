@@ -2,7 +2,7 @@
 // (variables externas + mínimos cuadrados → estado de resultados, balance, conciliación de efectivo y FCF).
 // La inflación entra SOLO por el crecimiento nominal del mercado, como en el Excel (fila 14).
 // El orden de las operaciones sigue al de las celdas para reproducir el resultado del Excel.
-import type { BuildResult, BuildSpec, BuildYear, Dataset, InflationSpec } from './types';
+import type { Assumptions, BuildResult, BuildSpec, BuildYear, Dataset, InflationSpec } from './types';
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 
@@ -14,7 +14,11 @@ export function inflationPath(spec: InflationSpec, key: string | undefined, n: n
   return Array(n).fill(s.value as number);
 }
 
-export function buildForecast(B: BuildSpec, years: string[], inflation: number[], scenario: string | null = null): BuildResult {
+/** Ajustes de escenario del Excel: se suman al crecimiento por variables externas y al margen EBIT final (pp en fracción). */
+export interface BuildAdj { salesAdj?: number; marginAdj?: number }
+
+export function buildForecast(B: BuildSpec, years: string[], inflation: number[], scenario: string | null = null, adj: BuildAdj = {}): BuildResult {
+  const sAdj = adj.salesAdj ?? 0, mAdj = adj.marginAdj ?? 0;
   const n = years.length, out: BuildYear[] = [];
   let p = {
     revenue: B.base.revenue, cash: B.base.cash, inventory: B.base.inventory, otherCA: B.base.otherCA, nonCurrent: B.base.nonCurrent,
@@ -24,12 +28,14 @@ export function buildForecast(B: BuildSpec, years: string[], inflation: number[]
     const w = B.weightsExternal[i], wl = 1 - w, S = B.sales;
     // B. Crecimiento de ventas (filas 10–28)
     const marketGrowth = inflation[i] + S.gdp[i] * S.elasticity[i] + S.consumptionAdj[i];
-    const growthExternal = marketGrowth + sum(S.adjustments.map(a => a.values[i]));
+    // Excel: C23 = C14 + SUM(C15:C22) + ajuste del escenario
+    const growthExternal = marketGrowth + sum(S.adjustments.map(a => a.values[i])) + sAdj;
     const growthLS = S.lsSales[i + 1] / S.lsSales[i] - 1;
     const growth = w * growthExternal + wl * growthLS;
     // D. Margen EBIT (filas 31–41) y E. otros supuestos (44–55)
     const marginExternal = p.marginExternal + sum(B.margin.adjustments.map(a => a.values[i]));
-    const margin = w * marginExternal + wl * B.margin.ls[i];
+    // Excel: C41 = w·margen externo + (1 − w)·margen MC + ajuste del escenario
+    const margin = w * marginExternal + wl * B.margin.ls[i] + mAdj;
     const daPct = w * B.da.ext[i] + wl * B.da.ls[i];
     const revenue = p.revenue * (1 + growth);
     const guide = B.capex.guide[i];
@@ -69,12 +75,16 @@ export function buildForecast(B: BuildSpec, years: string[], inflation: number[]
   };
 }
 
-/** Proyección del dataset con el escenario de inflación indicado (null si el dataset no se construye por drivers). */
-export function buildFor(ds: Dataset, scenario?: string): BuildResult | null {
+/**
+ * Proyección del dataset con la inflación de los supuestos: una tasa constante (A.inflationRate) o, si no la hay,
+ * el escenario de inflación documentado (A.inflation). null si el dataset no se construye por drivers.
+ */
+export function buildFor(ds: Dataset, A?: Partial<Assumptions>): BuildResult | null {
   const B = ds.forecast.build;
   if (!B) return null;
-  const n = ds.forecast.years.length;
-  if (!ds.inflation) throw new Error('La proyección por drivers requiere escenarios de inflación (dataset.inflation).');
-  const key = scenario && ds.inflation.scenarios[scenario] ? scenario : ds.inflation.default;
-  return buildForecast(B, ds.forecast.years, inflationPath(ds.inflation, key, n), key);
+  const n = ds.forecast.years.length, adj = { salesAdj: A?.salesAdj, marginAdj: A?.marginAdj };
+  if (A && A.inflationRate != null) return buildForecast(B, ds.forecast.years, Array(n).fill(A.inflationRate), A.scenario ?? null, adj);
+  if (!ds.inflation) throw new Error('La proyección por drivers requiere una tasa de inflación (A.inflationRate) o escenarios (dataset.inflation).');
+  const key = A?.inflation && ds.inflation.scenarios[A.inflation] ? A.inflation : ds.inflation.default;
+  return buildForecast(B, ds.forecast.years, inflationPath(ds.inflation, key, n), key, adj);
 }

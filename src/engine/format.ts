@@ -12,7 +12,7 @@ export const fmt = {
   /** Montos: negativos entre paréntesis. */
   m: (v: unknown, d = 0) => fin(v) ? (v < 0 ? '(' + nf(d).format(-v) + ')' : nf(d).format(v)) : '—',
   n: (v: unknown, d = 0) => fin(v) ? nf(d).format(v) : '—',
-  /** Porcentaje a partir de una fracción (0.1188 → 11.88%). */
+  /** Porcentaje a partir de una fracción (0.0963 → 9.63%). */
   p: (v: unknown, d = 2) => fin(v) ? nf(d).format(v * 100) + '%' : '—',
   /** Variación con signo (+/−). */
   pp: (v: unknown, d = 1) => fin(v) ? (v >= 0 ? '+' : '−') + nf(d).format(Math.abs(v * 100)) + '%' : '—',

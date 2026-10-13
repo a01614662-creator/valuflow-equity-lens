@@ -1,4 +1,4 @@
-// Generado a partir de project/ValuFlow.dc.html y revisado a mano. Estilos copiados tal cual del diseño.
+// Estructura común (portada, encabezado, pie, panel y avisos). Estilos del sistema de diseño Industry.
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';
@@ -10,7 +10,7 @@ export function Splash({ vm }: { vm: VM }) {
     {loading ? (<>
       <div style={css('min-height:100vh; display:grid; place-items:center;')}>
         <div style={css('display:flex; flex-direction:column; align-items:center; gap:12px;')}>
-          <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('width:48px; height:48px;')} />
+          <img src={vm.logos?.tec} alt="Tecnológico de Monterrey" style={css('width:48px; height:48px;')} />
           <div style={css('font-family:var(--font-heading); font-size:20px; font-weight:600;')}>Cargando modelo de valuación…</div></div></div>
     </>) : null}
   </>);
@@ -18,26 +18,26 @@ export function Splash({ vm }: { vm: VM }) {
 
 /** Portada. */
 export function Cover({ vm }: { vm: VM }) {
-  const { co, cv, goImport, r, startPresent, startTour, team, v } = vm;
+  const { author, co, cv, goStudy, logos, r, startPresent, startTour, v } = vm;
   return (<>
     {v.cover ? (<>
       <section data-screen-label="00 Portada" style={css('position:relative; min-height:100vh; overflow:hidden; background-image:linear-gradient(var(--color-divider) 1px, transparent 1px), linear-gradient(90deg, var(--color-divider) 1px, transparent 1px); background-size:56px 56px; background-position:-1px -1px;')}>
         <div style={css('position:absolute; inset:0; background:radial-gradient(ellipse at 70% 40%, transparent 0%, var(--color-bg) 78%); pointer-events:none;')}></div>
         <div style={css('position:relative; max-width:1360px; margin:0 auto; padding:40px 32px 32px; min-height:100vh; display:flex; flex-direction:column; gap:40px;')}>
           <div style={css(`display:flex; align-items:center; gap:16px; flex-wrap:wrap; opacity:${cv.o1}; transform:${cv.t1}; transition:all .7s cubic-bezier(.2,.7,.2,1);`)}>
-            <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('width:56px; height:56px;')} />
+            <img src={logos.tec} alt="Tecnológico de Monterrey" style={css('width:56px; height:56px;')} />
             <div style={css('display:flex; flex-direction:column;')}>
               <span style={css('font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.01em;')}>Tecnológico de Monterrey</span>
-              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Valuación de Empresas · 2026</span></div>
+              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{author.courseShort}</span></div>
             <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-700);')}>
-              <span style={css('width:8px; height:8px; background:var(--color-accent);')}></span>ValuFlow · Motor de valuación</div></div>
+              <span style={css('width:8px; height:8px; background:var(--color-accent);')}></span>ValuFlow · Estudio individual</div></div>
           <div style={css('flex:1; display:flex; flex-wrap:wrap; gap:48px; align-items:center;')}>
             <div style={css(`flex:7 1 520px; min-width:0; display:flex; flex-direction:column; gap:28px; opacity:${cv.o2}; transform:${cv.t2}; transition:all .9s cubic-bezier(.2,.7,.2,1) .1s;`)}>
-              <div style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Plataforma de Valuación Empresarial</div>
-              <h1 style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:clamp(56px, 8.4vw, 132px); line-height:.9; letter-spacing:-.025em; text-transform:uppercase; text-wrap:balance;')}>Valor intrínseco,
+              <div style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{author.contextShort}</div>
+              <h1 style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:clamp(56px, 8.4vw, 132px); line-height:.9; letter-spacing:-.025em; text-transform:uppercase; text-wrap:balance;')}>Soriana,
                 <br />
-                <span style={css('color:var(--color-accent);')}>paso a paso.</span></h1>
-              <p style={css('margin:0; max-width:560px; font-size:17px; line-height:1.55; color:var(--color-neutral-800); text-wrap:pretty;')}>Un motor DCF reutilizable: proyección de flujos, costo de capital iterado, valor terminal por dos métodos y sensibilidad, con trazabilidad hasta el dato de origen.</p>
+                <span style={css('color:var(--color-accent);')}>de la inflación al valor.</span></h1>
+              <p style={css('margin:0; max-width:560px; font-size:17px; line-height:1.55; color:var(--color-neutral-800); text-wrap:pretty;')}>Estudio individual de valuación intrínseca: inflación, beta por regresión, WACC iterado, crecimiento perpetuo, DCF y tres escenarios, con cada cifra rastreable hasta el Excel del estudio.</p>
               <div style={css('display:flex; gap:12px; flex-wrap:wrap; align-items:center;')}>
                 <button className="btn btn-primary blueprint" onClick={startTour} style={css('font-size:17px; padding:14px 24px; gap:10px;')}>
                   <i className="corner tl"></i>
@@ -46,7 +46,7 @@ export function Cover({ vm }: { vm: VM }) {
                   <i className="corner br"></i>Explorar valuación{' '}
                   <span style={css('font-family:var(--font-body);')}>→</span></button>
                 <button className="btn btn-secondary" onClick={startPresent} style={css('font-size:15px; padding:13px 18px;')}>Modo presentación</button>
-                <button className="btn btn-ghost" onClick={goImport} style={css('font-size:15px;')}>+ Nueva valuación</button></div></div>
+                <button className="btn btn-ghost" onClick={goStudy} style={css('font-size:15px;')}>Ver el estudio</button></div></div>
             <div style={css(`flex:5 1 380px; min-width:0; opacity:${cv.o3}; transform:${cv.t3}; transition:all .9s cubic-bezier(.2,.7,.2,1) .25s;`)}>
               <div className="blueprint" style={css('padding:28px; background:color-mix(in srgb, var(--color-bg) 82%, transparent); display:flex; flex-direction:column; gap:22px;')}>
                 <i className="corner tl"></i>
@@ -54,7 +54,7 @@ export function Cover({ vm }: { vm: VM }) {
                 <i className="corner bl"></i>
                 <i className="corner br"></i>
                 <div style={css('display:flex; justify-content:space-between; align-items:center; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
-                  <span>Caso de estudio</span>
+                  <span>Escenario {r.caseName}</span>
                   <span>{co.ticker} · {co.exchange}</span></div>
                 <div style={css('height:72px; display:flex; align-items:center;')}>
                   {co.hasLogo ? (<>
@@ -68,25 +68,25 @@ export function Cover({ vm }: { vm: VM }) {
                   <div style={css('font-size:14px; color:var(--color-neutral-700);')}>{co.sector}</div></div>
                 <div style={css('display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--color-divider);')}>
                   <div style={css('padding:14px 12px 0 0; display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Valor intrínseco</span>
+                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Valor por acción</span>
                     <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);')}>{r.value}</span></div>
                   <div style={css('padding:14px 12px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
                     <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio</span>
                     <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600;')}>{r.price}</span></div>
                   <div style={css('padding:14px 0 0 12px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Potencial</span>
+                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>{r.signal}</span>
                     <span style={css(`font-family:var(--font-heading); font-size:30px; font-weight:600; color:${r.upColor};`)}>{r.upside}</span></div></div></div></div></div>
           <div style={css(`display:flex; flex-direction:column; gap:14px; opacity:${cv.o4}; transition:opacity 1s ease .45s;`)}>
             <div style={css('display:flex; align-items:baseline; gap:12px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
-              <span>Equipo</span>
+              <span>Autor</span>
               <span style={css('flex:1; height:1px; background:var(--color-divider);')}></span></div>
-            <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0;')}>
-              {(team || []).map((m: any, $i: number) => (<Fragment key={$i}>
-                <div style={css('padding:10px 16px 10px 0; display:flex; gap:12px; align-items:baseline;')}>
-                  <span style={css('font-family:var(--font-heading); font-size:14px; color:var(--color-accent);')}>{m.n}</span>
-                  <div style={css('display:flex; flex-direction:column;')}>
-                    <span style={css('font-weight:500; font-size:14px; line-height:1.3;')}>{m.name}</span>
-                    <span style={css('font-size:12px; color:var(--color-neutral-700); letter-spacing:.04em;')}>{m.id}</span></div></div>
+            <div style={css('display:flex; flex-wrap:wrap; gap:6px 28px; align-items:baseline;')}>
+              <span style={css('font-weight:600; font-size:16px;')}>{author.name}</span>
+              <span style={css('font-size:13px; color:var(--color-neutral-700); letter-spacing:.04em;')}>{author.id}</span>
+              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{author.line}</span></div>
+            <div style={css('display:flex; flex-wrap:wrap; gap:6px 24px; font-size:13px;')}>
+              {(r.coverFacts || []).map((f: any, $i: number) => (<Fragment key={$i}>
+                <span><span style={css('color:var(--color-neutral-700);')}>{f.k}: </span><strong>{f.v}</strong></span>
               </Fragment>))}</div></div></div></section>
     </>) : null}
   </>);
@@ -99,7 +99,7 @@ export function Header({ vm }: { vm: VM }) {
     <header data-noprint style={css(`position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--color-bg) 90%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--color-divider); transform:${ui.headerT}; transition:transform .3s;`)}>
       <div style={css('max-width:1360px; margin:0 auto; padding:0 24px; height:64px; display:flex; align-items:center; gap:14px;')}>
         <button onClick={goCover} title="Portada" style={css('display:flex; align-items:center; gap:10px; background:none; border:0; cursor:pointer; padding:0; color:var(--color-text);')}>
-          <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('height:32px; width:32px;')} />
+          <img src={vm.logos.tec} alt="Tecnológico de Monterrey" style={css('height:32px; width:32px;')} />
           <span style={css('font-family:var(--font-heading); font-weight:600; font-size:20px; letter-spacing:.02em;')}>ValuFlow</span></button>
         <span style={css('width:1px; height:28px; background:var(--color-divider);')}></span>
         <div style={css('position:relative;')}>
@@ -142,7 +142,7 @@ export function Header({ vm }: { vm: VM }) {
         </>) : null}
         <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px;')}>
           {ui.modified ? (<>
-            <button className="tag tag-accent" onClick={resetA} style={css('border:0; cursor:pointer; gap:6px;')} title="Restaurar valores base">● Modelo modificado · Restaurar</button>
+            <button className="tag tag-accent" onClick={resetA} style={css('border:0; cursor:pointer; gap:6px;')} title="Restablecer los supuestos del Excel">● Supuestos modificados · Restablecer al Excel</button>
           </>) : null}
           {ui.desktop ? (<>
             <button className="btn btn-secondary" onClick={startPresent}>Presentar</button>
@@ -171,13 +171,13 @@ export function Header({ vm }: { vm: VM }) {
 
 /** Pie de página. */
 export function Footer({ vm }: { vm: VM }) {
-  const { co, project, teamNames } = vm;
+  const { author, co } = vm;
   return (<>
     <footer data-noprint style={css('border-top:1px solid var(--color-divider);')}>
       <div style={css('max-width:1360px; margin:0 auto; padding:24px 24px 96px; display:flex; flex-wrap:wrap; gap:12px 32px; font-size:12px; color:var(--color-neutral-700);')}>
-        <span style={css('font-weight:600; color:var(--color-text);')}>{project.institution} · {project.course} · {project.year}</span>
-        <span>Caso de estudio: {co.legalName}</span>
-        <span>Equipo: {teamNames}</span></div></footer>
+        <span style={css('font-weight:600; color:var(--color-text);')}>{author.footer}</span>
+        <span>{author.course} · {author.activity}</span>
+        <span>Caso de estudio: {co.legalName}</span></div></footer>
   </>);
 }
 
@@ -234,12 +234,18 @@ export function PresentationBar({ vm }: { vm: VM }) {
   </>);
 }
 
-/** Aviso breve. */
+/** Aviso breve e indicador de progreso de las exportaciones. */
 export function Toast({ vm }: { vm: VM }) {
-  const { toast } = vm;
+  const { toast, progress } = vm;
   return (<>
+    {progress && progress.show ? (<>
+      <div data-noprint role="status" aria-live="polite" style={css('position:fixed; bottom:88px; right:24px; z-index:96; width:min(360px, calc(100vw - 48px)); padding:14px 18px; background:var(--color-bg); border:1px solid var(--color-accent); box-shadow:var(--shadow-lg); display:flex; flex-direction:column; gap:8px;')}>
+        <strong style={css('font-size:14px;')}>{progress.title}</strong>
+        <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{progress.msg}</span>
+        <div style={css('height:6px; background:var(--color-accent-100);')}><div style={css(`height:6px; width:${progress.pct}; background:var(--color-accent); transition:width .3s;`)}></div></div></div>
+    </>) : null}
     {toast.show ? (<>
-      <div data-noprint style={css('position:fixed; bottom:88px; right:24px; z-index:95; padding:12px 18px; background:var(--color-text); color:var(--color-bg); font-size:14px; box-shadow:var(--shadow-lg);')}>✓ {toast.t}</div>
+      <div data-noprint style={css('position:fixed; bottom:88px; right:24px; z-index:95; padding:12px 18px; background:var(--color-text); color:var(--color-bg); font-size:14px; box-shadow:var(--shadow-lg); max-width:min(480px, calc(100vw - 48px));')}>{toast.t}</div>
     </>) : null}
   </>);
 }
@@ -260,7 +266,7 @@ export function ErrorBanner({ vm }: { vm: VM }) {
           {(ui.errors || []).map((e: any, $i: number) => (<Fragment key={$i}>
             <span style={css('font-size:14px;')}>{e}</span>
           </Fragment>))}</div>
-        <button className="btn btn-secondary" onClick={resetA} style={css('margin-left:auto;')}>Restaurar valores base</button></div>
+        <button className="btn btn-secondary" onClick={resetA} style={css('margin-left:auto;')}>Restablecer al Excel</button></div>
     </>) : null}
   </>);
 }

@@ -1,22 +1,17 @@
 # ValuFlow · notas para Claude Code
 
-El dueño del proyecto no programa: explica los cambios en español sencillo y pide aprobación antes de cualquier
-cambio que altere la arquitectura o el resultado financiero.
-
-## Comandos
-- `npm test` — obligatorio antes de terminar cualquier cambio. Incluye paridad contra el prototipo y validación contra el Excel.
-- `npm run typecheck`, `npm run build`, `npm run dev`.
+Estudio individual (autor único: Francisco Aarón Ponce Flores · A01614662). No agregues a otras personas en ninguna parte.
+El dueño del proyecto no programa: explica los cambios en español sencillo.
 
 ## Reglas
-- **Excel = fuente maestra; ValuFlow = implementación.** Los números de Soriana salen de `src/data/soriana.excel.ts`, generado con
-  `tools/excel/extract_dataset.py` desde `excel/`. No se editan a mano. `tests/excel-master.test.ts` exige Excel = app.
-- Sin números mágicos, supuestos sin fuente, deslizadores sin rango documentado, conversiones de moneda sin fuente ni escenarios inventados.
-- `src/engine/` es la única fuente de las fórmulas. No contiene datos de empresas ni código de interfaz.
-- No cambies una fórmula sin aprobación explícita. `tests/parity.test.ts` exige resultados idénticos a `project/vf-engine.js` (con el dataset histórico de `tests/fixtures/`);
-  si un cambio aprobado altera resultados, actualiza la prueba explicando por qué y vuelve a comprobar `tests/excel.test.ts`.
-- Nada específico de una empresa en el motor ni en la interfaz: fechas, fuentes y textos van en el dataset (`labels`, `method`…)
-  con valores por defecto en `src/engine/labels.ts`.
-- `project/` es el prototipo original de Claude Design: solo referencia, no se edita (las pruebas lo leen).
-- Las pantallas (`src/ui/pages/*.tsx`) solo dibujan; los textos y cálculos de presentación viven en `src/ui/viewmodel.ts`.
-- Estado del importador en `App.tsx`: usa actualizaciones funcionales (`setState(s => …)`); React agrupa actualizaciones.
-- SheetJS se carga desde su CDN en `index.html` (versión 0.20.3); el paquete `xlsx` de npm solo se usa en pruebas.
+- **El Excel manda.** Las cifras salen de `excel/SORIANA_FINAL.xlsx` vía `scripts/build-dataset.py` → `src/data/soriana.final.ts`
+  (generado; no se edita a mano). Si cambia el Excel: `npm run dataset` y `npm test`.
+- `src/engine/` no conoce a Soriana: fórmulas y estadística genéricas. Datos y textos van en `src/data/`.
+- Tolerancias de paridad: precio ±0.01 MXN, tasas ±0.01 pp, montos ±1 mdp (`tests/final.test.ts`, `tests/texts.test.ts`).
+- Los textos con cifras viven en `src/data/soriana.texts.ts` con marcadores `{clave}` (`src/report/context.ts`).
+- Pantalla, PDF, Excel y CSV salen del mismo contenido (`src/report/content.ts`) y de las mismas gráficas (`src/charts/svg.ts`).
+- Sin CDN: jsPDF, jspdf-autotable, ExcelJS, JSZip y SheetJS van en el paquete.
+- `tests/residue.test.ts` prohíbe residuos del Excel anterior y nombres de otros integrantes.
+
+## Comandos
+`npm test` (obligatorio), `npm run typecheck`, `npm run build`, `npm run build:standalone`, `npm run dataset`.

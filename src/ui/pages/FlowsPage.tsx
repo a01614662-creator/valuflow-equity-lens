@@ -1,4 +1,4 @@
-// Generado a partir de project/ValuFlow.dc.html y revisado a mano. Estilos copiados tal cual del diseño.
+// Pantalla de ValuFlow (estilos del sistema de diseño Industry).
 import { Fragment } from 'react';
 import { css, cx, hv } from '../css';
 import type { VM } from '../viewmodel';

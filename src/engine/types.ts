@@ -201,16 +201,6 @@ export interface TransactionsSpec {
 
 export interface CombinedSpec { weights: { dcf: number; comps: number; transactions: number }; reasons?: Record<string, string>; classRule?: string }
 
-export interface AltForecast {
-  label: string;
-  /** Nombre corto para botones (p. ej. "Supuestos constantes"). */
-  short?: string;
-  source?: string;
-  drivers: Drivers;
-  overrides: Partial<Assumptions>;
-  expected?: { price: number; ev?: number; equity?: number };
-}
-
 export interface WaccInputs {
   rf: number;
   prm: number;
@@ -229,6 +219,12 @@ export interface WaccInputs {
   start?: number;
   /** Número fijo de iteraciones del WACC (el Excel usa 6 filas). Por defecto: hasta converger (máx. 14). */
   iterations?: number;
+  /**
+   * Relación de Fisher (Excel, hoja Escenarios filas 12-15): la tasa real implícita sale de Rf y la inflación base;
+   * con la inflación de los supuestos: Rf = (1 + real) × (1 + inflación) − 1, y el mismo cambio se suma al Kd.
+   * baseInflation: inflación del escenario base (fracción); si falta, sale del estudio (dataset.study).
+   */
+  fisher?: { baseInflation?: number };
 }
 
 export interface Roll {
@@ -239,6 +235,8 @@ export interface Roll {
   debt?: number;
   lease?: number;
   cash?: number;
+  /** Fechas ISO del cierre y del balance intermedio: con ellas t₁ y t₂ salen de DAYS360 (como el Excel) y la fecha de valuación es editable. */
+  dateClose?: string; dateBalance?: string; dateValuation?: string;
 }
 
 export interface Valuation {
@@ -259,10 +257,23 @@ export interface Expected {
   tvM?: number; pvTvM?: number; evM: number; evW: number; ev2: number; eq2?: number; eqVal: number;
   price: number; upside: number; wacc: number; ke: number; priceG: number; priceM: number; priceW: number; tvWeight: number;
   waccMarket: number; keMarket: number; betaMarket?: number;
-  /** Fila central de la tabla WACC × g del precio final (opcional). */
-  sensRow?: number[];
+  /** Valor terminal ponderado (sin descontar) y g implícita en el múltiplo de salida (fracción). */
+  tvBlend?: number; impliedG?: number;
   /** Valuación relativa y combinada (precio por acción). */
   comps?: number; transactions?: number; combined?: number;
+}
+
+/** Resultados del Excel por escenario (fracciones; montos en la unidad del dataset). */
+export interface ExpectedScenario {
+  inflation: number; salesCagr: number; marginAvg: number; betaIter: number; rf: number; ke: number; wacc: number; g: number; fcf2030: number;
+  pvFcf: number; tvG: number; tvBlend: number; ev: number; equity: number; price: number; diff: number; diffPct: number; recommendation: string; betaLevered: number;
+}
+
+/** Textos del estudio con marcadores {clave} que se llenan con cifras vivas del motor. */
+export interface TextTemplates {
+  conclusions: [string, string][]; summary: string; sensitivity: string[]; reasons: string[]; limits: string[]; wacc: string[];
+  /** Preguntas de análisis: [pregunta, respuesta]. */
+  questions: [string, string][];
 }
 
 /**
@@ -284,34 +295,12 @@ export interface Labels {
   multipleSource?: string;
 }
 
-export interface LeastSquaresSeries {
-  key: string; label: string; unit: string; y: number[]; a: number; b: number; r2: number; fc: number[];
-}
-
-/** Metodología de proyección documentada (opcional; solo si la empresa la trae). */
-export interface Method {
-  weightsExternal: number[];
-  growthExternal: number[]; growthLS: number[]; growthFinal: number[];
-  marginExternal: number[]; marginLS: number[]; marginFinal: number[];
-  capexFinal: number[]; taxFinal: number[]; daFinal: number[];
-  salesLS: number[]; salesConst: number[]; salesLTM: number;
-  salesConstLabel?: string; salesLSLabel?: string;
-  externalNet: { sales: number; costs: number; capex: number };
-  leastSquares: LeastSquaresSeries[];
-  lsQuarters: string[]; lsForecastQuarters: string[];
-  fcffLTM: { projected: number; actual: number; adjusted: number };
-  /** [categoría, variable, dato observado, partida, efecto, Δventas, Δcostos, Δcapex] */
-  external: [string, string, string, string, string, number, number, number][];
-}
-
-export interface Ratio5 { cat: string; name: string; unit: string; v: number[]; avg: number; read: string }
+export interface Ratio5 { cat: string; name: string; unit: string; v: number[]; avg: number; read?: string }
 
 export interface Governance {
   board: number; patrimonial: number; related: number; independent: number; independencePct: number; bestPractice: number;
   chair: string; ceo: string; committees: [string, string][]; controls: string[];
 }
-
-export interface Discrepancy { topic: string; a: [string, string]; b: [string, string]; used: string; note: string }
 
 export type AnnexRow = (string | number | null)[] | { section: string };
 
@@ -327,6 +316,45 @@ export interface ImportedField {
   key: string; label: string; value: number | null; period?: string | null; srcLabel?: string | null; srcSheet?: string | null; conf?: string;
 }
 
+/** Series crudas y parámetros del estudio de soporte (inflación, precios, crecimiento perpetuo y escenarios). */
+export interface StudySpec {
+  inflation: {
+    source?: string;
+    /** Serie quincenal [fecha ISO, % anual]. */
+    series: [string, number][];
+    /** Inicio de la ventana larga de los modelos de tendencia (fecha ISO). */
+    longWindowStart: string;
+    /** Inflación del escenario conservador (fracción; techo del rango de la meta). */
+    scenarioConservative: number;
+    why?: Record<string, string>;
+    references?: [string, number][];
+  };
+  prices: {
+    source?: string;
+    /** Precios semanales [fecha ISO, empresa, índice de mercado] (null = sin dato). */
+    weekly: [string, number | null, number | null][];
+    counts?: Record<string, number | string>;
+    betaWindowWeeks: number;
+    betaMinObs: number;
+  };
+  growth: {
+    references: [string, number, string, string, string][];
+    scenarios: Record<string, number>;
+    why?: Record<string, string>;
+    /** Ventas de dos años antes del año base (mdp) para la CAGR histórica. */
+    sales2023: number;
+    bondExpected: number; inflLT: number; gdpLT: number; banxicoTarget: number;
+    intro?: string;
+  };
+  scenarios: {
+    order: string[]; labels: Record<string, string>; default: string;
+    salesAdj: Record<string, number>; marginAdj: Record<string, number>;
+    /** Desplazamiento de la beta en errores típicos de la regresión. */
+    betaShiftSE: Record<string, number>;
+    why?: string[];
+  };
+}
+
 export interface Dataset {
   id: string;
   builtIn: boolean;
@@ -338,29 +366,28 @@ export interface Dataset {
   dates: Dates;
   market: Market;
   forecast: Forecast;
-  altForecasts?: Record<string, AltForecast>;
   wacc: WaccInputs;
   valuation: Valuation;
   labels?: Labels;
   expected?: Expected;
-  /** Resultados de referencia por escenario de inflación (la clave es el escenario). */
-  expectedScenarios?: Record<string, Expected>;
+  /** Resultados de referencia por escenario (la clave es el escenario del estudio). */
+  expectedScenarios?: Record<string, ExpectedScenario>;
+  texts?: TextTemplates;
   inflation?: InflationSpec;
   beta?: BetaSpec;
+  /** Estudio de soporte (series crudas): el motor calcula inflación, beta, escenarios y controles. */
+  study?: StudySpec;
   /** Notas metodológicas del modelo (p. ej. referencia del DCF de Capital IQ). */
   notes?: string[];
   comps?: CompsSpec;
   transactions?: TransactionsSpec;
   combined?: CombinedSpec;
-  waccIterationExcel?: number[][];
-  method?: Method;
   quarterly?: { periods: string[]; [k: string]: string[] | number[] };
   ratios?: Ratio5[];
   governance?: Governance;
   timeline?: [string, string, string, string][];
   dividends?: [string, string, number][];
   news?: [string, string][];
-  discrepancies?: Discrepancy[];
   sources?: [string, string, string][];
   /** Registro de insumos: [insumo, dónde se usa, valor, fecha, unidad, tipo (Observado/Supuesto/Modelo/Pendiente), fuente]. */
   inputs?: [string, string, string, string, string, string, string][];
@@ -395,6 +422,16 @@ export interface Assumptions {
   dealsInclude?: Record<string, number>; dealsUse?: Record<string, number>;
   /** Pesos de la valuación combinada (fracciones). */
   weights?: { dcf: number; comps: number; transactions: number };
+  /** Escenario activo (preset del dataset) y sus parámetros, editables uno por uno en el Laboratorio. */
+  scenario?: string;
+  /** Inflación anual constante 2026E–2030E (fracción). Mueve ventas y, con Fisher, Rf y Kd. */
+  inflationRate?: number;
+  /** Ajuste al crecimiento de ventas por variables externas y al margen EBIT (fracciones; Excel Escenarios filas 8 y 9). */
+  salesAdj?: number; marginAdj?: number;
+  /** Beta apalancada a la estructura de mercado (regresión); el motor la desapalanca con el D/E de mercado. */
+  betaLevered?: number;
+  /** Fecha de valuación (ISO). Mueve t₂ = DAYS360(balance intermedio, fecha) / 360. */
+  valuationDate?: string;
 }
 
 export interface DriverSet {
@@ -434,6 +471,8 @@ export interface WaccIter { k: number; win: number; E: number; de: number; beta:
 export interface WaccResult {
   wacc: number; ke: number; mode: WaccMode; market: WaccLeg; iterated: WaccLeg | null; iters: WaccIter[]; src: WaccLeg | null;
   rf: number; prm: number; betaU: number;
+  /** Rf antes del ajuste de Fisher y cambio aplicado al Kd (0 sin Fisher). */
+  rfBase?: number; kdShift?: number;
 }
 
 export interface RollResult {

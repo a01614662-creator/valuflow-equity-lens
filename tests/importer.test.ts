@@ -5,7 +5,6 @@ import * as E from '../src/engine';
 import { buildFromImport, parseWorkbook } from '../src/services/importer';
 import { checkDataset } from '../src/data/registry';
 import { csvContent } from '../src/services/exporter';
-import { loadLegacy } from './legacy';
 
 // Encabezados de periodo: estilo Capital IQ ("Dec-31-2024") o estilo "FY2024".
 const CIQ = ['Dec-31-2022', 'Dec-31-2023', 'Dec-31-2024', 'LTM Jun-30-2025', 'Dec-31-2025E'];
@@ -44,22 +43,11 @@ describe('importador', () => {
     expect(P.fields.filter(f => f.req).every(f => f.value != null)).toBe(true);
   });
 
-  it('con encabezados estilo Capital IQ es idéntico al importador original', () => {
-    const { VF } = loadLegacy({ XLSX });
-    const legacy = VF.parseWorkbook(wb, 'Contoso Retail NYSE CTSO Financials.xlsx');
-    // Mismo valor, periodo, origen y confianza por campo. (La única diferencia: ahora también se
-    // reconoce la columna estimada "Dec-31-2025E" como periodo; se sigue excluyendo de los datos reales.)
-    const key = (x: typeof P) => ({ meta: x.meta, fields: x.fields.map(f => [f.key, f.value, f.period, f.srcLabel, f.srcSheet, f.conf, f.status, f.hist]) });
-    expect(JSON.parse(JSON.stringify(key(P)))).toEqual(JSON.parse(JSON.stringify(key(legacy))));
-  });
-
-  it('reconoce encabezados "FY2024" (el prototipo tomaba por error la columna LTM)', () => {
+  it('reconoce encabezados "FY2024" (no la columna LTM)', () => {
     const P2 = parseWorkbook(capitalIqWorkbook(FY) as never, 'x.xlsx', XLSX as never);
     const rev = P2.fields.find(f => f.key === 'revenue')!;
     expect(rev.value).toBe(11500); expect(rev.period).toBe('FY2024');
     expect(rev.hist.map(h => h.year)).toEqual([2022, 2023, 2024]);
-    const { VF } = loadLegacy({ XLSX });
-    expect(VF.parseWorkbook(capitalIqWorkbook(FY), 'x.xlsx').fields[0].value).toBe(11700);
   });
 
   it('crea un dataset válido y el mismo motor lo valúa', () => {

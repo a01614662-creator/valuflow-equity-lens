@@ -5,3 +5,15 @@ body{font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
 a{color:var(--color-accent);} a:hover{color:var(--color-accent-600);}
 input[type=range]{accent-color:var(--color-accent);width:100%;}
 @media print{[data-noprint]{display:none !important;} [data-page]{break-after:page;} body{background:#fff;}}
+/* Gráficas SVG compartidas con el PDF y el Excel */
+.vf-chart{max-width:860px;}
+.vf-chart svg{width:100%;height:auto;display:block;}
+/* Impresión: solo respaldo (la vía principal es el PDF generado por código) */
+@media print{
+  [data-noprint],header,nav,footer,.btn{display:none !important;}
+  body{background:#fff !important;}
+  main{padding:0 !important;max-width:none !important;}
+  [data-page],.blueprint{break-inside:avoid;page-break-inside:avoid;}
+  section[data-page]{break-before:page;}
+  .vf-chart svg{max-height:120mm;}
+}

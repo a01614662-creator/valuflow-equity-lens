@@ -1,19 +1,24 @@
 // Controlador de la aplicación: estado, navegación, persistencia e importación.
 // Toda la presentación se arma en viewmodel.ts y se dibuja en pages/*.tsx.
 import { Component } from 'react';
+import JSZip from 'jszip';
 import * as E from '../engine';
 import type { Assumptions, Dataset, RunResult } from '../engine';
 import { BUILT_IN, DEFAULT_ID, checkDataset } from '../data/registry';
 import { store } from '../services/store';
 import { FIELDS, buildFromImport, parseWorkbook, type Parsed, type ParsedLite } from '../services/importer';
-import { getXLSX, printPanel } from '../services/exporter';
+import { datasetJson, fileBase, getXLSX, makePdf, makeXlsx, makeZip, reportTables, saveFile, tableSlug, type SaveResult } from '../services/exporter';
+import { tableCsv } from '../services/xlsx';
+import { svgToPng, dataUrlToBytes } from '../services/raster';
+import { bundle } from '../report/bundle';
+import { buildReport, type RChart, type RTable } from '../report/content';
 import { brandColor, findLogo, research, type Research } from '../services/research';
 import { buildView, type Calc } from './viewmodel';
 import { Shell } from './Shell';
 
-export const SEQ = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab'];
-export const SEQ_N = ['Portada', '01 · Valor', '02 · Flujos', '03 · Riesgo', '04 · Múltiplos', '05 · Transacciones', '06 · Combinada', 'Laboratorio'];
-const VIEWS = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab', 'annex', 'team', 'library'];
+export const SEQ = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'study', 'lab'];
+export const SEQ_N = ['Portada', '01 · Valor', '02 · Flujos', '03 · Riesgo', '04 · Múltiplos', '05 · Transacciones', '06 · Combinada', '07 · Estudio', 'Laboratorio'];
+const VIEWS = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'study', 'lab', 'annex', 'author', 'library'];
 
 export interface ImpState {
   step: number; parsing: boolean; error: string | null; parsed: Parsed | null;
@@ -27,10 +32,13 @@ export interface AppState {
   menu: string | null; drawer: string | null; toast: string | null; busy: boolean; reveal: boolean; heroDisp: number;
   presenting: boolean; printing: string | null; fcfSel: number; step: number; mobile: boolean; imp: ImpState | null;
   research: Record<string, Research>; drag: boolean;
+  /** Exportación en curso (indicador de progreso). */
+  exporting: { title: string; p: number; msg: string } | null;
+  studyTab: string;
 }
 
 export class App extends Component<object, AppState> {
-  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false };
+  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false, exporting: null, studyTab: 'all' };
 
   // Cálculo en caché (una sola fuente de verdad por render).
   _c: Calc | null = null; _ck: string | null = null;
@@ -96,7 +104,7 @@ export class App extends Component<object, AppState> {
     this._bt = setTimeout(() => this.setState({ busy: false, toast: silent ? null : 'Valuación actualizada' }), 420);
     this._tt = setTimeout(() => this.setState({ toast: null }), 2400);
   }
-  resetA() { store.setA(this.state.activeId, null); this.setState({ A: E.defaults(this.ds()), toast: 'Valores base restaurados' }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2200); }
+  resetA() { store.setA(this.state.activeId, null); this.setState({ A: E.defaults(this.ds()), toast: 'Supuestos del Excel restablecidos' }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2200); }
   flash(t: string) { this.setState({ toast: t }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2600); }
   switchCompany(id: string) { store.setActive(id); this.setState({ activeId: id, A: this.loadA(this.state.companies, id), menu: null, fcfSel: 0, annexId: null }, () => this.enter()); }
   saveCompanies(list: Dataset[]) { this.setState({ companies: list }); store.save(list.filter(c => !c.builtIn)); }
@@ -106,10 +114,48 @@ export class App extends Component<object, AppState> {
   exitPresent() { this.setState({ presenting: false }); try { document.fullscreenElement && document.exitFullscreen(); } catch { /* no permitido */ } }
   presStep(d: number) {
     // Las páginas de múltiplos solo forman parte de la presentación si el dataset las documenta.
-    const ds = this.ds(), seq = SEQ.filter(x => !['p4', 'p5', 'p6'].includes(x) || !!(ds.comps || ds.combined));
+    const ds = this.ds(), seq = SEQ.filter(x => (!['p4', 'p5', 'p6'].includes(x) || !!(ds.comps || ds.combined)) && (x !== 'study' || !!ds.study));
     const i = Math.max(0, seq.indexOf(this.state.view)); const n = Math.min(seq.length - 1, Math.max(0, i + d)); if (n !== i) this.go(seq[n]);
   }
-  print(mode: 'summary' | 'full') { this.setState({ printing: mode, menu: null, reveal: true }); const p = () => { try { window.print(); } catch { /* bloqueado */ } }; setTimeout(() => { p(); printPanel(p); }, 600); }
+  // ---------- Exportación (PDF real, Excel, ZIP, CSV, JSON y gráficas) ----------
+  report() { const c = this.calc(); const B = c.view.ok ? bundle(c.ds, c.VA) : null; return B ? buildReport(B) : null; }
+  async runExport(title: string, job: (p: (x: number, m: string) => void) => Promise<{ name: string; blob: Blob; text?: string } | null>) {
+    if (this.state.exporting) return;
+    this.setState({ menu: null, exporting: { title, p: 0.02, msg: 'Preparando…' } });
+    const prog = (p: number, msg: string) => this.setState({ exporting: { title, p, msg } });
+    try {
+      await new Promise(r => setTimeout(r, 30));
+      const out = await job(prog);
+      if (!out) { this.setState({ exporting: null }); this.flash('No hay una valuación válida para exportar.'); return; }
+      prog(1, 'Descargando ' + out.name);
+      const res: SaveResult = await saveFile(out.name, out.blob, out.text);
+      this.setState({ exporting: null }); this.flash((res.ok ? '✓ ' : '⚠ ') + res.message);
+    } catch (e) { this.setState({ exporting: null }); this.flash('⚠ No se pudo generar: ' + ((e as Error).message || e)); }
+  }
+  exportPdf(variant: 'full' | 'exec') { this.runExport(variant === 'full' ? 'Reporte completo (PDF)' : 'Resumen ejecutivo (PDF)', async p => { const R = this.report(); return R ? makePdf(R, variant, p) : null; }); }
+  exportXlsx() { this.runExport('Libro de Excel (.xlsx)', async p => { const R = this.report(); return R ? makeXlsx(R, p) : null; }); }
+  exportZip() { this.runExport('Paquete completo (.zip)', async p => { const R = this.report(); return R ? makeZip(R, p) : null; }); }
+  exportCsvAll() {
+    this.runExport('Tablas en CSV (.zip)', async () => {
+      const R = this.report(); if (!R) return null;
+      const z = new JSZip();
+      reportTables(R).forEach(t => z.file('Tabla_' + tableSlug(t) + '.csv', tableCsv(t)));
+      const bytes = await z.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+      return { name: fileBase(R.bundle.ds, 'CSV') + '.zip', blob: new Blob([bytes as BlobPart], { type: 'application/zip' }) };
+    });
+  }
+  exportJson(ds?: Dataset, A?: Assumptions) { const d = ds ?? this.ds(), t = datasetJson(d, A ?? this.state.A as Assumptions); this.runExport('Dataset (.json)', async () => ({ name: fileBase(d) + '.valuflow.json', blob: new Blob([t], { type: 'application/json' }), text: t })); }
+  exportTable(t: RTable) { const c = tableCsv(t); this.runExport('Tabla ' + (t.n ?? '') + ' (CSV)', async () => ({ name: fileBase(this.ds(), 'Tabla_' + tableSlug(t)) + '.csv', blob: new Blob([c], { type: 'text/csv;charset=utf-8' }), text: c })); }
+  exportChart(c: RChart, kind: 'png' | 'svg') {
+    this.runExport('Gráfica ' + (c.n ?? '') + ' (' + kind.toUpperCase() + ')', async () => {
+      const base = fileBase(this.ds(), 'Grafica_' + (c.n ? String(c.n).padStart(2, '0') + '_' : '') + c.id);
+      if (kind === 'svg') return { name: base + '.svg', blob: new Blob([c.chart.svg.svg], { type: 'image/svg+xml' }), text: c.chart.svg.svg };
+      const p = await svgToPng(c.chart.svg.svg, c.chart.svg.w, c.chart.svg.h, 2);
+      return { name: base + '.png', blob: new Blob([dataUrlToBytes(p.dataUrl) as BlobPart], { type: 'image/png' }) };
+    });
+  }
+  /** Respaldo: impresión del navegador (ya no es la vía principal del reporte). */
+  print() { this.setState({ printing: 'full', menu: null, reveal: true }); setTimeout(() => { try { window.print(); } catch { /* bloqueado */ } }, 600); }
 
   // ---------- Cálculo central (una sola fuente de verdad) ----------
   calc(): Calc {
@@ -125,11 +171,11 @@ export class App extends Component<object, AppState> {
     const VA = base.ok ? A : (this._lastGood && this._lastGood.id === ds.id ? this._lastGood.A : D);
     const c: Calc = { ds, A, D, base, base0, isBase, view, VA };
     if (view.ok) {
-      c.grid = E.grid(ds, VA, view, this.state.step, this.state.step);
-      c.torn = E.tornado(ds, VA, view); c.scen = E.scenarios(ds, VA, view); c.methods = E.methods(ds, VA, view);
-      // La comparación contra el Excel también aplica a cada escenario de inflación documentado (tiene su columna de referencia).
-      const cmp = base.ok && E.isDefault(ds, { ...A, inflation: D.inflation }) && (!A.inflation || !ds.expectedScenarios || !!ds.expectedScenarios[A.inflation]);
-      c.ins = E.insights(ds, VA, view, c.torn); c.valid = E.validate(ds, VA, view, cmp);
+      const B = bundle(ds, VA);
+      c.bundle = B;
+      c.grid = this.state.step === 0.5 && B ? B.grid : E.grid(ds, VA, view, this.state.step, this.state.step);
+      c.torn = B ? B.torn : E.tornado(ds, VA, view); c.scen = B ? B.scen : E.scenarios(ds, VA); c.methods = B ? B.methods : E.methods(ds, VA, view);
+      c.ins = E.insights(ds, VA, view, c.torn); c.valid = E.validate(ds, VA, view, base.ok && isBase);
     }
     this._ck = key; this._c = c; return c;
   }

@@ -1,9 +1,7 @@
-// Generado a partir de project/ValuFlow.dc.html y revisado a mano. Estilos copiados tal cual del diseño.
+// Laboratorio: edita los supuestos del estudio; todo (valor, escenarios, tornado, sensibilidad, validación y reporte) se recalcula.
 import { Fragment } from 'react';
-import { css, cx, hv } from '../css';
+import { css } from '../css';
 import type { VM } from '../viewmodel';
-import { TableCard } from '../components/TableCard';
-import { TraceCard } from '../components/TraceCard';
 
 /** Laboratorio: editar supuestos. */
 export function LabPage({ vm }: { vm: VM }) {
@@ -15,7 +13,7 @@ export function LabPage({ vm }: { vm: VM }) {
           <div style={css('display:flex; flex-direction:column; gap:8px;')}>
             <span style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Laboratorio · Editar modelo</span>
             <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Qué pasa si cambian los supuestos?</h1></div>
-          <button className="btn btn-secondary" onClick={resetA}>Restaurar valores base</button></div>
+          <button className="btn btn-secondary" onClick={resetA}>Restablecer al Excel</button></div>
         <div className="blueprint" style={css('padding:12px 16px; display:flex; gap:10px; align-items:center; font-size:14px; border-color:var(--color-accent-300);')}>
           <i className="corner tl"></i>
           <i className="corner tr"></i>
@@ -25,60 +23,33 @@ export function LabPage({ vm }: { vm: VM }) {
         <div style={css('display:flex; flex-wrap:wrap; gap:28px; align-items:flex-start;')}>
           <div style={css('flex:7 1 600px; min-width:0; display:flex; flex-direction:column; gap:20px;')}>
             <div style={css('display:flex; flex-wrap:wrap; gap:20px;')}>
-              {lab.hasAlt ? (<>
-                <div style={css('display:flex; flex-direction:column; gap:6px;')}>
-                  <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Proyección</span>
-                  <div className="seg">
-                    {(lab.fcOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
-                      <button onClick={o.onClick} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
-                    </Fragment>))}</div></div>
+              {lab.hasScen ? (<>
+              <div style={css('display:flex; flex-direction:column; gap:6px;')}>
+                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Escenario (carga sus parámetros)</span>
+                <div className="seg" style={css('align-self:flex-start; display:flex; flex-wrap:wrap;')}>
+                  {(lab.scenOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
+                    <button onClick={o.onClick} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
+                  </Fragment>))}</div>
+                <span style={css('font-size:11px; color:var(--color-neutral-700); max-width:420px;')}>{lab.scenNote}</span></div>
               </>) : null}
               <div style={css('display:flex; flex-direction:column; gap:6px;')}>
                 <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Método de WACC</span>
-                <div className="seg">
+                <div className="seg" style={css('align-self:flex-start; display:flex; flex-wrap:wrap;')}>
                   {(lab.waccOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
                     <button onClick={o.onClick} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
                   </Fragment>))}</div></div>
-              {lab.hasInfl ? (<>
-                <div style={css('display:flex; flex-direction:column; gap:6px;')}>
-                  <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Escenario de inflación (documentado)</span>
-                  <div className="seg" style={css('align-self:flex-start;')}>
-                    {(lab.inflOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
-                      <button onClick={o.onClick} title={o.kind} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
-                    </Fragment>))}</div>
-                  <span style={css('font-size:11px; color:var(--color-neutral-700);')}>{lab.inflKind} · no hay valores libres fuera de estos escenarios</span>
-                  {(lab.inflRefs || []).map((x: any, $i: number) => (<Fragment key={$i}>
-                    <span style={css('font-size:11px; color:var(--color-neutral-700);')} title={x.desc}>{x.label}: DCF {x.valTxt} (no es escenario)</span>
-                  </Fragment>))}</div>
-              </>) : null}</div>
-            {lab.inflChart ? (
-              <div className="blueprint" style={css('padding:24px; display:flex; flex-direction:column; gap:14px;')}>
+            </div>
+            {lab.hasBeta ? (
+              <div className="blueprint" style={css('padding:20px 24px; display:flex; flex-direction:column; gap:10px;')}>
                 <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
-                <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;')}>
-                  <h3 style={css('margin:0; font-size:22px;')}>Modelo de inflación</h3>
-                  <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Datos históricos → modelo → forecast / referencia → escenario → proyección</span></div>
-                <svg viewBox={'0 0 ' + lab.inflChart.W + ' ' + lab.inflChart.H} style={css('width:100%; height:auto; overflow:visible;')} role="img" aria-label="Inflación observada y escenarios">
-                  {lab.inflChart.ticks.map((t: any, $i: number) => (<Fragment key={$i}>
-                    <line x1="44" x2={lab.inflChart.X2} y1={t.y} y2={t.y} stroke="currentColor" strokeOpacity=".1"></line>
-                    <text x="38" y={t.ty} textAnchor="end" fontSize="10" fill="currentColor" fillOpacity=".65">{t.t}</text>
-                  </Fragment>))}
-                  {lab.inflChart.years.map((t: any, $i: number) => (<Fragment key={$i}>
-                    <text x={t.x} y="214" textAnchor="middle" fontSize="10" fill="currentColor" fillOpacity=".65">{t.t}</text>
-                  </Fragment>))}
-                  <line x1={lab.inflChart.X1} x2={lab.inflChart.X1} y1="12" y2="200" stroke="currentColor" strokeOpacity=".25" strokeDasharray="3 3"></line>
-                  <text x={(lab.inflChart.X1 + lab.inflChart.X2) / 2} y="214" textAnchor="middle" fontSize="10" fill="currentColor" fillOpacity=".65">2026–30</text>
-                  <path d={lab.inflChart.path} fill="none" stroke="var(--color-text)" strokeWidth="1.6"></path>
-                  {lab.inflChart.q.map((p: any, $i: number) => (<Fragment key={$i}>
-                    <circle cx={p.x} cy={p.y} r="4" fill="var(--color-bg)" stroke="var(--color-accent)" strokeWidth="2"><title>Promedio trimestral (insumo del modelo Base)</title></circle>
-                  </Fragment>))}
-                  {lab.inflChart.lines.map((l: any, $i: number) => (<Fragment key={$i}>
-                    <line x1={lab.inflChart.X1} x2={lab.inflChart.X2} y1={l.y} y2={l.y} stroke={l.color} strokeWidth={l.w} strokeDasharray={l.dash}><title>{l.label}</title></line>
-                    <line x1={lab.inflChart.X2} x2={lab.inflChart.X2 + 8} y1={l.y} y2={l.ly} stroke={l.color} strokeOpacity=".5"></line>
-                    <text x={lab.inflChart.X2 + 11} y={l.lty} fontSize="10" fill={l.color} fontWeight={l.w > 2 ? 700 : 400}>{l.label}</text>
-                  </Fragment>))}</svg>
-                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{lab.inflChart.note}</span>
-                <div style={css('display:flex; flex-wrap:wrap; gap:20px;')}>{lab.inflChain ? <TraceCard c={lab.inflChain} /> : null}</div>
-                {(lab.inflModels || []).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}</div>
+                <h3 style={css('margin:0; font-size:22px;')}>Beta</h3>
+                <div className="seg" style={css('align-self:flex-start; display:flex; flex-wrap:wrap;')}>
+                  {(lab.betaOpts || []).map((o: any, $i: number) => (<Fragment key={$i}>
+                    <button onClick={o.onClick} style={css(`padding:8px 14px; border:0; border-right:1px solid var(--color-divider); background:${o.bg}; color:${o.color}; cursor:pointer; font-size:13px;`)}>{o.t}</button>
+                  </Fragment>))}</div>
+                <label className="field" style={css('max-width:260px;')}><span style={css('font-size:12px;')}>Beta apalancada (valor manual)</span>
+                  <input className="input" type="number" step="0.0001" value={lab.betaManual} onChange={lab.onBeta} aria-label="Beta manual" /></label>
+                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{lab.betaNote}</span></div>
             ) : null}
             {(lab.groups || []).map((gr: any, $i: number) => (<Fragment key={$i}>
               <div className="blueprint" style={css('padding:24px; display:flex; flex-direction:column; gap:18px;')}>
@@ -120,7 +91,15 @@ export function LabPage({ vm }: { vm: VM }) {
                   <input className="input" type="number" step="0.01" value={lab.price} onChange={lab.onPrice} /></div>
                 <div className="field">
                   <label>Acciones en circulación (millones)</label>
-                  <input className="input" type="number" step="0.1" value={lab.shares} onChange={lab.onShares} /></div></div></div></div>
+                  <input className="input" type="number" step="0.1" value={lab.shares} onChange={lab.onShares} /></div>
+                <div className="field">
+                  <label>Fecha de valuación (del precio)</label>
+                  <input className="input" type="date" value={lab.date} onChange={lab.onDate} /></div></div></div>
+            {(lab.changes || []).length ? (
+              <div role="note" style={css('padding:12px 16px; border:1px solid var(--warn); font-size:13px; display:flex; flex-direction:column; gap:4px;')}>
+                <strong style={css('color:var(--warn);')}>Supuestos modificados respecto al Excel (aparecen en el reporte)</strong>
+                {lab.changes.map((x: any, $i: number) => <span key={$i}>{x.k}: {x.a} → <strong>{x.b}</strong></span>)}</div>
+            ) : null}</div>
           <div style={css('flex:4 1 340px; min-width:0; position:sticky; top:88px;')}>
             <div className="blueprint" style={css('padding:24px; display:flex; flex-direction:column; gap:16px; background:var(--color-bg);')}>
               <i className="corner tl"></i>
@@ -136,7 +115,7 @@ export function LabPage({ vm }: { vm: VM }) {
               <div style={css('display:flex; gap:16px; flex-wrap:wrap; align-items:baseline;')}>
                 <span style={css(`font-family:var(--font-heading); font-size:26px; font-weight:600; color:${r.upColor};`)}>{r.upside}</span>
                 <span style={css('font-size:13px; color:var(--color-neutral-700);')}>vs. precio {r.price}</span></div>
-              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Cambio vs. base:{' '}
+              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Cambio vs. Excel:{' '}
                 <strong style={css(`color:${lab.deltaColor};`)}>{lab.delta}</strong></span>
               <div style={css('display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); border-top:1px solid var(--color-divider);')}>
                 {(lab.stats || []).map((s: any, $i: number) => (<Fragment key={$i}>
@@ -147,8 +126,8 @@ export function LabPage({ vm }: { vm: VM }) {
               <div style={css('display:flex; flex-direction:column; gap:6px;')}>
                 {(scen || []).map((s: any, $i: number) => (<Fragment key={$i}>
                   <div style={css('display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent);')}>
-                    <span>{s.label}</span>
-                    <strong style={css('font-family:var(--font-heading); font-size:17px;')}>{s.valTxt}</strong></div>
+                    <span>{s.label}{s.active ? ' · activo' : ''}</span>
+                    <strong style={css('font-family:var(--font-heading); font-size:17px;')}>{s.valTxt} <span style={css(`font-size:12px; color:${s.upColor};`)}>{s.upTxt}</span></strong></div>
                 </Fragment>))}</div>
               <button className="btn btn-secondary" onClick={goP1}>Ver en el dashboard</button></div></div></div></section>
     </>) : null}
