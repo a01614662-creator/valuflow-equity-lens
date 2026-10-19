@@ -27,10 +27,12 @@ export interface AppState {
   menu: string | null; drawer: string | null; toast: string | null; busy: boolean; reveal: boolean; heroDisp: number;
   presenting: boolean; printing: string | null; fcfSel: number; step: number; mobile: boolean; imp: ImpState | null;
   research: Record<string, Research>; drag: boolean;
+  /** Modo presentación (diapositivas): abierto y diapositiva actual. No modifica supuestos ni la vista de la app. */
+  deck: boolean; slide: number;
 }
 
 export class App extends Component<object, AppState> {
-  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false };
+  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false, deck: false, slide: 0 };
 
   // Cálculo en caché (una sola fuente de verdad por render).
   _c: Calc | null = null; _ck: string | null = null;
@@ -43,6 +45,7 @@ export class App extends Component<object, AppState> {
   onKey = (e: KeyboardEvent) => {
     const t = e.target as HTMLElement | null;
     if (t && /INPUT|SELECT|TEXTAREA/.test(t.tagName)) return;
+    if (this.state.deck) return; // la presentación maneja su propio teclado
     if (e.key === 'Escape') { if (this.state.drawer) this.setState({ drawer: null }); else if (this.state.presenting) this.exitPresent(); else this.setState({ menu: null }); }
     if (!this.state.presenting) return;
     if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); this.presStep(1); }
@@ -102,8 +105,11 @@ export class App extends Component<object, AppState> {
   saveCompanies(list: Dataset[]) { this.setState({ companies: list }); store.save(list.filter(c => !c.builtIn)); }
 
   // ---------- Presentación / impresión ----------
-  startPresent() { const i = SEQ.indexOf(this.state.view); this.setState({ presenting: true }); this.go(i >= 0 ? this.state.view : 'cover'); try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); } catch { /* no permitido */ } }
-  exitPresent() { this.setState({ presenting: false }); try { document.fullscreenElement && document.exitFullscreen(); } catch { /* no permitido */ } }
+  // Presentación por diapositivas: estado visual propio; al salir se conserva la vista, los supuestos y la valuación.
+  startPresent() { this.setState({ deck: true, slide: 0, menu: null, drawer: null }); }
+  exitPresent() { this.setState({ deck: false, presenting: false }); try { document.fullscreenElement && document.exitFullscreen(); } catch { /* no permitido */ } }
+  setSlide(i: number) { this.setState({ slide: i }); }
+  presentLive() { this.exitPresent(); this.go(this.state.view === 'cover' ? 'p1' : this.state.view); }
   presStep(d: number) {
     // Las páginas de múltiplos solo forman parte de la presentación si el dataset las documenta.
     const ds = this.ds(), seq = SEQ.filter(x => !['p4', 'p5', 'p6'].includes(x) || !!(ds.comps || ds.combined));

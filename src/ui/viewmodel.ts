@@ -2,6 +2,7 @@
 // (textos formateados, posiciones de gráficas, acciones). Las pantallas (pages/*.tsx) solo dibujan.
 import * as E from '../engine';
 import { fmt as f, labelsOf, unitsOf, type Assumptions, type Dataset, type RunOk, type RunResult } from '../engine';
+import { buildDeck } from './present/deck';
 import { FIELDS } from '../services/importer';
 import { exportCSV, exportJSON, exportXLSX, getXLSX } from '../services/exporter';
 import { store } from '../services/store';
@@ -311,6 +312,7 @@ export function buildView(app: App): VM {
     mult: rel.mult, trans: (rel as any).trans || { has: false }, comb: rel.comb, ext: (rel as any).ext || { has: false }, inflFlow, hasInflFlow: inflFlow.length > 0, betaT, hasBeta: betaT.length > 0,
     goP4: go('p4'), goP5: go('p5'), goP6: go('p6'), goAnnexInfl: go('annex', 'infl'), goAnnexBeta: go('annex', 'beta'),
     annexNav, annexTables: annexTablesV, ax, emp, res, val, formulas, sources, libCards, imp, drawer, arch,
+    deck: S.deck && b.ok ? { data: buildDeck(ds, A, b, PROJECT.team.map(t => t[0]), PROJECT.institution + ' · ' + PROJECT.course + ' · ' + PROJECT.year, !c.isBase || overridesActive(c.A)), index: S.slide, onIndex: (i: number) => app.setSlide(i), onExit: () => app.exitPresent(), onLive: () => app.presentLive(), team: PROJECT.team.map(t => t[0]).join(' · ') } : null,
     pres: { on: S.presenting, label: (pi >= 0 ? SEQ_N[pi] : 'Fuera de secuencia') + ' · ' + (pi + 1) + '/' + SEQ.length, progress: ((pi + 1) / SEQ.length * 100) + '%', prev: () => app.presStep(-1), next: () => app.presStep(1), exit: () => app.exitPresent() },
     toast: { show: !!S.toast, t: S.toast || '' },
     startTour: () => app.go('p1'), startPresent: () => app.startPresent(), goCover: go('cover'), goImport: () => { app.setState({ imp: app.newImp() }); app.go('import'); }, goLibrary: go('library'),
