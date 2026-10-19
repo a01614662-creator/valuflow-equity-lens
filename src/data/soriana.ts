@@ -1,9 +1,9 @@
-// ValuFlow · Dataset del caso Soriana. Fuente maestra: Excel "EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO"
-// (carpeta excel/). Los números del modelo (drivers, WACC, puente, inflación, múltiplos, transacciones, pesos y
+// ValuFlow · Dataset del caso Soriana. Fuente maestra: Excel "EXCEL FINAL PRO DEFINITIVO SORIANA - AUDITADO"
+// (carpeta excel/; el original sin cambios está en excel/original/). Los números del modelo (drivers, WACC, puente, inflación, múltiplos, transacciones, pesos y
 // resultados esperados) se leen de src/data/soriana.excel.ts, generado desde el Excel con tools/excel/extract_dataset.py.
 // Este archivo es solo DATOS. El motor (src/engine) no conoce a Soriana.
 // El dataset original del prototipo ($31.16, filas redondeadas) vive en tests/fixtures/soriana-legacy.ts.
-import type { BetaSpec, BuildSpec, CompsSpec, Dataset, Expected, InflationSpec, TransactionsSpec } from '../engine/types';
+import type { BetaSpec, BuildSpec, CompsSpec, Dataset, Expected, ExternalRef, InflationSpec, SdcSpec, TransactionsSpec } from '../engine/types';
 import { SORIANA_XL as XL } from './soriana.excel';
 
 type XLExp = typeof XL.expected.dcf.base;
@@ -13,12 +13,13 @@ const expectedOf = (e: XLExp): Expected => ({
   fcf: [...e.fcf], pvFcf: e.pvFcf, tvG: e.tvG, pvTvG: e.pvTvG, evG: e.evG, tvM: e.tvM, pvTvM: e.pvTvM, evM: e.evM, evW: e.evW, ev2: e.ev2, eq2: e.eq2, eqVal: e.eqVal,
   price: e.price, upside: e.upside, wacc: e.wacc, ke: e.ke, priceG: e.priceG, priceM: e.priceM, priceW: e.priceW, tvWeight: e.tvWeight,
   waccMarket: e.waccMarket, keMarket: e.keMarket, betaMarket: e.betaMarket,
-  comps: XL.expected.comps.value, transactions: XL.expected.transactions.value, combined: e.combined
+  comps: XL.expected.comps.value, transactions: XL.expected.sdc.prices.median, combined: e.combined,
+  sensRow: [...e.sensFinal.grid[2]]
 });
 const XE = XL.expected.dcf;
 
 export const soriana: Dataset = {
-  id: 'soriana', builtIn: true, version: 'Excel maestro integrado · DCF + inflación + múltiplos', createdAt: '2026-10-01', updatedAt: '2026-10-07',
+  id: 'soriana', builtIn: true, version: 'Excel PRO auditado · DCF + inflación + múltiplos + transacciones LSEG/SDC', createdAt: '2026-10-01', updatedAt: '2026-10-19',
   source: { kind: 'Excel', file: XL.file },
   profile: {
     name: 'Organización Soriana', short: 'Soriana', legalName: 'Organización Soriana, S.A.B. de C.V.',
@@ -38,10 +39,16 @@ export const soriana: Dataset = {
   notes: XL.notes,
   comps: XL.comps as unknown as CompsSpec,
   transactions: XL.transactions as unknown as TransactionsSpec,
-  combined: { weights: { ...XL.combined.weights }, reasons: { ...XL.combined.reasons }, classRule: XL.combined.classRule },
+  sdc: XL.sdc as unknown as SdcSpec,
+  combined: { weights: { ...XL.combined.weights }, reasons: { ...XL.combined.reasons }, classRule: XL.combined.classRule, transactionsSource: 'sdc' },
+  recommendation: { buy: XL.recommendation.buy, sell: XL.recommendation.sell, rule: XL.recommendation.rule, experts: XL.recommendation.experts },
+  external: XL.external as unknown as ExternalRef[],
+  externalNotes: XL.externalNotes,
+  audit: XL.audit,
+  study: XL.inflation.study as unknown as Dataset['study'],
   dates: { base: '31-dic-2025', balance: '30-jun-2026 (2T26)', valuation: '01-oct-2026', price: '25-sep-2026', nextReport: '23-oct-2026' },
   market: {
-    price: XL.market.price, shares: XL.market.shares, marketCap: 60264, consensus: 23.36, consensusLabel: 'Venta · 0 C / 1 M / 6 V',
+    price: XL.market.price, shares: XL.market.shares, marketCap: XL.market.price * XL.market.shares, consensus: XL.market.consensus, consensusLabel: 'Venta · 0 C / 1 M / 6 V (S&P Capital IQ)',
     low52: 23.90, high52: 42.70, pe: 18.08, pbv: 0.71, bvps: 47.07, divYield: 1.66, lastDiv: 0.5556,
     chg1y: 21.3, rating: 'HR+1 (HR Ratings, corto plazo)', rsi: 75, macd: 1.154, ma50: 29.68, ma200: 29.71, technical: 'Compra fuerte',
     hrRevenue2027: 196480
@@ -72,7 +79,7 @@ export const soriana: Dataset = {
     g: pts(XL.valuation.g), exitMultiple: XL.valuation.exitMultiple, comparablesMedian: XL.valuation.comparablesMedian, multipleDiscount: pts(XL.valuation.multipleDiscount), wGordon: XL.valuation.wGordon,
     bridge: { ...XL.valuation.bridge },
     roll: { ...XL.valuation.roll },
-    signalThreshold: 15
+    signalThreshold: XL.valuation.signalThreshold, tvFcf: 'normalized'
   },
   // Resultados del Excel para la capa de validación: escenario por defecto (Base) y cada escenario de inflación.
   expected: expectedOf(XE.base),
@@ -83,11 +90,12 @@ export const soriana: Dataset = {
   method: {
     // Ponderación y crecimiento del escenario Base (la pantalla usa la proyección en vivo del escenario activo).
     weightsExternal: XL.build.weightsExternal.map(pts),
-    growthExternal: XE.base.growthExternal.map(pts), growthLS: [-5.9, -6.6, -7.0, -7.6, -8.2], growthFinal: XE.base.growthFinal.map(pts),
-    marginExternal: [4.37, 4.34, 4.37, 4.40, 4.43], marginLS: [4.93, 4.93, 4.93, 4.93, 4.93], marginFinal: [4.54, 4.52, 4.51, 4.51, 4.51],
-    capexFinal: [2.26, 1.98, 1.97, 1.97, 1.97], taxFinal: [26.75, 27.10, 27.67, 28.23, 28.80], daFinal: [2.44, 2.44, 2.44, 2.44, 2.44],
-    salesLS: [163937, 153151, 142365, 131580, 120794], salesConst: [183728.0, 190158.5, 196814.1, 203702.5, 210832.1], salesLTM: 174278,
-    salesConstLabel: 'Supuestos constantes (3.5%)', salesLSLabel: 'Mínimos cuadrados (LTM)',
+    // Valores del escenario Base del Excel; las pantallas muestran la proyección en vivo del escenario activo.
+    growthExternal: XE.base.growthExternal.map(pts), growthLS: XE.base.lsSales.slice(1).map((v, i) => pts(v / XE.base.lsSales[i] - 1)), growthFinal: XE.base.growthFinal.map(pts),
+    marginExternal: [], marginLS: XL.build.margin.ls.map(pts), marginFinal: XE.base.marginFinal.map(pts),
+    capexFinal: [], taxFinal: [], daFinal: [],
+    salesLS: XE.base.lsSales.slice(1), salesConst: [183728.0, 190158.5, 196814.1, 203702.5, 210832.1], salesLTM: XE.base.lsSales[0],
+    salesConstLabel: 'Supuestos constantes (3.5%)', salesLSLabel: 'Mínimos cuadrados (2026E) + inflación',
     externalNet: { sales: -0.90, costs: 0.52, capex: 2.50 },
     leastSquares: [
       { key: 'ventas', label: 'Ventas', unit: 'mdp', y: [45810.0, 42683.0, 47592.0, 40444.0, 43559.0], a: 44017.6, b: -674.1, r2: 0.148, fc: [41995.3, 41321.2, 40647.1, 39973.0] },
@@ -165,28 +173,29 @@ export const soriana: Dataset = {
     ['11-dic-2025', '23-dic-2025', 0.5556], ['28-abr-2023', '15-dic-2023', 0.5556], ['29-abr-2021', '15-dic-2021', 0.5556], ['2019', '2019', 0.3889]
   ],
   news: [['31-jul-2026', 'Resultados 2T26: menos ventas, más utilidad'], ['26-ago-2026', 'Cierre de 20 tiendas en 2026'], ['2-sep-2026', 'Reducción de plantilla y automatización'], ['sep-2026', 'Plan de inversión 2S26']],
+  // Diferencias entre versiones y fuentes: se documentan, no se eligen en silencio. Cifras del Excel PRO auditado (XL).
   discrepancies: [
-    { topic: 'Valor intrínseco por acción (DCF)', a: ['Baseline histórico (Citi + βU 0.80) · proyección preliminar', '$31.16 · $34.44'], b: ['Excel maestro · DCF oficial (inflación Base 3.51%, βU Damodaran 0.65)', '$32.41'], used: 'Excel maestro · escenario Base con βU 0.65', note: '$34.44 es la proyección preliminar (supuestos constantes). $31.16 es el baseline histórico y se reproduce exactamente con la trayectoria Citi y la beta heredada 0.80. El cambio a $32.41 se explica por la beta (+$1.58) y por la inflación Base en lugar de la trayectoria Citi.' },
-    { topic: 'Inflación en la proyección', a: ['Excel definitivo anterior', 'Encuesta Citi 22-sep-2026: 3.93% / 3.83% / 3.75%'], b: ['Excel maestro', 'Escenarios Cautela 3.26% · Base 3.51% · Alcista 4.00%'], used: 'Base 3.51% (forecast del modelo exponencial trimestral de clase)', note: 'La trayectoria Citi queda como referencia histórica, no como escenario.' },
-    { topic: 'Beta del WACC', a: ['Excel definitivo anterior', 'βU 0.80 (sin fuente documentada)'], b: ['Damodaran global ene-2026 · Retail (Grocery and Food)', 'βL 0.87 · βU 0.65'], used: 'βU 0.65 reapalancada con la estructura de capital de Soriana (βL iterada 0.838)', note: 'La βL de 0.87 refleja el apalancamiento promedio de la industria; el modelo reapalanca con el de Soriana, por lo que el insumo correcto es la βU.' },
-    { topic: 'WACC', a: ['AE 1 · Sesión 2', '10.22% · 12.50%'], b: ['Excel maestro · WACC iterado (Base, βU 0.65)', '11.35%'], used: 'Excel · 11.35% (iterado al valor DCF, 6 iteraciones)', note: 'El WACC a valor de mercado (11.92%) es solo el punto de partida de la iteración, que usa el equity del propio DCF.' },
+    { topic: 'Beta del WACC (cambio del 19-oct-2026)', a: ['Antes: βU Damodaran 0.69 (corregida por caja), hoy referencia', '$' + XE.base_damodaran.price.toFixed(2) + ' · WACC ' + XE.base_damodaran.wacc.toFixed(2) + '%'], b: ['Ahora: βU ' + XL.beta.regression.unlevered.toFixed(4) + ' (regresión semanal: βL observada ' + XL.beta.regression.levered.toFixed(4) + ' desapalancada)', '$' + XE.base.price.toFixed(2) + ' · WACC ' + XE.base.wacc.toFixed(2) + '%'], used: 'Regresión semanal desapalancada', note: 'Decisión del equipo. La βL observada se desapalanca con la estructura de la propia regresión (D/E ' + XL.beta.regression.de.toFixed(4) + ', t ' + (XL.beta.regression.tax * 100).toFixed(0) + '%) y se reapalanca con la del modelo; no se usa directamente. La pendiente no es significativa al 95% (p ≈ 0.09).' },
+    { topic: 'Valor por acción (DCF), versiones anteriores', a: ['ValuFlow anterior (Excel integrado, βU 0.65) · baseline histórico (Citi + βU 0.80)', '$32.41 · $31.16'], b: ['Excel PRO auditado con βU Damodaran 0.69 (oficial hasta el 19-oct-2026)', '$' + XE.base_damodaran.price.toFixed(2)], used: 'Histórico (trazabilidad)', note: 'El PRO corrige la beta por caja (0.65 → 0.69), deja la tendencia de mínimos cuadrados crecer con la inflación y normaliza el FCF del valor terminal (capex = D&A).' },
+    { topic: 'DCF del reporte comparativo ($39.21)', a: ['Modelo individual (SORIANA_FINAL, 7-oct-2026)', 'βU 0.1705 (regresión) · WACC 9.63% · $39.21'], b: ['Modelo del equipo (Excel PRO auditado)', 'βU ' + XL.beta.regression.unlevered.toFixed(4) + ' (regresión) · WACC ' + XE.base.wacc.toFixed(2) + '% · $' + XE.base.price.toFixed(2)], used: 'Modelo del equipo', note: 'Misma beta desapalancada; la diferencia restante viene de la proyección, la fecha y el precio de referencia (33.48 del 25-sep vs. 33.10 del 7-oct-2026).' },
+    { topic: 'Precedent Transactions', a: ['Muestra S&P Capital IQ (3 operaciones, media)', '$' + XL.expected.transactions.value.toFixed(2)], b: ['Muestra LSEG/SDC auditada (mediana EV/EBITDA)', '$' + XL.expected.sdc.prices.median.toFixed(2)], used: 'LSEG/SDC como referencia (peso 0%)', note: 'La muestra CIQ no es defendible (1 de 3 en la ventana). La SDC es global, de control mixto y dispersa: se muestra como contraste, no entra al precio combinado.' },
+    { topic: 'Precio de mercado de referencia', a: ['Modelo del equipo', '$' + XL.market.price.toFixed(2) + ' · cierre 25-sep-2026 (fecha de valuación 01-oct-2026)'], b: ['Reporte comparativo (CIQ / Refinitiv)', '$33.10 · cierre 7-oct-2026'], used: 'Modelo: $' + XL.market.price.toFixed(2), note: 'Cada fuente se compara contra su propio precio y fecha; ningún cierre se presenta como precio del día.' },
+    { topic: 'WACC', a: ['A valor de mercado (Kd histórico FY2025 13.0%)', XE.base.waccMarket.toFixed(2) + '%'], b: ['Iterado al valor DCF (Kd prospectivo 10%)', XE.base.wacc.toFixed(2) + '%'], used: 'Iterado (6 iteraciones)', note: 'El de mercado es solo el punto de partida de la iteración.' },
     { topic: 'Deuda total', a: ['Cierre 2025', '23,618 mdp'], b: ['2T26', '23,720.6 mdp'], used: 'Cierre 2025 para el EV; 2T26 para el puente a la fecha de valuación', note: 'El modelo usa ambos saldos en etapas distintas.' },
-    { topic: 'Múltiplo P/U', a: ['Material maestro', '14.25x'], b: ['Excel · ratios de mercado', '18.08x'], used: 'Excel · 18.08x', note: 'Diferente fecha de corte de la utilidad.' },
-    { topic: 'Capex 1S26', a: ['Material maestro', '1,638 mdp'], b: ['Excel · reporte 2T26', '1,411 mdp'], used: 'Excel', note: 'Sin impacto en el DCF (el modelo usa FCF 1S26 = CFO − Capex real).' },
-    { topic: 'Rendimiento por dividendo', a: ['Material maestro', '1.8%'], b: ['Excel', '1.66%'], used: 'Excel · 1.66%', note: 'Distinto precio de referencia.' },
-    { topic: 'Capitalización de mercado', a: ['Reportada (precio $30.10)', '54,180 mdp'], b: ['Precio actual × acciones', '60,264 mdp'], used: '60,264 mdp para el WACC de mercado', note: 'El Excel recalcula E con el precio vigente.' }
+    { topic: 'Capitalización de mercado', a: ['Reportada (precio $30.10)', '54,180 mdp'], b: ['Precio de referencia × acciones', (XL.market.price * XL.market.shares).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' mdp'], used: 'Precio de referencia × 1,800 mm de acciones para el WACC de mercado', note: 'El Excel recalcula E con el precio de referencia.' }
   ],
   inputs: XL.registry.map(r => r.map(x => String(x ?? '')) as [string, string, string, string, string, string, string]),
   sources: [
-    ['Excel maestro integrado', XL.file, 'Fuente maestra: DCF, inflación, Trading Comps, Precedent Transactions, valuación combinada y validación (29 controles)'],
+    ['Excel PRO auditado', XL.file, 'Fuente maestra: DCF, inflación, Trading Comps, Precedent Transactions (CIQ y LSEG/SDC), combinada, contraste externo y validación (' + XL.expected.validation.checks.length + ' controles)'],
+    ['Excel PRO original', 'EXCEL FINAL PRO DEFINITIVO SORIANA.xlsx (excel/original, sin cambios)', 'Versión del equipo antes de la auditoría; cambios en la hoja Auditoría'],
+    ['LSEG/SDC (Refinitiv)', 'GridExport_October_19_2026_9_29_57.pdf · Current Screen Template, 19-oct-2026', '166 operaciones; 23 evaluadas en la hoja Transacciones SDC'],
+    ['Reporte comparativo', 'Soriana_Reporte_Valuacion_CapitalIQ_Refinitiv.pdf (19-oct-2026)', 'DCF con estimados CIQ, múltiplos, transacciones, consenso CIQ y Refinitiv, StarMine (referencias)'],
     ['Banco de México', 'Serie SP74833 · INPC variación anual quincenal', 'Datos de los modelos de inflación (consulta 07-oct-2026)'],
     ['S&P Capital IQ', 'Quick Comparable Analysis (as-of 30-jun-2026)', 'Múltiplos publicados de 10 comparables (extracto con atribución)'],
-    ['Damodaran (NYU Stern)', 'Betas by Sector (Global), enero 2026 · Retail (Grocery and Food)', 'Beta sectorial: βL 0.87, βU 0.65 (reapalancada con la estructura de Soriana)'],
-    ['S&P Capital IQ', 'Comparable M&A Transactions', '3 operaciones con múltiplos implícitos (extracto con atribución)'],
-    ['Excel definitivo', 'EXCEL DEFINITIVO DE VALUACIÓN DE SORIANA (anterior)', 'Base del modelo DCF; trayectoria Citi y baseline histórico $31.16'],
+    ['Regresión semanal Soriana B vs. IPC', 'Investing.com · hoja Beta y Kd §2', 'βL observada ' + XL.beta.regression.levered.toFixed(4) + ' → βU ' + XL.beta.regression.unlevered.toFixed(4) + ' (beta oficial del WACC)'],
+    ['Damodaran (NYU Stern)', 'Betas by Sector (Global), enero 2026 · Retail (Grocery and Food)', 'βL 0.87, βU 0.65; corregida por caja 0.69 (referencia; beta oficial hasta el 19-oct-2026)'],
+    ['S&P Capital IQ', 'Comparable M&A Transactions', '3 operaciones (histórico; no defendible)'],
     ['AE 1 · Etapa 1', 'PDF académico', 'Perfil, historia, gobierno corporativo, estructura de capital, dividendos'],
-    ['Sesión 2', 'Valuación y comparativas de Soriana y mercado', 'DCF de la segunda entrega y razones financieras'],
-    ['Material maestro', 'Material maestro de contexto (PDF)', 'Contexto consolidado, equipo y reglas de producto'],
     ['Reportes trimestrales', 'Soriana 2T25–2T26 (BMV)', 'Estados financieros trimestrales capturados en el Excel']
   ],
   // Tablas de anexo (capa 2). Valores tal como aparecen en el Excel.
@@ -219,43 +228,6 @@ export const soriana: Dataset = {
         ['Pasivo por arrendamiento LP', 11389.0, 11506.0, 11442.0, 11540.0, 11580.6, 11442.0],
         ['Deuda total (financiera + arrendamientos)', 30154.0, 30218.0, 23618.0, 23723.0, 23720.6, 23618.0]
       ]
-    },
-    projected: {
-      cols: ['2025A', '2026E', '2027E', '2028E', '2029E', '2030E'],
-      rows: [
-        { section: 'Estado de resultados' },
-        ['Ventas', 177515.0, 170043.1, 167793.9, 169496.0, 173233.0, 178318.2],
-        ['Costo de ventas', -134752.0, -128552.6, -127020.0, -128477.9, -131310.6, -135165.2],
-        ['Utilidad bruta', 42763.0, 41490.5, 40773.9, 41018.0, 41922.4, 43153.0],
-        ['Gastos de operación (sin D&A)', -30870.0, -29628.4, -29103.9, -29238.0, -29886.1, -30761.5],
-        ['EBITDA', 11893.0, 11862.1, 11670.0, 11780.0, 12036.3, 12391.5],
-        ['Depreciación y amortización', -4342.0, -4142.7, -4087.9, -4132.1, -4226.0, -4353.0],
-        ['Utilidad de operación (EBIT)', 7551.0, 7719.4, 7582.1, 7647.8, 7810.3, 8038.5],
-        ['Gastos financieros', -3074.0, -2361.8, -2302.8, -2156.5, -2010.3, -1864.0],
-        ['Utilidad antes de impuestos', 4765.0, 5357.6, 5279.3, 5491.3, 5800.0, 6174.5],
-        ['Impuestos a la utilidad', -1433.0, -1433.3, -1430.8, -1519.4, -1637.6, -1778.3],
-        ['Utilidad neta', 3332.0, 3924.3, 3848.5, 3972.0, 4162.4, 4396.2],
-        ['Dividendos pagados', null, -1177.9, -1155.1, -1192.2, -1249.3, -1319.5],
-        { section: 'Balance general' },
-        ['Efectivo y equivalentes', 9295.0, 12435.0, 14405.2, 16746.1, 18898.9, 21222.2],
-        ['Inventarios', 32283.0, 30993.5, 30624.0, 30623.5, 31298.7, 32217.5],
-        ['Otros activos circulantes', 6951.0, 6658.4, 6570.3, 6637.0, 6783.3, 6982.5],
-        ['Activo no circulante', 107509.0, 107201.5, 106431.9, 105645.4, 104832.5, 103986.2],
-        ['Activo total', 156038.0, 157288.4, 158031.5, 159652.1, 161813.4, 164408.3],
-        ['Pasivo circulante operativo', 35543.0, 34046.9, 33596.6, 33937.4, 34685.6, 35703.8],
-        ['Deuda bursátil y bancaria', 11500.0, 11500.0, 10000.0, 8500.0, 7000.0, 5500.0],
-        ['Pasivo por arrendamiento', 12118.0, 12118.0, 12118.0, 12118.0, 12118.0, 12118.0],
-        ['Otros pasivos a largo plazo', 12145.0, 12145.0, 12145.0, 12145.0, 12145.0, 12145.0],
-        ['Pasivo total', 71306.0, 69809.9, 67859.6, 66700.4, 65948.6, 65466.8],
-        ['Capital contable', 84732.0, 87478.5, 90171.9, 92951.7, 95864.8, 98941.5],
-        ['Comprobación (A − P − C)', 0, 0, 0, 0, 0, 0]
-      ]
-    },
-    sensitivity: {
-      waccG: { label: 'WACC vs. g', rowsLabel: 'WACC', colsLabel: 'g', cols: ['2.50%', '3.00%', '3.50%', '4.00%', '4.50%'], rowHeads: ['10.88%', '11.38%', '11.88%', '12.38%', '12.88%'], grid: [[32.40, 33.38, 34.50, 35.77, 37.25], [30.92, 31.78, 32.74, 33.84, 35.09], [29.57, 30.32, 31.16, 32.11, 33.19], [28.33, 28.99, 29.73, 30.56, 31.50], [27.18, 27.77, 28.43, 29.16, 29.98]] },
-      salesMargin: { label: 'Δ Ventas vs. Δ Margen EBIT', rowsLabel: 'Δ ventas', colsLabel: 'Δ margen', cols: ['-0.50', '-0.25', '0.00', '+0.25', '+0.50'], rowHeads: ['-2.00', '-1.00', '0.00', '+1.00', '+2.00'], grid: [[24.82, 26.48, 28.15, 29.81, 31.47], [26.16, 27.89, 29.63, 31.36, 33.10], [27.55, 29.36, 31.16, 32.97, 34.78], [28.98, 30.87, 32.75, 34.64, 36.53], [30.47, 32.43, 34.40, 36.36, 38.33]] },
-      waccMult: { label: 'WACC vs. múltiplo EV/EBITDA', rowsLabel: 'WACC', colsLabel: 'Múltiplo', cols: ['4.81x', '5.31x', '5.81x', '6.31x', '6.81x'], rowHeads: ['10.88%', '11.38%', '11.88%', '12.38%', '12.88%'], grid: [[32.26, 33.38, 34.50, 35.61, 36.73], [30.55, 31.65, 32.74, 33.84, 34.93], [29.02, 30.09, 31.16, 32.24, 33.31], [27.63, 28.68, 29.73, 30.79, 31.84], [26.37, 27.40, 28.43, 29.46, 30.49]] },
-      capexTax: { label: 'Δ Capex vs. Δ Tasa de impuestos', rowsLabel: 'Δ capex', colsLabel: 'Δ tasa', cols: ['-4.00', '-2.00', '0.00', '+2.00', '+4.00'], rowHeads: ['-0.50', '-0.25', '0.00', '+0.25', '+0.50'], grid: [[36.32, 35.64, 34.95, 34.27, 33.59], [34.43, 33.74, 33.06, 32.38, 31.69], [32.53, 31.85, 31.16, 30.48, 29.80], [30.64, 29.95, 29.27, 28.59, 27.90], [28.74, 28.06, 27.37, 26.69, 26.01]] }
     }
   }
 };

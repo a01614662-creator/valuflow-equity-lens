@@ -97,7 +97,10 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
   const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;
   const num = (p: unknown) => isNum(p) ? p : null;
   if (RV && RV.comps) out.push({ key: 'comps', label: 'Trading Comps', sub: RV.comps.n + ' comparables · rango P25–P75', value: num(RV.comps.value), lo: num(RV.comps.p25), hi: num(RV.comps.p75) });
-  if (RV && RV.transactions) out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'Referencia · ' + RV.transactions.n + ' operaciones · mín–máx', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
+  if (RV && RV.sdc && ds.combined?.transactionsSource === 'sdc') {
+    out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'LSEG/SDC · ' + (RV.sdc.stats.evEbitda?.n ?? 0) + ' operaciones · mediana · rango P25–P75', value: num(RV.sdc.value), lo: num(RV.sdc.lo), hi: num(RV.sdc.hi), ref: !(RV.combined && RV.combined.rows.find(r => r.key === 'transactions')!.weight > 0) });
+    if (RV.transactions) out.push({ key: 'transCiq', label: 'Transacciones CIQ (histórico)', sub: RV.transactions.n + ' operaciones · media · mín–máx · no defendible', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
+  } else if (RV && RV.transactions) out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'Referencia · ' + RV.transactions.n + ' operaciones · mín–máx', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
   if (RV && RV.combined) out.push({ key: 'combined', label: 'Valuación combinada', sub: RV.combined.rows.map(r => Math.round(r.weight * 100) + '%').join(' / ') + ' · DCF / Comps / Transactions', value: num(RV.combined.value), lo: null, hi: null, main: true });
   if (ds.altForecasts) Object.keys(ds.altForecasts).forEach(k => {
     const af = ds.altForecasts![k], r = run(ds, { ...A, ...af.overrides, forecastKey: k, dGrowth: 0, dMargin: 0, dCapex: 0, dTax: 0 });
@@ -107,4 +110,20 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
   if (m.consensus) out.push({ key: 'cons', label: 'Consenso de analistas', sub: m.consensusLabel || '', value: m.consensus, lo: null, hi: null, ref: true });
   if (m.low52 && m.high52) out.push({ key: '52w', label: 'Rango 52 semanas', sub: 'Mercado', value: null, lo: m.low52, hi: m.high52, ref: true });
   return out;
+}
+
+export interface Recommendation { target: number | null; potential: number | null; rating: 'COMPRAR' | 'MANTENER' | 'VENDER' | null; buy: number; sell: number; rule: string; fairLo: number | null; fairHi: number | null }
+
+/**
+ * Recomendación del modelo (réplica de la hoja Transacciones SDC §7): precio objetivo = valuación combinada;
+ * COMPRAR si el potencial supera el umbral de compra, VENDER si es menor que el de venta, MANTENER en otro caso.
+ * Rango de valor razonable = mín./máx. de DCF, Trading Comps y Precedent Transactions (media sin atípicos).
+ */
+export function recommendation(ds: Dataset, A: Assumptions, base: RunOk): Recommendation | null {
+  const Rr = ds.recommendation; if (!Rr) return null;
+  const RV = relative(ds, A, base.value), target = RV.combined && isNum(RV.combined.value) ? RV.combined.value : null;
+  const potential = target != null && base.price > 0 ? target / base.price - 1 : null;
+  const rating = potential == null ? null : potential > Rr.buy ? 'COMPRAR' : potential < Rr.sell ? 'VENDER' : 'MANTENER';
+  const pts = [base.value, RV.comps && isNum(RV.comps.value) ? RV.comps.value : null, RV.sdc && isNum(RV.sdc.prices.meanEx) ? RV.sdc.prices.meanEx : null].filter((x): x is number => x != null);
+  return { target, potential, rating, buy: Rr.buy, sell: Rr.sell, rule: Rr.rule, fairLo: pts.length ? Math.min(...pts) : null, fairHi: pts.length ? Math.max(...pts) : null };
 }

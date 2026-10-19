@@ -1,10 +1,10 @@
-// ARCHIVO GENERADO por tools/excel/extract_dataset.py a partir del Excel maestro integrado. No editar a mano.
+// ARCHIVO GENERADO por tools/excel/extract_dataset.py a partir del Excel PRO AUDITADO. No editar a mano.
 // Valores con precisión completa (sin redondear). Las referencias de celda viven en los campos source/cell.
 /* eslint-disable */
 export const SORIANA_XL = {
- "file": "EXCEL DEFINITIVO DE VALUACION DE SORIANA - MODELO INTEGRADO.xlsx",
+ "file": "EXCEL FINAL PRO DEFINITIVO SORIANA - AUDITADO.xlsx",
  "build": {
-  "source": "Excel maestro · hoja 'Proyección Final Soriana' (filas 5–117)",
+  "source": "Excel PRO auditado · hoja 'Proyección Final Soriana' (filas 5–117)",
   "weightsExternal": [
    0.7,
    0.7,
@@ -126,12 +126,13 @@ export const SORIANA_XL = {
    ],
    "lsSales": [
     174278.0,
-    163936.6,
-    153151,
-    142365.4,
-    131579.8,
-    120794.2
-   ]
+    162461.1706,
+    168163.55768806,
+    174066.098562911,
+    180175.818622469,
+    186499.989856118
+   ],
+   "lsGrowWithInflation": true
   },
   "margin": {
    "base": 0.042542883699969,
@@ -226,11 +227,11 @@ export const SORIANA_XL = {
     }
    ],
    "ls": [
-    0.0492556268703877,
-    0.0492556268703877,
-    0.0492556268703877,
-    0.0492556268703877,
-    0.0492556268703877
+    0.0443117561301137,
+    0.0443117561301137,
+    0.0443117561301137,
+    0.0443117561301137,
+    0.0443117561301137
    ]
   },
   "da": {
@@ -242,11 +243,11 @@ export const SORIANA_XL = {
     0.0244599047967777
    ],
    "ls": [
-    0.024136242913419,
-    0.024136242913419,
-    0.024136242913419,
-    0.024136242913419,
-    0.024136242913419
+    0.0243554418904329,
+    0.0243554418904329,
+    0.0243554418904329,
+    0.0243554418904329,
+    0.0243554418904329
    ]
   },
   "capex": {
@@ -267,11 +268,11 @@ export const SORIANA_XL = {
    "basePct": 0.0161507478241275,
    "extAdj": 0.025,
    "ls": [
-    0.0202932109120233,
-    0.0202932109120233,
-    0.0202932109120233,
-    0.0202932109120233,
-    0.0202932109120233
+    0.0209894462006296,
+    0.0209894462006296,
+    0.0209894462006296,
+    0.0209894462006296,
+    0.0209894462006296
    ]
   },
   "tax": {
@@ -284,11 +285,11 @@ export const SORIANA_XL = {
     0.005
    ],
    "ls": [
-    0.191734007304675,
-    0.191734007304675,
-    0.191734007304675,
-    0.191734007304675,
-    0.191734007304675
+    0.300671422576584,
+    0.300671422576584,
+    0.300671422576584,
+    0.300671422576584,
+    0.300671422576584
    ]
   },
   "invDays": [
@@ -363,7 +364,7 @@ export const SORIANA_XL = {
   }
  },
  "inflation": {
-  "source": "Fuente de datos: Banco de México, serie SP74833 (INPC, variación anual, quincenal), consulta 07/10/2026, tomada de \"MODELO DE INFLACION EN LA VALUACION DE EMPRESAS.xlsx\" hoja INFLACION. Unidades: % anual.",
+  "source": "Banco de México, serie SP74833 (INPC, variación anual, quincenal); hoja Inflación del Excel PRO.",
   "default": "base",
   "order": [
    "cautela",
@@ -393,21 +394,21 @@ export const SORIANA_XL = {
     "kind": "Escenario derivado de la tendencia larga",
     "value": 0.0326,
     "source": "Valor documentado en el Dossier (\"ventana 2023-2026, trimestral 3.26%\") y en Avances (escenario Cautela). Construcción de clase más cercana: fila 36 (3.268%). Modelos de tendencia larga calculados aquí: fila 34.",
-    "cell": "Inflación!B47"
+    "cell": "Inflación!B33"
    },
    "base": {
     "label": "Base",
     "kind": "Forecast / resultado de modelo",
     "value": 0.0351,
     "source": "Fila 33 redondeada a 2 decimales en %. Reproduce el 3.51% del Dossier (\"4.0327e^(−0.028x) → 3.51%\") y de Avances. Horizonte: siguiente trimestre; su extensión a 2026–30 es un supuesto.",
-    "cell": "Inflación!B48 = ROUND(G33, 4)"
+    "cell": "Inflación!B34 = ROUND(G21, 4)"
    },
    "alcista": {
     "label": "Alcista",
     "kind": "Supuesto de escenario (no es pronóstico estadístico)",
     "value": 0.04,
     "source": "Avances de valuación intrínseca: \"Alcista: inflación 4.0%\". No proviene de ningún modelo. Referencia de contexto: el promedio trimestral máximo del último año fue 4.33% (fila 38).",
-    "cell": "Inflación!B49"
+    "cell": "Inflación!B35"
    }
   },
   "series": [
@@ -914,49 +915,39 @@ export const SORIANA_XL = {
   ],
   "chain": [
    [
-    "Inflación (fila 13) → Proyección Final!C10:G10",
-    "Vínculo directo",
-    "Antes: valores capturados de la Encuesta Citi."
+    "Inflación aplicada (Inflación!B13:F13)",
+    "Proyección Final!C10:G10",
+    "Escenario elegido; misma tasa los 5 años."
    ],
    [
-    "→ Crecimiento nominal del mercado (C14)",
-    "Crec. mercado = Inflación + PIB × elasticidad + ajuste de consumo",
-    "Coeficiente 1.0 sobre la inflación (fórmula existente del Excel)."
+    "→ Crecimiento nominal del mercado",
+    "Proyección Final!C14",
+    "Inflación + PIB real × elasticidad + ajuste por consumo."
    ],
    [
-    "→ Crecimiento por variables externas (C23)",
-    "C23 = C14 + Σ ajustes (filas 15–22)",
-    "Ajustes documentados en comentarios de cada celda."
+    "→ Crecimiento por variables externas",
+    "Proyección Final!C23",
+    "Mercado + 8 ajustes documentados."
    ],
    [
-    "→ Crecimiento final de ventas (C28)",
-    "C28 = peso externo × C23 + peso MC × C27",
-    "Traspaso a ventas = 70% / 70% / 75% / 80% / 85% (pesos de la fila 6)."
+    "→ Ventas por mínimos cuadrados 2027E–2030E",
+    "Proyección Final!D26:G26",
+    "La tendencia crece con la misma inflación."
    ],
    [
-    "→ Costo de ventas, gastos, D&A, capital de trabajo",
-    "% de ventas / días sobre costo",
-    "Variables Externas!E6: 'eleva ventas nominales y costo de mercancía en proporción similar; efecto casi neutral en margen'."
+    "→ Crecimiento final de ventas",
+    "Proyección Final!C28",
+    "Ponderado: variables externas / mínimos cuadrados."
    ],
    [
-    "→ Margen EBIT",
-    "Sin término de inflación",
-    "Margen neutral (documentado)."
+    "→ Ventas, costos, EBIT, impuestos, capital de trabajo",
+    "Proyección Final!C67:G117",
+    "Estado de resultados, balance y FCF."
    ],
    [
-    "→ Capex",
-    "2026 = 4,000 mdp (guía de Soriana, monto fijo); 2027–30 = % de ventas",
-    "El capex 2026 no escala con la inflación."
-   ],
-   [
-    "→ FCFF → EV → Equity → precio",
-    "Fórmulas existentes",
-    "El WACC solo cambia por la iteración (peso del equity)."
-   ],
-   [
-    "NO transmitido (sin sustento documental)",
-    "Rf / WACC, beta, g, traspaso diferencial a costos",
-    "Limitación documentada: con WACC nominal fijo, mayor inflación eleva el valor (menor WACC real)."
+    "→ Valor (WACC no cambia con la inflación)",
+    "Proyección Final!B265",
+    "Limitación documentada: Rf y Kd no se ajustan por Fisher en el Excel."
    ]
   ],
   "beta": {
@@ -964,19 +955,161 @@ export const SORIANA_XL = {
    "r2": 0.000225094026900157,
    "n": 62,
    "reported": 0.414619566109315,
-   "wacc": 0.65
+   "wacc": 0.170520815748403
+  },
+  "study": {
+   "monthly": [
+    [
+     "2024-11-01",
+     30.5,
+     4.55
+    ],
+    [
+     "2024-12-01",
+     29.63,
+     4.215
+    ],
+    [
+     "2025-01-01",
+     29.18,
+     3.585
+    ],
+    [
+     "2025-02-01",
+     27.65,
+     3.775
+    ],
+    [
+     "2025-03-01",
+     27.7,
+     3.8
+    ],
+    [
+     "2025-04-01",
+     25.98,
+     3.93
+    ],
+    [
+     "2025-05-01",
+     27.51,
+     4.42
+    ],
+    [
+     "2025-06-01",
+     27.98,
+     4.32
+    ],
+    [
+     "2025-07-01",
+     25.96,
+     3.515
+    ],
+    [
+     "2025-08-01",
+     25.73,
+     3.57
+    ],
+    [
+     "2025-09-01",
+     25.0,
+     3.76
+    ],
+    [
+     "2025-10-01",
+     26.45,
+     3.565
+    ],
+    [
+     "2025-11-01",
+     31.05,
+     3.8
+    ],
+    [
+     "2025-12-01",
+     40.93,
+     3.69
+    ],
+    [
+     "2026-01-01",
+     35.8,
+     3.795
+    ],
+    [
+     "2026-02-01",
+     37.12,
+     4.025
+    ],
+    [
+     "2026-03-01",
+     35.44,
+     4.59
+    ],
+    [
+     "2026-04-01",
+     33.49,
+     4.45
+    ],
+    [
+     "2026-05-01",
+     34.49,
+     3.94
+    ],
+    [
+     "2026-06-01",
+     30.25,
+     3.365
+    ],
+    [
+     "2026-07-01",
+     29.59,
+     3.12
+    ],
+    [
+     "2026-08-01",
+     27.06,
+     3.26
+    ],
+    [
+     "2026-09-01",
+     35.0,
+     3.42
+    ]
+   ],
+   "correlations": [
+    [
+     "Toda la muestra (23 meses)",
+     0.190174438586874,
+     "nov-24 a sep-26"
+    ],
+    [
+     "Anual (ene–sep 2026)",
+     0.660039084883809,
+     "ene-26 a sep-26"
+    ],
+    [
+     "Semestral (abr–sep 2026)",
+     0.602966810483746,
+     "abr-26 a sep-26"
+    ],
+    [
+     "Trimestral (jul–sep 2026)",
+     0.695059955343774,
+     "jul-26 a sep-26"
+    ]
+   ],
+   "note": "El Dossier reporta 0.26 / 0.61 / 0.65 / 0.70; el libro de clase da los valores de esta tabla (diferencias documentadas en la auditoría)."
   }
  },
  "wacc": {
   "rf": 0.09517,
   "prm": 0.0423,
-  "betaU": 0.65,
+  "betaU": 0.170520815748403,
   "kdPre": 0.1,
-  "taxShield": 0.288010101095701,
+  "taxShield": 0.3,
   "debt": 23618.0,
   "kdMarket": 0.130154966550936,
   "taxMarket": 0.3,
-  "start": 0.119198962792971,
+  "start": 0.100630184051038,
   "iterations": 6,
   "prmMature": 0.0423,
   "countryRisk": 0.0246,
@@ -988,6 +1121,8 @@ export const SORIANA_XL = {
   "comparablesMedian": 6.45641334847373,
   "multipleDiscount": 0.1,
   "wGordon": 0.5,
+  "tvFcf": "normalized",
+  "signalThreshold": 15.0,
   "bridge": {
    "debt": 11500.0,
    "lease": 12118.0,
@@ -1005,10 +1140,38 @@ export const SORIANA_XL = {
  },
  "market": {
   "price": 33.48,
-  "shares": 1800.0
+  "shares": 1800.0,
+  "priceDate": "2026-09-25",
+  "consensus": 23.357
  },
+ "peersMarket": [
+  {
+   "name": "Walmex",
+   "price": 46.6,
+   "date": "2026-09-01",
+   "ev": 865879.504529617,
+   "ebitda": 103446.9,
+   "evEbitda": 8.37027986850855
+  },
+  {
+   "name": "Chedraui",
+   "price": 92.94,
+   "date": "21-ago-2026",
+   "ev": 131350.205420078,
+   "ebitda": 24391.15,
+   "evEbitda": 5.38515836358997
+  },
+  {
+   "name": "La Comer",
+   "price": 32.08,
+   "date": "2026-09-01",
+   "ev": 33669,
+   "ebitda": 5214.81481788325,
+   "evEbitda": 6.45641334847373
+  }
+ ],
  "comps": {
-  "source": "Fuente: S&P Capital IQ, \"MULTIPLOS DE SORIANA Y COMPETIDORES.xls\" (Quick Comparable Analysis, plantilla Capital IQ Default Comps), as-of 30-Jun-2026, USD al tipo de cambio del día de exportación. Los múltiplos no tienen unidades; las métricas de Soriana son MXN (mdp) del Excel.",
+  "source": "S&P Capital IQ, \"MULTIPLOS DE SORIANA Y COMPETIDORES.xls\" (hoja Multiplos del Excel PRO)",
   "asOf": "2026-06-30",
   "peers": [
    {
@@ -1242,12 +1405,6 @@ export const SORIANA_XL = {
     }
    }
   ],
-  "ciqMean": {
-   "evSales": 0.8,
-   "evEbitda": 7.2,
-   "evEbit": 10,
-   "pe": 14.6
-  },
   "target": {
    "revenue": 174278,
    "ebit": 7631,
@@ -1262,18 +1419,18 @@ export const SORIANA_XL = {
    "minority": 0,
    "preferred": 0,
    "sources": {
-    "revenue": "Datos!C6:F6",
-    "ebit": "Datos!C9:F9",
-    "da": "Datos!C14:F14",
-    "ebitda": "Cálculo (mismo EBITDA que el Excel: incluye D&A de arrendamientos)",
-    "netIncome": "Datos!C13:F13",
-    "shares": "WACC!B17",
-    "eps": "Cálculo",
-    "cash": "Datos!F17",
-    "debt": "Datos!F25:F26",
-    "lease": "Datos!F27:F28 (arrendamientos como deuda, igual que el DCF y el TEV de CIQ)",
-    "minority": "NA en MXN: no está en el Excel. CIQ reporta 8.4 USD mm (≈0.3% del capital); convertirlo requeriría un tipo de cambio sin fuente. Se omite, igual que en el puente del DCF.",
-    "preferred": "Soriana no tiene capital preferente (CIQ: \"-\")"
+    "revenue": "=SUM(Datos!C6:F6)",
+    "ebit": "=SUM(Datos!C9:F9)",
+    "da": "=SUM(Datos!C14:F14)",
+    "ebitda": "=B19+B20",
+    "netIncome": "=SUM(Datos!C13:F13)",
+    "shares": "=WACC!B17",
+    "eps": "=B22/B23",
+    "cash": "=Datos!F17",
+    "debt": "=-(Datos!F25+Datos!F26)",
+    "lease": "=-(Datos!F27+Datos!F28)",
+    "minority": 0,
+    "preferred": 0
    }
   },
   "multiples": [
@@ -1284,7 +1441,7 @@ export const SORIANA_XL = {
     "metric": "ebitda",
     "use": 1,
     "status": "Usado",
-    "reason": "Múltiplo central de retail; EBITDA comparable (con arrendamientos)."
+    "reason": "Múltiplo principal del sector (EV incluye arrendamientos; EBITDA post-NIIF 16)."
    },
    {
     "key": "evEbit",
@@ -1293,7 +1450,7 @@ export const SORIANA_XL = {
     "metric": "ebit",
     "use": 1,
     "status": "Usado",
-    "reason": "Incorpora la intensidad de capital (D&A)."
+    "reason": "Complementa EV/EBITDA con la depreciación."
    },
    {
     "key": "pe",
@@ -1302,7 +1459,7 @@ export const SORIANA_XL = {
     "metric": "eps",
     "use": 1,
     "status": "Usado",
-    "reason": "Múltiplo de precio sobre UPA diluida (CIQ \"P/Diluted EPS Before Extra\")."
+    "reason": "Múltiplo de capital; utilidades LTM."
    },
    {
     "key": "evSales",
@@ -1311,7 +1468,7 @@ export const SORIANA_XL = {
     "metric": "revenue",
     "use": 0,
     "status": "Excluido",
-    "reason": "No es NM ni NA: se excluye porque ignora el margen; los pares van de 5.6% a 11.0% de margen EBITDA y Soriana es de los más bajos, lo que sobrevaloraría el resultado."
+    "reason": "Excluido: ignora el margen (los pares tienen márgenes EBITDA de 5.6% a 11%)."
    },
    {
     "key": "ptbv",
@@ -1320,7 +1477,7 @@ export const SORIANA_XL = {
     "metric": null,
     "use": 0,
     "status": "NA",
-    "reason": "El valor en libros tangible por acción de Soriana en MXN no está en el Excel; además el valor contable no explica el valor en retail (Sendas 17.1x)."
+    "reason": "Sin dato en la fuente."
    },
    {
     "key": "evEbitdaNtm",
@@ -1329,7 +1486,7 @@ export const SORIANA_XL = {
     "metric": null,
     "use": 0,
     "status": "NA",
-    "reason": "No existe EBITDA NTM de consenso para Soriana en MXN (CIQ lo da en USD; convertirlo requiere un tipo de cambio sin fuente)."
+    "reason": "Sin dato en la fuente."
    },
    {
     "key": "peNtm",
@@ -1338,13 +1495,13 @@ export const SORIANA_XL = {
     "metric": null,
     "use": 0,
     "status": "NA",
-    "reason": "Ídem: UPA NTM de consenso solo en USD."
+    "reason": "Sin dato en la fuente."
    }
   ],
-  "note": "Precios de los pares al 30-jun-2026 (as-of CIQ) y puente al 2T26; la metodología de clase no prevé llevarlo a la fecha de valuación del DCF (01-oct-2026)."
+  "note": "Múltiplos de los pares al 30-jun-2026 (CIQ) y puente al 2T26; la metodología de clase no prevé llevarlos a la fecha de valuación del DCF (01-oct-2026)."
  },
  "transactions": {
-  "source": "Fuente: S&P Capital IQ, \"TRANSACCIONES INDUSTRIA RETAIL.xls\" (Comparable M&A Transactions para Soriana). TEV y tamaño en MXN mm; múltiplos implícitos de la transacción (publicados con 1 decimal).",
+  "source": "S&P Capital IQ, \"TRANSACCIONES INDUSTRIA RETAIL.xls\" (hoja Transacciones del Excel PRO) · muestra histórica, no defendible",
   "criteria": {
    "valuationDate": "2026-10-01",
    "windowYears": 3,
@@ -1423,7 +1580,913 @@ export const SORIANA_XL = {
     "reason": "Mismo criterio que Trading Comps: ignora el margen; los márgenes implícitos de los objetivos van de 5.8% a 13.2% (fila de margen implícito)."
    }
   ],
-  "warning": "ADVERTENCIA: solo 1 de 3 operaciones cumple la ventana de 3 años, ninguna la geografía, y 2 tienen carácter de control dudoso. Con n = 3 (o n = 1 dentro de la ventana) el resultado no es estadísticamente defendible. El método se calcula y se muestra como referencia, con peso 0% en la valuación combinada (decisión del proyecto). Las transacciones de control incluyen una prima de control (diap. 11, nota)."
+  "warning": "Solo 1 de 3 operaciones cumple la ventana de 3 años, ninguna la geografía, y 2 tienen carácter de control dudoso. Con n = 3 (o n = 1 dentro de la ventana) el resultado no es estadísticamente defendible. El método se calcula y se muestra como referencia, con peso 0% en la valuación combinada (decisión del proyecto)"
+ },
+ "sdc": {
+  "source": "Fuente: LSEG/SDC (Refinitiv), \"GridExport_October_19_2026_9_29_57.pdf\", Current Screen Template del 19-oct-2026 09:29:57, 166 operaciones, 23 columnas. Montos en USD mm tal como la pantalla; múltiplos en veces (x); precios en MXN por acción.",
+  "screen": {
+   "file": "GridExport_October_19_2026_9_29_57.pdf",
+   "date": "2026-10-19",
+   "time": "09:29:57",
+   "count": 166,
+   "columns": 23,
+   "provider": "LSEG/SDC (Refinitiv)"
+  },
+  "criteria": {
+   "valuationDate": "2026-10-01",
+   "windowYears": 3,
+   "windowStart": "2023-10-01",
+   "minMultiples": 2
+  },
+  "fx": {
+   "rate": 18.48,
+   "source": "Implícito en S&P Capital IQ: capitalización 59,580 mdp / 3,223.7 USD mm al cierre del 7-oct-2026 (reporte comparativo, p. 1 y 25). Equivalente MXN solo informativo: los múltiplos no requieren conversión."
+  },
+  "funnel": [
+   [
+    "Búsqueda inicial",
+    "M&A de los últimos 3 años, autoservicio en México",
+    "0 operaciones con múltiplos: solo FEMSA como comprador (Delek, objetivo en EE.UU.) y Nutrisa, sin múltiplos."
+   ],
+   [
+    "Primera ampliación",
+    "Subir un nivel en la industria (Retail: Food & Beverage + Discount and Department Store)",
+    "Sigue sin operaciones mexicanas con múltiplos."
+   ],
+   [
+    "Segunda ampliación",
+    "Eliminar el filtro geográfico → pantalla global",
+    "166 operaciones en la pantalla (Retail: Food & Beverage Retailing 130, Discount and Department Store Retailing 34, Food & Beverage 2). La subindustria de SDC mezcla restaurantes, servicios de alimentos y departamentales."
+   ],
+   [
+    "Filtro del analista",
+    "Objetivo que opera autoservicio, supermercados o mayoreo de alimentos",
+    "23 operaciones evaluadas abajo (19 de la versión original + 4 agregadas en la auditoría)."
+   ],
+   [
+    "Criterios objetivos",
+    "Ventana de 3 años, ≥ 2 múltiplos, no recompra propia",
+    "Columnas X–Z (fórmulas)."
+   ],
+   [
+    "Juicio del analista",
+    "Adquisición real con control o participación estratégica relevante; calidad del dato; sin sanciones ni reestructura judicial",
+    "Columna AA (naranja) y motivo."
+   ]
+  ],
+  "headers": [
+   "M&A SDC Deal Number",
+   "Date Announced",
+   "Target Full Name",
+   "Target Nation",
+   "Target Mid Industry",
+   "Target Public Status",
+   "Acquiror Full Name",
+   "Acquiror Nation",
+   "Deal Status",
+   "Rank Value inc. Net Debt of Target (USD mm) — valor de la operación",
+   "Enterprise Value at Announcement (USD mm)",
+   "Valor de la operación (MXN mm, informativo)",
+   "EV al anuncio (MXN mm, informativo)",
+   "Ratio of EV to EBITDA (x)",
+   "Ratio of Offer Price to EPS (x)",
+   "Ratio of EV to Sales (x)",
+   "Premium Paid 1 Day Prior (%)",
+   "Premium Paid 4 Weeks Prior (%)",
+   "Target Net Sales LTM (USD mm)",
+   "# múltiplos disponibles",
+   "¿Ventana?",
+   "¿≥ 2 múltiplos?",
+   "Autoservicio / alimentos (juicio)",
+   "¿Recompra propia?",
+   "¿Dentro de la ventana y ≥ 2 múlt.?",
+   "Naturaleza de la operación (juicio)",
+   "Juicio del analista",
+   "Incluir (1/0)",
+   "Motivo / observaciones",
+   "Cambio en la auditoría"
+  ],
+  "deals": [
+   {
+    "id": "4144889040",
+    "date": "2023-10-16",
+    "target": "Almacenes Exito SA",
+    "targetNation": "Colombia",
+    "targetIndustry": "Discount and Department Store Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Cama Commercial Group Corp",
+    "acquirorNation": "Panama",
+    "status": "Completed",
+    "rankValue": 1019.99,
+    "ev": 1744.4696579188,
+    "evEbitda": 4.98,
+    "pe": null,
+    "evSales": 0.34,
+    "prem1d": 41.93,
+    "prem4w": 39.35,
+    "salesLtm": 5375.07,
+    "sector": "Sí",
+    "nature": "Control (OPA)",
+    "judgment": "Elegible",
+    "reason": "OPA por el control de Éxito (hiper y supermercados); vendedor grupo Casino. Comprador: Cama Commercial Group (vehículo de Grupo Calleja / Super Selectos). SDC clasifica al objetivo como \"Discount and Department Store Retailing\". Misma operación que la muestra CIQ.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 18849.4152,
+     "evMxn": 32237.7992783394
+    }
+   },
+   {
+    "id": "4150545040",
+    "date": "2023-10-30",
+    "target": "Profi Rom Food Srl",
+    "targetNation": "Romania",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Subsidiary",
+    "acquiror": "Koninklijke Ahold Delhaize NV",
+    "acquirorNation": "Netherlands",
+    "status": "Completed",
+    "rankValue": 1703.42,
+    "ev": 1711.68773934065,
+    "evEbitda": 21.31,
+    "pe": null,
+    "evSales": 0.69,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 2526.08,
+    "sector": "Sí",
+    "nature": "Control (100%)",
+    "judgment": "Elegible",
+    "reason": "Compra del 100% de la cadena de supermercados Profi (Rumania). Múltiplo alto por crecimiento y sinergias: atípico estadístico (ver sección 3).",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 31479.2016,
+     "evMxn": 31631.9894230152
+    }
+   },
+   {
+    "id": "4191742040",
+    "date": "2024-02-06",
+    "target": "Lawson Inc",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "KDDI CORP",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 3339.55,
+    "ev": 11027.0528552116,
+    "evEbitda": 3.24,
+    "pe": 13.72,
+    "evSales": 0.9,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 12244.6,
+    "sector": "Sí",
+    "nature": "Estratégica (control conjunto 50%)",
+    "judgment": "Elegible",
+    "reason": "OPA de KDDI; control conjunto 50/50 con Mitsubishi. Tiendas de conveniencia (formato de proximidad): comparabilidad con reserva.",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 61714.884,
+     "evMxn": 203779.93676431
+    }
+   },
+   {
+    "id": "4234985040",
+    "date": "2024-05-15",
+    "target": "KANSAI FOOD MARKET LTD",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "H2O RETAILING CORP",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 234.33,
+    "ev": 700.281215044876,
+    "evEbitda": 7.64,
+    "pe": 18.52,
+    "evSales": 0.28,
+    "prem1d": -3.23,
+    "prem4w": -6.59,
+    "salesLtm": 2544.58,
+    "sector": "Sí",
+    "nature": "Control (OPA)",
+    "judgment": "Elegible",
+    "reason": "OPA de H2O Retailing para consolidar el control del supermercado.",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 4330.4184,
+     "evMxn": 12941.1968540293
+    }
+   },
+   {
+    "id": "4291087040",
+    "date": "2024-09-23",
+    "target": "Yonghui Superstores Co Ltd",
+    "targetNation": "China (Mainland)",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Guangdong Juncai International Trading Co Ltd",
+    "acquirorNation": "China (Mainland)",
+    "status": "Completed",
+    "rankValue": 889.32,
+    "ev": 5614.07966947722,
+    "evEbitda": 12.77,
+    "pe": null,
+    "evSales": 0.53,
+    "prem1d": 3.07,
+    "prem4w": 5.86,
+    "salesLtm": 10235.95,
+    "sector": "Sí",
+    "nature": "Estratégica (~29%)",
+    "judgment": "Elegible",
+    "reason": "Compra de ~29% por Guangdong Juncai (filial de Miniso); queda como mayor accionista. Participación estratégica relevante, no control pleno.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 16434.6336,
+     "evMxn": 103748.192291939
+    }
+   },
+   {
+    "id": "4338758040",
+    "date": "2025-01-01",
+    "target": "Sun Art Retail Group Ltd",
+    "targetNation": "Hong Kong",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Paragon Shine Ltd",
+    "acquirorNation": "Hong Kong",
+    "status": "Completed",
+    "rankValue": 1333.8,
+    "ev": 824.101012589789,
+    "evEbitda": 2.2,
+    "pe": null,
+    "evSales": 0.08,
+    "prem1d": -44.35,
+    "prem4w": -43.9,
+    "salesLtm": 10128.92,
+    "sector": "Sí",
+    "nature": "Control (empresa en dificultad)",
+    "judgment": "Elegible",
+    "reason": "Compra de control a Alibaba con descuento (prima 1 día −44.4%): operación en dificultad; se conserva y se cuantifica su efecto en la sección 4.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 24648.624,
+     "evMxn": 15229.3867126593
+    }
+   },
+   {
+    "id": "4353024040",
+    "date": "2025-02-05",
+    "target": "METRO AG",
+    "targetNation": "Germany",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "EP Global Commerce GmbH",
+    "acquirorNation": "Germany",
+    "status": "Completed",
+    "rankValue": 294.05,
+    "ev": 5048.57632795548,
+    "evEbitda": 5.11,
+    "pe": null,
+    "evSales": 0.16,
+    "prem1d": 38.8,
+    "prem4w": 26.45,
+    "salesLtm": 32597.58,
+    "sector": "Sí",
+    "nature": "Control (oferta y exclusión de bolsa)",
+    "judgment": "Elegible",
+    "reason": "Oferta de EP Global Commerce (prima 1 día +38.8%). Mayoreo de alimentos (cash & carry), comparable con City Club.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 5434.044,
+     "evMxn": 93297.6905406173
+    }
+   },
+   {
+    "id": "4340542040",
+    "date": "2025-03-05",
+    "target": "Seiyu Co Ltd",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Subsidiary",
+    "acquiror": "Trial Holdings Inc",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 2536.72,
+    "ev": 2552.39118753358,
+    "evEbitda": null,
+    "pe": 3.88,
+    "evSales": 0.69,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 3508.95,
+    "sector": "Sí",
+    "nature": "Control (vendedor KKR/Walmart)",
+    "judgment": "Elegible",
+    "reason": "Compra de control por Trial Holdings. Sin EV/EBITDA: solo aporta EV/Ventas (no usado en el precio). P/E 3.88x distorsionado.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 46878.5856,
+     "evMxn": 47168.1891456206
+    }
+   },
+   {
+    "id": "4172416040",
+    "date": "2023-12-21",
+    "target": "Chengdu Hongqi Chain Co Ltd",
+    "targetNation": "China (Mainland)",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Sichuan Shangtou Investment Co Ltd",
+    "acquirorNation": "China (Mainland)",
+    "status": "Completed",
+    "rankValue": 182.33,
+    "ev": 957.342430058419,
+    "evEbitda": 4.97,
+    "pe": 13.41,
+    "evSales": 0.67,
+    "prem1d": null,
+    "prem4w": 7.79,
+    "salesLtm": 1419.49,
+    "sector": "Sí",
+    "nature": "Cambio de control (inversionista estatal)",
+    "judgment": "Elegible",
+    "reason": "CORRECCIÓN: el objetivo es Chengdu Hongqi Chain (cadena de conveniencia y supermercados de Sichuan), no \"Chongqing Department Store\". Sichuan Shangtou Investment pasa a ser el accionista de control. La pantalla no reporta el % adquirido: decisión del analista con base en el anuncio.",
+    "change": "Corregido",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 1,
+     "rankMxn": 3369.4584,
+     "evMxn": 17691.6881074796
+    }
+   },
+   {
+    "id": "4163818040",
+    "date": "2023-11-30",
+    "target": "Seven & i Holdings Co Ltd",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Seven & i Holdings Co Ltd",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 747.08,
+    "ev": 23898.2636401176,
+    "evEbitda": 3.36,
+    "pe": 11.07,
+    "evSales": 0.31,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 76488.55,
+    "sector": "Sí",
+    "nature": "Recompra propia",
+    "judgment": "No elegible",
+    "reason": "Recompra propia: no hay cambio de control.",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "Sí",
+     "include": 0,
+     "rankMxn": 13806.0384,
+     "evMxn": 441639.912069373
+    }
+   },
+   {
+    "id": "4220226040",
+    "date": "2024-03-26",
+    "target": "Carrefour SA",
+    "targetNation": "France",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Carrefour SA",
+    "acquirorNation": "France",
+    "status": "Completed",
+    "rankValue": 395.51,
+    "ev": 25430.5705943316,
+    "evEbitda": 5.16,
+    "pe": 11.59,
+    "evSales": 0.28,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 93703.99,
+    "sector": "Sí",
+    "nature": "Recompra propia",
+    "judgment": "No elegible",
+    "reason": "Recompra propia: no hay cambio de control.",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "Sí",
+     "include": 0,
+     "rankMxn": 7309.0248,
+     "evMxn": 469956.944583248
+    }
+   },
+   {
+    "id": "4382315040",
+    "date": "2025-04-09",
+    "target": "Seven & i Holdings Co Ltd",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Seven & i Holdings Co Ltd",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 4101.72,
+    "ev": 57481.8306496952,
+    "evEbitda": 8.74,
+    "pe": 17.36,
+    "evSales": 0.78,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 70151.19,
+    "sector": "Sí",
+    "nature": "Recompra propia",
+    "judgment": "No elegible",
+    "reason": "Recompra propia: no hay cambio de control.",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "Sí",
+     "include": 0,
+     "rankMxn": 75799.7856,
+     "evMxn": 1062264.23040637
+    }
+   },
+   {
+    "id": "4488172040",
+    "date": "2025-11-07",
+    "target": "J Sainsbury PLC",
+    "targetNation": "United Kingdom",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "J Sainsbury PLC",
+    "acquirorNation": "United Kingdom",
+    "status": "Completed",
+    "rankValue": 120.85,
+    "ev": 13917.2561899704,
+    "evEbitda": 4.71,
+    "pe": 17.52,
+    "evSales": 0.32,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 41267.77,
+    "sector": "Sí",
+    "nature": "Recompra propia",
+    "judgment": "No elegible",
+    "reason": "Recompra propia: no hay cambio de control.",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "Sí",
+     "include": 0,
+     "rankMxn": 2233.308,
+     "evMxn": 257190.894390653
+    }
+   },
+   {
+    "id": "4343070040",
+    "date": "2025-01-14",
+    "target": "YAOKO Co Ltd",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "YAOKO Co Ltd",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 2412.71,
+    "ev": 2864.30135395037,
+    "evEbitda": 10.68,
+    "pe": 20.83,
+    "evSales": 0.73,
+    "prem1d": null,
+    "prem4w": -1.64,
+    "salesLtm": 4094.82,
+    "sector": "Sí",
+    "nature": "Recompra propia",
+    "judgment": "No elegible",
+    "reason": "Recompra propia de YAOKO (supermercados, Japón): no hay cambio de control.",
+    "change": "Agregada",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "Sí",
+     "include": 0,
+     "rankMxn": 44586.8808,
+     "evMxn": 52932.2890210028
+    }
+   },
+   {
+    "id": "4143788040",
+    "date": "2023-10-10",
+    "target": "Magnit PJSC",
+    "targetNation": "Russia",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Magnit PJSC",
+    "acquirorNation": "Russia",
+    "status": "Completed",
+    "rankValue": 180.44,
+    "ev": 7977.49404833716,
+    "evEbitda": 3.63,
+    "pe": 6.67,
+    "evSales": 0.32,
+    "prem1d": -59.55,
+    "prem4w": -61.42,
+    "salesLtm": 28121.76,
+    "sector": "Sí",
+    "nature": "Recompra propia",
+    "judgment": "No elegible",
+    "reason": "Recompra propia en un mercado con sanciones (Rusia).",
+    "change": "",
+    "expected": {
+     "nMultiples": 3,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "Sí",
+     "include": 0,
+     "rankMxn": 3334.5312,
+     "evMxn": 147424.090013271
+    }
+   },
+   {
+    "id": "4391691040",
+    "date": "2025-04-30",
+    "target": "Gorodskoi Supermarket OOO",
+    "targetNation": "Russia",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Private",
+    "acquiror": "Tander AO",
+    "acquirorNation": "Russia",
+    "status": "Completed",
+    "rankValue": 361.67,
+    "ev": 478.100359459312,
+    "evEbitda": null,
+    "pe": 44.78,
+    "evSales": 0.45,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 966.99,
+    "sector": "Sí",
+    "nature": "Control (Rusia)",
+    "judgment": "No elegible",
+    "reason": "Rusia: valuaciones distorsionadas por sanciones; además sin EV/EBITDA.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 6683.6616,
+     "evMxn": 8835.29464280809
+    }
+   },
+   {
+    "id": "4228856040",
+    "date": "2024-04-09",
+    "target": "Better Life Commercial Chain Share Co Ltd",
+    "targetNation": "China (Mainland)",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Investor Group",
+    "acquirorNation": "China (Mainland)",
+    "status": "Completed",
+    "rankValue": 345.7,
+    "ev": 2318.25964976686,
+    "evEbitda": 45.98,
+    "pe": null,
+    "evSales": 5.64,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 411.61,
+    "sector": "Sí",
+    "nature": "Reestructura por insolvencia",
+    "judgment": "No elegible",
+    "reason": "Better Life Commercial Chain (Bubugao, supermercados de Hunan) en reestructura judicial: EV/EBITDA 46.0x y EV/Ventas 5.6x no representan una adquisición en marcha.",
+    "change": "Agregada",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 6388.536,
+     "evMxn": 42841.4383276916
+    }
+   },
+   {
+    "id": "4292215040",
+    "date": "2024-09-04",
+    "target": "Wincommerce General Commercial Services JSC",
+    "targetNation": "Vietnam",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Subsidiary",
+    "acquiror": "Masan Consumer Holdings Co Ltd",
+    "acquirorNation": "Vietnam",
+    "status": "Completed",
+    "rankValue": 200.0,
+    "ev": 2951.11460542751,
+    "evEbitda": 323.13,
+    "pe": null,
+    "evSales": 2.45,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 1235.0,
+    "sector": "Sí",
+    "nature": "Reorganización intragrupo",
+    "judgment": "No elegible",
+    "reason": "Wincommerce (WinMart, Vietnam) adquirida por otra empresa del grupo Masan: reorganización intragrupo; EV/EBITDA 323.1x por EBITDA cercano a cero.",
+    "change": "Agregada",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 3696.0,
+     "evMxn": 54536.5979083004
+    }
+   },
+   {
+    "id": "4467353040",
+    "date": "2025-12-16",
+    "target": "Prosol Gestion SAS",
+    "targetNation": "France",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Subsidiary",
+    "acquiror": "Apollo Global Management Inc",
+    "acquirorNation": "United States",
+    "status": "Completed",
+    "rankValue": 1727.54,
+    "ev": 2464.14635578787,
+    "evEbitda": null,
+    "pe": 33.81,
+    "evSales": 44.45,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 52.55,
+    "sector": "Sí",
+    "nature": "Control (fondo)",
+    "judgment": "No elegible",
+    "reason": "Prosol (Grand Frais, alimentos frescos) adquirida por Apollo. Sin EV/EBITDA y EV/Ventas 44.5x incongruente con un minorista de alimentos: dato no confiable.",
+    "change": "Agregada",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "Sí",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 31924.9392,
+     "evMxn": 45537.4246549598
+    }
+   },
+   {
+    "id": "4069894040",
+    "date": "2023-04-25",
+    "target": "Inageya Co Ltd",
+    "targetNation": "Japan",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Public",
+    "acquiror": "AEON CO LTD",
+    "acquirorNation": "Japan",
+    "status": "Completed",
+    "rankValue": 170.08,
+    "ev": 463.756508264154,
+    "evEbitda": 10.27,
+    "pe": null,
+    "evSales": 0.24,
+    "prem1d": 25.88,
+    "prem4w": 27.27,
+    "salesLtm": 1704.63,
+    "sector": "Sí",
+    "nature": "Control",
+    "judgment": "Elegible",
+    "reason": "Fuera de la ventana de 3 años.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "No",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 3143.0784,
+     "evMxn": 8570.22027272157
+    }
+   },
+   {
+    "id": "4069904040",
+    "date": "2023-04-24",
+    "target": "Casino Guichard-Perrachon SA",
+    "targetNation": "France",
+    "targetIndustry": "Discount and Department Store Retailing",
+    "publicStatus": "Public",
+    "acquiror": "Investor Group",
+    "acquirorNation": "Czech Republic",
+    "status": "Completed",
+    "rankValue": 1347.24,
+    "ev": 12843.1336704335,
+    "evEbitda": 6.38,
+    "pe": null,
+    "evSales": 0.4,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 31598.64,
+    "sector": "Sí",
+    "nature": "Control (reestructura de deuda)",
+    "judgment": "Elegible",
+    "reason": "Fuera de la ventana; reestructura de deuda.",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "No",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 24896.9952,
+     "evMxn": 237341.110229611
+    }
+   },
+   {
+    "id": "4115751040",
+    "date": "2023-08-03",
+    "target": "Dia Portugal Supermercados SA",
+    "targetNation": "Portugal",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Subsidiary",
+    "acquiror": "Auchan Retail Portugal Sa",
+    "acquirorNation": "Portugal",
+    "status": "Completed",
+    "rankValue": 186.02,
+    "ev": 186.161271258783,
+    "evEbitda": 46.78,
+    "pe": null,
+    "evSales": 0.29,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": 625.09,
+    "sector": "Sí",
+    "nature": "Control",
+    "judgment": "Elegible",
+    "reason": "Fuera de la ventana; EBITDA deprimido (46.8x).",
+    "change": "",
+    "expected": {
+     "nMultiples": 2,
+     "inWindow": "No",
+     "enough": "Sí",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 3437.6496,
+     "evMxn": 3440.26029286231
+    }
+   },
+   {
+    "id": "4364904040",
+    "date": "2025-03-05",
+    "target": "Rimi Baltic AB",
+    "targetNation": "Latvia",
+    "targetIndustry": "Food & Beverage Retailing",
+    "publicStatus": "Subsidiary",
+    "acquiror": "Salling Group A/S",
+    "acquirorNation": "Denmark",
+    "status": "Completed",
+    "rankValue": 1381.11,
+    "ev": null,
+    "evEbitda": null,
+    "pe": 27.76,
+    "evSales": null,
+    "prem1d": null,
+    "prem4w": null,
+    "salesLtm": null,
+    "sector": "Sí",
+    "nature": "Control",
+    "judgment": "Elegible",
+    "reason": "Solo 1 múltiplo disponible.",
+    "change": "",
+    "expected": {
+     "nMultiples": 1,
+     "inWindow": "Sí",
+     "enough": "No",
+     "buyback": "No",
+     "include": 0,
+     "rankMxn": 25522.9128,
+     "evMxn": null
+    }
+   }
+  ],
+  "official": "median",
+  "weightNote": "Decisión: peso 0%. La muestra es global (ninguna operación mexicana), mezcla control pleno con participaciones estratégicas, incluye una operación en dificultad y un atípico, y su dispersión es muy amplia (P25–P75 de EV/EBITDA). El EBITDA de SDC no es homogéneo (normas locales; tratamiento de arrendamientos no verificable). Se usa como referencia de mercado y método de contraste; su conclusión (precio por debajo del mercado) es coherente con el consenso de analistas, pero no se incorpora al precio objetivo.",
+  "statNote": "Mediana (estadístico central robusto) en lugar de la media: con n pequeño y un atípico (Profi 21.3x) la media se desplaza al alza.",
+  "sensitivity": [
+   {
+    "label": "Muestra auditada (oficial)",
+    "drop": [],
+    "n": 8,
+    "median": 5.045,
+    "priceMedian": 23.7448001083333,
+    "meanEx": 5.84428571428571,
+    "priceMeanEx": 28.9893892547619,
+    "dropped": "—"
+   },
+   {
+    "label": "Sin Sun Art (empresa en dificultad)",
+    "drop": [
+     "4338758040"
+    ],
+    "n": 7,
+    "median": 5.11,
+    "priceMedian": 24.1713037833333,
+    "meanEx": 6.45166666666667,
+    "priceMeanEx": 32.974777075,
+    "dropped": "Sun Art Retail Group Ltd"
+   },
+   {
+    "label": "Sin participaciones no de control (Lawson 50%, Yonghui ~29%)",
+    "drop": [
+     "4191742040",
+     "4291087040"
+    ],
+    "n": 6,
+    "median": 5.045,
+    "priceMedian": 23.7448001083333,
+    "meanEx": 4.98,
+    "priceMeanEx": 23.3182964333333,
+    "dropped": "Lawson Inc, Yonghui Superstores Co Ltd"
+   },
+   {
+    "label": "Sin Chengdu Hongqi (control no verificable en la pantalla)",
+    "drop": [
+     "4172416040"
+    ],
+    "n": 7,
+    "median": 5.11,
+    "priceMedian": 24.1713037833333,
+    "meanEx": 5.99,
+    "priceMeanEx": 29.9455073833333,
+    "dropped": "Chengdu Hongqi Chain Co Ltd"
+   }
+  ],
+  "original": {
+   "label": "Versión original del libro PRO (EV/EBITDA, n = 7, sin Hongqi)",
+   "n": 7,
+   "median": 5.11,
+   "priceMedian": 24.1713037833333,
+   "meanEx": 5.99,
+   "priceMeanEx": 29.9455073833333
+  }
  },
  "combined": {
   "weights": {
@@ -1434,10 +2497,268 @@ export const SORIANA_XL = {
   "reasons": {
    "dcf": "Proyección Final Soriana!B265. Metodología principal existente. Peso: con Transactions en 0%, se conserva la regla de clase de pesos iguales entre los métodos activos (50/50).",
    "comps": "Trading Comps (sección 5). Metodología complementaria. Peso igual al DCF por la regla de pesos iguales de la diap. 18.",
-   "transactions": "Precedent Transactions (sección 4). Peso 0% por decisión del proyecto: la muestra no es defendible. El método sigue calculándose."
+   "transactions": "Transacciones SDC (auditada): mediana de EV/EBITDA de las operaciones elegibles. Peso 0%: muestra global, sin operaciones mexicanas, control mixto y dispersión amplia. Se calcula y se muestra como referencia. La muestra CIQ (3 operaciones) queda como histórico."
   },
-  "classRule": "Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Transactions 0% por decisión del proyecto."
+  "transactionsSource": "sdc",
+  "classRule": "Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Precedent Transactions 0% (referencia LSEG/SDC)."
  },
+ "recommendation": {
+  "buy": 0.1,
+  "sell": -0.1,
+  "target": 35.9164595827377,
+  "potential": 0.0727735837137917,
+  "rating": "MANTENER",
+  "experts": "Venta (0 C / 1 M / 6 V)",
+  "fairLo": 28.9893892547619,
+  "fairHi": 38.3400783109781,
+  "rule": "Precio objetivo = valuación combinada; COMPRAR si el potencial supera +10%, VENDER si es menor que −10% (hoja Transacciones SDC §7)."
+ },
+ "external": [
+  {
+   "key": "team_dcf",
+   "source": "Modelo del equipo (este libro)",
+   "method": "DCF (FCFF, 50% Gordon / 50% múltiplo, a la fecha de valuación)",
+   "date": "01-oct-2026",
+   "value": 38.3400783109781,
+   "lo": 37.9348536027754,
+   "hi": 39.1434242577885,
+   "refPrice": 33.48,
+   "refDate": "25-sep-2026",
+   "diff": 0.145163629360159,
+   "assumptions": "βU 0.1705 (regresión semanal desapalancada; βL observada 0.2178), WACC iterado, g 3.5%, múltiplo de salida 5.81x",
+   "limits": "Rango = escenarios de inflación Cautela–Alcista.",
+   "official": "Sí (50%)",
+   "page": "—"
+  },
+  {
+   "key": "team_comps",
+   "source": "Modelo del equipo (este libro)",
+   "method": "Trading Comps (7 pares CIQ, promedio de 3 múltiplos a la media)",
+   "date": "30-jun-2026",
+   "value": 33.4928408544974,
+   "lo": 27.031161037037,
+   "hi": 40.0699866203704,
+   "refPrice": 33.48,
+   "refDate": "25-sep-2026",
+   "diff": 0.000383538067423972,
+   "assumptions": "EV/EBITDA, EV/EBIT y P/U LTM; puente al 2T26",
+   "limits": "Múltiplos CIQ al 30-jun-2026; precio de mercado de otra fecha.",
+   "official": "Sí (50%)",
+   "page": "—"
+  },
+  {
+   "key": "team_sdc",
+   "source": "Modelo del equipo (este libro)",
+   "method": "Precedent Transactions LSEG/SDC (mediana EV/EBITDA)",
+   "date": "19-oct-2026",
+   "value": 23.7448001083333,
+   "lo": 20.4147906458333,
+   "hi": 49.1873847208333,
+   "refPrice": 33.48,
+   "refDate": "25-sep-2026",
+   "diff": -0.290776579798885,
+   "assumptions": "Muestra global auditada; rango P25–P75",
+   "limits": "Sin operaciones mexicanas; control mixto; dispersión amplia.",
+   "official": "No (0%, referencia)",
+   "page": "—"
+  },
+  {
+   "key": "team_ciq_trans",
+   "source": "Modelo del equipo (este libro)",
+   "method": "Precedent Transactions CIQ (3 operaciones, media)",
+   "date": "—",
+   "value": 40.7283951666667,
+   "lo": 24.7618473333333,
+   "hi": 65.4437363333333,
+   "refPrice": 33.48,
+   "refDate": "25-sep-2026",
+   "diff": 0.21649925826364,
+   "assumptions": "Media de EV/EBITDA 7.63x",
+   "limits": "Histórico: 1 de 3 en la ventana; no defendible.",
+   "official": "No (histórico)",
+   "page": "—"
+  },
+  {
+   "key": "team_combined",
+   "source": "Modelo del equipo (este libro)",
+   "method": "Valuación combinada (DCF 50% / Comps 50%)",
+   "date": "01-oct-2026",
+   "value": 35.9164595827377,
+   "lo": null,
+   "hi": null,
+   "refPrice": 33.48,
+   "refDate": "25-sep-2026",
+   "diff": 0.0727735837137917,
+   "assumptions": "Transacciones 0%",
+   "limits": "—",
+   "official": "Sí (precio objetivo)",
+   "page": "—"
+  },
+  {
+   "key": "indiv_dcf",
+   "source": "Modelo individual del autor del reporte (SORIANA_FINAL)",
+   "method": "DCF",
+   "date": "07-oct-2026",
+   "value": 39.21,
+   "lo": 32.12,
+   "hi": 47.74,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": 0.184592145015106,
+   "assumptions": "βU 0.1705 (regresión, no significativa al 95%), WACC 9.63%, Ke 10.39%, g 3.5%",
+   "limits": "Misma βU que el equipo desde el 19-oct-2026; la diferencia restante es proyección, fecha y precio de referencia.",
+   "official": "No (otro modelo)",
+   "page": "1, 5–7"
+  },
+  {
+   "key": "indiv_combined",
+   "source": "Modelo individual del autor del reporte",
+   "method": "Valuación combinada (50% DCF / 50% comps)",
+   "date": "07-oct-2026",
+   "value": 36.35,
+   "lo": null,
+   "hi": null,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": 0.0981873111782476,
+   "assumptions": "Transacciones 0%",
+   "limits": "Modelo distinto del equipo.",
+   "official": "No",
+   "page": "8"
+  },
+  {
+   "key": "app_hist",
+   "source": "ValuFlow (app del equipo, versión anterior)",
+   "method": "DCF",
+   "date": "01-oct-2026",
+   "value": 31.16,
+   "lo": 25.91,
+   "hi": 37.56,
+   "refPrice": 33.48,
+   "refDate": "25-sep-2026",
+   "diff": -0.069295101553166,
+   "assumptions": "βU 0.80 (heredada), WACC 11.88%, Ke 13.95%",
+   "limits": "Salida histórica antes de esta actualización.",
+   "official": "No (histórico)",
+   "page": "9"
+  },
+  {
+   "key": "ciq_dcf_author",
+   "source": "S&P Capital IQ (estimados de consenso; DCF construido por el autor)",
+   "method": "DCF con estimados CIQ",
+   "date": "19-oct-2026",
+   "value": 38.27,
+   "lo": 34.8,
+   "hi": 43.0,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": 0.15619335347432,
+   "assumptions": "WACC y g del modelo individual; horizonte de 4 años; sin capital de trabajo",
+   "limits": "No es un DCF nativo de Capital IQ.",
+   "official": "No",
+   "page": "12–13"
+  },
+  {
+   "key": "ciq_multiples",
+   "source": "S&P Capital IQ",
+   "method": "Múltiplos (Implied Valuation: promedio de medianas de 4 múltiplos, 10 pares)",
+   "date": "19-oct-2026",
+   "value": 29.7,
+   "lo": 25.3,
+   "hi": 33.8,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": -0.102719033232628,
+   "assumptions": "EV/EBITDA y P/U, LTM y NTM; USD→MXN a 18.48",
+   "limits": "3 de 10 pares de otra industria; selección de múltiplos del autor.",
+   "official": "No",
+   "page": "15"
+  },
+  {
+   "key": "ciq_trans",
+   "source": "S&P Capital IQ",
+   "method": "Transacciones (mediana 6.3x EV/EBITDA)",
+   "date": "19-oct-2026",
+   "value": 28.54,
+   "lo": 21.91,
+   "hi": 59.3,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": -0.137764350453172,
+   "assumptions": "Media 7.6x → $36.58; mín–máx",
+   "limits": "Estadísticos calculados por el autor (CIQ los mostró vacíos).",
+   "official": "No",
+   "page": "16"
+  },
+  {
+   "key": "ciq_combined",
+   "source": "S&P Capital IQ",
+   "method": "Combinada (50% DCF consenso / 50% múltiplos)",
+   "date": "19-oct-2026",
+   "value": 33.98,
+   "lo": null,
+   "hi": null,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": 0.0265861027190331,
+   "assumptions": "⅓ cada método: $32.17",
+   "limits": "Construida por el autor.",
+   "official": "No",
+   "page": "17"
+  },
+  {
+   "key": "ciq_consensus",
+   "source": "S&P Capital IQ",
+   "method": "Precio objetivo de analistas (media; 7 analistas)",
+   "date": "19-oct-2026",
+   "value": 23.36,
+   "lo": 18.5,
+   "hi": 30.0,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": -0.294259818731118,
+   "assumptions": "Mediana 22.00; calificación media 4.14/5 (Underperform)",
+   "limits": "Estimación de analistas a 12 meses, no valor intrínseco.",
+   "official": "No",
+   "page": "11"
+  },
+  {
+   "key": "ref_consensus",
+   "source": "LSEG Refinitiv",
+   "method": "Precio objetivo de analistas (media; 7 analistas)",
+   "date": "19-oct-2026",
+   "value": 22.42,
+   "lo": null,
+   "hi": null,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": -0.322658610271903,
+   "assumptions": "Mediana 21.50; 6 venta / 1 mantener; calificación 3.86/5 (Sell)",
+   "limits": "Sin máximo ni mínimo reportados. No es valor intrínseco.",
+   "official": "No",
+   "page": "18"
+  },
+  {
+   "key": "starmine_iv",
+   "source": "LSEG Refinitiv · StarMine",
+   "method": "Valor intrínseco StarMine (aprox.)",
+   "date": "19-oct-2026",
+   "value": 51.0,
+   "lo": 49.5,
+   "hi": 52.5,
+   "refPrice": 33.1,
+   "refDate": "07-oct-2026",
+   "diff": 0.540785498489426,
+   "assumptions": "WACC y g no observables (paneles sin cargar)",
+   "limits": "LEÍDO DE UNA GRÁFICA (±1.5): aproximado, no verificado numéricamente.",
+   "official": "No",
+   "page": "17, 24"
+  }
+ ],
+ "externalNotes": [
+  "StarMine relativo (solo puntajes): mercados emergentes 61, México 24, Consumer Staples 56, Food & Staples Retailing 33 (p. 17). No se convierten a precio.",
+  "Lectura: con la beta de regresión el DCF del equipo y el modelo individual usan la misma βU; las diferencias restantes vienen de la proyección, de la fecha y el precio de referencia (25-sep vs. 7-oct-2026), de la definición de EBITDA de CIQ y del estadístico usado (media vs. mediana)."
+ ],
  "registry": [
   [
    "Inflación INPC quincenal",
@@ -1485,13 +2806,13 @@ export const SORIANA_XL = {
    "Encuesta Citi de Expectativas (comentario original de Proyección Final!C10). Referencia histórica del modelo anterior; no es escenario."
   ],
   [
-   "Beta desapalancada sectorial (βU)",
-   "WACC!B9 ← 'Beta y Kd'!B28",
-   "0.65",
-   "ene-2026",
+   "Beta desapalancada (βU) · regresión semanal desapalancada (oficial)",
+   "WACC!B9 ← 'Beta y Kd'!B19 ← H8",
+   0.170520815748403,
+   "7-oct-2026",
    "x",
-   "Observado",
-   "Damodaran, Betas by Sector (Global), Retail (Grocery and Food): βL 0.87, D/E 45.96%, t marginal 25.37% → βU 0.65; reapalancada con la estructura de Soriana (Hamada)."
+   "Modelo",
+   "Regresión semanal de rendimientos Soriana B vs. S&P/BMV IPC (Investing.com): βL observada 0.2178 (p = 0.087, no significativa al 95%), desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705. Referencia (no usada): Damodaran, Betas by Sector (Global), ene-2026, Retail (Grocery and Food), βU corregida por caja 0.69."
   ],
   [
    "Beta heredada (histórico)",
@@ -1515,28 +2836,28 @@ export const SORIANA_XL = {
    "Rf Bono M 10 años",
    "WACC!B5",
    "9.517%",
-   "—",
-   "%",
-   "Pendiente",
-   "Input heredado; fecha y fuente exacta pendientes."
+   "25-sep-2026",
+   "% anual",
+   "Observado",
+   "Cierre del Bono M 10 años el 25-sep-2026 (misma fecha que el precio de Soriana, WACC!B14): 9.517%. Fuente consultada: Investing.com, histórico Mexico 10Y (no oficial); confirmar en Banxico SIE (vector de precios de valores gubernamentales). Al usar el Bono M en pesos, el Rf ya incorpora el riesgo soberano de México."
   ],
   [
    "Prima de riesgo de mercado",
    "WACC!B6",
    "4.23%",
-   "—",
-   "%",
-   "Pendiente",
-   "Input heredado (\"madura\"); fecha y fuente exacta pendientes."
+   "ene-2026",
+   "% anual",
+   "Observado",
+   "Damodaran, Historical Implied Equity Risk Premiums (ene-2026): ERP implícita del S&P 500 = 4.23%. La prima país México (2.46%, Damodaran Country Risk Premiums, 5-ene-2026) queda solo como referencia en WACC!B7 para no duplicar el riesgo país ya incluido en el Rf en pesos."
   ],
   [
    "Crecimiento perpetuo g",
    "Proyección Final!B123",
    "3.50%",
-   "—",
-   "%",
-   "Pendiente",
-   "Input heredado; no ligado a la inflación (sin sustento documental)."
+   "oct-2026",
+   "% anual",
+   "Supuesto",
+   "g nominal = inflación de largo plazo (escenario Base 3.51%, Inflación!B48; meta de Banxico 3% ±1 pp) → crecimiento real ≈ 0%, prudente para un autoservicio maduro con ventas a la baja. g < Rf (9.52%) y g < WACC; FCF terminal normalizado con capex = D&A (Proyección Final!B127)."
   ],
   [
    "Múltiplos de comparables",
@@ -1567,17 +2888,43 @@ export const SORIANA_XL = {
   ],
   [
    "Pesos de la combinada",
-   "Valuación Combinada!C6:C8",
+   "Valuación Combinada!C4:C6",
    "50/50/0",
    "—",
    "%",
    "Supuesto",
-   "Regla de pesos iguales de la diap. 18 entre métodos activos; Transactions 0% por decisión del proyecto."
+   "Pesos iguales entre métodos activos (diap. 18). Precedent Transactions = 0%: la muestra CIQ (3 operaciones) no es defendible y la muestra LSEG/SDC auditada es global, de control mixto y muy dispersa; se muestra como referencia."
+  ],
+  [
+   "Transacciones LSEG/SDC",
+   "Transacciones SDC",
+   "23 evaluadas · 166 en pantalla",
+   "19-oct-2026",
+   "USD mm / x",
+   "Observado",
+   "LSEG/SDC (Refinitiv), GridExport_October_19_2026_9_29_57.pdf (Current Screen Template, 19-oct-2026 09:29:57). Juicio del analista separado en columnas naranjas."
+  ],
+  [
+   "Contraste S&P Capital IQ / LSEG Refinitiv",
+   "Contraste externo",
+   "13 referencias",
+   "19-oct-2026",
+   "MXN por acción / x",
+   "Referencia",
+   "Soriana_Reporte_Valuacion_CapitalIQ_Refinitiv.pdf (consulta 19-oct-2026; último cierre en CIQ 7-oct-2026). No se incorpora al precio oficial."
+  ],
+  [
+   "Tipo de cambio de referencia",
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
   ]
  ],
  "beta": {
-  "source": "Aswath Damodaran, NYU Stern — Betas by Sector (Global)",
-  "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/BetasGlobal.html",
+  "source": "Aswath Damodaran, NYU Stern  Betas by Sector",
   "date": "Enero de 2026",
   "industry": "Retail (Grocery and Food)",
   "firms": 215,
@@ -1590,12 +2937,21 @@ export const SORIANA_XL = {
   "unleveredCash": 0.69,
   "check": 0.647803675992488,
   "inherited": 0.8,
-  "used": 0.65,
+  "used": 0.170520815748403,
+  "regression": {
+   "levered": 0.217837909377843,
+   "debt": 23618,
+   "equity": 59580,
+   "de": 0.396408190668009,
+   "tax": 0.3,
+   "unlevered": 0.170520815748403,
+   "source": "Regresión semanal (Investing.com); error típico 0.1269, t 1.716, p 0.0874, IC 95% −0.032 a 0.468",
+   "note": "Beta apalancada observada en la regresión semanal (βL; no se usa directamente: se desapalanca)"
+  },
   "treatment": [
-   "El WACC del modelo reapalanca la beta en cada paso: βL = βU × [1 + (1 − t) × D/E] (WACC!B28 a valor de mercado; Proyección Final!E214:E219 en la iteración al valor DCF).",
-   "Por eso el insumo correcto es una beta DESAPALANCADA. Usar la βL de 0.87 en esa fórmula aplicaría el apalancamiento dos veces (el de la industria y el de Soriana).",
-   "Se usa la βU sin corrección por caja (0.65): Damodaran la obtuvo con D/E bruta y el modelo reapalanca con deuda bruta (bancaria + arrendamientos), así el tratamiento es simétrico; el efectivo se suma por separado en el puente EV → capital.",
-   "La beta heredada 0.80 no tenía fuente en el Excel; coincide con la βU de \"Grocery and Food\" del archivo de Estados Unidos de Damodaran (15 empresas), pero la muestra global (215 empresas) es más representativa para una empresa mexicana."
+   "BETA DESAPALANCADA USADA EN EL WACC (βU) — regresión semanal desapalancada",
+   "Menor βU → menor βL y Ke → menor WACC → mayor EV y precio. El cambio no altera los flujos (FCF) ni el puente. La βU de regresión se reapalanca con la D/E de este libro; la βL observada (0.2178) no se usa directamente.",
+   "Referencia (NO usada): Ke con la βL de la industria 0.87 sin reapalancar"
   ],
   "kd": {
    "value": 0.1,
@@ -1609,8 +2965,135 @@ export const SORIANA_XL = {
   "DCF principal: el DCF de ValuFlow (Proyección Final Soriana): descuento de fin de periodo, valor terminal 50% Gordon / 50% múltiplo de salida, WACC iterado al valor DCF y traslado a la fecha de valuación.",
   "Referencia de Capital IQ (no reemplaza el DCF principal): la metodología de clase de CIQ usa convención de medio año (mid-year) y valor terminal por múltiplo de salida. Se documenta solo como referencia metodológica.",
   "Trading Comps y Precedent Transactions: metodología de la presentación de clase (CIQ Valuations): 6 estadísticos, percentiles inclusivos, puente EV → capital, NM/NA y promedio de precios implícitos a la media.",
-  "Valuación combinada: DCF 50% + Trading Comps 50% + Precedent Transactions 0% (referencia). Los pesos son editables y deben sumar 100%."
+  "Valuación combinada: DCF 50% + Trading Comps 50% + Precedent Transactions 0% (referencia). Los pesos son editables y deben sumar 100%.",
+  "Margen EBIT 2026E (4.39%) vs. margen real 1S26 (4.38%) y FY2025 (4.25%): la mejora proyectada ya se observa en el 1S26 (austeridad y cierres de tiendas); el margen se mantiene estable hacia 2030.",
+  "Kd: el DCF usa 10.0% (prospectivo; intereses 1S26 anualizados / deuda = 9.9%). El 13.0% de la hoja WACC es histórico FY2025 (tasas más altas de 2025). Conciliación en WACC!A35:B42."
  ],
+ "audit": {
+  "note": "Original: \"EXCEL FINAL PRO DEFINITIVO SORIANA.xlsx\" (se conserva sin cambios). Este libro se genera con tools/excel/audit_pro.py. Recálculo independiente en LibreOffice: todas las fórmulas del original coinciden con sus valores guardados, salvo las 16 con FILTER de la hoja SDC (#NAME? fuera de Excel 365), que se sustituyen.",
+  "findings": [
+   [
+    "Transacciones SDC",
+    "Compatibilidad",
+    "Estadísticos con FILTER (Excel 365): en LibreOffice/Excel anterior dan #NAME? y n = 0.",
+    "El modelo de transacciones no se recalcula fuera de Excel 365.",
+    "Columnas auxiliares AE:AG y MIN/PERCENTILE/AVERAGE/MEDIAN.",
+    "Validación: controles SDC (fila 62 en adelante)."
+   ],
+   [
+    "Transacciones SDC",
+    "Dato",
+    "La columna \"EV (USD mm)\" es el Enterprise Value at Announcement; la pantalla también trae el Rank Value (valor de la operación), que no estaba.",
+    "No se podía distinguir el tamaño de la operación de su EV.",
+    "Se muestran ambos por separado (USD mm) con equivalente MXN informativo.",
+    "Cotejo campo por campo contra la pantalla (19 + 4 operaciones)."
+   ],
+   [
+    "Transacciones SDC",
+    "Error de dato",
+    "Operación 4172416040 rotulada \"Chongqing Department Store / inversionista financiero\". En la pantalla es Chengdu Hongqi Chain Co Ltd adquirida por Sichuan Shangtou Investment (Food & Beverage Retailing).",
+    "El motivo de exclusión (\"formato departamental\") no correspondía a la operación.",
+    "Se corrige la identidad y se reaplican los criterios: elegible (cambio de control). Efecto cuantificado en la sección 4.",
+    "Sección 4 de la hoja."
+   ],
+   [
+    "Transacciones SDC",
+    "Criterios",
+    "\"Incluir\" era un 1/0 capturado a mano, sin comprobar contra las columnas de criterios.",
+    "Riesgo de inconsistencia entre criterio y decisión.",
+    "Incluir = fórmula: ventana + ≥2 múltiplos + autoservicio + no recompra + juicio del analista (columna separada).",
+    "Controles de criterios en Validación."
+   ],
+   [
+    "Transacciones SDC",
+    "Cobertura",
+    "Cuatro operaciones de autoservicio de la pantalla no estaban evaluadas (YAOKO, Better Life/Bubugao, Wincommerce/WinMart, Prosol/Grand Frais).",
+    "Embudo de selección incompleto.",
+    "Se agregan con su motivo de exclusión (recompra, reestructura judicial, reorganización intragrupo, dato no confiable).",
+    "Filas marcadas \"Agregada\"."
+   ],
+   [
+    "Transacciones SDC",
+    "Criterios",
+    "La ventana solo verificaba el inicio; no el fin (fecha de valuación).",
+    "Sin efecto en esta muestra.",
+    "Ventana = [inicio, fecha de valuación].",
+    "Control de ventana."
+   ],
+   [
+    "Transacciones SDC",
+    "Estadística",
+    "El límite de atípicos solo era superior; la media sin atípicos no tenía mediana equivalente.",
+    "Tratamiento estadístico incompleto.",
+    "Límites inferior y superior (RIC) y mediana sin atípicos.",
+    "Sección 3."
+   ],
+   [
+    "Valuación Combinada",
+    "Metodología",
+    "La referencia de Precedent Transactions seguía siendo la muestra CIQ (3 operaciones, declarada no defendible).",
+    "El rango y la regla de ⅓ usaban un dato no defendible.",
+    "Referencia = mediana SDC auditada (peso 0%); CIQ como memo histórico. El precio combinado oficial no cambia.",
+    "Control \"Combinada · PT = mediana SDC\"."
+   ],
+   [
+    "Proyección Final",
+    "Presentación",
+    "La tabla de sensibilidad (sección 7) mide el precio Gordon al cierre de 2025 (centro $29.19), no el precio objetivo final (B265).",
+    "Lectura equivocada del rango del precio objetivo.",
+    "Se rotula y se agrega la sección 12: sensibilidad del precio objetivo final (Ke fijo), igual a la de ValuFlow.",
+    "Control \"centro = B265\"."
+   ],
+   [
+    "Validación",
+    "Validación",
+    "Filas 33–35 comparan contra valores registrados; la 34 compara un valor registrado consigo mismo (tautológica).",
+    "Aparentan ser pruebas independientes.",
+    "Se rotulan como controles de regresión. La tabla A se re-verificó recalculando las 6 combinaciones en LibreOffice: coinciden.",
+    "tools/excel/audit_checks.py."
+   ],
+   [
+    "Inflación",
+    "Presentación",
+    "Las etiquetas de ventana (C189:C192) usan TEXT(fecha,\"mmm-yy\"): en Excel en español el código \"yy\" no existe y se muestra literal (\"nov-yy a sep-yy\").",
+    "Etiqueta ilegible; no afecta cálculos.",
+    "Se sustituye por una fórmula independiente del idioma (CHOOSE(MONTH) & año).",
+    "Recálculo: \"nov-24 a sep-26\"."
+   ],
+   [
+    "Fuentes",
+    "Referencia",
+    "La fila de pesos apuntaba a \"Valuación Combinada!C6:C8\" (los pesos están en C4:C6) y no había registro de LSEG/SDC ni del contraste externo.",
+    "Trazabilidad incompleta.",
+    "Se corrige y se agregan 3 registros.",
+    "—"
+   ],
+   [
+    "WACC / Beta",
+    "Cambio de supuesto (decisión del equipo, 19-oct-2026)",
+    "La βU oficial pasa de Damodaran 0.69 (corregida por caja) a la beta desapalancada de la regresión semanal de Soriana B contra el IPC: βL observada 0.2178 (p = 0.087, no significativa al 95%) desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705 (fórmula en Beta y Kd §2). Se reapalanca con la estructura de capital de este libro (WACC!B23 a mercado; D/E del DCF en la iteración), sin volver a usar la βL observada.",
+    "Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F).",
+    "Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico).",
+    "Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector."
+   ],
+   [
+    "DCF",
+    "Revisado, sin cambio",
+    "Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge.",
+    "—",
+    "Sin cambios.",
+    "Recálculo independiente y controles 23–32."
+   ],
+   [
+    "Fechas",
+    "Revisado, sin cambio",
+    "Fecha de valuación 01-oct-2026; precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación); balance 2T26; comparables CIQ al 30-jun-2026; pantalla SDC 19-oct-2026; reporte comparativo 19-oct-2026 con precio 33.10 MXN del 7-oct-2026.",
+    "Cada fecha cumple una función distinta.",
+    "Se rotulan en cada salida; el precio nunca se presenta como \"del día\".",
+    "—"
+   ]
+  ]
+ },
  "expected": {
   "dcf": {
    "historico": {
@@ -1622,74 +3105,74 @@ export const SORIANA_XL = {
      0.0375
     ],
     "revenue": [
-     170043.117005363,
-     167793.891012094,
-     169495.966502241,
-     173233.014215542,
-     178318.181982077
+     169592.266898165,
+     172644.927702332,
+     179054.370643281,
+     187058.101011036,
+     195901.272736332
     ],
     "ebit": [
-     7719.39750073024,
-     7582.05333100925,
-     7647.83928325854,
-     7810.28534043882,
-     8038.54711982523
+     7447.39771684176,
+     7545.19544092743,
+     7857.81928475916,
+     8248.63714120552,
+     8685.91266404031
     ],
     "taxEbit": [
-     2065.09478019116,
-     2054.88962679612,
-     2116.03095429571,
-     2205.20908437013,
-     2315.18276864342
+     2235.7194203417,
+     2291.48662069061,
+     2388.13158706322,
+     2508.69335516701,
+     2643.5637157134
     ],
     "da": [
-     4142.72751064788,
-     4087.9300536024,
-     4132.14035814768,
-     4226.04925064282,
-     4352.98853502347
+     4142.8958722707,
+     4217.46799797157,
+     4374.97672439382,
+     4571.51521561857,
+     4788.65681825228
     ],
     "capex": [
-     3835.21625125831,
-     3318.31293561137,
-     3345.71310698864,
-     3413.08108947276,
-     3506.68423149796
+     3867.89432863055,
+     3450.30809010798,
+     3565.5542564067,
+     3711.51377060842,
+     3872.92035657517
     ],
     "nwcRelease": [
-     86.0154541666898,
-     7.23010557022371,
-     274.634513215038,
-     -73.2681607750101,
-     -99.6992594341728
+     95.5736632701182,
+     -106.341656630462,
+     191.247009358824,
+     -156.920287984869,
+     -173.378286133153
     ],
     "fcf": [
-     6047.82943409534,
-     6304.01092777438,
-     6592.8700933369,
-     6344.77625646374,
-     6469.96939527314
+     5582.25350341033,
+     5914.52707146995,
+     6470.35717504188,
+     6443.0249430638,
+     6784.70712387087
     ],
     "netIncome": [
-     3924.33193407473,
-     3848.50182991039,
-     3971.97268406847,
-     4162.41032543954,
-     4396.2116196747
+     3558.89402625248,
+     3650.30379924542,
+     3968.58307298182,
+     4341.07625215685,
+     4745.6551998329
     ],
     "cash": [
-     12434.9937374781,
-     14405.2378359507,
-     16746.108286229,
-     18898.8958874941,
-     21222.2157575614
+     12156.2883394729,
+     13871.7933960891,
+     16149.8993198779,
+     18391.1084882867,
+     20954.7416559057
     ],
     "equityBook": [
-     87478.4670239218,
-     90171.8638988332,
-     92951.6725847374,
-     95864.7601856075,
-     98941.4750115834
+     87222.7131325626,
+     89777.3999379457,
+     92554.8363843886,
+     95592.964395772,
+     98914.2393878472
     ],
     "balanceCheck": [
      0,
@@ -1706,108 +3189,120 @@ export const SORIANA_XL = {
      0.049
     ],
     "growthFinal": [
-     -0.0420915584296354,
-     -0.0132273862822579,
-     0.0101438465958434,
-     0.0220480037986758,
-     0.0293544956748681
+     -0.0446313444037687,
+     0.018,
+     0.037125,
+     0.0447,
+     0.047275
     ],
     "marginFinal": [
-     0.0453967066510946,
-     0.0451867066510946,
-     0.0451210694925737,
-     0.0450854323340528,
-     0.0450797951755318
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
     ],
     "ebitda": [
-     11862.1250113781,
-     11669.9833846117,
-     11779.9796414062,
-     12036.3345910816,
-     12391.5356548487
+     11590.2935891125,
+     11762.663438899,
+     12232.796009153,
+     12820.1523568241,
+     13474.5694822926
     ],
-    "pvFcf": 22891.7730161719,
-    "tvG": 79934.8572153132,
-    "pvTvG": 45606.3648286012,
-    "evG": 68498.1378447731,
-    "tvM": 72004.3885890479,
-    "pvTvM": 41081.6823805297,
-    "evM": 63973.4553967016,
-    "evW": 66235.7966207374,
-    "ev2": 71119.4816040789,
-    "eq2": 54274.2776040789,
-    "eqVal": 56095.9495599756,
-    "price": 31.1644164222087,
-    "upside": -6.916318930081533,
-    "wacc": 11.8773444494561,
-    "ke": 13.951380592038701,
-    "priceG": 30.0972988026517,
-    "priceM": 27.5835863315009,
-    "priceW": 28.8404425670763,
-    "tvWeight": 66.5804447588808,
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     168683.43343398,
+     175009.062187754,
+     181571.902019795,
+     188380.848345537
+    ],
+    "fcfTv": 5868.97066219376,
+    "pvFcf": 22380.7017737623,
+    "tvG": 73447.9431339265,
+    "pvTvG": 42106.2962827423,
+    "evG": 64486.9980565046,
+    "tvM": 78297.6512433695,
+    "pvTvM": 44886.5408726918,
+    "evM": 67267.2426464542,
+    "evW": 65877.1203514794,
+    "ev2": 70706.7676895777,
+    "eq2": 53861.5636895777,
+    "eqVal": 55677.3942476206,
+    "price": 30.9318856931226,
+    "upside": -7.6108551579372685,
+    "wacc": 11.7703264055937,
+    "ke": 14.0162655262051,
+    "priceG": 27.8688878091692,
+    "priceM": 29.413468136919,
+    "priceW": 28.6411779730441,
+    "tvWeight": 65.2942415552481,
+    "impliedMultiple": 5.45085638768995,
+    "impliedG": 0.0397653889545372,
+    "signal": "MANTENER",
     "waccMarket": 12.500800915571899,
     "keMarket": 13.8293538829152,
     "betaMarket": 1.01946900305323,
     "waccIterations": [
      [
       0.125008009155719,
-      49499.266090588,
-      0.477138387401077,
-      1.07177416976724,
-      0.140506047381154,
-      0.118118803282231
+      45092.7245922937,
+      0.523765201893263,
+      1.09330851306023,
+      0.141416950102448,
+      0.116868736740879
      ],
      [
-      0.118118803282231,
-      54706.7012627654,
-      0.431720419159598,
-      1.04590446207389,
-      0.139411758745726,
-      0.118842906916727
+      0.116868736740879,
+      50800.469445194,
+      0.464916963522951,
+      1.06035349957285,
+      0.140022953031932,
+      0.117799946874487
      ],
      [
-      0.118842906916727,
-      54119.2208513609,
-      0.436406874091316,
-      1.04857382893233,
-      0.139524672963838,
-      0.118766071548008
+      0.117799946874487,
+      50091.0834063409,
+      0.471501081508057,
+      1.06404060564451,
+      0.140178917618763,
+      0.117692059829708
      ],
      [
-      0.118766071548008,
-      54181.0784703268,
-      0.435908635759895,
-      1.04829003640496,
-      0.13951266853993,
-      0.118774216439122
+      0.117692059829708,
+      50172.4588108416,
+      0.470736347386197,
+      1.06361235453627,
+      0.140160802596884,
+      0.117704541144696
      ],
      [
-      0.118774216439122,
-      54174.5159239731,
-      0.435961440488823,
-      1.04832011355185,
-      0.139513940803243,
-      0.118773352952406
+      0.117704541144696,
+      50163.0338206517,
+      0.470824792703759,
+      1.06366188391411,
+      0.140162897689567,
+      0.117703096954593
      ],
      [
-      0.118773352952406,
-      54175.2115969033,
-      0.435955842235234,
-      1.04831692483184,
-      0.139513805920387,
-      0.118773444494561
+      0.117703096954593,
+      50164.1242246323,
+      0.47081455851277,
+      1.06365615276715,
+      0.140162655262051,
+      0.117703264055937
      ]
     ],
     "betaU": 0.8,
     "betaLMarket": 1.01946900305323,
-    "betaLIter": 1.04831692483184,
+    "betaLIter": 1.06365615276715,
     "sensGordonClose": {
      "waccs": [
-      0.108773444494561,
-      0.113773444494561,
-      0.118773444494561,
-      0.123773444494561,
-      0.128773444494561
+      0.107703264055937,
+      0.112703264055937,
+      0.117703264055937,
+      0.122703264055937,
+      0.127703264055937
      ],
      "gs": [
       0.025,
@@ -1818,43 +3313,96 @@ export const SORIANA_XL = {
      ],
      "grid": [
       [
-       31.3302501817178,
-       33.1321981784271,
-       35.1784004605443,
-       37.5221307052574,
-       40.2333697560713
+       29.0339925539394,
+       30.7190076006352,
+       32.6357887266916,
+       34.8356848772279,
+       37.3864233935737
       ],
       [
-       29.136695635071,
-       30.7071410511775,
-       32.4769487557029,
-       34.4866541248488,
-       36.7885806243911
+       26.9789166018742,
+       28.445151603375,
+       30.100083311419,
+       31.9826432737832,
+       34.1432636795567
       ],
       [
-       27.1766799610136,
-       28.5547401557756,
-       30.0972988026517,
-       31.835679614824,
-       33.8096981722693
+       25.1438929921099,
+       26.4287138498751,
+       27.8688878091692,
+       29.4944045564133,
+       31.3435036652406
       ],
       [
-       25.4147460671493,
-       26.6313930874425,
-       27.9850908921477,
-       29.5003790209552,
-       31.2080274227622
+       23.4951889655519,
+       24.6280989337761,
+       25.8901842503091,
+       27.3048736183193,
+       28.9016260418779
       ],
       [
-       23.822270185686,
-       24.9023259015236,
-       26.0975587575055,
-       27.4274301715368,
-       28.9160477636744
+       22.0056389781264,
+       23.0102241622915,
+       24.123175022077,
+       25.3630254758248,
+       26.7527914701381
       ]
      ]
     },
-    "combined": 32.328628638353
+    "sensFinal": {
+     "waccs": [
+      0.107703264055937,
+      0.112703264055937,
+      0.117703264055937,
+      0.122703264055937,
+      0.127703264055937
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       32.1873575279661,
+       33.1039693400735,
+       34.1466568963734,
+       35.3433529145752,
+       36.7308996063775
+      ],
+      [
+       30.7533884004494,
+       31.5527866853471,
+       32.4550633106349,
+       33.4814439410185,
+       34.6594244454549
+      ],
+      [
+       29.4428713242099,
+       30.1449338407015,
+       30.9318856931226,
+       31.820114095761,
+       32.8305142350019
+      ],
+      [
+       28.2379223292097,
+       28.8583595434742,
+       29.5495395312197,
+       30.3242930025072,
+       31.1987531567379
+      ],
+      [
+       27.1241014675018,
+       27.6754854375328,
+       28.2863477846895,
+       28.966861170919,
+       29.7296582969739
+      ]
+     ]
+    },
+    "combined": 32.21236327381
    },
    "citi": {
     "inflation": [
@@ -1865,74 +3413,74 @@ export const SORIANA_XL = {
      0.0375
     ],
     "revenue": [
-     170043.117005363,
-     167793.891012094,
-     169495.966502241,
-     173233.014215542,
-     178318.181982077
+     169592.266898165,
+     172644.927702332,
+     179054.370643281,
+     187058.101011036,
+     195901.272736332
     ],
     "ebit": [
-     7719.39750073024,
-     7582.05333100925,
-     7647.83928325854,
-     7810.28534043882,
-     8038.54711982523
+     7447.39771684176,
+     7545.19544092743,
+     7857.81928475916,
+     8248.63714120552,
+     8685.91266404031
     ],
     "taxEbit": [
-     2065.09478019116,
-     2054.88962679612,
-     2116.03095429571,
-     2205.20908437013,
-     2315.18276864342
+     2235.7194203417,
+     2291.48662069061,
+     2388.13158706322,
+     2508.69335516701,
+     2643.5637157134
     ],
     "da": [
-     4142.72751064788,
-     4087.9300536024,
-     4132.14035814768,
-     4226.04925064282,
-     4352.98853502347
+     4142.8958722707,
+     4217.46799797157,
+     4374.97672439382,
+     4571.51521561857,
+     4788.65681825228
     ],
     "capex": [
-     3835.21625125831,
-     3318.31293561137,
-     3345.71310698864,
-     3413.08108947276,
-     3506.68423149796
+     3867.89432863055,
+     3450.30809010798,
+     3565.5542564067,
+     3711.51377060842,
+     3872.92035657517
     ],
     "nwcRelease": [
-     86.0154541666898,
-     7.23010557022371,
-     274.634513215038,
-     -73.2681607750101,
-     -99.6992594341728
+     95.5736632701182,
+     -106.341656630462,
+     191.247009358824,
+     -156.920287984869,
+     -173.378286133153
     ],
     "fcf": [
-     6047.82943409534,
-     6304.01092777438,
-     6592.8700933369,
-     6344.77625646374,
-     6469.96939527314
+     5582.25350341033,
+     5914.52707146995,
+     6470.35717504188,
+     6443.0249430638,
+     6784.70712387087
     ],
     "netIncome": [
-     3924.33193407473,
-     3848.50182991039,
-     3971.97268406847,
-     4162.41032543954,
-     4396.2116196747
+     3558.89402625248,
+     3650.30379924542,
+     3968.58307298182,
+     4341.07625215685,
+     4745.6551998329
     ],
     "cash": [
-     12434.9937374781,
-     14405.2378359507,
-     16746.108286229,
-     18898.8958874941,
-     21222.2157575614
+     12156.2883394729,
+     13871.7933960891,
+     16149.8993198779,
+     18391.1084882867,
+     20954.7416559057
     ],
     "equityBook": [
-     87478.4670239218,
-     90171.8638988332,
-     92951.6725847374,
-     95864.7601856075,
-     98941.4750115834
+     87222.7131325626,
+     89777.3999379457,
+     92554.8363843886,
+     95592.964395772,
+     98914.2393878472
     ],
     "balanceCheck": [
      0,
@@ -1949,108 +3497,120 @@ export const SORIANA_XL = {
      0.049
     ],
     "growthFinal": [
-     -0.0420915584296354,
-     -0.0132273862822579,
-     0.0101438465958434,
-     0.0220480037986758,
-     0.0293544956748681
+     -0.0446313444037687,
+     0.018,
+     0.037125,
+     0.0447,
+     0.047275
     ],
     "marginFinal": [
-     0.0453967066510946,
-     0.0451867066510946,
-     0.0451210694925737,
-     0.0450854323340528,
-     0.0450797951755318
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
     ],
     "ebitda": [
-     11862.1250113781,
-     11669.9833846117,
-     11779.9796414062,
-     12036.3345910816,
-     12391.5356548487
+     11590.2935891125,
+     11762.663438899,
+     12232.796009153,
+     12820.1523568241,
+     13474.5694822926
     ],
-    "pvFcf": 23197.0399350743,
-    "tvG": 85288.545922862,
-    "pvTvG": 49820.7914853949,
-    "evG": 73017.8314204692,
-    "tvM": 72004.3885890479,
-    "pvTvM": 42060.9308215056,
-    "evM": 65257.9707565799,
-    "evW": 69137.9010885246,
-    "ev2": 74017.0320477038,
-    "eq2": 57171.8280477038,
-    "eqVal": 58972.8055845486,
-    "price": 32.7626697691937,
-    "upside": -2.142563413399934,
-    "wacc": 11.351486095406301,
-    "ke": 13.054217241184901,
-    "priceG": 32.6082396780384,
-    "priceM": 28.2972059758777,
-    "priceW": 30.4527228269581,
-    "tvWeight": 68.2309930549766,
-    "waccMarket": 11.9198962792971,
-    "keMarket": 13.020787529868599,
-    "betaMarket": 0.828318564980751,
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     168683.43343398,
+     175009.062187754,
+     181571.902019795,
+     188380.848345537
+    ],
+    "fcfTv": 5868.97066219376,
+    "pvFcf": 23707.0729400862,
+    "tvG": 100096.383714517,
+    "pvTvG": 63385.3805486486,
+    "evG": 87092.4534887348,
+    "tvM": 78297.6512433695,
+    "pvTvM": 49581.4757332394,
+    "evM": 73288.5486733257,
+    "evW": 80190.5010810303,
+    "ev2": 84999.8960795964,
+    "eq2": 68154.6920795964,
+    "eqVal": 69881.0708533432,
+    "price": 38.8228171407462,
+    "upside": 15.958235187413994,
+    "wacc": 9.568535555385479,
+    "ke": 10.402176814108099,
+    "priceG": 40.4274741604082,
+    "priceM": 32.7586381518476,
+    "priceW": 36.5930561561279,
+    "tvWeight": 72.7794177446698,
+    "impliedMultiple": 7.4285403957475,
+    "impliedG": 0.0192827976140087,
+    "signal": "COMPRAR",
+    "waccMarket": 10.0630184051038,
+    "keMarket": 10.436182627388101,
+    "betaMarket": 0.21730085753856,
     "waccIterations": [
      [
-      0.119198962792971,
-      53834.0421587307,
-      0.438718681579992,
-      0.853036125334618,
-      0.131253428101654,
-      0.112940602743662
+      0.100630184051038,
+      66380.443637837,
+      0.355797561836988,
+      0.212990439088418,
+      0.10417949557344,
+      0.0952098812798644
      ],
      [
-      0.112940602743662,
-      59225.2508896347,
-      0.398782607844275,
-      0.834553972618495,
-      0.130471633041762,
-      0.11357343951465
+      0.0952098812798644,
+      73438.8042675277,
+      0.321601096798401,
+      0.208908592708554,
+      0.104006833471572,
+      0.0957315415021627
      ],
      [
-      0.11357343951465,
-      58641.1595591176,
-      0.402754655221136,
-      0.836392210065186,
-      0.130549390485757,
-      0.113508883765615
+      0.0957315415021627,
+      72704.9907570708,
+      0.324847025686515,
+      0.209296041617858,
+      0.104023222560435,
+      0.0956808687348678
      ],
      [
-      0.113508883765615,
-      58700.312436654,
-      0.402348795425701,
-      0.836204380816617,
-      0.130541445308543,
-      0.113515463232641
+      0.0956808687348678,
+      72775.7210429117,
+      0.324531308814843,
+      0.209258356208905,
+      0.104021628467637,
+      0.0956857865429232
      ],
      [
-      0.113515463232641,
-      58694.2791838038,
-      0.402390153323788,
-      0.836223520980308,
-      0.130542254937467,
-      0.113514792597963
+      0.0956857865429232,
+      72768.8514966481,
+      0.324561945313757,
+      0.209262013121456,
+      0.104021783155038,
+      0.0956853092264995
      ],
      [
-      0.113514792597963,
-      58694.8940975548,
-      0.402385937706018,
-      0.836221570020082,
-      0.130542172411849,
-      0.113514860954063
+      0.0956853092264995,
+      72769.5181978461,
+      0.324558971735766,
+      0.209261658181595,
+      0.104021768141081,
+      0.0956853555538548
      ]
     ],
-    "betaU": 0.65,
-    "betaLMarket": 0.828318564980751,
-    "betaLIter": 0.836221570020082,
+    "betaU": 0.170520815748403,
+    "betaLMarket": 0.21730085753856,
+    "betaLIter": 0.209261658181595,
     "sensGordonClose": {
      "waccs": [
-      0.103514860954063,
-      0.108514860954063,
-      0.113514860954063,
-      0.118514860954063,
-      0.123514860954063
+      0.0856853555538548,
+      0.0906853555538548,
+      0.0956853555538548,
+      0.100685355553855,
+      0.105685355553855
      ],
      "gs": [
       0.025,
@@ -2061,43 +3621,96 @@ export const SORIANA_XL = {
      ],
      "grid": [
       [
-       33.9381711709042,
-       36.0378843537719,
-       38.4440585224212,
-       41.2290690976227,
-       44.4900289496049
+       42.0808519404294,
+       45.5531629772108,
+       49.7105458653856,
+       54.7779321535063,
+       61.090824648747
       ],
       [
-       31.4508248075755,
-       33.2659977884923,
-       35.328083156559,
-       37.69113759022,
-       40.4262395098024
+       38.354890063537,
+       41.2449646694341,
+       44.6540401108566,
+       48.7357112959944,
+       53.7108134582264
       ],
       [
-       29.2440723102954,
-       30.8254503434207,
-       32.6082396780384,
-       34.6335363521901,
-       36.9544326445778
+       35.1535648507104,
+       37.5897932833585,
+       40.4274741604082,
+       43.774746984717,
+       47.7824221654326
       ],
       [
-       27.2729152941398,
-       28.6601050311389,
-       30.2133957136646,
-       31.9645203684665,
-       33.9538451139816
+       32.3729767521086,
+       34.449158564506,
+       36.841420238981,
+       39.6278893219224,
+       42.9147537162032
       ],
       [
-       25.5014904693729,
-       26.7258305281102,
-       28.0884908695141,
-       29.6143150270146,
-       31.3344748986665
+       29.9349777818176,
+       31.7211635923753,
+       33.760044716773,
+       36.1093270116,
+       38.8457343835376
       ]
      ]
     },
-    "combined": 33.1277553118455
+    "sensFinal": {
+     "waccs": [
+      0.0856853555538548,
+      0.0906853555538548,
+      0.0956853555538548,
+      0.100685355553855,
+      0.105685355553855
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       40.3686212614144,
+       42.223452520829,
+       44.4442339130081,
+       47.1511188640313,
+       50.523325504929
+      ],
+      [
+       38.0398183309747,
+       39.5871826949916,
+       41.4124234142237,
+       43.5977761814601,
+       46.261477588155
+      ],
+      [
+       35.9926676121387,
+       37.3000262232473,
+       38.8228171407462,
+       40.6190715034101,
+       42.7697190321148
+      ],
+      [
+       34.1729746544421,
+       35.2896598851386,
+       36.5763503203866,
+       38.0750672690338,
+       39.8429244492089
+      ],
+      [
+       32.5399197922261,
+       33.5028087571924,
+       34.6019195685966,
+       35.8683600385125,
+       37.3434901434082
+      ]
+     ]
+    },
+    "combined": 36.1578289976218
    },
    "cautela": {
     "inflation": [
@@ -2108,74 +3721,74 @@ export const SORIANA_XL = {
      0.0326
     ],
     "revenue": [
-     169210.571655363,
-     166297.207880131,
-     167372.959007225,
-     170407.096643903,
-     174699.565467782
+     168759.721548165,
+     170835.466123207,
+     176340.639019028,
+     183358.996451985,
+     191128.833926638
     ],
     "ebit": [
-     7681.60268370256,
-     7514.42314937559,
-     7552.04691454268,
-     7682.8776249811,
-     7875.42062854202
+     7410.83769879283,
+     7466.11555460211,
+     7738.72689615057,
+     8085.5189918708,
+     8474.3112481002
     ],
     "taxEbit": [
-     2054.98390309813,
-     2036.56048129553,
-     2089.52678627118,
-     2169.2359234292,
-     2268.20069139756
+     2224.74405076056,
+     2267.46994638457,
+     2351.93728369376,
+     2459.08353352763,
+     2579.16267381843
     ],
     "da": [
-     4122.44436960667,
-     4051.46665246803,
-     4080.3835810878,
-     4157.11050423769,
-     4264.6532008232
+     4122.55798330277,
+     4173.2654464974,
+     4308.66997829371,
+     4481.11275411349,
+     4671.99820074296
     ],
     "capex": [
-     3830.1477457439,
-     3288.71434315161,
-     3303.806658423,
-     3357.4041397421,
-     3435.52297733157
+     3862.65192888053,
+     3414.14600872927,
+     3511.51504301672,
+     3638.11797841534,
+     3778.57040591685
     ],
     "nwcRelease": [
-     103.665760590801,
-     21.6709459167569,
-     284.166826031942,
-     -59.4869804274649,
-     -84.1576881103756
+     113.223969694236,
+     -85.1943739915087,
+     205.654554455083,
+     -137.601170823721,
+     -152.334608750719
     ],
     "fcf": [
-     6022.581165058,
-     6262.28592331324,
-     6523.26387696823,
-     6253.86108562002,
-     6352.19247252571
+     5559.22367214875,
+     5872.57067199417,
+     6389.59910218888,
+     6331.8290632176,
+     6636.24176035716
     ],
     "netIncome": [
-     3896.64799414008,
-     3799.20079377732,
-     3902.68448337714,
-     4070.97577092275,
-     4280.06720563736
+     3533.30937778468,
+     3595.24058722615,
+     3885.68498774269,
+     4227.56792446151,
+     4598.45482578775
     ],
     "cash": [
-     12418.0546385037,
-     14361.3711455452,
-     16653.4318211557,
-     18742.7477897767,
-     20983.150792796
+     12140.9375884153,
+     13831.0131414369,
+     16053.2423600456,
+     18217.3244986566,
+     20676.6736203116
     ],
     "equityBook": [
-     87459.0922540502,
-     90117.9855058584,
-     92849.3024327722,
-     95698.3990173251,
-     98693.8294849631
+     87204.8075642988,
+     89720.9580535438,
+     92440.3777824205,
+     95399.066316157,
+     98617.3222517366
     ],
     "balanceCheck": [
      0,
@@ -2192,108 +3805,120 @@ export const SORIANA_XL = {
      0.0441
     ],
     "growthFinal": [
-     -0.0467815584296355,
-     -0.0172173862822579,
-     0.00646884659584336,
-     0.0181280037986758,
-     0.0251894956748681
+     -0.0493213444037687,
+     0.0123,
+     0.032225,
+     0.0398,
+     0.042375
     ],
     "marginFinal": [
-     0.0453967066510946,
-     0.0451867066510946,
-     0.0451210694925737,
-     0.0450854323340528,
-     0.0450797951755318
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
     ],
     "ebitda": [
-     11804.0470533092,
-     11565.8898018436,
-     11632.4304956305,
-     11839.9881292188,
-     12140.0738293652
+     11533.3956820956,
+     11639.3810010995,
+     12047.3968744443,
+     12566.6317459843,
+     13146.3094488432
     ],
-    "pvFcf": 22969.1250774403,
-    "tvG": 83860.6028460364,
-    "pvTvG": 49012.3393131987,
-    "evG": 71981.464390639,
-    "tvM": 70543.2012510331,
-    "pvTvM": 41228.9823661614,
-    "evM": 64198.1074436017,
-    "evW": 68089.7859171204,
-    "ev2": 72907.2628872693,
-    "eq2": 56062.0588872693,
-    "eqVal": 57829.9080175329,
-    "price": 32.1277266764072,
-    "upside": -4.0390481588793214,
-    "wacc": 11.339818682360999,
-    "ke": 13.068375792413,
-    "priceG": 32.0324802170217,
-    "priceM": 27.7083930242232,
-    "priceW": 29.8704366206224,
-    "tvWeight": 68.09022257064919,
-    "waccMarket": 11.9198962792971,
-    "keMarket": 13.020787529868599,
-    "betaMarket": 0.828318564980751,
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     167757.40476156,
+     173226.296156787,
+     178873.473411498,
+     184704.748644713
+    ],
+    "fcfTv": 5742.81396553105,
+    "pvFcf": 23425.1434645325,
+    "tvG": 98116.5782151375,
+    "pvTvG": 62161.8214207559,
+    "evG": 85586.9648852884,
+    "tvM": 76390.2070278095,
+    "pvTvM": 48397.0649398845,
+    "evM": 71822.208404417,
+    "evW": 78704.5866448527,
+    "ev2": 83440.5199497814,
+    "eq2": 66595.3159497814,
+    "eqVal": 68282.7364849957,
+    "price": 37.9348536027754,
+    "upside": 13.306014345207284,
+    "wacc": 9.55790842123724,
+    "ke": 10.4056387187952,
+    "priceG": 39.591091602938,
+    "priceM": 31.9440046691206,
+    "priceW": 35.7675481360293,
+    "tvWeight": 72.6300103106483,
+    "impliedMultiple": 7.46343136048509,
+    "impliedG": 0.0189752190547926,
+    "signal": "MANTENER",
+    "waccMarket": 10.0630184051038,
+    "keMarket": 10.436182627388101,
+    "betaMarket": 0.21730085753856,
     "waccIterations": [
      [
-      0.119198962792971,
-      52779.0717764153,
-      0.447487975916883,
-      0.857094497177068,
-      0.13142509723059,
-      0.112806318132318
+      0.100630184051038,
+      64864.818367012,
+      0.364111094343421,
+      0.213982780329742,
+      0.104221471607948,
+      0.095087012157481
      ],
      [
-      0.112806318132318,
-      58197.1165930128,
-      0.40582766608811,
-      0.837814379317917,
-      0.130609548245148,
-      0.113459189904871
+      0.095087012157481,
+      71944.5494586246,
+      0.328280601904148,
+      0.209705888970153,
+      0.104040559103437,
+      0.0956275361204845
      ],
      [
-      0.113459189904871,
-      57603.4070780863,
-      0.410010469831824,
-      0.839750153427422,
-      0.13069143148998,
-      0.113391897583268
+      0.0956275361204845,
+      71197.5454383864,
+      0.331724919090628,
+      0.210117018413588,
+      0.104057949878895,
+      0.0955743129760997
      ],
      [
-      0.113391897583268,
-      57664.1454997706,
-      0.409578600277601,
-      0.839550287033259,
-      0.130682977141507,
-      0.113398826947663
+      0.0955743129760997,
+      71270.5111674465,
+      0.331385303867271,
+      0.210076480388138,
+      0.104056235120418,
+      0.0955795486261529
      ],
      [
-      0.113398826947663,
-      57657.8862136593,
-      0.409623063746739,
-      0.839570864434841,
-      0.130683847565594,
-      0.113398113333441
+      0.0955795486261529,
+      71263.3277501531,
+      0.331418707849344,
+      0.210080467640129,
+      0.104056403781177,
+      0.0955790335379838
      ],
      [
-      0.113398113333441,
-      57658.5307695067,
-      0.409618484633511,
-      0.839568745251305,
-      0.13068375792413,
-      0.11339818682361
+      0.0955790335379838,
+      71264.0344067105,
+      0.331415421490311,
+      0.210080075365293,
+      0.104056387187952,
+      0.0955790842123724
      ]
     ],
-    "betaU": 0.65,
-    "betaLMarket": 0.828318564980751,
-    "betaLIter": 0.839568745251305,
+    "betaU": 0.170520815748403,
+    "betaLMarket": 0.21730085753856,
+    "betaLIter": 0.210080075365293,
     "sensGordonClose": {
      "waccs": [
-      0.10339818682361,
-      0.10839818682361,
-      0.11339818682361,
-      0.11839818682361,
-      0.12339818682361
+      0.0855790842123724,
+      0.0905790842123724,
+      0.0955790842123724,
+      0.100579084212372,
+      0.105579084212372
      ],
      "gs": [
       0.025,
@@ -2304,43 +3929,96 @@ export const SORIANA_XL = {
      ],
      "grid": [
       [
-       33.3423252687747,
-       35.4110406052986,
-       37.7822077219931,
-       40.5273866575573,
-       43.7426450741603
+       41.2143060045824,
+       44.6257817505002,
+       48.7117409907401,
+       53.6941551095384,
+       59.9043973608599
       ],
       [
-       30.8922736477051,
-       32.6803056772854,
-       34.7119448185614,
-       37.0406150999341,
-       39.7365940376019
+       37.5550618375851,
+       40.393670597554,
+       43.743012630695,
+       47.7545536904293,
+       52.6462223633123
       ],
       [
-       28.7188829052907,
-       30.27635094505,
-       32.0324802170217,
-       34.0278700685758,
-       36.3149913159781
+       34.4117018881189,
+       36.8039485127182,
+       39.591091602938,
+       42.8797080674887,
+       46.8185174953485
       ],
       [
-       26.7777319437462,
-       28.1437408425006,
-       29.6735433380683,
-       31.398478215844,
-       33.3584236507498
+       31.6819190507816,
+       33.7201790547588,
+       36.0692485231341,
+       38.806087053871,
+       42.0353479714682
       ],
       [
-       25.0334282057872,
-       26.2389102134733,
-       27.5807617611922,
-       29.0835102778771,
-       30.7779403343489
+       29.2887964708523,
+       31.042027057472,
+       33.0436641807002,
+       35.3505262315511,
+       38.0381900196424
       ]
      ]
     },
-    "combined": 32.8102837654523
+    "sensFinal": {
+     "waccs": [
+      0.0855790842123724,
+      0.0905790842123724,
+      0.0955790842123724,
+      0.100579084212372,
+      0.105579084212372
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       39.449255615603,
+       41.2715152695981,
+       43.4540542134166,
+       46.1154397557427,
+       49.4326768516419
+      ],
+      [
+       37.163948758009,
+       38.6836959825966,
+       40.4768819019961,
+       42.6245989378291,
+       45.2435226845793
+      ],
+      [
+       35.1555390949171,
+       36.439243569037,
+       37.9348536027754,
+       39.6995594762407,
+       41.8131656710436
+      ],
+      [
+       33.3706644452987,
+       34.4669089976951,
+       35.7303172983449,
+       37.2022807987103,
+       38.9390855646749
+      ],
+      [
+       31.7691497792631,
+       32.7142354615221,
+       33.7932256415237,
+       35.0367484911958,
+       36.4855439800702
+      ]
+     ]
+    },
+    "combined": 35.7138472286364
    },
    "base": {
     "inflation": [
@@ -2351,74 +4029,74 @@ export const SORIANA_XL = {
      0.0351
     ],
     "revenue": [
-     169521.222905363,
-     166899.172667645,
-     168291.753761357,
-     171679.130820352,
-     176368.459696609
+     169070.372798165,
+     171572.614315578,
+     177530.473347686,
+     185040.012370293,
+     193343.68292541
     ],
     "ebit": [
-     7695.70522736961,
-     7541.62395564329,
-     7593.5039164933,
-     7740.22783576996,
-     7950.65403854719
+     7424.47949657229,
+     7498.33154411529,
+     7790.94289679781,
+     8159.64617622566,
+     8572.51369823572
     ],
     "taxEbit": [
-     2058.75661843135,
-     2043.93244930997,
-     2100.99725474609,
-     2185.42857200854,
-     2289.86867341892
+     2228.8393379177,
+     2277.25398836462,
+     2367.80665864078,
+     2481.62815170453,
+     2609.05065957348
     ],
     "da": [
-     4130.01270581607,
-     4066.13220394458,
-     4102.78286859152,
-     4188.14199729641,
-     4305.39317115882
+     4130.14674784304,
+     4191.27291971112,
+     4337.74213930862,
+     4522.19512267549,
+     4726.13849095765
     ],
     "capex": [
-     3832.0389791448,
-     3300.61887393722,
-     3321.94292275407,
-     3382.46608196171,
-     3468.34231752008
+     3864.60804819024,
+     3428.8779119806,
+     3535.2085102006,
+     3671.47185988688,
+     3822.35743013711
     ],
     "nwcRelease": [
-     97.0798253579187,
-     15.3498469656297,
-     279.060067797571,
-     -66.4125550446124,
-     -91.9384841701649
+     106.638034461364,
+     -94.4140093085252,
+     198.132359459596,
+     -147.231224930893,
+     -162.800883459296
     ],
     "fcf": [
-     6032.00216096745,
-     6278.55468330631,
-     6552.40667538223,
-     6294.0626240515,
-     6405.89773459684
+     5567.81689276875,
+     5889.05855417266,
+     6423.80222672465,
+     6381.51006237885,
+     6704.44321602348
     ],
     "netIncome": [
-     3906.97782247391,
-     3819.02963203058,
-     3932.67101685285,
-     4112.13333313227,
-     4333.63263362116
+     3542.855888407,
+     3617.67253475927,
+     3922.03161344291,
+     4279.15049063947,
+     4666.76929016822
     ],
     "cash": [
-     12424.3751978225,
-     14378.0089568858,
-     16690.2121510789,
-     18807.3764604079,
-     21085.4073805949
+     12146.665480601,
+     13846.4961000481,
+     16092.019219474,
+     18290.300156531,
+     20797.3465533188
     ],
     "equityBook": [
-     87466.3216457933,
-     90139.0922278836,
-     92891.3954084417,
-     95769.2963574806,
-     98802.2149081991
+     87211.4887464868,
+     89743.338367512,
+     92488.1954983703,
+     95482.9843975695,
+     98749.050616996
     ],
     "balanceCheck": [
      0,
@@ -2435,108 +4113,120 @@ export const SORIANA_XL = {
      0.0466
     ],
     "growthFinal": [
-     -0.0450315584296355,
-     -0.0154673862822579,
-     0.00834384659584337,
-     0.0201280037986758,
-     0.0273144956748681
+     -0.0475713444037687,
+     0.0148,
+     0.034725,
+     0.0423,
+     0.044875
     ],
     "marginFinal": [
-     0.0453967066510946,
-     0.0451867066510946,
-     0.0451210694925737,
-     0.0450854323340528,
-     0.0450797951755318
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
     ],
     "ebitda": [
-     11825.7179331857,
-     11607.7561595879,
-     11696.2867850848,
-     11928.3698330664,
-     12256.047209706
+     11554.6262444153,
+     11689.6044638264,
+     12128.6850361064,
+     12681.8412989012,
+     13298.6521891934
     ],
-    "pvFcf": 23066.2909319912,
-    "tvG": 84512.601913753,
-    "pvTvG": 49381.6714228042,
-    "evG": 72447.9623547954,
-    "tvM": 71217.0961238431,
-    "pvTvM": 41612.9566577878,
-    "evM": 64679.247589779,
-    "evW": 68563.6049722872,
-    "ev2": 73408.9439360682,
-    "eq2": 56563.7399360682,
-    "eqVal": 58346.5694706359,
-    "price": 32.41476081702,
-    "upside": -3.181717989784927,
-    "wacc": 11.3451071262412,
-    "ke": 13.0619401464674,
-    "priceG": 32.2916457526641,
-    "priceM": 27.9756931054328,
-    "priceW": 30.1336694290485,
-    "tvWeight": 68.16157393215569,
-    "waccMarket": 11.9198962792971,
-    "keMarket": 13.020787529868599,
-    "betaMarket": 0.828318564980751,
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     168163.55768806,
+     174066.098562911,
+     180175.818622469,
+     186499.989856118
+    ],
+    "fcfTv": 5800.66215520295,
+    "pvFcf": 23547.3812562396,
+    "tvG": 99025.313510992,
+    "pvTvG": 62723.6092843861,
+    "evG": 86270.9905406258,
+    "tvM": 77275.4359599157,
+    "pvTvM": 48947.0225397703,
+    "evM": 72494.40379601,
+    "evW": 79382.6971683179,
+    "ev2": 84152.1443540494,
+    "eq2": 67306.9403540494,
+    "eqVal": 69012.1409597606,
+    "price": 38.3400783109781,
+    "upside": 14.516362936015836,
+    "wacc": 9.56277841268195,
+    "ke": 10.404047827740499,
+    "priceG": 39.9711058559032,
+    "priceM": 32.3174465533389,
+    "priceW": 36.144276204621,
+    "tvWeight": 72.7053310635735,
+    "impliedMultiple": 7.44626689247961,
+    "impliedG": 0.0191272410371974,
+    "signal": "MANTENER",
+    "waccMarket": 10.0630184051038,
+    "keMarket": 10.436182627388101,
+    "betaMarket": 0.21730085753856,
     "waccIterations": [
      [
-      0.119198962792971,
-      53253.4062442849,
-      0.44350214691731,
-      0.855249881685872,
-      0.131347069995312,
-      0.112867151058969
+      0.100630184051038,
+      65552.8037920425,
+      0.360289699810934,
+      0.213526641210658,
+      0.104202176923211,
+      0.0951433036124324
      ],
      [
-      0.112867151058969,
-      58659.9983688201,
-      0.402625309525304,
-      0.836332349726402,
-      0.130546858393427,
-      0.113510980198862
+      0.0951433036124324,
+      72623.5581022153,
+      0.325211276026416,
+      0.209339520203425,
+      0.104025061704605,
+      0.0956751978496798
      ],
      [
-      0.113510980198862,
-      58070.517927593,
-      0.406712404897935,
-      0.838223830630163,
-      0.130626868035656,
-      0.113444922988274
+      0.0956751978496798,
+      71882.4527069998,
+      0.3285641921022,
+      0.20973973959249,
+      0.104041990984762,
+      0.0956231435312865
      ],
      [
-      0.113444922988274,
-      58130.5545167678,
-      0.406292356856623,
-      0.838029435154559,
-      0.130618645107038,
-      0.113451694263669
+      0.0956231435312865,
+      71954.410504547,
+      0.328235612443903,
+      0.209700518822531,
+      0.104040331946193,
+      0.0956282331442387
      ],
      [
-      0.113451694263669,
-      58124.3957528739,
-      0.406335406916161,
-      0.838049358439459,
-      0.130619487861989,
-      0.113451000100325
+      0.0956282331442387,
+      71947.3694059349,
+      0.32826773508208,
+      0.209704353127457,
+      0.104040494137291,
+      0.0956277354619232
      ],
      [
-      0.113451000100325,
-      58125.0270752607,
-      0.406330993522278,
-      0.838047315949747,
-      0.130619401464674,
-      0.113451071262412
+      0.0956277354619232,
+      71948.0578602907,
+      0.328264593963907,
+      0.209703978189233,
+      0.104040478277405,
+      0.0956277841268195
      ]
     ],
-    "betaU": 0.65,
-    "betaLMarket": 0.828318564980751,
-    "betaLIter": 0.838047315949747,
+    "betaU": 0.170520815748403,
+    "betaLMarket": 0.21730085753856,
+    "betaLIter": 0.209703978189233,
     "sensGordonClose": {
      "waccs": [
-      0.103451071262412,
-      0.108451071262412,
-      0.113451071262412,
-      0.118451071262412,
-      0.123451071262412
+      0.0856277841268195,
+      0.0906277841268195,
+      0.0956277841268195,
+      0.10062778412682,
+      0.10562778412682
      ],
      "gs": [
       0.025,
@@ -2547,43 +4237,96 @@ export const SORIANA_XL = {
      ],
      "grid": [
       [
-       33.6105883343644,
-       35.6934871131325,
-       38.0806760571755,
-       40.8440901612588,
-       44.0802781674109
+       41.6080851373411,
+       45.0475257623403,
+       49.1663247049746,
+       54.1878190165504,
+       60.4452887620561
       ],
       [
-       31.143521731188,
-       32.9439697871349,
-       34.9895399393294,
-       37.3339469270136,
-       40.04783656346
+       37.9182273719414,
+       40.7804895076976,
+       44.1572898693933,
+       48.2010758438184,
+       53.1311169918863
       ],
       [
-       28.9549164843448,
-       30.5233204703713,
-       32.2916457526641,
-       34.3007197744784,
-       36.6032989211596
+       34.7482788379517,
+       37.1607359488317,
+       39.9711058559032,
+       43.2866855158321,
+       47.2571584753816
       ],
       [
-       27.0000867033454,
-       28.3757817062717,
-       29.9163271996848,
-       31.6532429234369,
-       33.6266311306938
+       31.9951991973123,
+       34.050882586818,
+       36.4197996801362,
+       39.1794480408817,
+       42.4351881306191
       ],
       [
-       25.2434240051874,
-       26.4575286463462,
-       27.8088961407221,
-       29.3221989432892,
-       31.0283994052782
+       29.581504922679,
+       31.3498751538021,
+       33.3686242199666,
+       35.6949791413377,
+       38.405045088087
       ]
      ]
     },
-    "combined": 32.9538008357587
+    "sensFinal": {
+     "waccs": [
+      0.0856277841268195,
+      0.0906277841268195,
+      0.0956277841268195,
+      0.10062778412682,
+      0.10562778412682
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       39.8689044782261,
+       41.7061362519603,
+       43.9062580485191,
+       46.5885688969162,
+       49.9310956310785
+      ],
+      [
+       37.5636113649666,
+       39.09605087388,
+       40.9039713376737,
+       43.0689922543067,
+       45.7085093486668
+      ],
+      [
+       35.5374028126272,
+       36.8319765008321,
+       38.3400783109781,
+       40.1192859783533,
+       42.2499227469743
+      ],
+      [
+       33.7365334061119,
+       34.8421692731812,
+       36.1162758393272,
+       37.6005346623132,
+       39.3516131773441
+      ],
+      [
+       32.1205313788558,
+       33.0737956670992,
+       34.16203010909,
+       35.4160837169219,
+       36.8769820290247
+      ]
+     ]
+    },
+    "combined": 35.9164595827377
    },
    "alcista": {
     "inflation": [
@@ -2594,74 +4337,74 @@ export const SORIANA_XL = {
      0.04
     ],
     "revenue": [
-     170130.099355363,
-     168082.177631184,
-     170102.331539628,
-     174192.953054657,
-     179676.459366934
+     169679.249248165,
+     173021.930458354,
+     179877.924452766,
+     188368.162486937,
+     197744.187774724
     ],
     "ebit": [
-     7723.34621295701,
-     7595.08005389749,
-     7675.19912224838,
-     7853.56459801456,
-     8099.77798612612
+     7451.21742022002,
+     7561.6717980021,
+     7893.96102753237,
+     8306.40647431097,
+     8767.62422643665
     ],
     "taxEbit": [
-     2066.15114048446,
-     2058.42013186719,
-     2123.60097035682,
-     2217.42884431625,
-     2332.81787663692
+     2236.8661007457,
+     2296.49051384221,
+     2399.1157080261,
+     2526.26298995796,
+     2668.43268802065
     ],
     "da": [
-     4144.84664478651,
-     4094.9535246425,
-     4146.92292492177,
-     4249.46712413578,
-     4386.14592715221
+     4145.02072634197,
+     4226.67763465091,
+     4395.09926446273,
+     4603.53182403119,
+     4833.70546720072
     ],
     "capex": [
-     3835.74579661056,
-     3324.01412777944,
-     3357.68226174243,
-     3431.99404964764,
-     3533.39519184163
+     3868.44204203727,
+     3457.84248846191,
+     3581.95388843043,
+     3737.5073585999,
+     3909.35433716105
     ],
     "nwcRelease": [
-     84.1713923014804,
-     2.89286692656788,
-     268.927485167234,
-     -80.2002911993932,
-     -107.509042677895
+     93.7296014049261,
+     -112.581103236811,
+     183.184009262793,
+     -166.458705649256,
+     -183.82535651632
     ],
     "fcf": [
-     6050.46731294998,
-     6310.49218581992,
-     6609.76630023814,
-     6373.40853698706,
-     6512.20180212189
+     5584.65960518395,
+     5921.43532711208,
+     6491.17470480137,
+     6479.70924413504,
+     6839.71731193936
     ],
     "netIncome": [
-     3927.2242860082,
-     3857.99804772757,
-     3991.7625069972,
-     4193.46982306917,
-     4439.8073779821
+     3561.56704922673,
+     3661.7762631685,
+     3993.74069479215,
+     4381.27595047135,
+     4802.49778992198
     ],
     "cash": [
-     12436.7634940874,
-     14410.6386172578,
-     16762.4654766839,
-     18934.563034826,
-     21287.0303039485
+     12157.8921492849,
+     13876.8620696704,
+     16168.2346125285,
+     18434.0623814411,
+     21035.6447714935
     ],
     "equityBook": [
-     87480.4912536099,
-     90180.5341129907,
-     92974.1928240702,
-     95909.0175989236,
-     99016.2431754134
+     87224.5838635753,
+     89787.2997410086,
+     92582.3428985716,
+     95648.6049077022,
+     99009.6615242312
     ],
     "balanceCheck": [
      0,
@@ -2678,108 +4421,120 @@ export const SORIANA_XL = {
      0.0515
     ],
     "growthFinal": [
-     -0.0416015584296355,
-     -0.0120373862822579,
-     0.0120188465958434,
-     0.0240480037986758,
-     0.0314794956748681
+     -0.0441413444037687,
+     0.0197,
+     0.039625,
+     0.0472,
+     0.049775
     ],
     "marginFinal": [
-     0.0453967066510946,
-     0.0451867066510946,
-     0.0451210694925737,
-     0.0450854323340528,
-     0.0450797951755318
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
     ],
     "ebitda": [
-     11868.1928577435,
-     11690.03357854,
-     11822.1220471701,
-     12103.0317221503,
-     12485.9239132783
+     11596.238146562,
+     11788.349432653,
+     12289.0602919951,
+     12909.9382983422,
+     13601.3296936374
     ],
-    "pvFcf": 23257.8708301971,
-    "tvG": 85802.6403230421,
-    "pvTvG": 50112.3198051833,
-    "evG": 73370.1906353804,
-    "tvM": 72552.8572395458,
-    "pvTvM": 42373.8939860052,
-    "evM": 65631.7648162023,
-    "evW": 69500.9777257914,
-    "ev2": 74401.446576648,
-    "eq2": 57556.242576648,
-    "eqVal": 59368.7056203021,
-    "price": 32.9826142335012,
-    "upside": -1.4856205689928181,
-    "wacc": 11.3553863142439,
-    "ke": 13.0495166234384,
-    "priceG": 32.8039947974336,
-    "priceM": 28.5048693423346,
-    "priceW": 30.6544320698841,
-    "tvWeight": 68.3006536731257,
-    "waccMarket": 11.9198962792971,
-    "keMarket": 13.020787529868599,
-    "betaMarket": 0.828318564980751,
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     168959.617424,
+     175718.00212096,
+     182746.722205798,
+     190056.59109403
+    ],
+    "fcfTv": 5915.36618189968,
+    "pvFcf": 23788.8027558412,
+    "tvG": 100826.437921436,
+    "pvTvG": 63836.9461908023,
+    "evG": 87625.7489466436,
+    "tvM": 79034.2259318932,
+    "pvTvM": 50039.4909515425,
+    "evM": 73828.2937073837,
+    "evW": 80727.0213270136,
+    "ev2": 85562.9196658533,
+    "eq2": 68717.7156658533,
+    "eqVal": 70458.1636640194,
+    "price": 39.1434242577885,
+    "upside": 16.915843063884427,
+    "wacc": 9.57222086238604,
+    "ke": 10.400984596747,
+    "priceG": 40.723749414802,
+    "priceM": 33.0584965041021,
+    "priceW": 36.891122959452,
+    "tvWeight": 72.8518123476165,
+    "impliedMultiple": 7.41298389146485,
+    "impliedG": 0.0194228652559995,
+    "signal": "COMPRAR",
+    "waccMarket": 10.0630184051038,
+    "keMarket": 10.436182627388101,
+    "betaMarket": 0.21730085753856,
     "waccIterations": [
      [
-      0.119198962792971,
-      54191.5499198517,
-      0.43582440500282,
-      0.85169667313769,
-      0.131196769273724,
-      0.112985282959586
+      0.100630184051038,
+      66916.01184263,
+      0.352949904658749,
+      0.212650529710915,
+      0.104165117406772,
+      0.0952523151737751
      ],
      [
-      0.112985282959586,
-      59575.1381719257,
-      0.396440540882032,
-      0.833470079405706,
-      0.130425784358861,
-      0.113611676098338
+      0.0952523151737751,
+      73968.5133603542,
+      0.319298021915617,
+      0.208633687163135,
+      0.103995204967001,
+      0.0957676464318802
      ],
      [
-      0.113611676098338,
-      58993.936058622,
-      0.400346231797975,
-      0.835277607517962,
-      0.13050224279801,
-      0.113547982990113
+      0.0957676464318802,
+      73238.9140973761,
+      0.322478839167362,
+      0.209013364049894,
+      0.104011265299311,
+      0.0957178143740464
      ],
      [
-      0.113547982990113,
-      59052.6115383637,
-      0.399948442325138,
-      0.835093513161704,
-      0.13049445560674,
-      0.113554453794392
+      0.0957178143740464,
+      73308.9273998179,
+      0.322170857461743,
+      0.20897660194572,
+      0.104009710262304,
+      0.0957226288647706
      ],
      [
-      0.113554453794392,
-      59046.6461590556,
-      0.399988848416209,
-      0.835112212835357,
-      0.130495246602936,
-      0.113553796344486
+      0.0957226288647706,
+      73302.1581213527,
+      0.322200609167606,
+      0.208980153245328,
+      0.104009860482277,
+      0.0957221636765758
      ],
      [
-      0.113553796344486,
-      59047.2522117577,
-      0.399984742986857,
-      0.835110312869608,
-      0.130495166234384,
-      0.113553863142439
+      0.0957221636765758,
+      73302.8121394322,
+      0.322197734448104,
+      0.208979810105667,
+      0.10400984596747,
+      0.0957222086238604
      ]
     ],
-    "betaU": 0.65,
-    "betaLMarket": 0.828318564980751,
-    "betaLIter": 0.835110312869608,
+    "betaU": 0.170520815748403,
+    "betaLMarket": 0.21730085753856,
+    "betaLIter": 0.208979810105667,
     "sensGordonClose": {
      "waccs": [
-      0.103553863142439,
-      0.108553863142439,
-      0.113553863142439,
-      0.118553863142439,
-      0.123553863142439
+      0.0857222086238604,
+      0.0907222086238604,
+      0.0957222086238604,
+      0.10072220862386,
+      0.10572220862386
      ],
      "gs": [
       0.025,
@@ -2790,43 +4545,96 @@ export const SORIANA_XL = {
      ],
      "grid": [
       [
-       34.1409268045413,
-       36.2518779025963,
-       38.6707549148582,
-       41.4702345990364,
-       44.7478176113193
+       42.3879967709028,
+       45.8828453666147,
+       50.0667113948341,
+       55.1656395239766,
+       61.5166923048637
       ],
       [
-       31.6402092504793,
-       33.4652142905686,
-       35.538337507205,
-       37.9138686585085,
-       40.6631821471626
+       38.6374852109311,
+       41.5466130064794,
+       44.9778177023147,
+       49.0854922895303,
+       54.0915649880462
       ],
       [
-       29.4215137668335,
-       31.0115476800871,
-       32.8039947974336,
-       34.8401336857854,
-       37.1732855789508
+       35.4148573289762,
+       37.867358998861,
+       40.723749414802,
+       44.0927523933968,
+       48.1259620518659
       ],
       [
-       27.439630798369,
-       28.8344839997195,
-       30.3962778006894,
-       32.1568898059452,
-       34.1568654462348
+       32.6156200126973,
+       34.7058262016604,
+       37.114068901071,
+       39.9189115849005,
+       43.227115989864
       ],
       [
-       25.6585251490757,
-       26.8896848229239,
-       28.2598739676681,
-       29.7940518369562,
-       31.5235323696544
+       30.1611670400052,
+       31.9595355708769,
+       34.0121903529652,
+       36.3771679898492,
+       39.1316205306409
       ]
      ]
     },
-    "combined": 33.2377275439993
+    "sensFinal": {
+     "waccs": [
+      0.0857222086238604,
+      0.0907222086238604,
+      0.0957222086238604,
+      0.10072220862386,
+      0.10572220862386
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       40.7008590440591,
+       42.5677559543675,
+       44.8027158810467,
+       47.5264885737638,
+       50.9191279082379
+      ],
+      [
+       38.3559510460089,
+       39.9135386714079,
+       41.7506535560211,
+       43.9499598621941,
+       46.630281056398
+      ],
+      [
+       36.2944617111902,
+       37.6105716056872,
+       39.1434242577885,
+       40.9513651897621,
+       43.115745831485
+      ],
+      [
+       34.4618862969271,
+       35.586130363429,
+       36.8814344247245,
+       38.3900548476364,
+       40.1694147943701
+      ],
+      [
+       32.8171651261299,
+       33.7866350065593,
+       34.8931862790002,
+       36.1681054891004,
+       37.6529839939946
+      ]
+     ]
+    },
+    "combined": 36.3181325561429
    },
    "base_beta080": {
     "inflation": [
@@ -2837,74 +4645,74 @@ export const SORIANA_XL = {
      0.0351
     ],
     "revenue": [
-     169521.222905363,
-     166899.172667645,
-     168291.753761357,
-     171679.130820352,
-     176368.459696609
+     169070.372798165,
+     171572.614315578,
+     177530.473347686,
+     185040.012370293,
+     193343.68292541
     ],
     "ebit": [
-     7695.70522736961,
-     7541.62395564329,
-     7593.5039164933,
-     7740.22783576996,
-     7950.65403854719
+     7424.47949657229,
+     7498.33154411529,
+     7790.94289679781,
+     8159.64617622566,
+     8572.51369823572
     ],
     "taxEbit": [
-     2058.75661843135,
-     2043.93244930997,
-     2100.99725474609,
-     2185.42857200854,
-     2289.86867341892
+     2228.8393379177,
+     2277.25398836462,
+     2367.80665864078,
+     2481.62815170453,
+     2609.05065957348
     ],
     "da": [
-     4130.01270581607,
-     4066.13220394458,
-     4102.78286859152,
-     4188.14199729641,
-     4305.39317115882
+     4130.14674784304,
+     4191.27291971112,
+     4337.74213930862,
+     4522.19512267549,
+     4726.13849095765
     ],
     "capex": [
-     3832.0389791448,
-     3300.61887393722,
-     3321.94292275407,
-     3382.46608196171,
-     3468.34231752008
+     3864.60804819024,
+     3428.8779119806,
+     3535.2085102006,
+     3671.47185988688,
+     3822.35743013711
     ],
     "nwcRelease": [
-     97.0798253579187,
-     15.3498469656297,
-     279.060067797571,
-     -66.4125550446124,
-     -91.9384841701649
+     106.638034461364,
+     -94.4140093085252,
+     198.132359459596,
+     -147.231224930893,
+     -162.800883459296
     ],
     "fcf": [
-     6032.00216096745,
-     6278.55468330631,
-     6552.40667538223,
-     6294.0626240515,
-     6405.89773459684
+     5567.81689276875,
+     5889.05855417266,
+     6423.80222672465,
+     6381.51006237885,
+     6704.44321602348
     ],
     "netIncome": [
-     3906.97782247391,
-     3819.02963203058,
-     3932.67101685285,
-     4112.13333313227,
-     4333.63263362116
+     3542.855888407,
+     3617.67253475927,
+     3922.03161344291,
+     4279.15049063947,
+     4666.76929016822
     ],
     "cash": [
-     12424.3751978225,
-     14378.0089568858,
-     16690.2121510789,
-     18807.3764604079,
-     21085.4073805949
+     12146.665480601,
+     13846.4961000481,
+     16092.019219474,
+     18290.300156531,
+     20797.3465533188
     ],
     "equityBook": [
-     87466.3216457933,
-     90139.0922278836,
-     92891.3954084417,
-     95769.2963574806,
-     98802.2149081991
+     87211.4887464868,
+     89743.338367512,
+     92488.1954983703,
+     95482.9843975695,
+     98749.050616996
     ],
     "balanceCheck": [
      0,
@@ -2921,108 +4729,120 @@ export const SORIANA_XL = {
      0.0466
     ],
     "growthFinal": [
-     -0.0450315584296355,
-     -0.0154673862822579,
-     0.00834384659584337,
-     0.0201280037986758,
-     0.0273144956748681
+     -0.0475713444037687,
+     0.0148,
+     0.034725,
+     0.0423,
+     0.044875
     ],
     "marginFinal": [
-     0.0453967066510946,
-     0.0451867066510946,
-     0.0451210694925737,
-     0.0450854323340528,
-     0.0450797951755318
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
     ],
     "ebitda": [
-     11825.7179331857,
-     11607.7561595879,
-     11696.2867850848,
-     11928.3698330664,
-     12256.047209706
+     11554.6262444153,
+     11689.6044638264,
+     12128.6850361064,
+     12681.8412989012,
+     13298.6521891934
     ],
-    "pvFcf": 22763.456036212,
-    "tvG": 79209.418945604,
-    "pvTvG": 45206.6035221023,
-    "evG": 67970.0595583143,
-    "tvM": 71217.0961238431,
-    "pvTvM": 40645.2044633348,
-    "evM": 63408.6604995468,
-    "evW": 65689.3600289305,
-    "ev2": 70539.3316771451,
-    "eq2": 53694.1276771451,
-    "eqVal": 55497.600188144,
-    "price": 30.8320001045245,
-    "upside": -7.909199209902917,
-    "wacc": 11.8703481777349,
-    "ke": 13.9617200207656,
-    "priceG": 29.8039219768413,
-    "priceM": 27.2698113886371,
-    "priceW": 28.5368666827392,
-    "tvWeight": 66.5095835075997,
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     168163.55768806,
+     174066.098562911,
+     180175.818622469,
+     186499.989856118
+    ],
+    "fcfTv": 5800.66215520295,
+    "pvFcf": 22233.7023164509,
+    "tvG": 72671.2192644275,
+    "pvTvG": 41677.5907058527,
+    "evG": 63911.2930223036,
+    "tvM": 77275.4359599157,
+    "pvTvM": 44318.1499382136,
+    "evM": 66551.8522546645,
+    "evW": 65231.572638484,
+    "ev2": 70021.5418504145,
+    "eq2": 53176.3378504145,
+    "eqVal": 54970.6452983396,
+    "price": 30.5392473879664,
+    "upside": -8.783609952310623,
+    "wacc": 11.761434707445199,
+    "ke": 14.0292132857991,
+    "priceG": 27.5490516790575,
+    "priceM": 29.0160290303692,
+    "priceW": 28.2825403547134,
+    "tvWeight": 65.2116218198061,
+    "impliedMultiple": 5.46455522188038,
+    "impliedG": 0.0395786256783505,
+    "signal": "MANTENER",
     "waccMarket": 12.500800915571899,
     "keMarket": 13.8293538829152,
     "betaMarket": 1.01946900305323,
     "waccIterations": [
      [
       0.125008009155719,
-      48960.6186541156,
-      0.482387695442543,
-      1.07476413320865,
-      0.140632522834726,
-      0.118037973482754
+      44508.2623664994,
+      0.530643047924891,
+      1.09716010683794,
+      0.141579872519245,
+      0.116764575592125
      ],
      [
-      0.118037973482754,
-      54183.1703814936,
-      0.435891806140358,
-      1.04828045038967,
-      0.139512263051483,
-      0.118774491657988
+      0.116764575592125,
+      50230.4997321224,
+      0.4701924154837,
+      1.06330775267087,
+      0.140147917937978,
+      0.117713426623072
      ],
      [
-      0.118774491657988,
-      53590.3580189392,
-      0.44071360731819,
-      1.05102690937618,
-      0.139628438266612,
-      0.118695902551344
+      0.117713426623072,
+      49514.2665914335,
+      0.476993836844716,
+      1.06711654863304,
+      0.140309030007178,
+      0.117602791733632
      ],
      [
-      0.118695902551344,
-      53653.1172541089,
-      0.440198094886859,
-      1.05073327766109,
-      0.139616017645064,
-      0.118704279612403
+      0.117602791733632,
+      49596.937964115,
+      0.476198752775593,
+      1.06667130155433,
+      0.140290196055748,
+      0.117615672295879
      ],
      [
-      0.118704279612403,
-      53646.4219523593,
-      0.440253033482344,
-      1.05076457024112,
-      0.1396173413212,
-      0.118703386576437
+      0.117615672295879,
+      49587.3017325821,
+      0.476291291818393,
+      1.0667231234183,
+      0.140292388120594,
+      0.117614172426644
      ],
      [
-      0.118703386576437,
-      53647.1356408505,
-      0.440247176626811,
-      1.05076123422354,
-      0.139617200207656,
-      0.118703481777349
+      0.117614172426644,
+      49588.4236643919,
+      0.476280515788193,
+      1.06671708884139,
+      0.140292132857991,
+      0.117614347074452
      ]
     ],
     "betaU": 0.8,
     "betaLMarket": 1.01946900305323,
-    "betaLIter": 1.05076123422354,
+    "betaLIter": 1.06671708884139,
     "sensGordonClose": {
      "waccs": [
-      0.108703481777349,
-      0.113703481777349,
-      0.118703481777349,
-      0.123703481777349,
-      0.128703481777349
+      0.107614347074452,
+      0.112614347074452,
+      0.117614347074452,
+      0.122614347074452,
+      0.127614347074453
      ],
      "gs": [
       0.025,
@@ -3033,43 +4853,404 @@ export const SORIANA_XL = {
      ],
      "grid": [
       [
-       31.0267811850366,
-       32.8144142776897,
-       34.8445912840826,
-       37.1702667068399,
-       39.8610203573282
+       28.7030681837247,
+       30.3727099399733,
+       32.2722844606846,
+       34.4528015036419,
+       36.9815641396363
       ],
       [
-       28.850961380823,
-       30.4087732205809,
-       32.1645193581079,
-       34.1584830255517,
-       36.4426741481201
+       26.6671662340556,
+       28.1198321409372,
+       29.7596626586978,
+       31.6253205210297,
+       33.7669047130616
       ],
       [
-       26.9069233782525,
-       28.2737742872994,
-       29.8039219768413,
-       31.5284889798604,
-       33.4870431652257
+       24.8494266285036,
+       26.1222076760404,
+       27.5490516790575,
+       29.1597333431257,
+       30.9922281514223
       ],
       [
-       25.1594528182165,
-       26.3661058076411,
-       27.7087909984233,
-       29.211885907209,
-       30.9059628252834
+       23.2163768005515,
+       24.3385523326621,
+       25.5888091173966,
+       26.9904024228454,
+       28.5725800349695
       ],
       [
-       23.5801264408883,
-       24.6512318954537,
-       25.8366453174766,
-       27.1556964951176,
-       28.6323338507325
+       21.7410663683418,
+       22.7360385981147,
+       23.8384425877825,
+       25.0666711742748,
+       26.4435698925282
       ]
      ]
     },
-    "combined": 32.1624204795109
+    "sensFinal": {
+     "waccs": [
+      0.107614347074452,
+      0.112614347074452,
+      0.117614347074452,
+      0.122614347074452,
+      0.127614347074452
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       31.7811384749933,
+       32.6893771646564,
+       33.7226928847213,
+       34.9088335250544,
+       36.2844100847501
+      ],
+      [
+       30.3614423870262,
+       31.1534338247706,
+       32.0474671487896,
+       33.0646212278712,
+       34.2322099592258
+      ],
+      [
+       29.0641121143307,
+       29.7595880354966,
+       30.5392473879664,
+       31.4193597342264,
+       32.4206757243555
+      ],
+      [
+       27.8714021587392,
+       28.4859539710103,
+       29.170648611801,
+       29.938221670813,
+       30.8046904994789
+      ],
+      [
+       26.7689874872455,
+       27.31508936577,
+       27.9201563934075,
+       28.594283688894,
+       29.3500102851506
+      ]
+     ]
+    },
+    "combined": 32.0160441212319
+   },
+   "base_damodaran": {
+    "inflation": [
+     0.0351,
+     0.0351,
+     0.0351,
+     0.0351,
+     0.0351
+    ],
+    "revenue": [
+     169070.372798165,
+     171572.614315578,
+     177530.473347686,
+     185040.012370293,
+     193343.68292541
+    ],
+    "ebit": [
+     7424.47949657229,
+     7498.33154411529,
+     7790.94289679781,
+     8159.64617622566,
+     8572.51369823572
+    ],
+    "taxEbit": [
+     2228.8393379177,
+     2277.25398836462,
+     2367.80665864078,
+     2481.62815170453,
+     2609.05065957348
+    ],
+    "da": [
+     4130.14674784304,
+     4191.27291971112,
+     4337.74213930862,
+     4522.19512267549,
+     4726.13849095765
+    ],
+    "capex": [
+     3864.60804819024,
+     3428.8779119806,
+     3535.2085102006,
+     3671.47185988688,
+     3822.35743013711
+    ],
+    "nwcRelease": [
+     106.638034461364,
+     -94.4140093085252,
+     198.132359459596,
+     -147.231224930893,
+     -162.800883459296
+    ],
+    "fcf": [
+     5567.81689276875,
+     5889.05855417266,
+     6423.80222672465,
+     6381.51006237885,
+     6704.44321602348
+    ],
+    "netIncome": [
+     3542.855888407,
+     3617.67253475927,
+     3922.03161344291,
+     4279.15049063947,
+     4666.76929016822
+    ],
+    "cash": [
+     12146.665480601,
+     13846.4961000481,
+     16092.019219474,
+     18290.300156531,
+     20797.3465533188
+    ],
+    "equityBook": [
+     87211.4887464868,
+     89743.338367512,
+     92488.1954983703,
+     95482.9843975695,
+     98749.050616996
+    ],
+    "balanceCheck": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "growthExternal": [
+     -0.0389,
+     0.0061,
+     0.0346,
+     0.0441,
+     0.0466
+    ],
+    "growthFinal": [
+     -0.0475713444037687,
+     0.0148,
+     0.034725,
+     0.0423,
+     0.044875
+    ],
+    "marginFinal": [
+     0.0439135454290124,
+     0.0437035454290124,
+     0.0438851018075052,
+     0.044096658185998,
+     0.0443382145644907
+    ],
+    "ebitda": [
+     11554.6262444153,
+     11689.6044638264,
+     12128.6850361064,
+     12681.8412989012,
+     13298.6521891934
+    ],
+    "lsSales": [
+     174278.0,
+     162461.1706,
+     168163.55768806,
+     174066.098562911,
+     180175.818622469,
+     186499.989856118
+    ],
+    "fcfTv": 5800.66215520295,
+    "pvFcf": 22451.0151511555,
+    "tvG": 76153.1172746779,
+    "pvTvG": 44420.0897530041,
+    "evG": 66871.1049041596,
+    "tvM": 77275.4359599157,
+    "pvTvM": 45074.7378949826,
+    "evM": 67525.7530461381,
+    "evW": 67198.4289751488,
+    "ev2": 71980.6959486144,
+    "eq2": 55135.4919486144,
+    "eqVal": 56910.4022601389,
+    "price": 31.6168901445216,
+    "upside": -5.564844251727585,
+    "wacc": 11.383702657870499,
+    "ke": 13.3539746416858,
+    "priceG": 29.193391613422,
+    "priceM": 29.5570850256323,
+    "priceW": 29.3752383195271,
+    "tvWeight": 66.4264330859607,
+    "impliedMultiple": 5.7263785977169,
+    "impliedG": 0.0360650508392349,
+    "signal": "MANTENER",
+    "waccMarket": 12.0748041823037,
+    "keMarket": 13.2364052240143,
+    "betaMarket": 0.879292015133413,
+    "waccIterations": [
+     [
+      0.120748041823037,
+      47329.1638818825,
+      0.499015787790853,
+      0.931024625502982,
+      0.134552341658776,
+      0.113063149957819
+     ],
+     [
+      0.113063149957819,
+      53189.5668326322,
+      0.444034448979761,
+      0.904468638857224,
+      0.133429023423661,
+      0.113924868598858
+     ],
+     [
+      0.113924868598858,
+      52476.0820973954,
+      0.450071709929965,
+      0.907384635896173,
+      0.133552370098408,
+      0.113827053285163
+     ],
+     [
+      0.113827053285163,
+      52556.2922056546,
+      0.449384821660972,
+      0.907052868862249,
+      0.133538336352873,
+      0.113838141122562
+     ],
+     [
+      0.113838141122562,
+      52547.1900776782,
+      0.449462663276315,
+      0.90709046636246,
+      0.133539926727132,
+      0.113836884065374
+     ],
+     [
+      0.113836884065374,
+      52548.2218820889,
+      0.449453837905222,
+      0.907086203708222,
+      0.133539746416858,
+      0.113837026578705
+     ]
+    ],
+    "betaU": 0.69,
+    "betaLMarket": 0.879292015133413,
+    "betaLIter": 0.907086203708222,
+    "sensGordonClose": {
+     "waccs": [
+      0.103837026578705,
+      0.108837026578705,
+      0.113837026578705,
+      0.118837026578705,
+      0.123837026578705
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       30.4110218988372,
+       32.2754721719607,
+       34.4107723591186,
+       36.8805649720048,
+       39.7701260124442
+      ],
+      [
+       28.1829591896497,
+       29.7956016474,
+       31.6266497658972,
+       33.7236954455184,
+       36.1492410243379
+      ],
+      [
+       26.2039215170076,
+       27.6095112848294,
+       29.193391613422,
+       30.9917822496452,
+       33.0514262731231
+      ],
+      [
+       24.434156972399,
+       25.667657948848,
+       27.0482897369189,
+       28.6040463169798,
+       30.3705043096175
+      ],
+      [
+       22.8419556825996,
+       23.9310558270531,
+       25.1427512661036,
+       26.4989765732205,
+       28.0272308578335
+      ]
+     ]
+    },
+    "sensFinal": {
+     "waccs": [
+      0.103837026578705,
+      0.108837026578705,
+      0.113837026578705,
+      0.118837026578705,
+      0.123837026578705
+     ],
+     "gs": [
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045
+     ],
+     "grid": [
+      [
+       32.8987323209387,
+       33.9096916619008,
+       35.0675137293936,
+       36.406707350285,
+       37.9735116610369
+      ],
+      [
+       31.3744160663341,
+       32.2508160388778,
+       33.2459098447396,
+       34.3855615804423,
+       35.703738507054
+      ],
+      [
+       29.9885863135,
+       30.7541825997897,
+       31.6168901445216,
+       32.5964371104364,
+       33.718283506556
+      ],
+      [
+       28.7202373704374,
+       29.3936066801221,
+       30.1472948342558,
+       30.9965837722904,
+       31.9608948038988
+      ],
+      [
+       27.5525732269848,
+       28.1484409890508,
+       28.8113830088913,
+       29.5534001160643,
+       30.3895376054199
+      ]
+     ]
+    },
+    "combined": 32.5548654995095
    }
   },
   "comps": {
@@ -3212,14 +5393,85 @@ export const SORIANA_XL = {
     ]
    }
   },
+  "sdc": {
+   "stats": {
+    "evEbitda": {
+     "min": 2.2,
+     "p25": 4.5375,
+     "mean": 7.7775,
+     "median": 5.045,
+     "p75": 8.9225,
+     "max": 21.31,
+     "n": 8,
+     "lo": -2.04,
+     "hi": 15.5,
+     "nOut": 1,
+     "meanEx": 5.84428571428571,
+     "medianEx": 4.98
+    },
+    "evSales": {
+     "min": 0.08,
+     "p25": 0.28,
+     "mean": 0.482222222222222,
+     "median": 0.53,
+     "p75": 0.69,
+     "max": 0.9,
+     "n": 9,
+     "lo": -0.335,
+     "hi": 1.305,
+     "nOut": 0,
+     "meanEx": 0.482222222222222,
+     "medianEx": 0.53
+    },
+    "pe": {
+     "min": 3.88,
+     "p25": 11.0275,
+     "mean": 12.3825,
+     "median": 13.565,
+     "p75": 14.92,
+     "max": 18.52,
+     "n": 4,
+     "lo": 5.18875,
+     "hi": 20.75875,
+     "nOut": 1,
+     "meanEx": 15.2166666666667,
+     "medianEx": 13.72
+    }
+   },
+   "prices": {
+    "min": 5.07706233333333,
+    "p25": 20.4147906458333,
+    "mean": 41.6743584458333,
+    "median": 23.7448001083333,
+    "p75": 49.1873847208333,
+    "max": 130.469142783333,
+    "meanEx": 28.9893892547619,
+    "medianEx": 23.3182964333333
+   },
+   "pricesSales": {
+    "min": "NM",
+    "p25": 17.7514644444444,
+    "mean": 37.330844691358,
+    "median": 41.9567422222222,
+    "p75": 57.44812,
+    "max": 77.7805533333333
+   }
+  },
   "combined": {
-   "value": 32.9538008357587,
-   "classRule": 35.5453322793947,
-   "dcfLo": 32.1277266764072,
-   "dcfHi": 32.9826142335012
+   "value": 35.9164595827377,
+   "classRule": 31.8592397579363,
+   "dcfLo": 37.9348536027754,
+   "dcfHi": 39.1434242577885,
+   "ptLo": 20.4147906458333,
+   "ptHi": 49.1873847208333,
+   "ciqHist": [
+    24.7618473333333,
+    40.7283951666667,
+    65.4437363333333
+   ]
   },
   "validation": {
-   "summary": "39 PASS de 39",
+   "summary": "49 PASS de 49",
    "checks": [
     [
      "DCF · balance proyectado cuadra 2025A–2030E",
@@ -3242,7 +5494,7 @@ export const SORIANA_XL = {
      "PASS"
     ],
     [
-     "DCF · VT Gordon = FCF2030 × (1+g) / (WACC − g)",
+     "DCF · VT Gordon = FCF normalizado 2030 (NOPAT − ΔNWC) × (1+g) / (WACC − g)",
      "PASS"
     ],
     [
@@ -3266,7 +5518,7 @@ export const SORIANA_XL = {
      "PASS"
     ],
     [
-     "DCF · baseline histórico (Citi + βU 0.80) = $31.1644",
+     "DCF · baseline histórico (Citi + βU 0.80) reproducible (registrado tras las correcciones)",
      "PASS"
     ],
     [
@@ -3278,7 +5530,7 @@ export const SORIANA_XL = {
      "PASS"
     ],
     [
-     "Beta · βU usada = Damodaran global (selector oficial)",
+     "Beta · βU usada = selector (2 regresión desapalancada, oficial)",
      "PASS"
     ],
     [
@@ -3322,11 +5574,11 @@ export const SORIANA_XL = {
      "PASS"
     ],
     [
-     "Comps · media de 10 empresas ≈ media publicada por CIQ (EV/EBITDA)",
+     "Comps · 10 empresas con EV/EBITDA y P/U transcritos de CIQ (20 cifras)",
      "PASS"
     ],
     [
-     "Comps · media de 10 empresas ≈ media publicada por CIQ (P/U)",
+     "Comps · media muestra (P/U) = SUMPRODUCT / SUM",
      "PASS"
     ],
     [
@@ -3375,6 +5627,46 @@ export const SORIANA_XL = {
     ],
     [
      "Combinada · Transactions con peso 0%",
+     "PASS"
+    ],
+    [
+     "SDC · n EV/EBITDA por vía independiente (SUMPRODUCT)",
+     "PASS"
+    ],
+    [
+     "SDC · media EV/EBITDA = SUMPRODUCT / n",
+     "PASS"
+    ],
+    [
+     "SDC · mediana EV/EBITDA = percentil 50",
+     "PASS"
+    ],
+    [
+     "SDC · ninguna operación incluida tiene < 2 múltiplos",
+     "PASS"
+    ],
+    [
+     "SDC · ninguna operación incluida está fuera de la ventana",
+     "PASS"
+    ],
+    [
+     "SDC · ninguna recompra propia incluida",
+     "PASS"
+    ],
+    [
+     "SDC · ningún NA se trata como cero",
+     "PASS"
+    ],
+    [
+     "SDC · precio mediana = (múltiplo × EBITDA + ajuste) / acciones",
+     "PASS"
+    ],
+    [
+     "Combinada · Precedent Transactions = mediana SDC (peso 0%)",
+     "PASS"
+    ],
+    [
+     "DCF · centro de la sensibilidad del precio final = precio objetivo",
      "PASS"
     ]
    ]

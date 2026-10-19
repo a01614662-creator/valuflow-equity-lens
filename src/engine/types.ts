@@ -116,6 +116,8 @@ export interface BuildSpec {
     adjustments: LabeledSeries[];
     /** Ventas por mínimos cuadrados: año base + un valor por año proyectado. */
     lsSales: number[];
+    /** Si es true, solo el primer año proyectado viene de la regresión; los siguientes crecen con la inflación del escenario. */
+    lsGrowWithInflation?: boolean;
   };
   margin: { base: number; adjustments: LabeledSeries[]; ls: number[] };
   da: { ext: number[]; ls: number[] };
@@ -149,7 +151,7 @@ export interface InflationSpec {
   beta?: { historical: number; r2: number; n: number; reported: number; wacc: number };
 }
 
-/** Beta sectorial de referencia externa y su tratamiento en el WACC. */
+/** Beta del WACC: regresión semanal desapalancada (si existe) y beta sectorial de referencia externa, con su tratamiento. */
 export interface BetaSpec {
   source: string; url?: string; date: string; industry: string; firms?: number;
   levered: number; de: number; effTax?: number; marginalTax: number; unlevered: number; cashFirm?: number; unleveredCash?: number;
@@ -157,6 +159,8 @@ export interface BetaSpec {
   check?: number;
   /** Beta del modelo anterior (solo para reproducir el baseline histórico). */
   inherited?: number;
+  /** Beta de la regresión semanal: βL observada desapalancada con su propia estructura (D/E = deuda ÷ capitalización, t). */
+  regression?: { levered: number; debt: number; equity: number; de: number; tax: number; unlevered: number; source: string; note: string };
   used: number; treatment: string[];
   kd?: { value: number; check: number; fy2025?: number; source: string; checkNote?: string };
 }
@@ -199,7 +203,42 @@ export interface TransactionsSpec {
   multiples: MultipleDef[];
 }
 
-export interface CombinedSpec { weights: { dcf: number; comps: number; transactions: number }; reasons?: Record<string, string>; classRule?: string }
+export interface CombinedSpec {
+  weights: { dcf: number; comps: number; transactions: number }; reasons?: Record<string, string>; classRule?: string;
+  /** Muestra que alimenta el renglón de Precedent Transactions: 'sdc' (LSEG/SDC auditada) o 'ciq' (histórica). */
+  transactionsSource?: 'sdc' | 'ciq';
+}
+
+/** Operación de la pantalla LSEG/SDC: datos tal como la fuente (USD mm, múltiplos en x, NA = null) y juicio del analista. */
+export interface SdcDeal {
+  id: string; date: string; target: string; targetNation: string; targetIndustry: string; publicStatus: string;
+  acquiror: string; acquirorNation: string; status: string;
+  /** Rank Value inc. Net Debt of Target (USD mm): valor de la operación según LSEG; no es la contraprestación pagada. */
+  rankValue: number | null;
+  /** Enterprise Value at Announcement (USD mm). */
+  ev: number | null;
+  evEbitda: number | null; pe: number | null; evSales: number | null; prem1d: number | null; prem4w: number | null; salesLtm: number | null;
+  /** Juicio del analista: el objetivo opera autoservicio/alimentos ('Sí'/'No'), naturaleza de la operación, elegibilidad y motivo. */
+  sector: string; nature: string; judgment: string; reason: string; change?: string;
+}
+
+export interface SdcSpec {
+  source?: string;
+  screen: { file: string; date: string; time?: string; count: number; columns?: number; provider: string };
+  criteria: { valuationDate: string; windowYears: number; windowStart: string; minMultiples: number };
+  fx: { rate: number; source: string };
+  funnel: [string, string, string][];
+  deals: SdcDeal[];
+  official: 'median' | 'mean' | 'meanEx' | 'medianEx';
+  weightNote?: string; statNote?: string;
+  sensitivity: { label: string; drop: string[] }[];
+}
+
+/** Referencia externa (S&P Capital IQ, LSEG Refinitiv, otros modelos). Nunca entra al precio oficial salvo indicación. */
+export interface ExternalRef {
+  key: string; source: string; method: string; date: string; value: number | null; lo: number | null; hi: number | null;
+  refPrice: number | null; refDate: string; assumptions: string; limits: string; official: string; page: string;
+}
 
 export interface AltForecast {
   label: string;
@@ -250,6 +289,8 @@ export interface Valuation {
   bridge: { debt: number; lease: number; cash: number };
   roll?: Roll;
   signalThreshold?: number;
+  /** FCF del valor terminal: 'last' = FCF del último año; 'normalized' = NOPAT − ΔNWC (capex = D&A). */
+  tvFcf?: 'last' | 'normalized';
 }
 
 /** Resultados de referencia (Excel) para la capa de validación. */
@@ -319,8 +360,9 @@ export interface SensTable { label: string; rowsLabel: string; colsLabel: string
 
 export interface Annex {
   statements: { cols: string[]; rows: (string | number)[][] };
-  projected: { cols: string[]; rows: AnnexRow[] };
-  sensitivity: Record<string, SensTable>;
+  /** Tablas estáticas (solo para datasets sin proyección por drivers; con drivers se calculan en vivo). */
+  projected?: { cols: string[]; rows: AnnexRow[] };
+  sensitivity?: Record<string, SensTable>;
 }
 
 export interface ImportedField {
@@ -351,7 +393,18 @@ export interface Dataset {
   notes?: string[];
   comps?: CompsSpec;
   transactions?: TransactionsSpec;
+  /** Precedent Transactions con la pantalla LSEG/SDC auditada. */
+  sdc?: SdcSpec;
   combined?: CombinedSpec;
+  /** Regla de recomendación sobre el precio objetivo combinado (umbrales como fracción, p. ej. 0.10). */
+  recommendation?: { buy: number; sell: number; rule: string; experts?: string; target?: number; rating?: string; fairLo?: number; fairHi?: number };
+  /** Contraste con plataformas externas y otros modelos (referencias). */
+  external?: ExternalRef[];
+  externalNotes?: string[];
+  /** Hallazgos de la auditoría del Excel: [hoja, tipo, hallazgo, impacto, corrección, prueba]. */
+  audit?: { note: string; findings: string[][] };
+  /** Estudio de mercado de clase: cierres mensuales vs. inflación y correlaciones (no alimenta el DCF). */
+  study?: { monthly: [string, number, number][]; correlations: [string, number, string][]; note?: string };
   waccIterationExcel?: number[][];
   method?: Method;
   quarterly?: { periods: string[]; [k: string]: string[] | number[] };
@@ -393,6 +446,8 @@ export interface Assumptions {
   /** Inclusión de comparables / operaciones y uso de múltiplos (solo cambios respecto al dataset). */
   compsInclude?: Record<string, number>; compsUse?: Record<string, number>;
   dealsInclude?: Record<string, number>; dealsUse?: Record<string, number>;
+  /** Inclusión manual de operaciones LSEG/SDC (solo cambios respecto a los criterios). */
+  sdcInclude?: Record<string, number>;
   /** Pesos de la valuación combinada (fracciones). */
   weights?: { dcf: number; comps: number; transactions: number };
 }
@@ -406,7 +461,7 @@ export interface DriverSet {
 }
 
 export interface BuildYear {
-  year: string; inflation: number; marketGrowth: number; growthExternal: number; growthLS: number; growth: number;
+  year: string; inflation: number; marketGrowth: number; growthExternal: number; growthLS: number; growth: number; lsSales: number;
   marginExternal: number; margin: number; daPct: number; capexPctExternal: number; capexPct: number; taxRate: number;
   revenue: number; cogs: number; gross: number; opex: number; ebitda: number; da: number; ebit: number; interest: number; otherIncome: number;
   ebt: number; taxes: number; netIncome: number; dividends: number;
@@ -416,7 +471,7 @@ export interface BuildYear {
   taxEbit: number; nopat: number; nwcRelease: number; fcf: number;
 }
 
-export interface BuildResult { scenario: string | null; inflation: number[]; years: BuildYear[]; rows: ForecastRows }
+export interface BuildResult { scenario: string | null; inflation: number[]; years: BuildYear[]; rows: ForecastRows; lsBase: number }
 
 export interface ProjRow {
   year: string; n: number; growth: number; revenue: number; margin: number; ebit: number; taxRate: number; tax: number; nopat: number;
@@ -450,6 +505,8 @@ export interface RunOk {
   mult: number | null; tvM: number | null; pvTvM: number | null; evM: number | null; wG: number; evW: number;
   nd: number; eqClose: number; priceClose: number; priceG: number; priceM: number | null;
   pvTvW: number; tvWeightG: number; tvWeightW: number;
+  /** FCF usado en el valor terminal (normalizado o del último año) y g implícita en el múltiplo de salida. */
+  fcfTv: number; impliedG: number | null;
   roll: RollResult | null; eqVal: number; ev: number; value: number; price: number; shares: number;
   upside: number | null; signal: string | null; threshold: number; impliedMultiple: number;
 }

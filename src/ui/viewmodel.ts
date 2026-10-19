@@ -2,8 +2,8 @@
 // (textos formateados, posiciones de gráficas, acciones). Las pantallas (pages/*.tsx) solo dibujan.
 import * as E from '../engine';
 import { fmt as f, labelsOf, unitsOf, type Assumptions, type Dataset, type RunOk, type RunResult } from '../engine';
+import { buildDeck } from './present/deck';
 import { FIELDS } from '../services/importer';
-import { exportCSV, exportJSON, exportXLSX, getXLSX } from '../services/exporter';
 import { store } from '../services/store';
 import { brandColor } from '../services/research';
 import { DEFAULT_ID } from '../data/registry';
@@ -11,7 +11,7 @@ import { PROJECT } from '../config';
 import { annexDefs, annexTables } from './annex';
 import { betaTables, inflationChain, inflationChart, inflationTables, overridesActive, relativeView } from './relative';
 import type { App } from './App';
-import { SEQ, SEQ_N } from './App';
+import { EXPORT_LABELS, SEQ, SEQ_N, type ExportKind } from './App';
 
 export type VM = Record<string, any>;
 
@@ -25,7 +25,7 @@ const initialsOf = (s: string) => s.split(/\s+/).map(w => w[0]).join('').slice(0
 
 export function buildView(app: App): VM {
   const S = app.state;
-  if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pres: {}, toast: {} };
+  if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pres: {}, toast: {}, exp: null };
   const c = app.calc(), ds = c.ds, b = c.view as RunOk, A = c.VA, P = ds.profile, rv = S.reveal || !!S.printing, L = labelsOf(ds);
   const view = S.view, pr = S.printing;
   const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, p4: view === 'p4' || !!pr, p5: view === 'p5' || !!pr, p6: view === 'p6' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
@@ -35,7 +35,7 @@ export function buildView(app: App): VM {
   const mu = co.units;
   const r = b.ok ? {
     value: f.cur(b.value), price: b.price ? f.cur(b.price) : 'No disponible', upside: b.upside != null ? f.pp(b.upside) : '—', upColor, heroDisp: f.cur(S.heroDisp || 0),
-    diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: b.signal === 'Mantener' ? 'Mantener' : ((b.upside as number) > 0 ? 'Sobre umbral' : 'Bajo umbral'), threshold: Math.round(b.threshold * 100) + '%',
+    diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: b.signal || '—', threshold: Math.round(b.threshold * 100) + '%',
     modelLabel: A.forecastKey && A.forecastKey !== 'final' && ds.altForecasts ? ds.altForecasts[A.forecastKey].label : (ds.builtIn ? 'Proyección final · DCF' : 'DCF base'), tvWeight: f.p(b.tvWeightG, 1)
   } : { value: '—', price: '—', upside: '—', upColor, heroDisp: '—', diff: '—', signal: '—', threshold: '', modelLabel: '', tvWeight: '—' };
 
@@ -50,13 +50,14 @@ export function buildView(app: App): VM {
   const NAV = [['01', 'Valor', 'p1'], ['02', 'Flujos', 'p2'], ['03', 'Riesgo', 'p3']].concat(hasRel ? [['04', 'Múltiplos', 'p4'], ['05', 'Transacciones', 'p5'], ['06', 'Combinada', 'p6']] : []).concat([['', 'Laboratorio', 'lab'], ['', 'Anexos', 'annex'], ['', 'Equipo', 'team']]);
   const navItems = NAV.map(([num, label, vw]) => ({ num, label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
   const mobileNav = [['Inicio', 'cover'], ['Valor', 'p1'], ['Flujos', 'p2'], ['Riesgo', 'p3'], ['Más', 'annex']].map(([label, vw]) => ({ label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
-  const exportItems = [
-    { label: 'PDF · Resumen ejecutivo', desc: 'Valor, flujos, costo de capital y sensibilidad', onClick: () => app.print('summary') },
-    { label: 'PDF · Reporte completo', desc: 'Resumen + todos los anexos y la validación', onClick: () => app.print('full') },
-    { label: 'Excel (.xlsx)', desc: 'Resumen, supuestos, FCF, WACC, sensibilidad, validación', onClick: () => { app.setState({ menu: null }); getXLSX() ? (b.ok && exportXLSX(ds, A, b)) : app.flash('Excel aún no disponible'); } },
-    { label: 'CSV', desc: 'Datos financieros normalizados', onClick: () => { app.setState({ menu: null }); b.ok && exportCSV(ds, b); } },
-    { label: 'Dataset ValuFlow (.json)', desc: 'Para reabrir esta valuación en otra computadora', onClick: () => { app.setState({ menu: null }); exportJSON(ds, S.A as Assumptions); } }
-  ];
+  const exportItems = ([
+    ['exec', 'Dos o tres páginas: resultado, recomendación, escenarios y riesgos'],
+    ['full', 'Portada, índice, 16 secciones con tablas y gráficas numeradas'],
+    ['xlsx', 'Libro con fórmulas (WACC, FCFF, transacciones, combinada) y todas las tablas'],
+    ['csv', 'Todas las tablas del reporte en un archivo (UTF-8)'],
+    ['json', 'Dataset y supuestos activos; se reabre en ValuFlow'],
+    ['zip', 'Ambos PDF, Excel, CSV por tabla, JSON, gráficas y LEEME']
+  ] as [ExportKind, string][]).map(([k, desc]) => ({ label: EXPORT_LABELS[k], desc, onClick: () => app.exportRun(k), disabled: !!(S.exp && S.exp.status === 'run') }));
 
   // ----- Página 01 -----
   let track: any = {}, football: any = { rows: [] }, wf: any = { steps: [] }, kpis: any[] = [], insights: any[] = [];
@@ -105,7 +106,10 @@ export function buildView(app: App): VM {
     const yrs = [ds.forecast.baseYear].concat(R.map(rr => rr.year)), X0 = 80, X1 = 600, xs = (i: number) => X0 + i * (X1 - X0) / (yrs.length - 1);
     const series: any[] = [{ label: 'Proyección final', color: ACC, dash: 'solid', w: 3, data: [B.revenue as number].concat(R.map(rr => rr.revenue)), solid: true }];
     const M = ds.method;
-    if (M) { series.push({ label: M.salesConstLabel || 'Supuestos constantes', color: 'var(--color-neutral-600)', dash: 'dashed', w: 2, data: [B.revenue as number].concat(M.salesConst) }); series.push({ label: M.salesLSLabel || 'Mínimos cuadrados', color: 'var(--color-accent-400)', dash: 'dotted', w: 2, data: [M.salesLTM].concat(M.salesLS) }); }
+    // La tendencia de mínimos cuadrados se toma de la proyección en vivo (depende del escenario de inflación activo).
+    const BLD = b.drivers.build, lsLine = BLD ? [BLD.lsBase].concat(BLD.years.map(y => y.lsSales)) : (M ? [M.salesLTM].concat(M.salesLS) : null);
+    if (M) series.push({ label: M.salesConstLabel || 'Supuestos constantes', color: 'var(--color-neutral-600)', dash: 'dashed', w: 2, data: [B.revenue as number].concat(M.salesConst) });
+    if (M && lsLine) series.push({ label: M.salesLSLabel || 'Mínimos cuadrados', color: 'var(--color-accent-400)', dash: 'dotted', w: 2, data: lsLine });
     const allS = series.flatMap(s => s.data as number[]), ymn = Math.min(...allS) * 0.96, ymx = Math.max(...allS) * 1.02, ys = (vv: number) => 248 - (vv - ymn) / (ymx - ymn) * 220;
     const lastY = R[R.length - 1];
     sales = {
@@ -114,7 +118,7 @@ export function buildView(app: App): VM {
       paths: series.map(s => ({ d: (s.data as number[]).map((vv, i) => (i ? 'L' : 'M') + xs(i).toFixed(1) + ' ' + ys(vv).toFixed(1)).join(' '), color: s.color, w: s.w, dash: s.solid ? '1000' : (s.dash === 'dashed' ? '7 6' : '2 5'), off: s.solid ? (rv ? 0 : 1000) : 0 })),
       dots: (series[0].data as number[]).map((vv, i) => ({ x: xs(i).toFixed(1), y: ys(vv).toFixed(1), ty: (ys(vv) - 12).toFixed(1), t: f.m(vv / 1000, 1) + 'k' })),
       xl: yrs.map((y, i) => ({ x: xs(i).toFixed(1), t: y, fw: i === 0 ? 700 : 400 })),
-      note: M ? 'Ventas ' + lastY.year + ': ' + f.m(lastY.revenue) + ' ' + mu + ' con la proyección final, frente a ' + f.m(M.salesConst[M.salesConst.length - 1]) + ' con supuestos constantes y ' + f.m(M.salesLS[M.salesLS.length - 1]) + ' con la tendencia lineal pura.' : 'Crecimiento constante de ' + f.p(R[0].growth) + ' anual a partir del último año reportado.'
+      note: M ? 'Ventas ' + lastY.year + ': ' + f.m(lastY.revenue) + ' ' + mu + ' con la proyección final, frente a ' + f.m(M.salesConst[M.salesConst.length - 1]) + ' con supuestos constantes y ' + f.m(lsLine ? lsLine[lsLine.length - 1] : M.salesLS[M.salesLS.length - 1]) + ' con la tendencia de mínimos cuadrados.' : 'Crecimiento constante de ' + f.p(R[0].growth) + ' anual a partir del último año reportado.'
     };
     if (M) {
       const ls = M.leastSquares, Q = M.lsQuarters, Y = ds.forecast.years, wN = M.weightsExternal.length - 1;
@@ -122,11 +126,18 @@ export function buildView(app: App): VM {
       methodSteps = [
         { n: '01', title: 'Mínimos cuadrados', text: 'Tendencia lineal sobre ' + (Q.length === 5 ? 'cinco' : Q.length) + ' trimestres (' + Q[0] + '–' + Q[Q.length - 1] + ') para ventas, costos, impuestos, D&A, capex y capital de trabajo.', meta: 'R²: ventas ' + r2('ventas') + ' · D&A ' + r2('da') + ' · capital de trabajo ' + r2('nwc') },
         { n: '02', title: 'Variables externas', text: M.external.length + ' variables macroeconómicas, regulatorias y sectoriales ajustan la trayectoria de ventas, costos y capex.', meta: 'Ajuste neto: ventas ' + M.externalNet.sales.toFixed(2) + '% · costos +' + M.externalNet.costs.toFixed(2) + '% · capex +' + M.externalNet.capex.toFixed(2) + '%' },
-        { n: '03', title: 'Ponderación', text: 'La proyección final combina ambos métodos: ' + M.weightsExternal[0] + '% variables externas en ' + Y[0] + ', hasta ' + M.weightsExternal[wN] + '% en ' + Y[wN] + '.', meta: 'Crecimiento final: ' + M.growthFinal[0].toFixed(2) + '% → ' + M.growthFinal[M.growthFinal.length - 1].toFixed(2) + '%' }
+        { n: '03', title: 'Ponderación', text: 'La proyección final combina ambos métodos: ' + M.weightsExternal[0] + '% variables externas en ' + Y[0] + ', hasta ' + M.weightsExternal[wN] + '% en ' + Y[wN] + '.', meta: 'Crecimiento final: ' + f.p(R[0].growth) + ' → ' + f.p(R[R.length - 1].growth) + ' (escenario activo)' }
       ];
       weights = M.weightsExternal.map((w, i) => ({ year: Y[i], ext: rv ? w + '%' : '0%', extTxt: w + '%', lsTxt: (100 - w) + '%', delay: (i * 80) + 'ms' }));
-      extNet = [{ k: 'Ventas', v: M.externalNet.sales.toFixed(2) + '%', color: M.externalNet.sales < 0 ? NEG : POS }, { k: 'Costos', v: '+' + M.externalNet.costs.toFixed(2) + '%', color: NEG }, { k: 'Capex', v: '+' + M.externalNet.capex.toFixed(2) + '%', color: NEG }];
-      extTop = M.external.filter(e => e[5]).sort((a, z) => Math.abs(z[5]) - Math.abs(a[5])).slice(0, 8).map(e => { const w = Math.abs(e[5]) / 0.5 * 46; return { name: e[1], cat: e[0], v: (e[5] > 0 ? '+' : '') + e[5].toFixed(2) + '%', left: e[5] < 0 ? (50 - (rv ? w : 0)) + '%' : '50%', width: rv ? w + '%' : '0%', color: e[5] < 0 ? NEG : POS }; });
+      // Ajustes documentados en la hoja Proyección Final (filas 15–22 ventas y 32–39 margen), primer año proyectado.
+      const BS = ds.forecast.build, sumAt = (L: { values: number[] }[], i: number) => L.reduce((a, x) => a + (x.values[i] || 0), 0) * 100;
+      if (BS) {
+        const sA = sumAt(BS.sales.adjustments, 0), mA = sumAt(BS.margin.adjustments, 0);
+        extNet = [{ k: 'Ventas ' + ds.forecast.years[0], v: (sA >= 0 ? '+' : '') + sA.toFixed(2) + ' pp', color: sA < 0 ? NEG : POS }, { k: 'Margen EBIT ' + ds.forecast.years[0], v: (mA >= 0 ? '+' : '') + mA.toFixed(2) + ' pp', color: mA < 0 ? NEG : POS }];
+        const adj = [...BS.sales.adjustments.map(a => ({ cat: 'Ventas', a })), ...BS.margin.adjustments.map(a => ({ cat: 'Margen EBIT', a }))].filter(x => x.a.values[0]);
+        const mxA = Math.max(...adj.map(x => Math.abs(x.a.values[0]))) || 1;
+        extTop = adj.sort((p, q) => Math.abs(q.a.values[0]) - Math.abs(p.a.values[0])).slice(0, 8).map(x => { const e = x.a.values[0] * 100, w = Math.abs(x.a.values[0]) / mxA * 46; return { name: x.a.label.replace(/^\(±\)\s*/, ''), cat: x.cat + ' · ' + (x.a.cell || ''), v: (e > 0 ? '+' : '') + e.toFixed(2) + ' pp', left: e < 0 ? (50 - (rv ? w : 0)) + '%' : '50%', width: rv ? w + '%' : '0%', color: e < 0 ? NEG : POS }; });
+      }
     } else {
       methodSteps = [
         { n: '01', title: 'Base del archivo', text: 'Último año reportado: ventas ' + f.m(B.revenue) + ' ' + mu + ', margen EBIT ' + f.p((B.ebit as number) / (B.revenue as number)) + '.', meta: 'Fuente: ' + (ds.source.file || 'captura') },
@@ -134,9 +145,9 @@ export function buildView(app: App): VM {
         { n: '03', title: 'Mismo motor', text: 'WACC iterado al valor DCF y valor terminal por Gordon' + (b.mult ? ' y múltiplo EV/EBITDA.' : '.'), meta: 'Sin código específico por empresa' }
       ];
     }
-    tv = { lastYear: lastY.year, fcfN: f.m(lastY.fcf), g: f.p(b.g), denom: f.p(b.wacc - b.g), tv: f.m(b.tvG), pv: f.m(b.pvTvG), wExp: rv ? ((1 - b.tvWeightG) * 100).toFixed(1) + '%' : '0%', expTxt: f.p(1 - b.tvWeightG, 1), tvTxt: f.p(b.tvWeightG, 1) };
+    tv = { lastYear: lastY.year, fcfN: f.m(b.fcfTv), fcfLabel: 'FCF ' + lastY.year + (Math.abs(b.fcfTv - lastY.fcf) > 1e-6 ? ' normalizado (capex = D&A)' : ''), g: f.p(b.g), denom: f.p(b.wacc - b.g), tv: f.m(b.tvG), pv: f.m(b.pvTvG), wExp: rv ? ((1 - b.tvWeightG) * 100).toFixed(1) + '%' : '0%', expTxt: f.p(1 - b.tvWeightG, 1), tvTxt: f.p(b.tvWeightG, 1) };
   }
-  const extCount = ds.method ? ds.method.external.length : 0;
+  const extCount = ds.forecast.build ? ds.forecast.build.sales.adjustments.length + ds.forecast.build.margin.adjustments.length : (ds.method ? ds.method.external.length : 0);
 
   // ----- Página 03 -----
   let wb: any = { keBlocks: [], kdBlocks: [] }, iter: any = { yl: [], pts: [], stats: [] }, heat: any = { steps: [], cols: [], rows: [] }, torn: any = { rows: [] }, scen: any[] = [];
@@ -145,7 +156,7 @@ export function buildView(app: App): VM {
     const blk = (k: string, vv: string, s: string, op: string, hl?: boolean) => ({ k, v: vv, s, op, bg: hl ? ACC : 'transparent', color: hl ? 'var(--color-bg)' : 'var(--color-text)', border: hl ? ACC : 'var(--color-divider)' });
     wb = {
       modeLabel: A.waccMode === 'iterated' ? 'Iterado al valor DCF' : useM ? 'Valor de mercado' : 'Manual · ' + f.p(b.wacc),
-      keBlocks: [blk('Tasa libre de riesgo', f.p(W.rf), L.rfSource, '+'), blk('Beta apalancada βL', src.beta.toFixed(3), 'βU ' + W.betaU.toFixed(2) + (ds.beta && Math.abs(W.betaU - ds.beta.unlevered) < 1e-12 ? ' (Damodaran)' : '') + ' · D/E ' + f.x(src.de, 3), '×'), blk('Prima de riesgo', f.p(W.prm), 'PRM aplicada', '='), blk('Ke', f.p(src.ke), 'Costo del capital', '', true)],
+      keBlocks: [blk('Tasa libre de riesgo', f.p(W.rf), L.rfSource, '+'), blk('Beta apalancada βL', src.beta.toFixed(3), 'βU ' + W.betaU.toFixed(4) + (ds.beta && ds.beta.regression && Math.abs(W.betaU - ds.beta.regression.unlevered) < 1e-12 ? ' (regresión)' : ds.beta && Math.abs(W.betaU - (ds.beta.unleveredCash ?? ds.beta.unlevered)) < 1e-12 ? ' (Damodaran)' : '') + ' · D/E ' + f.x(src.de, 3), '×'), blk('Prima de riesgo', f.p(W.prm), 'PRM aplicada', '='), blk('Ke', f.p(src.ke), 'Costo del capital', '', true)],
       kdBlocks: [blk('Kd antes de impuestos', f.p(src.kd), useM ? 'Gastos financieros / deuda' : 'Tasa implícita proyectada', '× (1 −'), blk('Tasa fiscal', f.p(src.tax), 'Escudo fiscal', ') ='), blk('Kd(1 − t)', f.p(src.kdAT), 'Costo de la deuda', '', true)],
       structLabel: useM ? 'capital a valor de mercado (' + f.m(src.E) + ' ' + mu + ')' : 'capital al valor DCF (' + f.m(src.E) + ' ' + mu + ')', wEW: rv ? (src.wE * 100).toFixed(1) + '%' : '50%', wE: f.p(src.wE, 1), wD: f.p(src.wD, 1), ke: f.p(src.ke), kdat: f.p(src.kdAT), wacc: f.p(b.wacc)
     };
@@ -169,15 +180,19 @@ export function buildView(app: App): VM {
   const D = c.D as unknown as Record<string, number>, ch = (k: string) => Math.abs((SAr[k] ?? 0) - (D[k] ?? 0)) > 1e-9 ? '●' : '';
   const pp = (vv: number) => (vv >= 0 ? '+' : '−') + Math.abs(vv).toFixed(2) + ' pp';
   // Deslizadores solo donde el Excel define un rango de sensibilidad; el resto son campos numéricos con su fuente.
-  const ctl = (k: string, label: string, min: number, max: number, step: number, fm: (v: number) => string, impact: string, source: string) => ({ range: true, num: false, label, min, max, step, value: SAr[k] ?? 0, valTxt: fm(SAr[k] ?? 0), onChange: (e: { target: { value: string } }) => app.setA({ [k]: parseFloat(e.target.value) } as Partial<Assumptions>), impact, source, dot: ch(k) });
-  const inp = (k: string, label: string, step: number, fm: (v: number) => string, impact: string, source: string) => ({ ...ctl(k, label, 0, 0, step, fm, impact, source), value: +(+(SAr[k] ?? 0)).toPrecision(12), range: false, num: true, onChange: (e: { target: { value: string } }) => { const x = parseFloat(e.target.value); if (isFinite(x)) app.setA({ [k]: x } as Partial<Assumptions>); } });
+  // Cada control tiene deslizador (rango documentado) y campo numérico; ambos escriben el mismo supuesto y se validan contra el rango.
+  const ctl = (k: string, label: string, min: number, max: number, step: number, fm: (v: number) => string, impact: string, source: string) => ({
+    range: true, num: true, label, min, max, step, value: SAr[k] ?? 0, numValue: +(+(SAr[k] ?? 0)).toPrecision(10), valTxt: fm(SAr[k] ?? 0),
+    onChange: (e: { target: { value: string } }) => { const x = parseFloat(e.target.value); if (isFinite(x)) app.setA({ [k]: Math.min(max, Math.max(min, x)) } as Partial<Assumptions>, true); },
+    impact, source, dot: ch(k), rangeTxt: 'Rango ' + fm(min) + ' – ' + fm(max) });
+  const inp = (k: string, label: string, step: number, fm: (v: number) => string, impact: string, source: string) => ({ ...ctl(k, label, -1e9, 1e9, step, fm, impact, source), value: +(+(SAr[k] ?? 0)).toPrecision(12), range: false, num: true, rangeTxt: '', onChange: (e: { target: { value: string } }) => { const x = parseFloat(e.target.value); if (isFinite(x)) app.setA({ [k]: x } as Partial<Assumptions>, true); } });
   const SRCS = srcRegistry(ds);
   const pct = (vv: number) => (+vv).toFixed(2) + '%';
   const srcX = L.sourceShort;
   const groups = [
     { title: 'Proyección', desc: 'Cambios en puntos porcentuales sobre la proyección fuente, aplicados a todos los años. Rango = tablas de sensibilidad', controls: [ctl('dGrowth', 'Δ Crecimiento anual de ventas', -2, 2, 0.25, pp, 'Afecta ventas, EBIT y FCF', 'Rango: sensibilidad Δ ventas ±2 pp'), ctl('dMargin', 'Δ Margen EBIT', -0.5, 0.5, 0.05, pp, 'Afecta EBIT, NOPAT y FCF', 'Rango: sensibilidad Δ margen ±0.5 pp'), ctl('dCapex', 'Δ Capex (% ventas)', -0.5, 0.5, 0.05, pp, 'Reduce el FCF uno a uno', 'Rango: sensibilidad Δ capex ±0.5 pp'), ctl('dTax', 'Δ Tasa de impuestos sobre EBIT', -4, 4, 0.5, pp, 'Afecta NOPAT', 'Rango: sensibilidad Δ tasa ±4 pp')] },
     { title: 'Valor terminal', desc: 'Afectan principalmente el valor terminal', controls: [ctl('g', 'Crecimiento perpetuo (g)', +(D.g - 1).toFixed(4), +(D.g + 1).toFixed(4), 0.05, pct, 'Afecta principalmente el valor terminal', SRCS.g || 'Rango: tabla WACC × g del ' + srcX + ' (±1 pp)')].concat(A.exitMultiple ? [ctl('exitMultiple', 'Múltiplo de salida EV/EBITDA', +(D.exitMultiple - 1).toFixed(4), +(D.exitMultiple + 1).toFixed(4), 0.05, vv => (+vv).toFixed(2) + 'x', 'Valor terminal por múltiplos', L.multipleSource + ' · rango ±1x'), ctl('wGordon', 'Peso del método Gordon', 0, 100, 5, vv => Math.round(vv) + '%', 'Ponderación Gordon vs. múltiplo', srcX + ' · 50% / 50%')] : []) },
-    { title: 'Costo de capital', desc: 'Cambian Ke, el WACC y el descuento de todos los flujos. Insumos sin rango documentado: se capturan como número', controls: (A.waccMode === 'manual' ? [ctl('waccManual', 'WACC manual', +((b.ok ? b.wacc * 100 : 12) - 1).toFixed(2), +((b.ok ? b.wacc * 100 : 12) + 1).toFixed(2), 0.05, pct, 'Descuento de todos los flujos', 'Rango: tabla WACC × g (±1 pp)')] : []).concat([inp('rf', 'Tasa libre de riesgo (Rf, %)', 0.001, pct, 'Sube Ke y el WACC', SRCS.rf || srcX + ' · ' + L.rfSource), inp('prm', 'Prima de riesgo de mercado (%)', 0.01, pct, 'Sube Ke y el WACC', SRCS.prm || srcX + ' · PRM'), inp('betaU', 'Beta desapalancada (βU)', 0.01, vv => (+vv).toFixed(2), 'Se reapalanca con la D/E de la empresa', ds.beta ? 'Damodaran ' + ds.beta.date + ' · ' + ds.beta.industry + ' (βL ' + ds.beta.levered.toFixed(2) + ' → βU ' + ds.beta.unlevered.toFixed(2) + ')' : (SRCS.betaU || srcX + ' · beta sectorial')), inp('kdPre', 'Kd antes de impuestos (%)', 0.05, pct, 'Costo de la deuda (WACC iterado)', ds.beta && ds.beta.kd ? 'Encuesta Citi (Banxico 6.50%) y gastos financieros 1S26 · control ' + f.p(ds.beta.kd.check) : (SRCS.kdPre || srcX + ' · tasa implícita')), inp('taxShield', 'Tasa del escudo fiscal (%)', 0.1, pct, 'Kd después de impuestos y βL', srcX)]) }
+    { title: 'Costo de capital', desc: 'Cambian βL, Ke, el WACC iterado y el descuento de todos los flujos. Rango documentado en cada control', controls: (A.waccMode === 'manual' ? [ctl('waccManual', 'WACC manual', +((b.ok ? b.wacc * 100 : 12) - 1).toFixed(2), +((b.ok ? b.wacc * 100 : 12) + 1).toFixed(2), 0.05, pct, 'Descuento de todos los flujos', 'Rango: tabla WACC × g (±1 pp)')] : []).concat([ctl('rf', 'Tasa libre de riesgo (Rf, %)', +(D.rf - 2).toFixed(3), +(D.rf + 2).toFixed(3), 0.01, pct, 'Sube Ke y el WACC', SRCS.rf || srcX + ' · ' + L.rfSource), ctl('prm', 'Prima de riesgo de mercado (%)', +Math.max(0.5, D.prm - 2).toFixed(2), +(D.prm + 2.46).toFixed(2), 0.01, pct, 'Sube Ke y el WACC', (SRCS.prm || srcX + ' · PRM') + ' · máx. = PRM + prima país México 2.46%'), ctl('betaU', 'Beta desapalancada (βU)', 0.1, 1.2, 0.0005, vv => (+vv).toFixed(4), 'Se reapalanca con la D/E: cambia βL, Ke, WACC y el valor', ds.beta && ds.beta.regression ? 'Regresión semanal: βL ' + ds.beta.regression.levered.toFixed(4) + ' desapalancada → βU ' + ds.beta.regression.unlevered.toFixed(4) + ' · referencia: Damodaran ' + (ds.beta.unleveredCash ?? ds.beta.unlevered).toFixed(2) : ds.beta ? 'Damodaran ' + ds.beta.date + ' · ' + ds.beta.industry + ' (βL ' + ds.beta.levered.toFixed(2) + ' → βU ' + ds.beta.unlevered.toFixed(2) + (ds.beta.unleveredCash ? '; corregida por caja ' + ds.beta.unleveredCash.toFixed(2) : '') + ')' : (SRCS.betaU || srcX + ' · beta sectorial')), ctl('kdPre', 'Kd antes de impuestos (%)', 7, 14, 0.05, pct, 'Costo de la deuda (WACC iterado)', ds.beta && ds.beta.kd ? 'Encuesta Citi (Banxico 6.50%) y gastos financieros 1S26 · control ' + f.p(ds.beta.kd.check) : (SRCS.kdPre || srcX + ' · tasa implícita')), ctl('taxShield', 'Tasa del escudo fiscal (%)', 25, 35, 0.5, pct, 'Kd después de impuestos y βL', srcX + ' · ISR 30% ± 5 pp')]) }
   ];
   const b0 = c.base0;
   const lab = {
@@ -242,7 +257,7 @@ export function buildView(app: App): VM {
     name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + ' · ' + x.profile.currency, hasLogo: !!x.profile.logo, noLogo: !x.profile.logo, logo: x.profile.logo || '', brand: x.profile.brand || ACC, initials: initialsOf(x.profile.short || x.profile.name), tag: x.builtIn ? 'Caso presentado' : 'Importada', tagCls: x.builtIn ? 'tag-accent' : 'tag-neutral', valTxt: rr.ok ? f.cur(rr.value) : '—', upTxt: rr.ok && rr.upside != null ? f.pp(rr.upside) : '—', upColor: rr.ok && (rr.upside ?? 0) >= 0 ? POS : NEG, created: (x.builtIn ? 'Modelo académico · ' : 'Creada ') + String(x.createdAt).slice(0, 10) + ' · ' + x.version, border: x.id === S.activeId ? ACC : 'var(--color-divider)', canDel: !x.builtIn,
     onOpen: () => { app.switchCompany(x.id); app.go('p1'); },
     onDup: () => { const cp: Dataset = JSON.parse(JSON.stringify(x)); cp.id = 'c' + Date.now().toString(36); cp.builtIn = false; cp.profile.name = x.profile.name + ' (copia)'; cp.createdAt = new Date().toISOString(); cp.updatedAt = cp.createdAt; cp.version = 'Copia de ' + x.version; store.setA(cp.id, store.getA(x.id)); app.saveCompanies([...app.state.companies, cp]); app.flash('Valuación duplicada'); },
-    onJson: () => exportJSON(x, x.id === S.activeId ? SA : { ...E.defaults(x), ...(store.getA(x.id) || {}) }),
+    onJson: () => app.exportDatasetJson(x, x.id === S.activeId ? SA : { ...E.defaults(x), ...(store.getA(x.id) || {}) }),
     onDel: () => { if (!confirm('¿Eliminar la valuación de ' + x.profile.name + '?')) return; store.setA(x.id, null); const list = app.state.companies.filter(y => y.id !== x.id); app.saveCompanies(list); if (S.activeId === x.id) app.switchCompany(DEFAULT_ID); }
   }));
 
@@ -279,7 +294,7 @@ export function buildView(app: App): VM {
     const map: Record<string, [string, any[], string]> = {
       value: ['Valor intrínseco por acción', [st('EV · Gordon', f.m(b.evG, 1), 'VPN FCF + VP valor terminal Gordon')].concat(b.mult ? [st('EV · múltiplos', f.m(b.evM, 1), 'VPN FCF + VP de EBITDA × ' + f.x(b.mult)), st('EV ponderado', f.m(b.evW, 1), Math.round(b.wG * 100) + '% Gordon + ' + Math.round((1 - b.wG) * 100) + '% múltiplo')] : []).concat(b.roll ? [st('EV al ' + L.rollDate, f.m(b.roll.ev2, 1), 'EV × (1+WACC)^' + b.roll.t1 + ' − FCF ' + L.rollFcf + ' (' + f.m(-b.roll.fcfGenerated, 1) + ')'), st('Equity al ' + L.rollDate, f.m(b.roll.eq2, 1), '− deuda ' + f.m(b.roll.debt, 1) + ' − arrendamiento ' + f.m(b.roll.lease, 1) + ' + efectivo ' + f.m(b.roll.cash, 1)), st('Equity a la fecha de valuación', f.m(b.eqVal, 1), '× (1 + Ke ' + f.p(b.ke) + ')^' + b.roll.t2)] : [st('Equity Value', f.m(b.eqVal, 1), 'EV − deuda neta ' + f.m(b.nd, 1))]).concat([st('Acciones en circulación', f.n(b.shares, 1) + ' mm', 'Dato de mercado'), st('Valor intrínseco por acción', f.cur(b.value), 'Equity / acciones', tot), st('Potencial', b.upside != null ? f.pp(b.upside) : '—', 'Valor / precio ' + f.cur(b.price) + ' − 1')]), 'dcf'],
       ev: ['Enterprise Value', [st('VPN FCF ' + b.rows[0].year + '–' + last.year, f.m(b.pvSum, 1), 'Σ FCFₜ / (1 + WACC)ᵗ'), st('VP valor terminal · Gordon', f.m(b.pvTvG, 1), 'TV ' + f.m(b.tvG, 1) + ' × factor ' + last.df.toFixed(4)), st('EV · Gordon', f.m(b.evG, 1), '', tot)].concat(b.mult ? [st('VP valor terminal · múltiplo', f.m(b.pvTvM, 1), 'EBITDA ' + f.m(last.ebitda, 1) + ' × ' + f.x(b.mult)), st('EV · múltiplos', f.m(b.evM, 1), '', tot), st('EV ponderado', f.m(b.evW, 1), Math.round(b.wG * 100) + '% / ' + Math.round((1 - b.wG) * 100) + '%', tot)] : []).concat([st('Deuda neta', f.m(b.nd, 1), 'Deuda + arrendamientos − efectivo'), st('Equity Value al cierre', f.m(b.eqClose, 1), 'EV − deuda neta', tot)]), 'dcf'],
-      wacc: ['WACC', [st('Tasa libre de riesgo', f.p(W.rf), 'Rf'), st('Beta desapalancada', W.betaU.toFixed(2), 'βU sectorial'), st('D / E', f.x(src.de, 4), A.waccMode === 'market' ? 'Deuda / capital de mercado' : 'Deuda / equity del DCF'), st('Beta apalancada', src.beta.toFixed(4), 'βU × [1 + (1 − t) × D/E]'), st('Prima de riesgo', f.p(W.prm), 'PRM'), st('Ke', f.p(src.ke), 'Rf + βL × PRM', tot), st('Kd después de impuestos', f.p(src.kdAT), f.p(src.kd) + ' × (1 − ' + f.p(src.tax) + ')'), st('Pesos', f.p(src.wE, 1) + ' / ' + f.p(src.wD, 1), 'E/(D+E) · D/(D+E)'), st('WACC', f.p(b.wacc), A.waccMode === 'manual' ? 'Supuesto manual' : 'E/(D+E)·Ke + D/(D+E)·Kd(1−t)', tot)], 'wacc'],
+      wacc: ['WACC', [st('Tasa libre de riesgo', f.p(W.rf), 'Rf'), st('Beta desapalancada', W.betaU.toFixed(4), ds.beta && ds.beta.regression && Math.abs(W.betaU - ds.beta.regression.unlevered) < 1e-12 ? 'βU regresión semanal' : 'βU'), st('D / E', f.x(src.de, 4), A.waccMode === 'market' ? 'Deuda / capital de mercado' : 'Deuda / equity del DCF'), st('Beta apalancada', src.beta.toFixed(4), 'βU × [1 + (1 − t) × D/E]'), st('Prima de riesgo', f.p(W.prm), 'PRM'), st('Ke', f.p(src.ke), 'Rf + βL × PRM', tot), st('Kd después de impuestos', f.p(src.kdAT), f.p(src.kd) + ' × (1 − ' + f.p(src.tax) + ')'), st('Pesos', f.p(src.wE, 1) + ' / ' + f.p(src.wD, 1), 'E/(D+E) · D/(D+E)'), st('WACC', f.p(b.wacc), A.waccMode === 'manual' ? 'Supuesto manual' : 'E/(D+E)·Ke + D/(D+E)·Kd(1−t)', tot)], 'wacc'],
       tv: ['Valor terminal', [st('FCF ' + last.year, f.m(last.fcf, 1), 'Último año explícito'), st('FCF siguiente año', f.m(b.fcfN1, 1), '× (1 + g ' + f.p(b.g) + ')'), st('WACC − g', f.p(b.wacc - b.g), f.p(b.wacc) + ' − ' + f.p(b.g)), st('Valor terminal', f.m(b.tvG, 1), 'FCFₙ₊₁ / (WACC − g)', tot), st('Valor presente', f.m(b.pvTvG, 1), '× 1/(1+WACC)ⁿ'), st('Peso en el EV', f.p(b.tvWeightG, 1), 'VP TV / EV Gordon')], 'dcf']
     };
     const d = map[S.drawer] || map.value;
@@ -294,11 +309,14 @@ export function buildView(app: App): VM {
   return {
     loading: false, v, cv, co, r, team, teamNames: PROJECT.team.map(t => t[0]).join(' · '), project: PROJECT, ui, companyList, navItems, mobileNav, exportItems, track, kpis, football, wf, insights,
     fcfChart, fcfSel, sales, methodSteps, hasMethod: !!ds.method, weights, extNet, extTop, extCount, tv, wb, iter, heat, torn, scen, scenNote, hasScen, lab,
-    mult: rel.mult, trans: (rel as any).trans || { has: false }, comb: rel.comb, inflFlow, hasInflFlow: inflFlow.length > 0, betaT, hasBeta: betaT.length > 0,
+    mult: rel.mult, trans: (rel as any).trans || { has: false }, comb: rel.comb, ext: (rel as any).ext || { has: false }, inflFlow, hasInflFlow: inflFlow.length > 0, betaT, hasBeta: betaT.length > 0,
     goP4: go('p4'), goP5: go('p5'), goP6: go('p6'), goAnnexInfl: go('annex', 'infl'), goAnnexBeta: go('annex', 'beta'),
     annexNav, annexTables: annexTablesV, ax, emp, res, val, formulas, sources, libCards, imp, drawer, arch,
+    deck: S.deck && b.ok ? { data: buildDeck(ds, A, b, PROJECT.team.map(t => t[0]), PROJECT.institution + ' · ' + PROJECT.course + ' · ' + PROJECT.year, !c.isBase || overridesActive(c.A)), index: S.slide, onIndex: (i: number) => app.setSlide(i), onExit: () => app.exitPresent(), onLive: () => app.presentLive(), team: PROJECT.team.map(t => t[0]).join(' · ') } : null,
     pres: { on: S.presenting, label: (pi >= 0 ? SEQ_N[pi] : 'Fuera de secuencia') + ' · ' + (pi + 1) + '/' + SEQ.length, progress: ((pi + 1) / SEQ.length * 100) + '%', prev: () => app.presStep(-1), next: () => app.presStep(1), exit: () => app.exitPresent() },
     toast: { show: !!S.toast, t: S.toast || '' },
+    exp: S.exp ? { ...S.exp, pct: Math.round(S.exp.p * 100), running: S.exp.status === 'run', done: S.exp.status === 'done', error: S.exp.status === 'error', close: () => app.closeExport(), retry: () => app.exportRun(S.exp!.kind),
+      scope: S.exp.modified ? 'Escenario modificado (supuestos del Laboratorio)' : 'Caso base del Excel' } : null,
     startTour: () => app.go('p1'), startPresent: () => app.startPresent(), goCover: go('cover'), goImport: () => { app.setState({ imp: app.newImp() }); app.go('import'); }, goLibrary: go('library'),
     goP1: go('p1'), goP2: go('p2'), goP3: go('p3'), goLab: go('lab'), goAnnexMethod: go('annex', ds.method ? 'ls' : 'dcf'), goAnnexMet: go('annex', 'method'),
     toggleCompanyMenu: () => app.setState({ menu: S.menu === 'company' ? null : 'company' }), toggleExportMenu: () => app.setState({ menu: S.menu === 'export' ? null : 'export' }),

@@ -16,7 +16,9 @@ export function annexDefs(ds: Dataset): [string, string, string][] {
     if (ds.inflation) L.push(['infl', '', 'Inflación: escenarios y modelos']);
     if (ds.beta) L.push(['beta', '', 'Beta y costo de la deuda']);
     L.push(['wacc', '', 'WACC e iteración'], ['sens', '', ds.forecast.build ? 'Sensibilidad (recalculada)' : 'Sensibilidad (' + labelsOf(ds).sourceShort + ')']);
-    L.push(['empresa', '', 'Empresa'], ['valid', '', 'Validación y discrepancias'], ['method', '', 'Metodología y fuentes']);
+    L.push(['empresa', '', 'Empresa'], ['valid', '', 'Validación y discrepancias']);
+    if (ds.audit) L.push(['audit', '', 'Auditoría del Excel']);
+    L.push(['method', '', 'Metodología y fuentes']);
   } else {
     L.push(['imp', '', 'Datos importados'], ['dcf', '', 'Flujo libre y DCF'], ['wacc', '', 'WACC e iteración'], ['empresa', '', 'Empresa'], ['valid', '', 'Validación'], ['method', '', 'Metodología y fuentes']);
   }
@@ -48,7 +50,7 @@ export function annexTables(c: Calc, which: string): any[] {
     }
     const live = want('proj') && b.ok ? projectedTable(ds, b, code('proj')) : null;
     if (live) T.push(live);
-    else if (want('proj')) { const Pj = ds.annex.projected; tb('proj', code('proj'), 'Proyección de estados financieros', 'Estado de resultados y balance proyectados con los supuestos finales.', src + ' · Proyección final', ds.profile.units || '', head(Pj.cols, 1), Pj.rows.map(r => 'section' in r ? sec(r.section, Pj.cols.length) : row(r[0] as string, r.slice(1).map((v, i) => cell(mm(v), estBg(i, 1))), /Utilidad neta|EBIT\)|Activo total|Pasivo total/.test(r[0] as string) ? { fw: 600 } : {}))); }
+    else if (want('proj') && ds.annex.projected) { const Pj = ds.annex.projected; tb('proj', code('proj'), 'Proyección de estados financieros', 'Estado de resultados y balance proyectados con los supuestos finales.', src + ' · Proyección final', ds.profile.units || '', head(Pj.cols, 1), Pj.rows.map(r => 'section' in r ? sec(r.section, Pj.cols.length) : row(r[0] as string, r.slice(1).map((v, i) => cell(mm(v), estBg(i, 1))), /Utilidad neta|EBIT\)|Activo total|Pasivo total/.test(r[0] as string) ? { fw: 600 } : {}))); }
   }
   if (ds.imported && want('imp')) tb('imp', code('imp'), 'Datos importados', 'Campos normalizados tal como se confirmaron en la revisión.', ds.source.file || 'Archivo', ds.profile.currency + ' ' + ds.profile.units, head(['Valor', 'Periodo', 'Campo de origen', 'Hoja', 'Confianza'], null, 0).map((h, i) => i === 0 ? { ...h, align: 'right' } : { ...h, align: 'left' }), ds.imported.map(x => row(x.label, [cell(x.value == null ? 'No disponible' : f.m(x.value, 1)), txt(x.period || '—', '90px'), txt(x.srcLabel || '—', '200px'), txt(x.srcSheet || '—', '120px'), txt(x.conf || '—', '80px')])));
   if (want('dcf') && b.ok) {
@@ -61,7 +63,7 @@ export function annexTables(c: Calc, which: string): any[] {
       line('FCF', B.fcf, 'fcf', mm, { fw: 700 }), line('Factor de descuento', null, 'df', v => v.toFixed(4)), line('Valor presente del FCF', null, 'pv', mm, { fw: 600 })
     ], { note: 'WACC ' + f.p(b.wacc) + ' · g ' + f.p(b.g) + '. Los drivers (crecimiento, margen, tasa, D&A, capex y capital de trabajo) se derivan de las filas de la proyección fuente.' });
     const last = R[R.length - 1].year;
-    const V: [string, number | null, number?][] = [['VPN de los FCF', b.pvSum], ['FCF ' + last + ' × (1 + g)', b.fcfN1], ['Valor terminal (Gordon)', b.tvG], ['VP del valor terminal (Gordon)', b.pvTvG], ['EV · Gordon', b.evG, 1]];
+    const V: [string, number | null, number?][] = [['VPN de los FCF', b.pvSum], ['FCF ' + last + (Math.abs(b.fcfTv - R[R.length - 1].fcf) > 1e-6 ? ' normalizado (NOPAT − ΔNWC)' : '') + ' × (1 + g)', b.fcfN1], ['Valor terminal (Gordon)', b.tvG], ['VP del valor terminal (Gordon)', b.pvTvG], ['EV · Gordon', b.evG, 1]];
     if (b.mult) V.push(['EBITDA ' + last + ' × ' + f.x(b.mult), b.tvM], ['VP del valor terminal (múltiplo)', b.pvTvM], ['EV · múltiplos', b.evM, 1], ['EV ponderado (' + Math.round(b.wG * 100) + '% Gordon)', b.evW, 1]);
     const br = ds.valuation.bridge;
     V.push(['(−) Deuda bursátil y bancaria', -br.debt], ['(−) Pasivo por arrendamiento', -br.lease], ['(+) Efectivo', br.cash], ['Equity Value al cierre', b.eqClose, 1]);
@@ -82,7 +84,7 @@ export function annexTables(c: Calc, which: string): any[] {
     tb('pond', code('pond'), 'Ponderación de métodos y supuestos finales', 'Cómo se combinan variables externas y mínimos cuadrados en cada año.', src + ' · Proyección final', '%', head(Y, 0), [
       row('Peso de variables externas', pr(M.weightsExternal)), row('Peso de mínimos cuadrados', pr(M.weightsExternal.map(v => 100 - v))),
       sec('Crecimiento de ventas', n), row('Variables externas', pr(lv('growthExternal', M.growthExternal))), row('Mínimos cuadrados', pr(lv('growthLS', M.growthLS))), row('Final (ponderado)', pr(lv('growth', M.growthFinal)), { fw: 700 }),
-      sec('Margen EBIT', n), row('Variables externas', pr(lv('marginExternal', M.marginExternal))), row('Mínimos cuadrados', pr(M.marginLS)), row('Final (ponderado)', pr(lv('margin', M.marginFinal)), { fw: 700 }),
+      sec('Margen EBIT', n), row('Variables externas', pr(lv('marginExternal', M.marginExternal))), row('Mínimos cuadrados', pr(bd && ds.forecast.build ? ds.forecast.build.margin.ls.map(v => v * 100) : M.marginLS)), row('Final (ponderado)', pr(lv('margin', M.marginFinal)), { fw: 700 }),
       sec('Otros supuestos finales', n), row('Capex (% ventas)', pr(lv('capexPct', M.capexFinal))), row('D&A (% ventas)', pr(lv('daPct', M.daFinal))), row('Tasa de impuestos', pr(lv('taxRate', M.taxFinal)))
     ]);
   }
@@ -97,6 +99,9 @@ export function annexTables(c: Calc, which: string): any[] {
     ], { minW: '520px', note: 'Activo en el modelo: ' + (W.mode === 'iterated' ? 'WACC iterado' : W.mode === 'market' ? 'WACC de mercado' : 'WACC manual (' + f.p(b.wacc) + ')') + '.' });
     tb('wacc', '', 'Iteraciones', 'El equity del DCF alimenta D/E hasta converger.', 'Motor ValuFlow', '%', head(['WACC entrada', 'Equity DCF', 'D / E', 'Beta', 'Ke', 'WACC salida']), W.iters.map(i => row('Iteración ' + i.k, [cell(f.p(i.win)), cell(f.m(i.E, 1)), cell(i.de.toFixed(4)), cell(i.beta.toFixed(4)), cell(f.p(i.ke)), cell(f.p(i.wout), { color: ACC })])), { minW: '640px' });
   }
+  if (want('audit') && ds.audit) tb('audit', code('audit'), 'Auditoría del Excel PRO DEFINITIVO', ds.audit.note, src + ' · hoja Auditoría', '',
+    head(['Hoja / área', 'Tipo', 'Hallazgo', 'Impacto', 'Corrección / decisión', 'Prueba'], null, 6),
+    ds.audit.findings.map((x, i) => row(String(i + 1), x.map((v, j) => txt(v, ['130px', '110px', '360px', '240px', '340px', '180px'][j])))), { minW: '1500px' });
   if (want('method') && ds.inputs && ds.inputs.length) tb('method', '', 'Registro de insumos y fuentes', 'Cada insumo del modelo con su origen. Tipo: Observado · Supuesto · Modelo · Pendiente (input heredado sin fuente verificada).', src + ' · hoja Fuentes', '', head(['Dónde se usa', 'Valor', 'Fecha', 'Unidad', 'Tipo', 'Fuente'], null, 6), ds.inputs.map(r => row(r[0], [txt(r[1], '170px'), txt(r[2], '90px'), txt(r[3], '90px'), txt(r[4], '80px'), cell(r[5], { align: 'left', ws: 'normal', mw: '80px', color: r[5] === 'Pendiente' ? 'var(--warn)' : 'var(--color-text)' }), txt(r[6], '380px')])), { minW: '1300px' });
   if (want('beta') && b.ok && ds.beta) betaTables(ds, c.VA, b, code('beta')).forEach(t => T.push(t));
   if (want('method') && ds.notes && ds.notes.length) tb('method', '', 'Notas metodológicas', 'DCF principal, referencia de Capital IQ y métodos relativos.', src + ' · hoja Fuentes', '', head(['Nota'], null, 1), ds.notes.map((n, i) => row(String(i + 1), [txt(n, '760px')])), { minW: '860px' });
@@ -104,6 +109,6 @@ export function annexTables(c: Calc, which: string): any[] {
   // Con proyección por drivers, las tablas se recalculan con el motor (la versión estática sería de otro escenario).
   const sensT = ds.forecast.build && b.ok ? E.sensTables(ds, c.VA, b) : null;
   if (ds.annex && want('sens') && sensT) sensT.forEach((s, k) => tb('sens', k === 0 ? code('sens') : '', s.label, s.rowsLabel + ' (filas) vs. ' + s.colsLabel + ' (columnas) · precio por acción', 'Motor ValuFlow · supuestos activos', ds.profile.currency + ' por acción', head(s.cols), s.grid.map((r, i) => row(s.rowsLabel + ' ' + s.rowHeads[i], r.map((v, j) => cell(f.cur(v), i === 2 && j === 2 ? { bg: 'var(--color-accent-200)', color: 'var(--color-accent-800)' } : { bg: v >= (ds.market.price as number) ? 'color-mix(in srgb, var(--pos) 14%, transparent)' : 'color-mix(in srgb, var(--neg) 10%, transparent)' })))), { minW: '560px', note: 'Pasos: WACC y g ±0.5 pp (como la tabla del Excel), Δ ventas ±1 pp, Δ margen ±0.25 pp, múltiplo ±0.5x, Δ capex ±0.25 pp, Δ tasa ±2 pp. Ke fijo en el del caso base.' }));
-  if (ds.annex && want('sens') && !sensT) Object.values(ds.annex.sensitivity).forEach((s, k) => tb('sens', k === 0 ? code('sens') : '', s.label, s.rowsLabel + ' (filas) vs. ' + s.colsLabel + ' (columnas) · precio por acción', src + ' · Sensibilidad', ds.profile.currency + ' por acción', head(s.cols), s.grid.map((r, i) => row(s.rowsLabel + ' ' + s.rowHeads[i], r.map((v, j) => cell('$' + v.toFixed(2), i === 2 && j === 2 ? { bg: 'var(--color-accent-200)', color: 'var(--color-accent-800)' } : { bg: v >= (ds.market.price as number) ? 'color-mix(in srgb, var(--pos) 14%, transparent)' : 'color-mix(in srgb, var(--neg) 10%, transparent)' })))), { minW: '560px' }));
+  if (ds.annex && ds.annex.sensitivity && want('sens') && !sensT) Object.values(ds.annex.sensitivity).forEach((s, k) => tb('sens', k === 0 ? code('sens') : '', s.label, s.rowsLabel + ' (filas) vs. ' + s.colsLabel + ' (columnas) · precio por acción', src + ' · Sensibilidad', ds.profile.currency + ' por acción', head(s.cols), s.grid.map((r, i) => row(s.rowsLabel + ' ' + s.rowHeads[i], r.map((v, j) => cell('$' + v.toFixed(2), i === 2 && j === 2 ? { bg: 'var(--color-accent-200)', color: 'var(--color-accent-800)' } : { bg: v >= (ds.market.price as number) ? 'color-mix(in srgb, var(--pos) 14%, transparent)' : 'color-mix(in srgb, var(--neg) 10%, transparent)' })))), { minW: '560px' }));
   return T;
 }

@@ -134,8 +134,8 @@ export function FlowsPage({ vm }: { vm: VM }) {
               <i className="corner br"></i>
               <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;')}>
                 <div>
-                  <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{extCount} variables externas</div>
-                  <h3 style={css('margin:4px 0 0; font-size:24px;')}>Ajuste a la proyección de ventas</h3></div>
+                  <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{extCount} ajustes por variables externas</div>
+                  <h3 style={css('margin:4px 0 0; font-size:24px;')}>Ajustes documentados en ventas y margen (primer año)</h3></div>
                 <div style={css('display:flex; gap:20px;')}>
                   {(extNet || []).map((e: any, $i: number) => (<Fragment key={$i}>
                     <div style={css('display:flex; flex-direction:column; align-items:flex-end;')}>
@@ -174,7 +174,7 @@ export function FlowsPage({ vm }: { vm: VM }) {
             <span style={css('font-size:14px; line-height:1.5; color:var(--color-neutral-800);')}>Es el valor presente de todos los flujos posteriores al periodo explícito, suponiendo que crecen a una tasa constante g para siempre.</span></div>
           <div style={css('flex:2 1 520px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; font-family:var(--font-heading);')}>
             <div style={css('display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);')}>
-              <span style={css('font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);')}>FCF {tv.lastYear}</span>
+              <span style={css('font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);')}>{tv.fcfLabel}</span>
               <span style={css('font-size:24px; font-weight:600;')}>{tv.fcfN}</span></div>
             <span style={css('font-size:22px;')}>× (1 +{' '}</span>
             <div style={css('display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);')}>

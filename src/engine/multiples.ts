@@ -3,7 +3,7 @@
 // (caja − deuda − arrendamientos − minoritarios − preferentes) ÷ acciones; valor del método = promedio de
 // los precios implícitos con la MEDIA de cada múltiplo usado; NM si el capital implícito es ≤ 0; NA si falta el dato.
 // Réplica de las hojas "Trading Comps", "Precedent Transactions" y "Valuación Combinada" del Excel maestro.
-import type { Assumptions, CompsSpec, CompsTarget, Dataset, MultipleDef, MultipleKey, TransactionsSpec } from './types';
+import type { Assumptions, CompsSpec, CompsTarget, Dataset, MultipleDef, MultipleKey, SdcDeal, SdcSpec, TransactionsSpec } from './types';
 
 export type Price = number | 'NM' | 'NA';
 export const isNum = (x: unknown): x is number => typeof x === 'number' && isFinite(x);
@@ -129,13 +129,65 @@ export function combine(prices: Record<CombinedRow['key'], Price>, weights: Reco
   return { rows, weightSum: ws, value, classValue: cls, errors };
 }
 
-export interface RelativeResult { comps: CompsResult | null; transactions: TransactionsResult | null; combined: CombinedResult | null }
+// ---------------------------------------------------------------- Precedent Transactions LSEG/SDC
+// Réplica de la hoja "Transacciones SDC" del Excel PRO auditado: criterios objetivos (ventana, ≥ N múltiplos, no recompra)
+// + juicio del analista (autoservicio y elegibilidad); estadísticos solo sobre elegibles con dato (NA nunca cuenta como cero);
+// atípicos por rango intercuartílico (P25 − 1.5·RIC, P75 + 1.5·RIC); precio implícito con el mismo puente que Trading Comps.
+
+export interface SdcCheck { nMultiples: number; inWindow: boolean; enough: boolean; buyback: boolean; criteria: boolean; include: number }
+export interface SdcStats extends Stats { lo: number; hi: number; nOut: number; meanEx: number; medianEx: number }
+export interface SdcResult {
+  spec: SdcSpec; checks: SdcCheck[]; included: SdcDeal[];
+  stats: Record<'evEbitda' | 'evSales' | 'pe', SdcStats | null>;
+  /** Precio implícito (MXN/acción) por estadístico de EV/EBITDA (múltiplo usado) y de EV/Ventas (referencia). */
+  prices: Record<StatKey | 'meanEx' | 'medianEx', Price>; pricesSales: Record<StatKey, Price>;
+  value: Price; lo: Price; hi: Price; n: number;
+  sensitivity: { label: string; drop: string[]; n: number; median: number | null; priceMedian: Price; meanEx: number | null; priceMeanEx: Price }[];
+  fx: number;
+}
+
+const evDef = (metric: 'ebitda' | 'revenue'): MultipleDef => ({ key: metric === 'ebitda' ? 'evEbitda' : 'evSales', label: '', metric, use: 1, status: '', reason: '' });
+
+function sdcStats(xs: number[]): SdcStats | null {
+  const st = stats(xs); if (!st) return null;
+  const iqr = st.p75 - st.p25, lo = st.p25 - 1.5 * iqr, hi = st.p75 + 1.5 * iqr;
+  const inside = xs.filter(x => x >= lo && x <= hi), si = stats(inside);
+  return { ...st, lo, hi, nOut: xs.length - inside.length, meanEx: si ? si.mean : NaN, medianEx: si ? si.median : NaN };
+}
+
+export function sdc(spec: SdcSpec, target: CompsTarget, A?: Partial<Assumptions>): SdcResult {
+  const c = spec.criteria;
+  const checks = spec.deals.map(d => {
+    const nMultiples = [d.evEbitda, d.pe, d.evSales].filter(isNum).length;
+    const inWindow = d.date >= c.windowStart && d.date <= c.valuationDate, enough = nMultiples >= c.minMultiples;
+    const buyback = d.target.trim().toUpperCase() === d.acquiror.trim().toUpperCase();
+    const criteria = inWindow && enough && d.sector === 'Sí' && !buyback && d.judgment === 'Elegible';
+    return { nMultiples, inWindow, enough, buyback, criteria, include: A?.sdcInclude?.[d.id] ?? (criteria ? 1 : 0) };
+  });
+  const included = spec.deals.filter((_, i) => checks[i].include === 1);
+  const vals = (k: 'evEbitda' | 'evSales' | 'pe', ds = included) => ds.map(d => d[k]).filter(isNum);
+  const st = { evEbitda: sdcStats(vals('evEbitda')), evSales: sdcStats(vals('evSales')), pe: sdcStats(vals('pe')) };
+  const pE = (m: number | undefined | null): Price => isNum(m) ? impliedPrice(evDef('ebitda'), m, target) : 'NA';
+  const pS = (m: number | undefined | null): Price => isNum(m) ? impliedPrice(evDef('revenue'), m, target) : 'NA';
+  const E = st.evEbitda;
+  const prices = Object.fromEntries([...STAT_KEYS, 'meanEx', 'medianEx'].map(k => [k, E ? pE((E as unknown as Record<string, number>)[k]) : 'NA'])) as SdcResult['prices'];
+  const pricesSales = Object.fromEntries(STAT_KEYS.map(k => [k, st.evSales ? pS(st.evSales[k]) : 'NA'])) as Record<StatKey, Price>;
+  const sensitivity = spec.sensitivity.map(sc => {
+    const xs = vals('evEbitda', included.filter(d => !sc.drop.includes(d.id))), s2 = sdcStats(xs);
+    return { label: sc.label, drop: sc.drop, n: xs.length, median: s2 ? s2.median : null, priceMedian: s2 ? pE(s2.median) : 'NA' as Price, meanEx: s2 ? s2.meanEx : null, priceMeanEx: s2 ? pE(s2.meanEx) : 'NA' as Price };
+  });
+  return { spec, checks, included, stats: st, prices, pricesSales, value: prices[spec.official], lo: prices.p25, hi: prices.p75, n: included.length, sensitivity, fx: spec.fx.rate };
+}
+
+export interface RelativeResult { comps: CompsResult | null; transactions: TransactionsResult | null; sdc: SdcResult | null; combined: CombinedResult | null }
 
 /** Valuación relativa y combinada del dataset; dcfPrice = precio final del DCF con los supuestos activos. */
 export function relative(ds: Dataset, A: Assumptions, dcfPrice: Price): RelativeResult {
   const C = ds.comps ? comps(ds.comps, A) : null;
   const T = ds.transactions && ds.comps ? transactions(ds.transactions, ds.comps.target, A) : null;
+  const S = ds.sdc && ds.comps ? sdc(ds.sdc, ds.comps.target, A) : null;
   const W = A.weights ?? ds.combined?.weights;
-  const combined = ds.combined && W ? combine({ dcf: dcfPrice, comps: C ? C.value : 'NA', transactions: T ? T.value : 'NA' }, W) : null;
-  return { comps: C, transactions: T, combined };
+  const ptPrice: Price = ds.combined?.transactionsSource === 'sdc' ? (S ? S.value : 'NA') : (T ? T.value : 'NA');
+  const combined = ds.combined && W ? combine({ dcf: dcfPrice, comps: C ? C.value : 'NA', transactions: ptPrice }, W) : null;
+  return { comps: C, transactions: T, sdc: S, combined };
 }

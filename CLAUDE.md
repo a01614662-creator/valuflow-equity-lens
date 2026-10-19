@@ -19,4 +19,7 @@ cambio que altere la arquitectura o el resultado financiero.
 - `project/` es el prototipo original de Claude Design: solo referencia, no se edita (las pruebas lo leen).
 - Las pantallas (`src/ui/pages/*.tsx`) solo dibujan; los textos y cálculos de presentación viven en `src/ui/viewmodel.ts`.
 - Estado del importador en `App.tsx`: usa actualizaciones funcionales (`setState(s => …)`); React agrupa actualizaciones.
-- SheetJS se carga desde su CDN en `index.html` (versión 0.20.3); el paquete `xlsx` de npm solo se usa en pruebas.
+- Sin CDN ni Google Fonts: SheetJS (`xlsx`), jsPDF, jspdf-autotable, ExcelJS, JSZip y las fuentes (@fontsource) van en el paquete.
+- Reportes: `src/report/snapshot.ts` (una instantánea por juego de supuestos) → `content.ts` (secciones; reutiliza las tablas de `src/ui/annex.ts` y `relative.ts`)
+  → `src/services/pdf.ts`, `xlsx.ts`, `exporter.ts`. Pantalla, presentación y exportaciones usan los mismos supuestos activos.
+- Cierre del proyecto (auditoría, reconciliación, transacciones, QA): `docs/CIERRE_PROYECTO.md`; guion de la presentación: `docs/PRESENTACION.md`.

@@ -16,6 +16,9 @@ export function inflationPath(spec: InflationSpec, key: string | undefined, n: n
 
 export function buildForecast(B: BuildSpec, years: string[], inflation: number[], scenario: string | null = null): BuildResult {
   const n = years.length, out: BuildYear[] = [];
+  // Ventas por mínimos cuadrados: regresión para el primer año; si así lo documenta el Excel, los años siguientes crecen con la inflación (D26 = C26 × (1 + D10)).
+  const ls = [...B.sales.lsSales];
+  if (B.sales.lsGrowWithInflation) for (let i = 1; i < n; i++) ls[i + 1] = ls[i] * (1 + inflation[i]);
   let p = {
     revenue: B.base.revenue, cash: B.base.cash, inventory: B.base.inventory, otherCA: B.base.otherCA, nonCurrent: B.base.nonCurrent,
     opCL: B.base.opCL, debt: B.base.debt, lease: B.base.lease, otherLT: B.base.otherLT, equity: B.base.equity, marginExternal: B.margin.base
@@ -25,7 +28,7 @@ export function buildForecast(B: BuildSpec, years: string[], inflation: number[]
     // B. Crecimiento de ventas (filas 10–28)
     const marketGrowth = inflation[i] + S.gdp[i] * S.elasticity[i] + S.consumptionAdj[i];
     const growthExternal = marketGrowth + sum(S.adjustments.map(a => a.values[i]));
-    const growthLS = S.lsSales[i + 1] / S.lsSales[i] - 1;
+    const growthLS = ls[i + 1] / ls[i] - 1;
     const growth = w * growthExternal + wl * growthLS;
     // D. Margen EBIT (filas 31–41) y E. otros supuestos (44–55)
     const marginExternal = p.marginExternal + sum(B.margin.adjustments.map(a => a.values[i]));
@@ -56,7 +59,7 @@ export function buildForecast(B: BuildSpec, years: string[], inflation: number[]
     const taxEbitNeg = -ebit * taxRate, nopat = ebit + taxEbitNeg, nwcRelease = dInventory + dOtherCA + dOpCL;
     const fcf = sum([nopat, -da, capex, nwcRelease]);
     out.push({
-      year: years[i], inflation: inflation[i], marketGrowth, growthExternal, growthLS, growth, marginExternal, margin, daPct, capexPctExternal, capexPct, taxRate,
+      year: years[i], inflation: inflation[i], marketGrowth, growthExternal, growthLS, growth, lsSales: ls[i + 1], marginExternal, margin, daPct, capexPctExternal, capexPct, taxRate,
       revenue, cogs, gross, opex, ebitda, da: -da, ebit, interest, otherIncome, ebt, taxes, netIncome, dividends,
       cash, inventory, otherCA, currentAssets, nonCurrent, totalAssets, opCL, debt, lease, otherLT, totalLiabilities, equity, liabEquity, check: totalAssets - liabEquity,
       dInventory, dOtherCA, capex: -capex, dOpCL, dDebt, cashChange, taxEbit: -taxEbitNeg, nopat, nwcRelease, fcf
@@ -64,7 +67,7 @@ export function buildForecast(B: BuildSpec, years: string[], inflation: number[]
     p = { revenue, cash, inventory, otherCA, nonCurrent, opCL, debt, lease, otherLT, equity, marginExternal };
   }
   return {
-    scenario, inflation: inflation.slice(0, n), years: out,
+    scenario, inflation: inflation.slice(0, n), years: out, lsBase: ls[0],
     rows: { revenue: out.map(y => y.revenue), ebit: out.map(y => y.ebit), taxEbit: out.map(y => y.taxEbit), da: out.map(y => y.da), capex: out.map(y => y.capex), nwcRelease: out.map(y => y.nwcRelease) }
   };
 }
