@@ -63,7 +63,7 @@ export function annexTables(c: Calc, which: string): any[] {
       line('FCF', B.fcf, 'fcf', mm, { fw: 700 }), line('Factor de descuento', null, 'df', v => v.toFixed(4)), line('Valor presente del FCF', null, 'pv', mm, { fw: 600 })
     ], { note: 'WACC ' + f.p(b.wacc) + ' · g ' + f.p(b.g) + '. Los drivers (crecimiento, margen, tasa, D&A, capex y capital de trabajo) se derivan de las filas de la proyección fuente.' });
     const last = R[R.length - 1].year;
-    const V: [string, number | null, number?][] = [['VPN de los FCF', b.pvSum], ['FCF ' + last + ' × (1 + g)', b.fcfN1], ['Valor terminal (Gordon)', b.tvG], ['VP del valor terminal (Gordon)', b.pvTvG], ['EV · Gordon', b.evG, 1]];
+    const V: [string, number | null, number?][] = [['VPN de los FCF', b.pvSum], ['FCF ' + last + (Math.abs(b.fcfTv - R[R.length - 1].fcf) > 1e-6 ? ' normalizado (NOPAT − ΔNWC)' : '') + ' × (1 + g)', b.fcfN1], ['Valor terminal (Gordon)', b.tvG], ['VP del valor terminal (Gordon)', b.pvTvG], ['EV · Gordon', b.evG, 1]];
     if (b.mult) V.push(['EBITDA ' + last + ' × ' + f.x(b.mult), b.tvM], ['VP del valor terminal (múltiplo)', b.pvTvM], ['EV · múltiplos', b.evM, 1], ['EV ponderado (' + Math.round(b.wG * 100) + '% Gordon)', b.evW, 1]);
     const br = ds.valuation.bridge;
     V.push(['(−) Deuda bursátil y bancaria', -br.debt], ['(−) Pasivo por arrendamiento', -br.lease], ['(+) Efectivo', br.cash], ['Equity Value al cierre', b.eqClose, 1]);

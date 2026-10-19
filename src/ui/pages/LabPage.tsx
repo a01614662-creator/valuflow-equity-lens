@@ -97,10 +97,13 @@ export function LabPage({ vm }: { vm: VM }) {
                           <span style={css('color:var(--color-accent);')}>{c.dot}</span></span>
                         <span style={css('font-family:var(--font-heading); font-size:22px; font-weight:600;')}>{c.valTxt}</span></span>
                       {c.range ? (
-                        <input type="range" min={c.min} max={c.max} step={c.step} value={c.value} onChange={c.onChange} aria-label={c.label} />
+                        <span style={css('display:flex; gap:10px; align-items:center;')}>
+                          <input type="range" min={c.min} max={c.max} step={c.step} value={c.value} onChange={c.onChange} aria-label={c.label} style={css('flex:1 1 auto; min-width:0;')} />
+                          <input className="input" type="number" min={c.min} max={c.max} step={c.step} value={c.numValue} onChange={c.onChange} aria-label={c.label + ' (valor)'} style={css('flex:0 0 92px; width:92px; padding:4px 6px; font-size:13px;')} /></span>
                       ) : (
                         <input className="input" type="number" step={c.step} value={c.value} onChange={c.onChange} aria-label={c.label} />
                       )}
+                      {c.rangeTxt ? <span style={css('font-size:11px; color:var(--color-neutral-600);')}>{c.rangeTxt}</span> : null}
                       <span style={css('display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--color-neutral-700);')}>
                         <span>{c.impact}</span>
                         <span className="tag tag-neutral" style={css('padding:1px 6px; font-size:10px;')}>{c.source}</span></span></label>

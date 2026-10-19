@@ -174,7 +174,7 @@ export function FlowsPage({ vm }: { vm: VM }) {
             <span style={css('font-size:14px; line-height:1.5; color:var(--color-neutral-800);')}>Es el valor presente de todos los flujos posteriores al periodo explícito, suponiendo que crecen a una tasa constante g para siempre.</span></div>
           <div style={css('flex:2 1 520px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; font-family:var(--font-heading);')}>
             <div style={css('display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);')}>
-              <span style={css('font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);')}>FCF {tv.lastYear}</span>
+              <span style={css('font-family:var(--font-body); font-size:11px; color:var(--color-neutral-700);')}>{tv.fcfLabel}</span>
               <span style={css('font-size:24px; font-weight:600;')}>{tv.fcfN}</span></div>
             <span style={css('font-size:22px;')}>× (1 +{' '}</span>
             <div style={css('display:flex; flex-direction:column; padding:12px 16px; border:1px solid var(--color-divider);')}>

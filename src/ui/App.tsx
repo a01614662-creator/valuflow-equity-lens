@@ -93,8 +93,8 @@ export class App extends Component<object, AppState> {
   setA(patch: Partial<Assumptions>, silent?: boolean) {
     const A = { ...(this.state.A as Assumptions), ...patch }; store.setA(this.state.activeId, A);
     this.setState({ A, busy: true }); clearTimeout(this._bt); clearTimeout(this._tt);
-    this._bt = setTimeout(() => this.setState({ busy: false, toast: silent ? null : 'Valuación actualizada' }), 420);
-    this._tt = setTimeout(() => this.setState({ toast: null }), 2400);
+    this._bt = setTimeout(() => silent ? this.setState({ busy: false }) : this.setState({ busy: false, toast: 'Valuación actualizada' }), 420);
+    if (!silent) this._tt = setTimeout(() => this.setState({ toast: null }), 2400);
   }
   resetA() { store.setA(this.state.activeId, null); this.setState({ A: E.defaults(this.ds()), toast: 'Valores base restaurados' }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2200); }
   flash(t: string) { this.setState({ toast: t }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast: null }), 2600); }
