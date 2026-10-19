@@ -6,12 +6,13 @@ import * as E from '../src/engine';
 import { soriana } from '../src/data/soriana';
 import { SORIANA_XL as XL } from '../src/data/soriana.excel';
 
-// Escenarios oficiales + referencia Citi (con la beta oficial) y las dos columnas con la beta heredada 0.80.
+// Escenarios oficiales + referencia Citi (con la beta oficial: regresión desapalancada), las dos columnas con la beta heredada 0.80
+// y la Base con la βU de Damodaran 0.69 (referencia; era la beta oficial hasta el 19-oct-2026).
 const SCEN = ['citi', 'cautela', 'base', 'alcista'] as const;
-const INHERITED = { historico: 'citi', base_beta080: 'base' } as const;
+const INHERITED = { historico: 'citi', base_beta080: 'base', base_damodaran: 'base' } as const;
 const rel = (a: number, b: number) => Math.abs(a - b) / Math.max(1, Math.abs(b));
 const close = (a: number, b: number, tol = 1e-9) => expect(rel(a, b)).toBeLessThan(tol);
-const runX = (key: string) => key in INHERITED ? run(INHERITED[key as keyof typeof INHERITED], { betaU: soriana.beta!.inherited! }) : run(key);
+const runX = (key: string) => key in INHERITED ? run(INHERITED[key as keyof typeof INHERITED], { betaU: key === 'base_damodaran' ? soriana.beta!.unleveredCash! : soriana.beta!.inherited! }) : run(key);
 const run = (inflation: string, extra: Partial<E.Assumptions> = {}) => {
   const r = E.run(soriana, { ...E.defaults(soriana), inflation, ...extra });
   if (!r.ok) throw new Error(r.errors.join('; '));
@@ -37,7 +38,7 @@ describe('proyección por drivers = hoja Proyección Final (por escenario de inf
 });
 
 describe('DCF = Excel (por escenario de inflación y beta)', () => {
-  [...SCEN, 'historico', 'base_beta080'].forEach(k => {
+  [...SCEN, 'historico', 'base_beta080', 'base_damodaran'].forEach(k => {
     const X = XL.expected.dcf[k as keyof typeof XL.expected.dcf];
     it(k + ': WACC iterado, EV, equity y precio final', () => {
       const b = runX(k);
@@ -57,12 +58,16 @@ describe('DCF = Excel (por escenario de inflación y beta)', () => {
   it('baseline histórico del PRO: trayectoria Citi + βU heredada 0.80 = Validación!C9 ($30.93)', () => {
     expect(runX('historico').value).toBeCloseTo(30.931885693122553, 9);
   });
-  it('valor oficial por defecto (Base 3.51%, βU Damodaran 0.69 corregida por caja) = Excel PRO auditado ($31.62)', () => {
+  it('valor oficial por defecto (Base 3.51%, βU de la regresión desapalancada) = Excel PRO auditado', () => {
     expect(E.defaults(soriana).inflation).toBe('base');
+    expect(E.defaults(soriana).betaU).toBe(soriana.beta!.regression!.unlevered);
     const b = E.run(soriana, E.defaults(soriana)) as E.RunOk;
-    close(b.value, XL.expected.dcf.base.price, 1e-11);
-    expect(b.value).toBeCloseTo(31.6168901445216, 9);
-    expect(b.signal).toBe('Mantener'); expect(XL.expected.dcf.base.signal).toBe('MANTENER');
+    close(b.value, XL.expected.dcf.base.price, 1e-11); close(b.wacc, XL.expected.dcf.base.wacc / 100, 1e-12);
+    expect(b.signal!.toUpperCase()).toBe(XL.expected.dcf.base.signal);
+  });
+  it('trazabilidad: con la βU de Damodaran 0.69 se reproduce el resultado oficial anterior (Validación!H9)', () => {
+    close(runX('base_damodaran').value, XL.expected.dcf.base_damodaran.price, 1e-11);
+    expect(runX('base_damodaran').value).toBeCloseTo(31.6168901445216, 9);
   });
   it('valor terminal con FCF normalizado (capex = D&A) y tendencia de mínimos cuadrados que crece con la inflación', () => {
     (['citi', 'cautela', 'base', 'alcista'] as const).forEach(k => {
@@ -220,7 +225,7 @@ describe('recomendación = hoja Transacciones SDC §7', () => {
 });
 
 describe('Valuación combinada = hoja Valuación Combinada', () => {
-  [...SCEN, 'historico', 'base_beta080'].forEach(k => it(k + ': DCF 50% + Comps 50% + Transactions 0%', () => {
+  [...SCEN, 'historico', 'base_beta080', 'base_damodaran'].forEach(k => it(k + ': DCF 50% + Comps 50% + Transactions 0%', () => {
     const b = runX(k), R = E.relative(soriana, E.defaults(soriana), b.value);
     close(R.combined!.value as number, XL.expected.dcf[k as keyof typeof XL.expected.dcf].combined, 1e-12);
     expect(R.combined!.rows.find(r => r.key === 'transactions')!.weight).toBe(0);
@@ -284,17 +289,22 @@ describe('pruebas aleatorias de los métodos nuevos', () => {
   });
 });
 
-describe('beta del WACC (Damodaran global, enero 2026)', () => {
-  const Bt = soriana.beta!, X = XL.expected.dcf;
-  it('fuente documentada: Retail (Grocery and Food), βL 0.87, βU 0.65, corregida por caja 0.69', () => {
+describe('beta del WACC (regresión semanal desapalancada; Damodaran como referencia)', () => {
+  const Bt = soriana.beta!, Rg = Bt.regression!, X = XL.expected.dcf;
+  it('βU oficial = βL observada de la regresión desapalancada con su propia estructura (D/E y t)', () => {
+    close(Rg.levered, 0.217837909377843, 1e-12); close(Rg.de, Rg.debt / Rg.equity, 1e-12);
+    close(Rg.unlevered, Rg.levered / (1 + (1 - Rg.tax) * Rg.de), 1e-12);
+    expect(Rg.unlevered).toBeCloseTo(0.1705, 4); expect(Bt.used).toBe(Rg.unlevered);
+  });
+  it('Damodaran se conserva como referencia documentada: Retail (Grocery and Food), βL 0.87, βU 0.65, corregida por caja 0.69', () => {
     expect(Bt.industry).toBe('Retail (Grocery and Food)'); expect(String(Bt.date)).toMatch(/2026/);
-    expect(Bt.levered).toBe(0.87); expect(Bt.unlevered).toBe(0.65); expect(Bt.unleveredCash).toBe(0.69); expect(Bt.used).toBe(0.69);
+    expect(Bt.levered).toBe(0.87); expect(Bt.unlevered).toBe(0.65); expect(Bt.unleveredCash).toBe(0.69); expect(Bt.used).not.toBe(0.69);
   });
   it('control: desapalancar 0.87 con D/E 45.96% y t 25.37% da 0.65 (redondeo)', () => {
     const bu = Bt.levered / (1 + (1 - Bt.marginalTax) * Bt.de);
     expect(Math.abs(bu - Bt.unlevered)).toBeLessThan(0.005); close(bu, Bt.check!, 1e-12);
   });
-  it('el WACC usa la βU sectorial reapalancada (no la βL de 0.87 ni la beta histórica)', () => {
+  it('el WACC reapalanca la βU de regresión con la estructura del libro (no usa directamente la βL observada 0.2178)', () => {
     expect(soriana.wacc.betaU).toBe(Bt.used);
     expect(soriana.wacc.betaU).not.toBe(soriana.inflation!.beta!.historical);
     const b = run('base'), it = b.W.iterated!, mk = b.W.market;
@@ -302,11 +312,12 @@ describe('beta del WACC (Damodaran global, enero 2026)', () => {
     close(it.beta, Bt.used * (1 + (1 - it.tax) * it.de), 1e-12);
     close(it.ke, b.W.rf + it.beta * b.W.prm, 1e-12);
     close(it.beta, X.base.betaLIter, 1e-11); close(mk.beta, X.base.betaLMarket, 1e-12);
+    expect(Math.abs(it.beta - Rg.levered)).toBeGreaterThan(1e-6);
   });
-  it('impacto del cambio de beta = Excel (Base: βU 0.80 → 0.69)', () => {
-    const a = runX('base_beta080'), b = run('base');
-    close(a.value, X.base_beta080.price, 1e-11); close(b.value, X.base.price, 1e-11);
-    expect(b.ke).toBeLessThan(a.ke); expect(b.wacc).toBeLessThan(a.wacc); expect(b.value).toBeGreaterThan(a.value);
+  it('impacto del cambio de beta = Excel (Base: βU 0.80 y Damodaran 0.69 frente a la regresión)', () => {
+    const a = runX('base_beta080'), d = runX('base_damodaran'), b = run('base');
+    close(a.value, X.base_beta080.price, 1e-11); close(d.value, X.base_damodaran.price, 1e-11); close(b.value, X.base.price, 1e-11);
+    expect(b.ke).toBeLessThan(d.ke); expect(b.wacc).toBeLessThan(d.wacc); expect(b.value).toBeGreaterThan(d.value); expect(d.value).toBeGreaterThan(a.value);
     expect(a.rows.map(r => r.fcf)).toEqual(b.rows.map(r => r.fcf));
   });
   it('Kd 10% con fuente y control con intereses 1S26 / deuda 2T26', () => {

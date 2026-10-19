@@ -106,7 +106,7 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
     const rf = W0.rf * 100, prem = src.beta * W0.prm * 100, ke = src.ke * 100, kdAT = src.kdAT * 100, w = b.wacc * 100;
     s += T(L0 - 16, 92, 'Costo del capital (Ke)', { size: 18, a: 'end', w: 600 });
     s += Rc(X(0), 70, X(rf) - X(0), 34, C.steelLt, 'class="grow"') + Rc(X(rf), 70, X(rf + prem) - X(rf), 34, C.steel, 'class="grow"');
-    s += T(X(rf / 2), 92, 'Rf ' + rf.toFixed(2) + '%', { size: 15, a: 'middle', c: C.night }) + T(X(rf + prem / 2), 92, 'βL × PRM ' + prem.toFixed(2) + '%', { size: 15, a: 'middle', c: '#fff' });
+    s += T(X(rf / 2), 92, 'Rf ' + rf.toFixed(2) + '%', { size: 15, a: 'middle', c: C.night }) + (X(rf + prem) - X(rf) > 150 ? T(X(rf + prem / 2), 92, 'βL × PRM ' + prem.toFixed(2) + '%', { size: 15, a: 'middle', c: '#fff' }) : T(X(rf + prem), 126, 'βL × PRM ' + prem.toFixed(2) + '%', { size: 15, a: 'end', c: C.steelDk }));
     s += T(X(ke) + 10, 93, f.p(src.ke, 2), { size: 22, w: 600, cond: true });
     s += T(L0 - 16, 182, 'Costo de la deuda Kd(1−t)', { size: 18, a: 'end', w: 600 });
     s += Rc(X(0), 160, X(kdAT) - X(0), 34, C.grayLt, 'class="grow"') + T(X(kdAT) + 10, 183, f.p(src.kdAT, 2) + ' (Kd ' + f.p(src.kd, 1) + ', t ' + f.p(src.tax, 0) + ')', { size: 18, cond: true });
@@ -115,16 +115,20 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
     s += T(X(0) + 10, 276, f.p(src.wE, 0) + ' capital × Ke + ' + f.p(src.wD, 0) + ' deuda × Kd(1−t)', { size: 15, c: '#fff' });
     const H2 = 430;
     // Sensibilidad a la beta (motor): βU documentadas
-    const betas: [number, string][] = [[0.1705, 'regresión del modelo individual'], [0.65, 'Damodaran sin ajuste por caja'], [A.betaU, 'usada'], [0.80, 'heredada del Excel anterior']];
+    const Bt = ds.beta, Rg = Bt && Bt.regression, D0 = E.defaults(ds).betaU;
+    const betas: [number, string][] = [[A.betaU, Math.abs(A.betaU - D0) < 1e-9 ? (Rg && Math.abs(Rg.unlevered - D0) < 1e-9 ? 'regresión semanal · usada' : 'usada') : 'Laboratorio · usada']];
+    if (Rg) betas.push([Rg.unlevered, 'regresión semanal (oficial)']);
+    if (Bt && Bt.unleveredCash != null) betas.push([Bt.unleveredCash, 'Damodaran · referencia']);
+    if (Bt && Bt.inherited != null) betas.push([Bt.inherited, 'heredada del Excel anterior']);
     const uniq = betas.filter((x, i) => betas.findIndex(y => Math.abs(y[0] - x[0]) < 1e-9) === i).sort((a, z) => a[0] - z[0]);
-    const side = uniq.map(([bu, lab]) => { const r = E.run(ds, { ...A, betaU: bu }); return { k: 'βU ' + bu.toFixed(2) + ' · ' + lab, v: r.ok ? cur(r.value) : 'NA', tone: (Math.abs(bu - A.betaU) < 1e-9 ? undefined : 'muted') as 'muted' | undefined }; });
+    const side = uniq.map(([bu, lab]) => { const r = E.run(ds, { ...A, betaU: bu }); return { k: 'βU ' + (Math.abs(bu * 100 - Math.round(bu * 100)) > 1e-9 ? bu.toFixed(4) : bu.toFixed(2)) + ' · ' + lab, v: r.ok ? cur(r.value) : 'NA', tone: (Math.abs(bu - A.betaU) < 1e-9 ? undefined : 'muted') as 'muted' | undefined }; });
     const hb = ds.inflation && ds.inflation.beta;
     slides.push({
       key: 'riesgo', theme: 'light', kicker: 'Riesgo y costo de capital',
       title: 'Los accionistas exigen ' + f.p(src.ke, 1) + '; con la deuda, el flujo se descuenta al ' + f.p(b.wacc, 2),
       figure: svg(W, H2, s), side,
-      notes: ['βU ' + A.betaU.toFixed(2) + (ds.beta ? ' (Damodaran, ' + ds.beta.industry + ', ' + ds.beta.date + ')' : '') + ' reapalancada con D/E ' + src.de.toFixed(2) + ' → βL ' + src.beta.toFixed(3) + '.',
-        hb ? 'La regresión propia de Soriana da β ' + (+hb.historical).toFixed(3) + ' con R² ' + (+hb.r2).toFixed(4) + ': no es una estimación defendible, por eso se usa la beta sectorial.' : ''].filter(Boolean),
+      notes: ['βU ' + A.betaU.toFixed(4) + (Rg && Math.abs(A.betaU - Rg.unlevered) < 1e-9 ? ' (regresión semanal: βL observada ' + Rg.levered.toFixed(4) + ' desapalancada)' : '') + ' reapalancada con D/E ' + src.de.toFixed(2) + ' → βL ' + src.beta.toFixed(3) + '.',
+        Rg ? 'La pendiente de la regresión no es significativa al 95% (p ≈ 0.09); con Damodaran (βU ' + (Bt!.unleveredCash ?? Bt!.unlevered).toFixed(2) + ') el valor sería el de la tabla.' : (hb ? 'La regresión propia de Soriana da β ' + (+hb.historical).toFixed(3) + ' con R² ' + (+hb.r2).toFixed(4) + '.' : '')].filter(Boolean),
       source: 'CAPM y WACC iterado (' + b.W.iters.length + ' iteraciones) · ' + L.rfSource + ' · ' + L.sourceShort
     });
   }

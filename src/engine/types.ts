@@ -151,7 +151,7 @@ export interface InflationSpec {
   beta?: { historical: number; r2: number; n: number; reported: number; wacc: number };
 }
 
-/** Beta sectorial de referencia externa y su tratamiento en el WACC. */
+/** Beta del WACC: regresión semanal desapalancada (si existe) y beta sectorial de referencia externa, con su tratamiento. */
 export interface BetaSpec {
   source: string; url?: string; date: string; industry: string; firms?: number;
   levered: number; de: number; effTax?: number; marginalTax: number; unlevered: number; cashFirm?: number; unleveredCash?: number;
@@ -159,6 +159,8 @@ export interface BetaSpec {
   check?: number;
   /** Beta del modelo anterior (solo para reproducir el baseline histórico). */
   inherited?: number;
+  /** Beta de la regresión semanal: βL observada desapalancada con su propia estructura (D/E = deuda ÷ capitalización, t). */
+  regression?: { levered: number; debt: number; equity: number; de: number; tax: number; unlevered: number; source: string; note: string };
   used: number; treatment: string[];
   kd?: { value: number; check: number; fy2025?: number; source: string; checkNote?: string };
 }

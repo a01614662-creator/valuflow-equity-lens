@@ -1,26 +1,26 @@
 {
   "format": "valuflow/2",
   "app": "ValuFlow",
-  "exportedAt": "2026-10-19T19:35:54.699Z",
+  "exportedAt": "2026-10-19T20:01:58.473Z",
   "case": {
     "isBase": true,
     "changes": []
   },
   "results": {
     "price": 33.48,
-    "dcf": 31.61689,
-    "upside": -0.055648,
-    "wacc": 0.113837,
-    "ke": 0.13354,
+    "dcf": 38.340078,
+    "upside": 0.145164,
+    "wacc": 0.095628,
+    "ke": 0.10404,
     "g": 0.035,
-    "evClose": 67198.428975,
-    "ev": 71980.695949,
-    "equity": 56910.40226,
+    "evClose": 79382.697168,
+    "ev": 84152.144354,
+    "equity": 69012.14096,
     "comps": 33.492841,
     "transactionsSdc": 23.7448,
-    "combined": 32.554865,
+    "combined": 35.91646,
     "recommendation": "MANTENER",
-    "potential": -0.027632
+    "potential": 0.072774
   },
   "assumptions": {
     "forecastKey": "final",
@@ -30,11 +30,11 @@
     "dTax": 0,
     "g": 3.5000000000000004,
     "waccMode": "iterated",
-    "waccManual": 12.0748041823037,
+    "waccManual": 10.0630184051038,
     "keFixed": null,
     "rf": 9.517000000000001,
     "prm": 4.2299999999999995,
-    "betaU": 0.69,
+    "betaU": 0.170520815748403,
     "kdPre": 10,
     "kdMarket": 13.0154966550936,
     "taxShield": 30,
@@ -688,7 +688,7 @@
         "r2": 0.000225094026900157,
         "n": 62,
         "reported": 0.414619566109315,
-        "wacc": 0.69
+        "wacc": 0.170520815748403
       },
       "study": {
         "monthly": [
@@ -847,10 +847,20 @@
       "unleveredCash": 0.69,
       "check": 0.647803675992488,
       "inherited": 0.8,
-      "used": 0.69,
+      "used": 0.170520815748403,
+      "regression": {
+        "levered": 0.217837909377843,
+        "debt": 23618,
+        "equity": 59580,
+        "de": 0.396408190668009,
+        "tax": 0.3,
+        "unlevered": 0.170520815748403,
+        "source": "Regresión semanal (Investing.com); error típico 0.1269, t 1.716, p 0.0874, IC 95% −0.032 a 0.468",
+        "note": "Beta apalancada observada en la regresión semanal (βL; no se usa directamente: se desapalanca)"
+      },
       "treatment": [
-        "BETA DESAPALANCADA USADA EN EL WACC (βU) — corregida por caja (Damodaran 0.69)",
-        "Menor βU → menor βL y Ke → menor WACC → mayor EV y precio. El cambio no altera los flujos (FCF) ni el puente.",
+        "BETA DESAPALANCADA USADA EN EL WACC (βU) — regresión semanal desapalancada",
+        "Menor βU → menor βL y Ke → menor WACC → mayor EV y precio. El cambio no altera los flujos (FCF) ni el puente. La βU de regresión se reapalanca con la D/E de este libro; la βL observada (0.2178) no se usa directamente.",
         "Referencia (NO usada): Ke con la βL de la industria 0.87 sin reapalancar"
       ],
       "kd": {
@@ -2213,13 +2223,13 @@
         "source": "Modelo del equipo (este libro)",
         "method": "DCF (FCFF, 50% Gordon / 50% múltiplo, a la fecha de valuación)",
         "date": "01-oct-2026",
-        "value": 31.6168901445216,
-        "lo": 31.2773490371468,
-        "hi": 32.289933097456,
+        "value": 38.3400783109781,
+        "lo": 37.9348536027754,
+        "hi": 39.1434242577885,
         "refPrice": 33.48,
         "refDate": "25-sep-2026",
-        "diff": -0.0556484425172753,
-        "assumptions": "βU 0.69 Damodaran (corregida por caja), WACC iterado, g 3.5%, múltiplo de salida 5.81x",
+        "diff": 0.145163629360159,
+        "assumptions": "βU 0.1705 (regresión semanal desapalancada; βL observada 0.2178), WACC iterado, g 3.5%, múltiplo de salida 5.81x",
         "limits": "Rango = escenarios de inflación Cautela–Alcista.",
         "official": "Sí (50%)",
         "page": "—"
@@ -2277,12 +2287,12 @@
         "source": "Modelo del equipo (este libro)",
         "method": "Valuación combinada (DCF 50% / Comps 50%)",
         "date": "01-oct-2026",
-        "value": 32.5548654995095,
+        "value": 35.9164595827377,
         "lo": null,
         "hi": null,
         "refPrice": 33.48,
         "refDate": "25-sep-2026",
-        "diff": -0.0276324522249256,
+        "diff": 0.0727735837137917,
         "assumptions": "Transacciones 0%",
         "limits": "—",
         "official": "Sí (precio objetivo)",
@@ -2300,7 +2310,7 @@
         "refDate": "07-oct-2026",
         "diff": 0.184592145015106,
         "assumptions": "βU 0.1705 (regresión, no significativa al 95%), WACC 9.63%, Ke 10.39%, g 3.5%",
-        "limits": "Modelo distinto del equipo: otra beta, otra fecha y otra proyección. En este libro, βU 0.1705 lleva el DCF del equipo a $38.34.",
+        "limits": "Misma βU que el equipo desde el 19-oct-2026; la diferencia restante es proyección, fecha y precio de referencia.",
         "official": "No (otro modelo)",
         "page": "1, 5–7"
       },
@@ -2451,7 +2461,7 @@
     ],
     "externalNotes": [
       "StarMine relativo (solo puntajes): mercados emergentes 61, México 24, Consumer Staples 56, Food & Staples Retailing 33 (p. 17). No se convierten a precio.",
-      "Lectura: las diferencias provienen sobre todo de la beta (modelo individual βU 0.1705 vs. equipo 0.69: +$6.72 por acción en este libro), de la fecha y el precio de referencia (25-sep vs. 7-oct-2026), de la definición de EBITDA de CIQ y del estadístico usado (media vs. mediana)."
+      "Lectura: con la beta de regresión el DCF del equipo y el modelo individual usan la misma βU; las diferencias restantes vienen de la proyección, de la fecha y el precio de referencia (25-sep vs. 7-oct-2026), de la definición de EBITDA de CIQ y del estadístico usado (media vs. mediana)."
     ],
     "audit": {
       "note": "Original: \"EXCEL FINAL PRO DEFINITIVO SORIANA.xlsx\" (se conserva sin cambios). Este libro se genera con tools/excel/audit_pro.py. Recálculo independiente en LibreOffice: todas las fórmulas del original coinciden con sus valores guardados, salvo las 16 con FILTER de la hoja SDC (#NAME? fuera de Excel 365), que se sustituyen.",
@@ -2523,7 +2533,7 @@
         [
           "Proyección Final",
           "Presentación",
-          "La tabla de sensibilidad (sección 7) mide el precio Gordon al cierre de 2025 (centro $29.19), no el precio objetivo final ($31.62).",
+          "La tabla de sensibilidad (sección 7) mide el precio Gordon al cierre de 2025 (centro $29.19), no el precio objetivo final (B265).",
           "Lectura equivocada del rango del precio objetivo.",
           "Se rotula y se agrega la sección 12: sensibilidad del precio objetivo final (Ke fijo), igual a la de ValuFlow.",
           "Control \"centro = B265\"."
@@ -2554,11 +2564,11 @@
         ],
         [
           "WACC / Beta",
-          "Revisado, sin cambio",
-          "βU Damodaran 0.69 (corregida por caja) → βL 0.907 → Ke 13.35% → WACC iterado 11.38%. Beta de regresión del estudio 0.04 (R² bajo); la del modelo individual 0.1705 no es significativa al 95%.",
-          "Con βU 0.1705 el DCF sería $38.34 (+$6.72); con 0.65, $32.03; con 0.80, $30.54.",
-          "Se conserva la metodología del equipo (beta sectorial).",
-          "Recálculo en LibreOffice con cada beta."
+          "Cambio de supuesto (decisión del equipo, 19-oct-2026)",
+          "La βU oficial pasa de Damodaran 0.69 (corregida por caja) a la beta desapalancada de la regresión semanal de Soriana B contra el IPC: βL observada 0.2178 (p = 0.087, no significativa al 95%) desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705 (fórmula en Beta y Kd §2). Se reapalanca con la estructura de capital de este libro (WACC!B23 a mercado; D/E del DCF en la iteración), sin volver a usar la βL observada.",
+          "Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F).",
+          "Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico).",
+          "Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector."
         ],
         [
           "DCF",
@@ -3173,7 +3183,7 @@
       "prm": 4.2299999999999995,
       "prmMature": 4.2299999999999995,
       "countryRisk": 2.46,
-      "betaU": 0.69,
+      "betaU": 0.170520815748403,
       "taxMarket": 30,
       "taxShield": 30,
       "kdPre": 10,
@@ -3182,7 +3192,7 @@
       "debt": 23618,
       "equityMarket": 60264,
       "mode": "iterated",
-      "start": 12.0748041823037,
+      "start": 10.0630184051038,
       "iterations": 6
     },
     "valuation": {
@@ -3216,37 +3226,37 @@
         6381.51006237885,
         6704.44321602348
       ],
-      "pvFcf": 22451.0151511555,
-      "tvG": 76153.1172746779,
-      "pvTvG": 44420.0897530041,
-      "evG": 66871.1049041596,
+      "pvFcf": 23547.3812562396,
+      "tvG": 99025.313510992,
+      "pvTvG": 62723.6092843861,
+      "evG": 86270.9905406258,
       "tvM": 77275.4359599157,
-      "pvTvM": 45074.7378949826,
-      "evM": 67525.7530461381,
-      "evW": 67198.4289751488,
-      "ev2": 71980.6959486144,
-      "eq2": 55135.4919486144,
-      "eqVal": 56910.4022601389,
-      "price": 31.6168901445216,
-      "upside": -5.564844251727585,
-      "wacc": 11.383702657870499,
-      "ke": 13.3539746416858,
-      "priceG": 29.193391613422,
-      "priceM": 29.5570850256323,
-      "priceW": 29.3752383195271,
-      "tvWeight": 66.4264330859607,
-      "waccMarket": 12.0748041823037,
-      "keMarket": 13.2364052240143,
-      "betaMarket": 0.879292015133413,
+      "pvTvM": 48947.0225397703,
+      "evM": 72494.40379601,
+      "evW": 79382.6971683179,
+      "ev2": 84152.1443540494,
+      "eq2": 67306.9403540494,
+      "eqVal": 69012.1409597606,
+      "price": 38.3400783109781,
+      "upside": 14.516362936015836,
+      "wacc": 9.56277841268195,
+      "ke": 10.404047827740499,
+      "priceG": 39.9711058559032,
+      "priceM": 32.3174465533389,
+      "priceW": 36.144276204621,
+      "tvWeight": 72.7053310635735,
+      "waccMarket": 10.0630184051038,
+      "keMarket": 10.436182627388101,
+      "betaMarket": 0.21730085753856,
       "comps": 33.4928408544974,
       "transactions": 23.7448001083333,
-      "combined": 32.5548654995095,
+      "combined": 35.9164595827377,
       "sensRow": [
-        29.9885863135,
-        30.7541825997897,
-        31.6168901445216,
-        32.5964371104364,
-        33.718283506556
+        35.5374028126272,
+        36.8319765008321,
+        38.3400783109781,
+        40.1192859783533,
+        42.2499227469743
       ]
     },
     "expectedScenarios": {
@@ -3258,37 +3268,37 @@
           6443.0249430638,
           6784.70712387087
         ],
-        "pvFcf": 22600.1091763708,
-        "tvG": 76968.5645955951,
-        "pvTvG": 44878.9547095459,
-        "evG": 67479.0638859166,
+        "pvFcf": 23707.0729400862,
+        "tvG": 100096.383714517,
+        "pvTvG": 63385.3805486486,
+        "evG": 87092.4534887348,
         "tvM": 78297.6512433695,
-        "pvTvM": 45653.9206944766,
-        "evM": 68254.0298708473,
-        "evW": 67866.546878382,
-        "ev2": 72688.4958261744,
-        "eq2": 55843.2918261744,
-        "eqVal": 57639.6374688299,
-        "price": 32.0220208160166,
-        "upside": -4.354776535195337,
-        "wacc": 11.392033153127299,
-        "ke": 13.343472201868,
-        "priceG": 29.531146603287,
-        "priceM": 29.9616832615819,
-        "priceW": 29.7464149324344,
-        "tvWeight": 66.5079687314874,
-        "waccMarket": 12.0748041823037,
-        "keMarket": 13.2364052240143,
-        "betaMarket": 0.879292015133413,
+        "pvTvM": 49581.4757332394,
+        "evM": 73288.5486733257,
+        "evW": 80190.5010810303,
+        "ev2": 84999.8960795964,
+        "eq2": 68154.6920795964,
+        "eqVal": 69881.0708533432,
+        "price": 38.8228171407462,
+        "upside": 15.958235187413994,
+        "wacc": 9.568535555385479,
+        "ke": 10.402176814108099,
+        "priceG": 40.4274741604082,
+        "priceM": 32.7586381518476,
+        "priceW": 36.5930561561279,
+        "tvWeight": 72.7794177446698,
+        "waccMarket": 10.0630184051038,
+        "keMarket": 10.436182627388101,
+        "betaMarket": 0.21730085753856,
         "comps": 33.4928408544974,
         "transactions": 23.7448001083333,
-        "combined": 32.757430835257,
+        "combined": 36.1578289976218,
         "sensRow": [
-          30.37829174872,
-          31.1511893324855,
-          32.0220208160166,
-          33.0106590606231,
-          34.142743835831
+          35.9926676121387,
+          37.3000262232473,
+          38.8228171407462,
+          40.6190715034101,
+          42.7697190321148
         ]
       },
       "cautela": {
@@ -3299,37 +3309,37 @@
           6331.8290632176,
           6636.24176035716
         ],
-        "pvFcf": 22337.2334702507,
-        "tvG": 75460.7153418775,
-        "pvTvG": 44030.0554376934,
-        "evG": 66367.2889079441,
+        "pvFcf": 23425.1434645325,
+        "tvG": 98116.5782151375,
+        "pvTvG": 62161.8214207559,
+        "evG": 85586.9648852884,
         "tvM": 76390.2070278095,
-        "pvTvM": 44572.3981689416,
-        "evM": 66909.6316391924,
-        "evW": 66638.4602735682,
-        "ev2": 71387.5019673013,
-        "eq2": 54542.2979673013,
-        "eqVal": 56299.2282668643,
-        "price": 31.2773490371468,
-        "upside": -6.579005265391869,
-        "wacc": 11.3766977325831,
-        "ke": 13.3628639411916,
-        "priceG": 28.9134938377467,
-        "priceM": 29.2147953551069,
-        "priceW": 29.0641445964268,
-        "tvWeight": 66.34300746978829,
-        "waccMarket": 12.0748041823037,
-        "keMarket": 13.2364052240143,
-        "betaMarket": 0.879292015133413,
+        "pvTvM": 48397.0649398845,
+        "evM": 71822.208404417,
+        "evW": 78704.5866448527,
+        "ev2": 83440.5199497814,
+        "eq2": 66595.3159497814,
+        "eqVal": 68282.7364849957,
+        "price": 37.9348536027754,
+        "upside": 13.306014345207284,
+        "wacc": 9.55790842123724,
+        "ke": 10.4056387187952,
+        "priceG": 39.591091602938,
+        "priceM": 31.9440046691206,
+        "priceW": 35.7675481360293,
+        "tvWeight": 72.6300103106483,
+        "waccMarket": 10.0630184051038,
+        "keMarket": 10.436182627388101,
+        "betaMarket": 0.21730085753856,
         "comps": 33.4928408544974,
         "transactions": 23.7448001083333,
-        "combined": 32.3850949458221,
+        "combined": 35.7138472286364,
         "sensRow": [
-          29.6621893523776,
-          30.4215652444607,
-          31.2773490371468,
-          32.2491446041675,
-          33.3622573563853
+          35.1555390949171,
+          36.439243569037,
+          37.9348536027754,
+          39.6995594762407,
+          41.8131656710436
         ]
       },
       "base": {
@@ -3340,37 +3350,37 @@
           6381.51006237885,
           6704.44321602348
         ],
-        "pvFcf": 22451.0151511555,
-        "tvG": 76153.1172746779,
-        "pvTvG": 44420.0897530041,
-        "evG": 66871.1049041596,
+        "pvFcf": 23547.3812562396,
+        "tvG": 99025.313510992,
+        "pvTvG": 62723.6092843861,
+        "evG": 86270.9905406258,
         "tvM": 77275.4359599157,
-        "pvTvM": 45074.7378949826,
-        "evM": 67525.7530461381,
-        "evW": 67198.4289751488,
-        "ev2": 71980.6959486144,
-        "eq2": 55135.4919486144,
-        "eqVal": 56910.4022601389,
-        "price": 31.6168901445216,
-        "upside": -5.564844251727585,
-        "wacc": 11.383702657870499,
-        "ke": 13.3539746416858,
-        "priceG": 29.193391613422,
-        "priceM": 29.5570850256323,
-        "priceW": 29.3752383195271,
-        "tvWeight": 66.4264330859607,
-        "waccMarket": 12.0748041823037,
-        "keMarket": 13.2364052240143,
-        "betaMarket": 0.879292015133413,
+        "pvTvM": 48947.0225397703,
+        "evM": 72494.40379601,
+        "evW": 79382.6971683179,
+        "ev2": 84152.1443540494,
+        "eq2": 67306.9403540494,
+        "eqVal": 69012.1409597606,
+        "price": 38.3400783109781,
+        "upside": 14.516362936015836,
+        "wacc": 9.56277841268195,
+        "ke": 10.404047827740499,
+        "priceG": 39.9711058559032,
+        "priceM": 32.3174465533389,
+        "priceW": 36.144276204621,
+        "tvWeight": 72.7053310635735,
+        "waccMarket": 10.0630184051038,
+        "keMarket": 10.436182627388101,
+        "betaMarket": 0.21730085753856,
         "comps": 33.4928408544974,
         "transactions": 23.7448001083333,
-        "combined": 32.5548654995095,
+        "combined": 35.9164595827377,
         "sensRow": [
-          29.9885863135,
-          30.7541825997897,
-          31.6168901445216,
-          32.5964371104364,
-          33.718283506556
+          35.5374028126272,
+          36.8319765008321,
+          38.3400783109781,
+          40.1192859783533,
+          42.2499227469743
         ]
       },
       "alcista": {
@@ -3381,94 +3391,94 @@
           6479.70924413504,
           6839.71731193936
         ],
-        "pvFcf": 22675.7064901035,
-        "tvG": 77525.2668679397,
-        "pvTvG": 45192.8696200385,
-        "evG": 67868.5761101419,
+        "pvFcf": 23788.8027558412,
+        "tvG": 100826.437921436,
+        "pvTvG": 63836.9461908023,
+        "evG": 87625.7489466436,
         "tvM": 79034.2259318932,
-        "pvTvM": 46072.5078721117,
-        "evM": 68748.2143622151,
-        "evW": 68308.3952361785,
-        "ev2": 73156.5381176457,
-        "eq2": 56311.3341176457,
-        "eqVal": 58121.8795754208,
-        "price": 32.289933097456,
-        "upside": -3.554560640812421,
-        "wacc": 11.3973014161891,
-        "ke": 13.3368687514593,
-        "priceG": 29.7475422834122,
-        "priceM": 30.2362302012306,
-        "priceW": 29.9918862423214,
-        "tvWeight": 66.58879883776589,
-        "waccMarket": 12.0748041823037,
-        "keMarket": 13.2364052240143,
-        "betaMarket": 0.879292015133413,
+        "pvTvM": 50039.4909515425,
+        "evM": 73828.2937073837,
+        "evW": 80727.0213270136,
+        "ev2": 85562.9196658533,
+        "eq2": 68717.7156658533,
+        "eqVal": 70458.1636640194,
+        "price": 39.1434242577885,
+        "upside": 16.915843063884427,
+        "wacc": 9.57222086238604,
+        "ke": 10.400984596747,
+        "priceG": 40.723749414802,
+        "priceM": 33.0584965041021,
+        "priceW": 36.891122959452,
+        "tvWeight": 72.8518123476165,
+        "waccMarket": 10.0630184051038,
+        "keMarket": 10.436182627388101,
+        "betaMarket": 0.21730085753856,
         "comps": 33.4928408544974,
         "transactions": 23.7448001083333,
-        "combined": 32.8913869759767,
+        "combined": 36.3181325561429,
         "sensRow": [
-          30.6355937337282,
-          31.4135113022721,
-          32.289933097456,
-          33.2848334763658,
-          34.4239787300283
+          36.2944617111902,
+          37.6105716056872,
+          39.1434242577885,
+          40.9513651897621,
+          43.115745831485
         ]
       }
     },
     "waccIterationExcel": [
       [
         0,
-        12.0748041823037,
-        47329.1638818825,
-        0.499015787790853,
-        0.931024625502982,
-        13.4552341658776,
-        11.3063149957819
+        10.0630184051038,
+        65552.8037920425,
+        0.360289699810934,
+        0.213526641210658,
+        10.420217692321101,
+        9.514330361243239
       ],
       [
         1,
-        11.3063149957819,
-        53189.5668326322,
-        0.444034448979761,
-        0.904468638857224,
-        13.3429023423661,
-        11.3924868598858
+        9.514330361243239,
+        72623.5581022153,
+        0.325211276026416,
+        0.209339520203425,
+        10.4025061704605,
+        9.56751978496798
       ],
       [
         2,
-        11.3924868598858,
-        52476.0820973954,
-        0.450071709929965,
-        0.907384635896173,
-        13.3552370098408,
-        11.3827053285163
+        9.56751978496798,
+        71882.4527069998,
+        0.3285641921022,
+        0.20973973959249,
+        10.4041990984762,
+        9.562314353128649
       ],
       [
         3,
-        11.3827053285163,
-        52556.2922056546,
-        0.449384821660972,
-        0.907052868862249,
-        13.353833635287298,
-        11.3838141122562
+        9.562314353128649,
+        71954.410504547,
+        0.328235612443903,
+        0.209700518822531,
+        10.4040331946193,
+        9.56282331442387
       ],
       [
         4,
-        11.3838141122562,
-        52547.1900776782,
-        0.449462663276315,
-        0.90709046636246,
-        13.3539926727132,
-        11.3836884065374
+        9.56282331442387,
+        71947.3694059349,
+        0.32826773508208,
+        0.209704353127457,
+        10.4040494137291,
+        9.56277354619232
       ],
       [
         5,
-        11.3836884065374,
-        52548.2218820889,
-        0.449453837905222,
-        0.907086203708222,
-        13.3539746416858,
-        11.383702657870499
+        9.56277354619232,
+        71948.0578602907,
+        0.328264593963907,
+        0.209703978189233,
+        10.404047827740499,
+        9.56277841268195
       ]
     ],
     "method": {
@@ -4233,16 +4243,29 @@
     ],
     "discrepancies": [
       {
-        "topic": "Valor por acción (DCF)",
+        "topic": "Beta del WACC (cambio del 19-oct-2026)",
+        "a": [
+          "Antes: βU Damodaran 0.69 (corregida por caja), hoy referencia",
+          "$31.62 · WACC 11.38%"
+        ],
+        "b": [
+          "Ahora: βU 0.1705 (regresión semanal: βL observada 0.2178 desapalancada)",
+          "$38.34 · WACC 9.56%"
+        ],
+        "used": "Regresión semanal desapalancada",
+        "note": "Decisión del equipo. La βL observada se desapalanca con la estructura de la propia regresión (D/E 0.3964, t 30%) y se reapalanca con la del modelo; no se usa directamente. La pendiente no es significativa al 95% (p ≈ 0.09)."
+      },
+      {
+        "topic": "Valor por acción (DCF), versiones anteriores",
         "a": [
           "ValuFlow anterior (Excel integrado, βU 0.65) · baseline histórico (Citi + βU 0.80)",
           "$32.41 · $31.16"
         ],
         "b": [
-          "Excel PRO auditado · DCF oficial (Base 3.51%, βU Damodaran 0.69 corregida por caja)",
+          "Excel PRO auditado con βU Damodaran 0.69 (oficial hasta el 19-oct-2026)",
           "$31.62"
         ],
-        "used": "Excel PRO auditado",
+        "used": "Histórico (trazabilidad)",
         "note": "El PRO corrige la beta por caja (0.65 → 0.69), deja la tendencia de mínimos cuadrados crecer con la inflación y normaliza el FCF del valor terminal (capex = D&A)."
       },
       {
@@ -4253,10 +4276,10 @@
         ],
         "b": [
           "Modelo del equipo (Excel PRO auditado)",
-          "βU 0.69 (Damodaran) · WACC 11.38% · $31.62"
+          "βU 0.1705 (regresión) · WACC 9.56% · $38.34"
         ],
         "used": "Modelo del equipo",
-        "note": "Con βU 0.1705 el Excel del equipo da $38.34: la beta explica +$6.72 de la diferencia; el resto es proyección, fecha y precio de referencia. La beta de regresión no es significativa al 95% (p = 0.087)."
+        "note": "Misma beta desapalancada; la diferencia restante viene de la proyección, la fecha y el precio de referencia (33.48 del 25-sep vs. 33.10 del 7-oct-2026)."
       },
       {
         "topic": "Precedent Transactions",
@@ -4288,11 +4311,11 @@
         "topic": "WACC",
         "a": [
           "A valor de mercado (Kd histórico FY2025 13.0%)",
-          "12.07%"
+          "10.06%"
         ],
         "b": [
           "Iterado al valor DCF (Kd prospectivo 10%)",
-          "11.38%"
+          "9.56%"
         ],
         "used": "Iterado (6 iteraciones)",
         "note": "El de mercado es solo el punto de partida de la iteración."
@@ -4371,13 +4394,13 @@
         "Encuesta Citi de Expectativas (comentario original de Proyección Final!C10). Referencia histórica del modelo anterior; no es escenario."
       ],
       [
-        "Beta desapalancada sectorial (βU)",
-        "WACC!B9 ← 'Beta y Kd'!B19",
-        "0.69",
-        "ene-2026",
+        "Beta desapalancada (βU) · regresión semanal desapalancada (oficial)",
+        "WACC!B9 ← 'Beta y Kd'!B19 ← H8",
+        "0.170520815748403",
+        "7-oct-2026",
         "x",
-        "Observado",
-        "Damodaran, Betas by Sector (Global), ene-2026, Retail (Grocery and Food): βL 0.87, D/E 45.96%, t marginal 25.37% → βU 0.65; Cash/Firm value 5.81% → βU corregida por caja 0.69 (usada, porque se reapalanca con deuda bruta). https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/BetasGlobal.html"
+        "Modelo",
+        "Regresión semanal de rendimientos Soriana B vs. S&P/BMV IPC (Investing.com): βL observada 0.2178 (p = 0.087, no significativa al 95%), desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705. Referencia (no usada): Damodaran, Betas by Sector (Global), ene-2026, Retail (Grocery and Food), βU corregida por caja 0.69."
       ],
       [
         "Beta heredada (histórico)",
@@ -4520,9 +4543,14 @@
         "Múltiplos publicados de 10 comparables (extracto con atribución)"
       ],
       [
+        "Regresión semanal Soriana B vs. IPC",
+        "Investing.com · hoja Beta y Kd §2",
+        "βL observada 0.2178 → βU 0.1705 (beta oficial del WACC)"
+      ],
+      [
         "Damodaran (NYU Stern)",
         "Betas by Sector (Global), enero 2026 · Retail (Grocery and Food)",
-        "βL 0.87, βU 0.65; corregida por caja 0.69 (reapalancada con la estructura de Soriana)"
+        "βL 0.87, βU 0.65; corregida por caja 0.69 (referencia; beta oficial hasta el 19-oct-2026)"
       ],
       [
         "S&P Capital IQ",

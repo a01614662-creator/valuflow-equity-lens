@@ -35,11 +35,11 @@ La hoja *Auditoría* del Excel auditado contiene este registro. "Revisado, sin c
 | 10 | Validación | Validación | Filas 33–35 comparan contra valores registrados; la 34 compara un valor registrado consigo mismo (tautológica). | Aparentan ser pruebas independientes. | Se rotulan como controles de regresión. La tabla A se re-verificó recalculando las 6 combinaciones en LibreOffice: coinciden. | tools/excel/audit_checks.py. |
 | 11 | Inflación | Presentación | Las etiquetas de ventana (C189:C192) usan TEXT(fecha,"mmm-yy"): en Excel en español el código "yy" no existe y se muestra literal ("nov-yy a sep-yy"). | Etiqueta ilegible; no afecta cálculos. | Se sustituye por una fórmula independiente del idioma (CHOOSE(MONTH) & año). | Recálculo: "nov-24 a sep-26". |
 | 12 | Fuentes | Referencia | La fila de pesos apuntaba a "Valuación Combinada!C6:C8" (los pesos están en C4:C6) y no había registro de LSEG/SDC ni del contraste externo. | Trazabilidad incompleta. | Se corrige y se agregan 3 registros. | — |
-| 13 | WACC / Beta | Revisado, sin cambio | βU Damodaran 0.69 (corregida por caja) → βL 0.907 → Ke 13.35% → WACC iterado 11.38%. Beta de regresión del estudio 0.04 (R² bajo); la del modelo individual 0.1705 no es significativa al 95%. | Con βU 0.1705 el DCF sería $38.34 (+$6.72); con 0.65, $32.03; con 0.80, $30.54. | Se conserva la metodología del equipo (beta sectorial). | Recálculo en LibreOffice con cada beta. |
+| 13 | WACC / Beta | Cambio de supuesto (decisión del equipo, 19-oct-2026) | La βU oficial pasa de Damodaran 0.69 (corregida por caja) a la beta desapalancada de la regresión semanal de Soriana B contra el IPC: βL observada 0.2178 (p = 0.087, no significativa al 95%) desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705 (fórmula en Beta y Kd §2). Se reapalanca con la estructura de capital de este libro (WACC!B23 a mercado; D/E del DCF en la iteración), sin volver a usar la βL observada. | Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F). | Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico). | Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector. |
 | 14 | DCF | Revisado, sin cambio | Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge. | — | Sin cambios. | Recálculo independiente y controles 23–32. |
 | 15 | Fechas | Revisado, sin cambio | Fecha de valuación 01-oct-2026; precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación); balance 2T26; comparables CIQ al 30-jun-2026; pantalla SDC 19-oct-2026; reporte comparativo 19-oct-2026 con precio 33.10 MXN del 7-oct-2026. | Cada fecha cumple una función distinta. | Se rotulan en cada salida; el precio nunca se presenta como "del día". | — |
 
-**Qué se conservó:** la metodología del equipo (DCF FCFF con WACC iterado, beta sectorial de Damodaran, valor terminal 50/50 Gordon–múltiplo, puente al 2T26, escenarios de inflación, Trading Comps CIQ y pesos 50/50 DCF–Comps). El precio objetivo oficial ($32.55) no cambió con la auditoría de transacciones.
+**Qué se conservó:** la metodología del equipo (DCF FCFF con WACC iterado, valor terminal 50/50 Gordon–múltiplo, puente al 2T26, escenarios de inflación, Trading Comps CIQ y pesos 50/50 DCF–Comps). La auditoría de transacciones no cambió el precio objetivo. El único cambio de supuesto fue la beta (sección 10).
 
 ## 3. Transacciones precedentes (LSEG/SDC): tabla definitiva
 
@@ -126,11 +126,11 @@ Cada fuente se compara contra su propio precio de referencia (el equipo: $33.48 
 
 | Fuente | Método | Fecha | Precio por acción | Rango | Precio de referencia | Diferencia | ¿Entra al precio oficial? |
 |---|---|---|---|---|---|---|---|
-| Modelo del equipo (este libro) | DCF (FCFF, 50% Gordon / 50% múltiplo, a la fecha de valuación) | 01-oct-2026 | $31.62 | $31.28 – $32.29 | $33.48 (25-sep-2026) | −5.6% | Sí (50%) |
+| Modelo del equipo (este libro) | DCF (FCFF, 50% Gordon / 50% múltiplo, a la fecha de valuación) | 01-oct-2026 | $38.34 | $37.93 – $39.14 | $33.48 (25-sep-2026) | +14.5% | Sí (50%) |
 | Modelo del equipo (este libro) | Trading Comps (7 pares CIQ, promedio de 3 múltiplos a la media) | 30-jun-2026 | $33.49 | $27.03 – $40.07 | $33.48 (25-sep-2026) | +0.0% | Sí (50%) |
 | Modelo del equipo (este libro) | Precedent Transactions LSEG/SDC (mediana EV/EBITDA) | 19-oct-2026 | $23.74 | $20.41 – $49.19 | $33.48 (25-sep-2026) | −29.1% | No (0%, referencia) |
 | Modelo del equipo (este libro) | Precedent Transactions CIQ (3 operaciones, media) | — | $40.73 | $24.76 – $65.44 | $33.48 (25-sep-2026) | +21.6% | No (histórico) |
-| Modelo del equipo (este libro) | Valuación combinada (DCF 50% / Comps 50%) | 01-oct-2026 | $32.55 | — | $33.48 (25-sep-2026) | −2.8% | Sí (precio objetivo) |
+| Modelo del equipo (este libro) | Valuación combinada (DCF 50% / Comps 50%) | 01-oct-2026 | $35.92 | — | $33.48 (25-sep-2026) | +7.3% | Sí (precio objetivo) |
 | Modelo individual del autor del reporte (SORIANA_FINAL) | DCF | 07-oct-2026 | $39.21 | $32.12 – $47.74 | $33.10 (07-oct-2026) | +18.5% | No (otro modelo) |
 | Modelo individual del autor del reporte | Valuación combinada (50% DCF / 50% comps) | 07-oct-2026 | $36.35 | — | $33.10 (07-oct-2026) | +9.8% | No |
 | ValuFlow (app del equipo, versión anterior) | DCF | 01-oct-2026 | $31.16 | $25.91 – $37.56 | $33.48 (25-sep-2026) | −6.9% | No (histórico) |
@@ -146,62 +146,63 @@ Cada fuente se compara contra su propio precio de referencia (el equipo: $33.48 
 
 | Tema | Fuente A | Fuente B | Se usa | Explicación |
 |---|---|---|---|---|
-| Valor por acción (DCF) | ValuFlow anterior (Excel integrado, βU 0.65) · baseline histórico (Citi + βU 0.80): $32.41 · $31.16 | Excel PRO auditado · DCF oficial (Base 3.51%, βU Damodaran 0.69 corregida por caja): $31.62 | Excel PRO auditado | El PRO corrige la beta por caja (0.65 → 0.69), deja la tendencia de mínimos cuadrados crecer con la inflación y normaliza el FCF del valor terminal (capex = D&A). |
-| DCF del reporte comparativo ($39.21) | Modelo individual (SORIANA_FINAL, 7-oct-2026): βU 0.1705 (regresión) · WACC 9.63% · $39.21 | Modelo del equipo (Excel PRO auditado): βU 0.69 (Damodaran) · WACC 11.38% · $31.62 | Modelo del equipo | Con βU 0.1705 el Excel del equipo da $38.34: la beta explica +$6.72 de la diferencia; el resto es proyección, fecha y precio de referencia. La beta de regresión no es significativa al 95% (p = 0.087). |
+| Beta del WACC (cambio del 19-oct-2026) | Antes: βU Damodaran 0.69 (corregida por caja), hoy referencia: $31.62 · WACC 11.38% | Ahora: βU 0.1705 (regresión semanal: βL observada 0.2178 desapalancada): $38.34 · WACC 9.56% | Regresión semanal desapalancada | Decisión del equipo. La βL observada se desapalanca con la estructura de la propia regresión (D/E 0.3964, t 30%) y se reapalanca con la del modelo; no se usa directamente. La pendiente no es significativa al 95% (p ≈ 0.09). |
+| Valor por acción (DCF), versiones anteriores | ValuFlow anterior (Excel integrado, βU 0.65) · baseline histórico (Citi + βU 0.80): $32.41 · $31.16 | Excel PRO auditado con βU Damodaran 0.69 (oficial hasta el 19-oct-2026): $31.62 | Histórico (trazabilidad) | El PRO corrige la beta por caja (0.65 → 0.69), deja la tendencia de mínimos cuadrados crecer con la inflación y normaliza el FCF del valor terminal (capex = D&A). |
+| DCF del reporte comparativo ($39.21) | Modelo individual (SORIANA_FINAL, 7-oct-2026): βU 0.1705 (regresión) · WACC 9.63% · $39.21 | Modelo del equipo (Excel PRO auditado): βU 0.1705 (regresión) · WACC 9.56% · $38.34 | Modelo del equipo | Misma beta desapalancada; la diferencia restante viene de la proyección, la fecha y el precio de referencia (33.48 del 25-sep vs. 33.10 del 7-oct-2026). |
 | Precedent Transactions | Muestra S&P Capital IQ (3 operaciones, media): $40.73 | Muestra LSEG/SDC auditada (mediana EV/EBITDA): $23.74 | LSEG/SDC como referencia (peso 0%) | La muestra CIQ no es defendible (1 de 3 en la ventana). La SDC es global, de control mixto y dispersa: se muestra como contraste, no entra al precio combinado. |
 | Precio de mercado de referencia | Modelo del equipo: $33.48 · cierre 25-sep-2026 (fecha de valuación 01-oct-2026) | Reporte comparativo (CIQ / Refinitiv): $33.10 · cierre 7-oct-2026 | Modelo: $33.48 | Cada fuente se compara contra su propio precio y fecha; ningún cierre se presenta como precio del día. |
-| WACC | A valor de mercado (Kd histórico FY2025 13.0%): 12.07% | Iterado al valor DCF (Kd prospectivo 10%): 11.38% | Iterado (6 iteraciones) | El de mercado es solo el punto de partida de la iteración. |
+| WACC | A valor de mercado (Kd histórico FY2025 13.0%): 10.06% | Iterado al valor DCF (Kd prospectivo 10%): 9.56% | Iterado (6 iteraciones) | El de mercado es solo el punto de partida de la iteración. |
 | Deuda total | Cierre 2025: 23,618 mdp | 2T26: 23,720.6 mdp | Cierre 2025 para el EV; 2T26 para el puente a la fecha de valuación | El modelo usa ambos saldos en etapas distintas. |
 | Capitalización de mercado | Reportada (precio $30.10): 54,180 mdp | Precio de referencia × acciones: 60,264 mdp | Precio de referencia × 1,800 mm de acciones para el WACC de mercado | El Excel recalcula E con el precio de referencia. |
 
-**31.62 frente a 39.21.** El $39.21 es el DCF del modelo individual (otra beta, otra proyección, otra fecha). Recalculando el Excel del equipo solo con βU 0.1705 se obtiene $38.34: la beta explica **+$6.72** de la brecha de $7.59; los $0.87 restantes son proyección, fecha y precio de referencia. La beta de regresión no es significativa al 95% (p = 0.087; en el estudio del equipo, β 0.04 con R² ≈ 0), por eso el equipo mantiene la beta sectorial.
+**38.34 frente a 39.21.** Desde el 19-oct-2026 el equipo usa la misma βU de regresión (0.1705) que el modelo individual. La brecha restante de $0.87 es proyección, fecha y precio de referencia. Con la beta anterior (Damodaran 0.69), el DCF del equipo era $31.62; la diferencia de $6.72 se explica solo por la beta.
 
-## 5. Cifras finales de la app (caso base del Excel)
+## 5. Cifras finales de la app (caso base del Excel, βU de regresión)
 
 | Concepto | Valor |
 |---|---|
 | Precio de mercado de referencia | $33.48 (cierre 25-sep-2026) |
 | Fecha de valuación | 01-oct-2026 |
-| Valor DCF por acción | $31.62 (−5.6% frente al mercado) |
-| Rango DCF por escenario de inflación | $31.28 a $32.29 (Cautela, Base, Alcista) |
+| Valor DCF por acción | $38.34 (+14.5% frente al mercado) |
+| Rango DCF por escenario de inflación | $37.93 a $39.14 (Cautela, Base, Alcista) |
 | Trading Comps | $33.49 (7 comparable(s), media) |
 | Precedent Transactions LSEG/SDC (referencia) | $23.74 (mediana EV/EBITDA, 8 operaciones; peso 0%) |
-| Precio objetivo combinado | $32.55 (50% DCF · 50% Trading Comps · 0% Transacciones) |
-| Recomendación | MANTENER (potencial −2.8% frente a $33.48) |
-| WACC / Ke / g | 11.38% / 13.35% / 3.50% |
-| Beta desapalancada (βU) / apalancada (βL) | 0.69 / 0.9071 |
-| Enterprise Value (cierre de 2025 / 2T26) | 67,198 / 71,981 mdp |
-| Equity Value a la fecha de valuación | 56,910 mdp |
-| Peso del valor terminal en el EV | 66.6% |
+| Precio objetivo combinado | $35.92 (50% DCF · 50% Trading Comps · 0% Transacciones) |
+| Recomendación | MANTENER (potencial +7.3% frente a $33.48) |
+| WACC / Ke / g | 9.56% / 10.40% / 3.50% |
+| Beta desapalancada (βU) / apalancada (βL) | 0.1705 / 0.2097 |
+| Enterprise Value (cierre de 2025 / 2T26) | 79,383 / 84,152 mdp |
+| Equity Value a la fecha de valuación | 69,012 mdp |
+| Peso del valor terminal en el EV | 70.3% |
 
 ### Valuación combinada y recomendación
 
 | Método | Precio por acción | Peso | Contribución | Motivo |
 |---|---|---|---|---|
-| DCF | $31.62 | 50% | $15.81 | Proyección Final Soriana!B265. Metodología principal existente. Peso: con Transactions en 0%, se conserva la regla de clase de pesos iguales entre los métodos activos (50/50). |
+| DCF | $38.34 | 50% | $19.17 | Proyección Final Soriana!B265. Metodología principal existente. Peso: con Transactions en 0%, se conserva la regla de clase de pesos iguales entre los métodos activos (50/50). |
 | Trading Comps | $33.49 | 50% | $16.75 | Trading Comps (sección 5). Metodología complementaria. Peso igual al DCF por la regla de pesos iguales de la diap. 18. |
 | Precedent Transactions | $23.74 | 0% | $0.00 | Transacciones SDC (auditada): mediana de EV/EBITDA de las operaciones elegibles. Peso 0%: muestra global, sin operaciones mexicanas, control mixto y dispersión amplia. Se calcula y se muestra como referencia. La muestra CIQ (3 operaciones) queda como histórico. |
-| Precio objetivo combinado | $32.55 | 100% | $32.55 | Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Precedent Transactions 0% (referencia LSEG/SDC). |
+| Precio objetivo combinado | $35.92 | 100% | $35.92 | Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Precedent Transactions 0% (referencia LSEG/SDC). |
 
 | Concepto | Valor |
 |---|---|
-| Precio objetivo | $32.55 |
+| Precio objetivo | $35.92 |
 | Precio de mercado | $33.48 (25-sep-2026) |
-| Potencial | −2.8% |
+| Potencial | +7.3% |
 | Umbral de compra / venta | +10% / −10% |
-| Rango de valor razonable | $28.99 a $33.49 |
+| Rango de valor razonable | $28.99 a $38.34 |
 | Recomendación | MANTENER |
 
 ### Escenarios de inflación
 
 | Escenario | Inflación | WACC | Ventas 2030E | FCFF 2030E | Valor por acción | vs. mercado |
 |---|---|---|---|---|---|---|
-| Cautela | 3.26% | 11.38% | 191,129 | 6,636 | $31.28 | −6.6% |
-| Base (activo) | 3.51% | 11.38% | 193,344 | 6,704 | $31.62 | −5.6% |
-| Alcista | 4.00% | 11.40% | 197,744 | 6,840 | $32.29 | −3.6% |
-| Trayectoria Citi — Referencia (referencia) | trayectoria | 11.39% | 195,901 | 6,785 | $32.02 | −4.4% |
+| Cautela | 3.26% | 9.56% | 191,129 | 6,636 | $37.93 | +13.3% |
+| Base (activo) | 3.51% | 9.56% | 193,344 | 6,704 | $38.34 | +14.5% |
+| Alcista | 4.00% | 9.57% | 197,744 | 6,840 | $39.14 | +16.9% |
+| Trayectoria Citi — Referencia | trayectoria | 9.57% | 195,901 | 6,785 | $38.82 | +16.0% |
 
-Nota: la tarjeta "Lectura del modelo" de 01 · Valor aplica la regla del DCF del Excel ('Proyección Final'!B268, umbral ±15% sobre el DCF); la recomendación oficial aplica la regla de la hoja Transacciones SDC §7 (±10% sobre el precio combinado). Hoy ambas dan MANTENER.
+Nota: la tarjeta "Lectura del modelo" de 01 · Valor aplica la regla del DCF del Excel ('Proyección Final'!B268, umbral ±15% sobre el DCF: +14.5% → Mantener); la recomendación oficial aplica la regla de la hoja Transacciones SDC §7 (±10% sobre el precio combinado: +7.3% → MANTENER).
 
 ## 6. App: qué cambió
 
@@ -209,7 +210,7 @@ Nota: la tarjeta "Lectura del modelo" de 01 · Valor aplica la regla del DCF del
 - **Transacciones (05):** búsqueda, tabla por operación con monto y múltiplos, criterios, estadísticos, exclusiones, sensibilidad e histórico CIQ. **Combinada (06):** contraste externo separado del precio oficial.
 - **Laboratorio:** un solo estado de supuestos; cada control tiene deslizador y campo numérico con rango documentado; "Restaurar valores base" vuelve exactamente al Excel. Dependencias: supuesto → `E.run` (proyección → WACC iterado → TV → EV → puente) → todas las vistas, presentación y exportaciones leen ese mismo resultado.
 - **Presentación:** 7 diapositivas 16:9 (`docs/PRESENTACION.md`).
-- **Exportaciones:** PDF · Resumen ejecutivo (3 páginas), PDF · Reporte técnico completo (31 páginas; 32 con supuestos modificados; 16 secciones, 44 tablas y 13 gráficas numeradas, índice con página real, "Página n de total", pie con el equipo), Excel con fórmulas (Supuestos → WACC → FCFF y valuación → Transacciones SDC → Combinada, más una hoja por sección), CSV UTF-8 con BOM, JSON reabrible y ZIP con LEEME. Avance real, estado "Descargado" o error con su causa. Sin `window.print`, sin CDN y sin Google Fonts (SheetJS, jsPDF, ExcelJS, JSZip y las fuentes van en el paquete).
+- **Exportaciones:** PDF · Resumen ejecutivo (3 páginas), PDF · Reporte técnico completo (32 páginas; 16 secciones, 44 tablas y 13 gráficas numeradas, índice con página real, "Página n de total", pie con el equipo), Excel con fórmulas (Supuestos → WACC → FCFF y valuación → Transacciones SDC → Combinada, más una hoja por sección), CSV UTF-8 con BOM, JSON reabrible y ZIP con LEEME. Avance real, estado "Descargado" o error con su causa. Sin `window.print`, sin CDN y sin Google Fonts (SheetJS, jsPDF, ExcelJS, JSZip y las fuentes van en el paquete).
 
 ## 7. QA: comprobaciones ejecutadas
 
@@ -220,30 +221,86 @@ Nota: la tarjeta "Lectura del modelo" de 01 · Valor aplica la regla del DCF del
 | Reactividad: 19 supuestos, cambios combinados, secuencia de deslizadores, restablecer, bandera de escenario modificado | `npm test` (reactivity) | Pasa |
 | Presentación (contenido y cifras) | `npm test` (deck) | Pasa |
 | Reportes, CSV (BOM), JSON (reabre y reproduce el valor), libro de Excel | `npm test` (report) | Pasa |
-| Total | `npm test` | 118 de 118 |
+| Total | `npm test` | 122 de 122 |
 | Tipos | `npm run typecheck` | Sin errores |
 | Compilación | `npm run build` | Correcta |
 | Navegador (build de producción, Chromium) | Playwright | 29 de 29: pantallas = motor; beta, g (deslizador), margen y WACC manual se propagan; restablecer; presentación (flechas, espacio, Inicio, Fin, Esc, conserva el modelo); 10 descargas; JSON reabierto reproduce el escenario; **0 errores JS; 0 solicitudes externas** (todas bloqueadas y registradas) |
 | Excel exportado recalculado | LibreOffice + openpyxl | Fórmula − app = 0.000000 MXN en DCF, WACC, transacciones y combinada (base y βU 0.90/g 4%); sin errores de fórmula |
-| PDF | pdftotext / pdftoppm, revisión visual | Ejecutivo 3 páginas (base y modificado); técnico 31 páginas; equipo y matrículas en portada; sin títulos huérfanos |
+| PDF | pdftotext / pdftoppm, revisión visual | Ejecutivo 3 páginas (base y modificado); técnico 32 páginas; equipo y matrículas en portada; sin títulos huérfanos |
 
 ## 8. Limitaciones
 
-- El valor terminal pesa 66.6% del EV.
+- El valor terminal pesa 70.3% del EV.
+- La beta oficial sale de una regresión semanal cuya pendiente no es significativa al 95% (p = 0.087). El resultado es muy sensible a esta elección: con Damodaran 0.69 el DCF sería $31.62 y el precio objetivo $32.55.
 - En el Excel exportado, cambiar un supuesto recalcula WACC, flujos y precio, pero no repite la iteración del WACC (el equity del DCF queda fijo); la app sí la repite.
 - La muestra de transacciones es global; se reporta como referencia.
 - StarMine es una lectura aproximada de una gráfica (el panel numérico de Refinitiv no cargó).
 - La matrícula registrada para Saúl González Loredo (A016113349) tiene 10 caracteres. Se conserva tal como está en el proyecto; conviene confirmarla.
 - La rama remota `development` contiene un commit del estudio individual (bbbb130). Este trabajo parte de `main` y no lo usa.
 
-## 9. Archivos cambiados (rama `cierre-equipo-pro` frente a `main` 58e620f)
+## 10. Cambio final: beta de regresión como supuesto oficial (19-oct-2026)
+
+Decisión del equipo. Solo cambió la beta; transacciones, ponderación, diseño y demás hipótesis quedan igual.
+
+**Cómo se obtiene la βU (hoja *Beta y Kd* §2, con fórmulas):**
+
+| Concepto | Valor | Lectura |
+|---|---|---|
+| Beta apalancada observada (βL, pendiente de la regresión) | 0.2178 | Regresión semanal (Investing.com); error típico 0.1269, t 1.716, p 0.0874, IC 95% −0.032 a 0.468 |
+| Deuda / capitalización de la regresión | 23,618 / 59,580 | D/E 0.3964 · tasa 30% |
+| Beta desapalancada derivada (βU) | 0.1705 | βU = βL / [1 + (1 − t) × D/E] = 0.2178 / [1 + (1 − 30%) × 0.3964]. Supuesto oficial del WACC. |
+
+- **0.2178** es la beta apalancada observada: la pendiente de la regresión semanal. No se usa directamente en el modelo.
+- **0.1705** es la beta desapalancada que sale de ella: βU = 0.2178 / [1 + (1 − 0.30) × 23,618 / 59,580]. Es el supuesto oficial (`'Beta y Kd'!B18 = 2` → B19 → WACC!B9 → Proyección Final B212).
+- En CAPM/WACC la βU se reapalanca con la estructura de capital del libro. Queda βL 0.2173 a mercado y 0.2097 iterada al DCF. No se mezcla con la βL observada ni se ajusta dos veces.
+- **Damodaran 0.69** (corregida por caja) queda como referencia: selector 1, tabla A columna H y página Riesgo. La heredada 0.80 sigue como histórico (selector 0).
+
+**Antes y después (caso base; todo sale de las fórmulas del Excel, recalculado en LibreOffice, y la app lo reproduce):**
+
+| Concepto | Antes: βU Damodaran 0.69 | Ahora: βU regresión 0.1705 |
+|---|---|---|
+| βL iterada | 0.9071 | 0.2097 |
+| Ke | 13.35% | 10.40% |
+| WACC iterado | 11.38% | 9.56% |
+| EV al cierre 2025 / al 2T26 (mdp) | 67,198 / 71,981 | 79,383 / 84,152 |
+| Equity a la fecha de valuación (mdp) | 56,910 | 69,012 |
+| Valor DCF por acción | $31.62 (−5.6%) | **$38.34 (+14.5%)** |
+| Escenarios Cautela / Base / Alcista | $31.28 / $31.62 / $32.29 | $37.93 / $38.34 / $39.14 |
+| Precio objetivo combinado (50% DCF + 50% Comps) | $32.55 (−2.8%) | **$35.92 (+7.3%)** |
+| Recomendación (±10%) | MANTENER | **MANTENER** |
+| Rango de valor razonable | $28.99 – $33.49 | $28.99 – $38.34 |
+| Controles del Excel | 49 PASS de 49 | 49 PASS de 49 |
+
+**Qué se actualizó:**
+- `tools/excel/audit_pro.py` (sección 8 y textos de Contraste externo, Auditoría y Fuentes).
+- `tools/excel/scenarios.py` (selectores actuales).
+- `tools/excel/extract_dataset.py` (combinaciones y la beta de regresión).
+- Excel auditado regenerado.
+- `src/data/soriana.excel.ts` regenerado.
+- `src/data/soriana.ts` (diferencias y fuentes).
+- Tipo `BetaSpec.regression`.
+- Página Riesgo, anexo de beta y Laboratorio: el control de βU ahora admite 4 decimales.
+- Presentación (diapositiva de riesgo).
+- Textos del reporte y hoja Supuestos del Excel exportado.
+- Pruebas `excel-master` y `report`.
+- Para trazabilidad, `XL.expected.dcf.base_damodaran` conserva el resultado anterior.
+
+**Pruebas repetidas:**
+- `npm test`: 122 de 122.
+- `npm run typecheck`: sin errores.
+- `npm run build`: correcta.
+- Excel auditado: 49 PASS de 49.
+- Navegador: 29 de 29. Restaurar regresa a $38.34 / $35.92.
+- Excel exportado recalculado: fórmula = app (DCF 38.3401, WACC 9.5628%).
+- PDF ejecutivo: 3 páginas.
+
+## 11. Archivos cambiados (rama `cierre-equipo-pro` frente a `main` 58e620f)
 
 A = nuevo · M = modificado · D = eliminado · R = renombrado.
 
 ```
 M	.gitignore
 M	CLAUDE.md
-A	docs/CIERRE_PROYECTO.md
 A	docs/PRESENTACION.md
 A	entregables/ValuFlow_Soriana_Modelo_2026-10-19.xlsx
 A	entregables/ValuFlow_Soriana_Paquete_2026-10-19.zip
@@ -300,4 +357,6 @@ A	tests/reactivity.test.ts
 A	tests/report.test.ts
 A	tools/excel/audit_pro.py
 M	tools/excel/extract_dataset.py
+M	tools/excel/scenarios.py
+M	docs/CIERRE_PROYECTO.md
 ```

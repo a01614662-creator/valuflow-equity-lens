@@ -18,6 +18,8 @@ Cambios (registro completo en la hoja "Auditoría" del libro de salida):
   6. 'Validación': controles nuevos para SDC, la combinada y la nueva sensibilidad; se rotulan los controles de regresión.
   7. 'Fuentes': registro de LSEG/SDC, del reporte comparativo y del tipo de cambio; corrección de la referencia C6:C8.
   8. Hojas nuevas 'Contraste externo' (S&P Capital IQ / LSEG Refinitiv) y 'Auditoría' (hallazgos y cambios).
+  9. Beta oficial = beta desapalancada de la regresión semanal (0.1705, desde βL 0.2178); Damodaran 0.69 como referencia.
+     La tabla A de Validación se llena después con tools/excel/scenarios.py.
 """
 import sys, json, datetime as dt, openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
@@ -488,7 +490,7 @@ hdr(CE, 4, ['Clave', 'Fuente', 'Método', 'Fecha de referencia', 'Precio por acc
             'Fecha del precio', 'Diferencia vs. precio', 'Supuestos principales', 'Calidad y limitaciones', '¿Entra en la valuación oficial?', 'Página del reporte'])
 EXT = [
     ('team_dcf', 'Modelo del equipo (este libro)', 'DCF (FCFF, 50% Gordon / 50% múltiplo, a la fecha de valuación)', '01-oct-2026', "='Proyección Final Soriana'!B265", "='Valuación Combinada'!B18", "='Valuación Combinada'!D18", "='Valuación Combinada'!B10", '25-sep-2026', None,
-     'βU 0.69 Damodaran (corregida por caja), WACC iterado, g 3.5%, múltiplo de salida 5.81x', 'Rango = escenarios de inflación Cautela–Alcista.', 'Sí (50%)', '—'),
+     'βU 0.1705 (regresión semanal desapalancada; βL observada 0.2178), WACC iterado, g 3.5%, múltiplo de salida 5.81x', 'Rango = escenarios de inflación Cautela–Alcista.', 'Sí (50%)', '—'),
     ('team_comps', 'Modelo del equipo (este libro)', 'Trading Comps (7 pares CIQ, promedio de 3 múltiplos a la media)', '30-jun-2026', "='Valuación Combinada'!B5", "='Valuación Combinada'!B19", "='Valuación Combinada'!D19", "='Valuación Combinada'!B10", '25-sep-2026', None,
      'EV/EBITDA, EV/EBIT y P/U LTM; puente al 2T26', 'Múltiplos CIQ al 30-jun-2026; precio de mercado de otra fecha.', 'Sí (50%)', '—'),
     ('team_sdc', 'Modelo del equipo (este libro)', 'Precedent Transactions LSEG/SDC (mediana EV/EBITDA)', '19-oct-2026', "='Valuación Combinada'!B6", "='Valuación Combinada'!B20", "='Valuación Combinada'!D20", "='Valuación Combinada'!B10", '25-sep-2026', None,
@@ -498,7 +500,7 @@ EXT = [
     ('team_combined', 'Modelo del equipo (este libro)', 'Valuación combinada (DCF 50% / Comps 50%)', '01-oct-2026', "='Valuación Combinada'!B9", None, None, "='Valuación Combinada'!B10", '25-sep-2026', None,
      'Transacciones 0%', '—', 'Sí (precio objetivo)', '—'),
     ('indiv_dcf', 'Modelo individual del autor del reporte (SORIANA_FINAL)', 'DCF', '07-oct-2026', 39.21, 32.12, 47.74, 33.10, '07-oct-2026', None,
-     'βU 0.1705 (regresión, no significativa al 95%), WACC 9.63%, Ke 10.39%, g 3.5%', 'Modelo distinto del equipo: otra beta, otra fecha y otra proyección. En este libro, βU 0.1705 lleva el DCF del equipo a $38.34.', 'No (otro modelo)', '1, 5–7'),
+     'βU 0.1705 (regresión, no significativa al 95%), WACC 9.63%, Ke 10.39%, g 3.5%', 'Misma βU que el equipo desde el 19-oct-2026; la diferencia restante es proyección, fecha y precio de referencia.', 'No (otro modelo)', '1, 5–7'),
     ('indiv_combined', 'Modelo individual del autor del reporte', 'Valuación combinada (50% DCF / 50% comps)', '07-oct-2026', 36.35, None, None, 33.10, '07-oct-2026', None, 'Transacciones 0%', 'Modelo distinto del equipo.', 'No', '8'),
     ('app_hist', 'ValuFlow (app del equipo, versión anterior)', 'DCF', '01-oct-2026', 31.16, 25.91, 37.56, 33.48, '25-sep-2026', None,
      'βU 0.80 (heredada), WACC 11.88%, Ke 13.95%', 'Salida histórica antes de esta actualización.', 'No (histórico)', '9'),
@@ -526,7 +528,7 @@ for i, row_ in enumerate(EXT):
     CE.cell(rr, 10, f'=IF(AND(ISNUMBER(E{rr}),ISNUMBER(H{rr})),E{rr}/H{rr}-1,"NA")').number_format = PCT
 rr = 5 + len(EXT) + 1
 CE[f'A{rr}'] = 'StarMine relativo (solo puntajes): mercados emergentes 61, México 24, Consumer Staples 56, Food & Staples Retailing 33 (p. 17). No se convierten a precio.'; CE[f'A{rr}'].font = NOTE
-CE[f'A{rr+1}'] = ('Lectura: las diferencias provienen sobre todo de la beta (modelo individual βU 0.1705 vs. equipo 0.69: +$6.72 por acción en este libro), '
+CE[f'A{rr+1}'] = ('Lectura: con la beta de regresión el DCF del equipo y el modelo individual usan la misma βU; las diferencias restantes vienen de la proyección, '
                   'de la fecha y el precio de referencia (25-sep vs. 7-oct-2026), de la definición de EBITDA de CIQ y del estadístico usado (media vs. mediana).'); CE[f'A{rr+1}'].font = NOTE
 for c_, w in {'A': 16, 'B': 30, 'C': 42, 'D': 13, 'E': 14, 'F': 11, 'G': 11, 'H': 14, 'I': 12, 'J': 12, 'K': 48, 'L': 52, 'M': 18, 'N': 10}.items():
     CE.column_dimensions[c_].width = w
@@ -549,11 +551,11 @@ FIND = [
     ('Transacciones SDC', 'Criterios', 'La ventana solo verificaba el inicio; no el fin (fecha de valuación).', 'Sin efecto en esta muestra.', 'Ventana = [inicio, fecha de valuación].', 'Control de ventana.'),
     ('Transacciones SDC', 'Estadística', 'El límite de atípicos solo era superior; la media sin atípicos no tenía mediana equivalente.', 'Tratamiento estadístico incompleto.', 'Límites inferior y superior (RIC) y mediana sin atípicos.', 'Sección 3.'),
     ('Valuación Combinada', 'Metodología', 'La referencia de Precedent Transactions seguía siendo la muestra CIQ (3 operaciones, declarada no defendible).', 'El rango y la regla de ⅓ usaban un dato no defendible.', 'Referencia = mediana SDC auditada (peso 0%); CIQ como memo histórico. El precio combinado oficial no cambia.', 'Control "Combinada · PT = mediana SDC".'),
-    ('Proyección Final', 'Presentación', 'La tabla de sensibilidad (sección 7) mide el precio Gordon al cierre de 2025 (centro $29.19), no el precio objetivo final ($31.62).', 'Lectura equivocada del rango del precio objetivo.', 'Se rotula y se agrega la sección 12: sensibilidad del precio objetivo final (Ke fijo), igual a la de ValuFlow.', 'Control "centro = B265".'),
+    ('Proyección Final', 'Presentación', 'La tabla de sensibilidad (sección 7) mide el precio Gordon al cierre de 2025 (centro $29.19), no el precio objetivo final (B265).', 'Lectura equivocada del rango del precio objetivo.', 'Se rotula y se agrega la sección 12: sensibilidad del precio objetivo final (Ke fijo), igual a la de ValuFlow.', 'Control "centro = B265".'),
     ('Validación', 'Validación', 'Filas 33–35 comparan contra valores registrados; la 34 compara un valor registrado consigo mismo (tautológica).', 'Aparentan ser pruebas independientes.', 'Se rotulan como controles de regresión. La tabla A se re-verificó recalculando las 6 combinaciones en LibreOffice: coinciden.', 'tools/excel/audit_checks.py.'),
     ('Inflación', 'Presentación', 'Las etiquetas de ventana (C189:C192) usan TEXT(fecha,"mmm-yy"): en Excel en español el código "yy" no existe y se muestra literal ("nov-yy a sep-yy").', 'Etiqueta ilegible; no afecta cálculos.', 'Se sustituye por una fórmula independiente del idioma (CHOOSE(MONTH) & año).', 'Recálculo: "nov-24 a sep-26".'),
     ('Fuentes', 'Referencia', 'La fila de pesos apuntaba a "Valuación Combinada!C6:C8" (los pesos están en C4:C6) y no había registro de LSEG/SDC ni del contraste externo.', 'Trazabilidad incompleta.', 'Se corrige y se agregan 3 registros.', '—'),
-    ('WACC / Beta', 'Revisado, sin cambio', 'βU Damodaran 0.69 (corregida por caja) → βL 0.907 → Ke 13.35% → WACC iterado 11.38%. Beta de regresión del estudio 0.04 (R² bajo); la del modelo individual 0.1705 no es significativa al 95%.', 'Con βU 0.1705 el DCF sería $38.34 (+$6.72); con 0.65, $32.03; con 0.80, $30.54.', 'Se conserva la metodología del equipo (beta sectorial).', 'Recálculo en LibreOffice con cada beta.'),
+    ('WACC / Beta', 'Cambio de supuesto (decisión del equipo, 19-oct-2026)', 'La βU oficial pasa de Damodaran 0.69 (corregida por caja) a la beta desapalancada de la regresión semanal de Soriana B contra el IPC: βL observada 0.2178 (p = 0.087, no significativa al 95%) desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705 (fórmula en Beta y Kd §2). Se reapalanca con la estructura de capital de este libro (WACC!B23 a mercado; D/E del DCF en la iteración), sin volver a usar la βL observada.', 'Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F).', "Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico).", 'Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector.'),
     ('DCF', 'Revisado, sin cambio', 'Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge.', '—', 'Sin cambios.', 'Recálculo independiente y controles 23–32.'),
     ('Fechas', 'Revisado, sin cambio', 'Fecha de valuación 01-oct-2026; precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación); balance 2T26; comparables CIQ al 30-jun-2026; pantalla SDC 19-oct-2026; reporte comparativo 19-oct-2026 con precio 33.10 MXN del 7-oct-2026.', 'Cada fecha cumple una función distinta.', 'Se rotulan en cada salida; el precio nunca se presenta como "del día".', '—'),
 ]
@@ -561,6 +563,59 @@ for i, x in enumerate(FIND):
     rr = 5 + i; AU.cell(rr, 1, i + 1)
     for j, v in enumerate(x): AU.cell(rr, 2 + j, v).alignment = WRAP
 for c_, w in {'A': 4, 'B': 20, 'C': 18, 'D': 60, 'E': 40, 'F': 55, 'G': 30}.items(): AU.column_dimensions[c_].width = w
+
+# =====================================================================================================
+# 8. BETA DE REGRESIÓN COMO SUPUESTO OFICIAL (decisión del equipo, 19-oct-2026)
+#    βL observada (regresión semanal) → βU = βL / [1 + (1 − t) × D/E] con la estructura de la regresión → se reapalanca
+#    en el WACC con la estructura de este libro. Damodaran 0.69 queda como referencia (selector 1).
+# =====================================================================================================
+BK = wb['Beta y Kd']
+BK['G1'] = '2. BETA DE REGRESIÓN (OFICIAL desde el 19-oct-2026)'; BK['G1'].font = B
+REG = [
+    ('G2', 'Dato', 'Valor', 'Fuente'),
+    ('G3', 'Beta apalancada observada (βL): pendiente de la regresión semanal de rendimientos Soriana B vs. S&P/BMV IPC', 0.217837909377843, 'Regresión semanal (Investing.com); error típico 0.1269, t 1.716, p 0.0874, IC 95% −0.032 a 0.468'),
+    ('G4', 'Deuda usada para desapalancar (mdp)', '=WACC!B21', 'Deuda total al cierre 2025 (WACC!B21)'),
+    ('G5', 'Capitalización usada para desapalancar (mdp)', 59580, '33.10 MXN (cierre 7-oct-2026) × 1,800 mm de acciones'),
+    ('G6', 'D/E de la regresión', '=H4/H5', 'Deuda ÷ capitalización'),
+    ('G7', 'Tasa para desapalancar', 0.30, 'ISR 30%'),
+    ('G8', 'Beta desapalancada derivada βU = βL / [1 + (1 − t) × D/E]', '=H3/(1+(1-H7)*H6)', 'Supuesto OFICIAL del WACC (B16 → B19)'),
+    ('G9', 'Control: βL observada ÷ βU − 1 = (1 − t) × D/E', '=H3/H8-1-(1-H7)*H6', 'Debe ser 0'),
+]
+for cell, a, b_, c in REG:
+    r_ = int(cell[1:]); BK[f'G{r_}'] = a; BK[f'H{r_}'] = b_; BK[f'I{r_}'] = c
+    if r_ == 2:
+        for col in 'GHI': BK[f'{col}2'].font = B
+    elif isinstance(b_, (int, float)): BK[f'H{r_}'].fill = FILL_IN
+BK['H3'].number_format = '0.0000'; BK['H6'].number_format = '0.0000'; BK['H7'].number_format = '0%'; BK['H8'].number_format = '0.0000'; BK['H9'].number_format = '0.0E+00'
+BK['H4'].number_format = '#,##0'; BK['H5'].number_format = '#,##0'
+BK.column_dimensions['G'].width = 62; BK.column_dimensions['H'].width = 12; BK.column_dimensions['I'].width = 70
+BK['A1'] = '1. FUENTE EXTERNA: Damodaran (REFERENCIA; no es la beta oficial desde el 19-oct-2026)'
+BK['A15'] = 'Beta apalancada observada en la regresión semanal (βL; no se usa directamente: se desapalanca)'; BK['B15'] = '=H3'
+BK['A16'] = 'Beta desapalancada derivada de la regresión (βU, OFICIAL)'; BK['B16'] = '=H8'
+BK['B15'].number_format = '0.0000'; BK['B16'].number_format = '0.0000'
+BK['A18'] = 'Selector de beta (2 = regresión desapalancada, OFICIAL · 1 = Damodaran 0.69, referencia · 0 = heredada 0.80, histórico)'
+BK['B18'] = 2
+BK['A19'] = 'BETA DESAPALANCADA USADA EN EL WACC (βU) — regresión semanal desapalancada'
+BK['B19'] = '=CHOOSE(B18+1,B17,B13,B16)'
+BK['B35'] = 'βU Damodaran 0.69 (referencia)'; BK['C35'] = 'βU regresión 0.1705 (oficial)'
+BK['E36'] = ('Menor βU → menor βL y Ke → menor WACC → mayor EV y precio. El cambio no altera los flujos (FCF) ni el puente. '
+             'La βU de regresión se reapalanca con la D/E de este libro; la βL observada (0.2178) no se usa directamente.')
+FU = wb['Fuentes']
+FU['A11'] = 'Beta desapalancada (βU) · regresión semanal desapalancada (oficial)'; FU['B11'] = "WACC!B9 ← 'Beta y Kd'!B19 ← H8"
+FU['C11'] = "='Beta y Kd'!H8"; FU['C11'].number_format = '0.0000'; FU['D11'] = '7-oct-2026'; FU['F11'] = 'Modelo'
+FU['G11'] = ('Regresión semanal de rendimientos Soriana B vs. S&P/BMV IPC (Investing.com): βL observada 0.2178 (p = 0.087, no significativa al 95%), '
+             'desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705. Referencia (no usada): Damodaran, Betas by Sector (Global), ene-2026, Retail (Grocery and Food), '
+             'βU corregida por caja 0.69.')
+wb['Inflación']['C266'] = "Ver hoja 'Beta y Kd' §2: beta de la regresión semanal (βL 0.2178) desapalancada (βU 0.1705) y reapalancada con la estructura de capital de Soriana. Damodaran 0.69 queda como referencia."
+W_ = wb['WACC']
+W_['A9'] = "Beta desapalancada usada (regresión semanal Soriana B vs. IPC, desapalancada; ver hoja 'Beta y Kd' §2). Damodaran 0.69 queda como referencia"
+V['D6'] = 'Referencia Citi (βU regresión)'; V['F6'] = 'Base (oficial, βU regresión)'; V['H6'] = 'Base con βU Damodaran 0.69 (referencia)'
+V['C33'] = ("=IF(AND(Inflación!$E$6=0,'Beta y Kd'!$B$18=0),C9,IF(AND(Inflación!$E$6=0,'Beta y Kd'!$B$18=2),D9,IF(AND(Inflación!$E$6=1,'Beta y Kd'!$B$18=2),E9,"
+            "IF(AND(Inflación!$E$6=2,'Beta y Kd'!$B$18=2),F9,IF(AND(Inflación!$E$6=3,'Beta y Kd'!$B$18=2),G9,IF(AND(Inflación!$E$6=2,'Beta y Kd'!$B$18=1),H9,\"sin registro\"))))))")
+V['A37'] = 'Beta · βU usada = selector (2 regresión desapalancada, oficial)'
+V['C37'] = "=CHOOSE('Beta y Kd'!$B$18+1,'Beta y Kd'!B17,'Beta y Kd'!B13,'Beta y Kd'!H8)"
+V['I7'] = ('Valores registrados al recalcular el modelo completo con cada combinación (tools/excel/scenarios.py; columnas C..H = selectores '
+           '(0,0) (0,2) (1,2) (2,2) (3,2) (2,1)). El control "combinación activa = tabla" verifica que el modelo vivo coincide con su columna.')
 
 wb.save(OUT)
 print('OK', OUT, 'SDC rows', D0, D1, 'stats', S)

@@ -5,7 +5,7 @@ Uso:  python3 -I tools/excel/extract_dataset.py <excel_pro_auditado.xlsx> <salid
 - Todos los insumos se leen de celdas del Excel con precisión completa (sin redondear) y se guardan con la referencia
   de la celda de origen cuando aplica.
 - Los resultados esperados se obtienen recalculando el libro en LibreOffice con cada combinación de selectores
-  (Inflación!E6 = escenario; 'Beta y Kd'!B18 = beta oficial/heredada), igual que la tabla A de la hoja Validación.
+  (Inflación!E6 = escenario; 'Beta y Kd'!B18 = beta: 2 regresión oficial, 1 Damodaran referencia, 0 heredada), igual que la tabla A de la hoja Validación.
   La app debe reproducirlos (tests/excel-master.test.ts).
 """
 import sys, os, json, subprocess, tempfile, datetime as dt, openpyxl
@@ -34,7 +34,7 @@ def with_selector(sel, beta, wd):
 
 
 # Combinaciones (escenario de inflación, selector de beta): igual que la tabla A de la hoja Validación.
-COMBOS = {'historico': (0, 0), 'citi': (0, 1), 'cautela': (1, 1), 'base': (2, 1), 'alcista': (3, 1), 'base_beta080': (2, 0)}
+COMBOS = {'historico': (0, 0), 'citi': (0, 2), 'cautela': (1, 2), 'base': (2, 2), 'alcista': (3, 2), 'base_beta080': (2, 0), 'base_damodaran': (2, 1)}
 wd = tempfile.mkdtemp(prefix='vf-extract-')
 books = {k: with_selector(i, b, wd) for k, (i, b) in COMBOS.items()}
 X = books['base']                          # escenario Base con la beta oficial (por defecto)
@@ -147,10 +147,12 @@ beta = {
     'source': BKs['B3'].value, 'date': BKs['B4'].value, 'industry': BKs['B5'].value, 'firms': BKs['B6'].value,
     'levered': BKs['B7'].value, 'de': BKs['B8'].value, 'effTax': BKs['B9'].value, 'marginalTax': BKs['B10'].value, 'unlevered': BKs['B11'].value,
     'cashFirm': BKs['B12'].value, 'unleveredCash': BKs['B13'].value, 'check': BKs['B14'].value, 'inherited': BKs['B17'].value, 'used': BKs['B19'].value,
+    'regression': {'levered': BKs['H3'].value, 'debt': BKs['H4'].value, 'equity': BKs['H5'].value, 'de': BKs['H6'].value, 'tax': BKs['H7'].value,
+                   'unlevered': BKs['H8'].value, 'source': BKs['I3'].value, 'note': BKs['A15'].value},
     'treatment': [BKs['A19'].value, BKs['E36'].value, BKs['A32'].value],
     'kd': {'value': BKs['B48'].value, 'check': BKs['B49'].value, 'fy2025': BKs['B51'].value, 'source': BKs['E48'].value, 'checkNote': BKs['E49'].value},
 }
-assert beta['used'] == beta['unleveredCash'] == 0.69, beta
+assert beta['used'] == beta['regression']['unlevered'] and abs(beta['used'] - 0.1705) < 5e-5 and beta['unleveredCash'] == 0.69, beta
 
 # ---------------------------------------------------------------- WACC / valuación
 wacc = {'rf': num(v(X, PF, 'B210')), 'prm': num(v(X, PF, 'B211')), 'betaU': num(v(X, PF, 'B212')), 'kdPre': num(v(X, PF, 'B206')), 'taxShield': num(v(X, PF, 'B207')),

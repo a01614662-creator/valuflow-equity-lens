@@ -94,7 +94,7 @@ export async function buildXlsx(R: Report, images: Record<string, ChartImage>): 
   const SUP: [string, string, number | null, string, string, string][] = [
     ['rf', 'Tasa libre de riesgo (Rf)', b.W.rf, '0.00%', 'fracción', 'Bono M 10 años'],
     ['prm', 'Prima de riesgo de mercado', b.W.prm, '0.00%', 'fracción', 'Hoja WACC'],
-    ['bu', 'Beta desapalancada (βU)', b.W.betaU, '0.0000', 'x', 'Damodaran, corregida por caja'],
+    ['bu', 'Beta desapalancada (βU)', b.W.betaU, '0.0000', 'x', ds.beta?.regression && Math.abs(b.W.betaU - ds.beta.regression.unlevered) < 1e-12 ? 'Regresión semanal (βL ' + ds.beta.regression.levered.toFixed(4) + ') desapalancada' : 'Laboratorio / referencia'],
     ['D', 'Deuda total para el WACC', it.D, '#,##0.0', 'mdp', 'Deuda + arrendamientos'],
     ['tax', 'Tasa del escudo fiscal', A.taxShield / 100, '0.00%', 'fracción', 'Hoja WACC'],
     ['kd', 'Kd antes de impuestos', A.kdPre / 100, '0.00%', 'fracción', 'Hoja Beta y Kd'],

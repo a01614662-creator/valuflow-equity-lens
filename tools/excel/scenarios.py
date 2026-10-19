@@ -5,7 +5,9 @@ import sys, os, subprocess, openpyxl
 from openpyxl.styles import PatternFill
 
 SRC, WD, PROF, OUT = sys.argv[1:5]
-COMBOS = [(0, 0), (0, 1), (1, 1), (2, 1), (3, 1), (2, 0)]   # columnas C..H (ver build_master.py, SCN_COMBOS)
+# Columnas C..H de la tabla A: (selector de inflación Inflación!E6, selector de beta 'Beta y Kd'!B18).
+# Beta: 2 = regresión desapalancada (oficial), 1 = Damodaran 0.69 (referencia), 0 = heredada 0.80 (histórico).
+COMBOS = [(0, 0), (0, 2), (1, 2), (2, 2), (3, 2), (2, 1)]
 FMTS = ['0.00%', '0.00', '"$"#,##0.0000', '#,##0.0', '#,##0.0', '0.0000%', '0.0000%', '0.0000', '0.0000%', '0.0000%', '#,##0.0', '#,##0.0', '"$"#,##0.0000']
 
 
@@ -26,7 +28,7 @@ base = openpyxl.load_workbook(SRC)
 refs = [base['Validación'].cell(7 + k, 2).value for k in range(len(FMTS))]
 vals = {}
 for (i, b) in COMBOS:
-    wb = openpyxl.load_workbook(SRC); wb['Inflación']['B6'] = i; wb['Beta y Kd']['B27'] = b
+    wb = openpyxl.load_workbook(SRC); wb['Inflación']['E6'] = i; wb['Beta y Kd']['B18'] = b
     p = os.path.join(WD, f'sel{i}{b}.xlsx'); wb.save(p)
     r = openpyxl.load_workbook(recalc(p, os.path.join(WD, f'r{i}{b}')), data_only=True)
     vals[(i, b)] = [ref(r, t) for t in refs]

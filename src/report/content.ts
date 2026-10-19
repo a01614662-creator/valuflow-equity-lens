@@ -61,6 +61,9 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
   const T = (id: string, title: string, source: string, head: string[], rows: string[][], o: { bold?: number[]; note?: string; pdfCols?: number[] } = {}): RTable => ({ kind: 'table', id, title, source, head, rows, ...o });
   const SRC = L.sourceShort === 'Excel' ? 'Excel PRO auditado' : L.sourceShort;
   const W = b.W, it = W.src ?? W.market;
+  const Rg = ds.beta?.regression, Bt0 = S.D.betaU, dam = ds.beta?.unleveredCash ?? ds.beta?.unlevered;
+  const damR = dam != null ? E.run(ds, { ...A, betaU: dam }) : null, damV = damR && damR.ok ? damR.value : null;
+  const indiv = ds.external?.find(x => x.key === 'indiv_dcf')?.value ?? null;
   const recTxt = rec && rec.rating ? rec.rating + ' (potencial ' + f.pp(rec.potential) + ' frente a ' + cur(price) + ')' : (b.signal ?? '—');
   const weightsTxt = K ? K.rows.map(r => Math.round(r.weight * 100) + '% ' + (r.key === 'dcf' ? 'DCF' : r.key === 'comps' ? 'Trading Comps' : 'Transacciones')).join(' · ') : '';
 
@@ -74,7 +77,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
     ['Precio objetivo combinado', comb != null ? cur(comb) + ' (' + weightsTxt + ')' : '—'],
     ['Recomendación', recTxt],
     ['WACC / Ke / g', f.p(b.wacc) + ' / ' + f.p(b.ke) + ' / ' + f.p(b.g)],
-    ['Beta desapalancada (βU) / apalancada (βL)', W.betaU.toFixed(2) + ' / ' + (it.beta != null ? it.beta.toFixed(4) : '—')],
+    ['Beta desapalancada (βU) / apalancada (βL)', W.betaU.toFixed(4) + ' / ' + (it.beta != null ? it.beta.toFixed(4) : '—')],
     ['Enterprise Value (' + L.closeDate + (b.roll ? ' / ' + L.rollDate : '') + ')', f.m(b.evW) + (b.roll ? ' / ' + f.m(b.ev) : '') + ' mdp'], ['Equity Value a la fecha de valuación', f.m(b.eqVal) + ' mdp'],
     ['Peso del valor terminal en el EV', f.p(b.tvWeightW, 1)]
   ];
@@ -100,7 +103,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
     ['¿Qué recomendamos?', (rec?.rating ?? b.signal ?? '—') + '. ' + (rec ? rec.rule + ' Rango de valor razonable (DCF, Trading Comps y transacciones sin atípicos): ' + cur(rec.fairLo) + ' a ' + cur(rec.fairHi) + '.' : '')],
     ['¿Qué tan sensible es?', 'Por inflación, el DCF va de ' + cur(scLo) + ' a ' + cur(scHi) + '. La variable que más mueve el valor es ' + (torn[0]?.label ?? '—') + ' (rango ' + cur(torn[0]?.range) + ' por acción). El valor terminal explica ' + f.p(b.tvWeightW, 1) + ' del EV.'],
     ['¿Qué dicen las transacciones?', sd ? 'La muestra LSEG/SDC auditada (' + (sd.stats.evEbitda?.n ?? 0) + ' operaciones con EV/EBITDA) da ' + cur(sdcV) + ' a la mediana. Es global, de control mixto y dispersa, por eso es referencia con peso 0% y no entra al precio objetivo.' : 'No hay muestra de transacciones.'],
-    ['¿Por qué otras fuentes dan otro valor?', 'El reporte comparativo con S&P Capital IQ / LSEG Refinitiv llega a $39.21 en su DCF porque usa una beta de regresión (βU 0.1705) en lugar de la beta sectorial de Damodaran (βU ' + S.D.betaU.toFixed(2) + ' en el Excel' + (Math.abs(S.D.betaU - W.betaU) > 1e-9 ? '; ' + W.betaU.toFixed(2) + ' en este escenario' : '') + '). Con esa beta, el Excel del equipo daría $38.34: la beta explica +$6.72 de la diferencia; el resto es proyección, fecha y precio de referencia.']
+    ['¿Por qué otras fuentes dan otro valor?', 'El DCF del equipo usa la beta desapalancada de la regresión semanal (βU ' + Bt0.toFixed(4) + '), la misma del modelo individual del reporte comparativo, cuyo DCF es ' + cur(indiv) + '; la diferencia restante (' + cur(indiv != null ? indiv - b.value : null) + ') viene de la proyección, la fecha y el precio de referencia. Con la beta sectorial de Damodaran (βU ' + (dam ?? 0).toFixed(2) + ', la beta oficial anterior) el DCF sería ' + cur(damV) + '.']
   ];
   sections.push({ id: 'exec', title: '1. Resumen ejecutivo', blocks: [
     ...modWarn,
@@ -133,7 +136,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
 
   // ---------------------------------------------------------------- 5. Beta y regresión
   sections.push({ id: 'beta', title: '5. Beta y costo de la deuda', blocks: [
-    p('La beta del WACC es la beta sectorial de Damodaran (Retail, Grocery and Food, enero 2026), desapalancada y corregida por caja (βU ' + W.betaU.toFixed(2) + '), reapalancada con la estructura de capital de ' + P.short + '. La beta de regresión contra el IPC no es estadísticamente significativa, por lo que se documenta pero no alimenta el WACC.'),
+    p('La beta del WACC sale de la regresión semanal de rendimientos de Soriana B contra el IPC: la pendiente observada (βL ' + (Rg ? Rg.levered.toFixed(4) : '—') + ') se desapalanca con la estructura de capital de la propia regresión (D/E ' + (Rg ? Rg.de.toFixed(4) : '—') + ', t ' + (Rg ? f.p(Rg.tax, 0) : '—') + ') y da βU ' + Bt0.toFixed(4) + '; esa βU se reapalanca con la estructura de capital del modelo (' + (it.beta != null ? 'βL ' + it.beta.toFixed(4) : '') + '). La pendiente no es significativa al 95% (p ≈ 0.09). La beta sectorial de Damodaran (βU ' + (dam ?? 0).toFixed(2) + ') se conserva como referencia' + (W.betaU !== Bt0 ? '. Este escenario usa βU ' + W.betaU.toFixed(4) + ' (Laboratorio)' : '') + '.'),
     ...(ui.beta || []).map(t => fromUi(t, { first: 'Concepto' }))
   ] });
 
@@ -239,7 +242,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
     { kind: 'text', style: 'def', pairs: conclPairs },
     bullets([
       'El valor terminal pesa ' + f.p(b.tvWeightW, 1) + ' del EV: pequeñas variaciones en g o en el múltiplo de salida mueven el precio.',
-      'La beta es sectorial (Damodaran); la de regresión no es significativa. Usar la de regresión elevaría el DCF de forma importante (ver sección 12).',
+      'La beta sale de una regresión semanal que no es significativa al 95%; con la beta sectorial de Damodaran (βU ' + (dam ?? 0).toFixed(2) + ') el DCF sería ' + cur(damV) + '. El valor es muy sensible a esta elección.',
       'La muestra de transacciones es global y de control mixto; se reporta como referencia y no entra al precio objetivo.',
       'El precio de mercado es el cierre del ' + ds.dates.price + '; no es el precio del día de la consulta.',
       'Las proyecciones dependen de la inflación del escenario y de los drivers históricos de márgenes, capex y capital de trabajo.'

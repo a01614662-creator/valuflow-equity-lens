@@ -56,7 +56,7 @@ describe('escenario modificado', () => {
   const A = { ...D, betaU: 0.9, g: 4 }, S = snapshot(ds, A, when)!, R = buildReport(S, 'full'), b = E.run(ds, A) as E.RunOk;
   it('usa los supuestos activos y lo declara', () => {
     expect(S.isBase).toBe(false);
-    expect(S.changes).toEqual([['Beta desapalancada (βU)', '0.6900', '0.9000'], ['Crecimiento perpetuo g', '3.50%', '4.00%']]);
+    expect(S.changes).toEqual([['Beta desapalancada (βU)', D.betaU.toFixed(4), '0.9000'], ['Crecimiento perpetuo g', '3.50%', '4.00%']]);
     expect(R.meta.modified).toBe(true); expect(R.meta.caseLabel).toMatch(/modificado/);
     expect(cell(R, 'keyFacts', 'Valor DCF por acción')[1]).toContain(E.fmt.cur(b.value));
     expect(cell(R, 'changes', 'Crecimiento perpetuo g')).toEqual(['Crecimiento perpetuo g', '3.50%', '4.00%']);

@@ -303,22 +303,31 @@ export function inflationTables(ds: Dataset, A: Assumptions, b: RunOk, code = ''
 export function betaTables(ds: Dataset, A: Assumptions, b: RunOk, code = ''): TTable[] {
   const Bt = ds.beta; if (!Bt) return [];
   const out: TTable[] = [], W = b.W, it = W.iterated, mk = W.market;
-  out.push(table('beta', code, 'Beta del WACC: fuente externa', Bt.source + ' · ' + Bt.date + ' · ' + Bt.industry, 'Damodaran (NYU Stern) · Excel maestro hoja Beta y Kd §1', 'x · %',
+  const Rg = Bt.regression, official = Rg && Math.abs(Rg.unlevered - Bt.used) < 1e-12;
+  if (Rg) out.push(table('beta', code, 'Beta del WACC: regresión semanal desapalancada' + (official ? ' (oficial)' : ''), 'βL observada de la regresión → βU con la estructura de capital de la propia regresión → se reapalanca con la del modelo (sin volver a usar la βL observada).', 'Excel maestro · hoja Beta y Kd §2', 'x · mdp · %',
+    head(['Valor', 'Lectura'], null, null).map((h, i) => i === 1 ? { ...h, align: 'left' } : h),
+    [row('Beta apalancada observada (βL, pendiente de la regresión)', [cell(Rg.levered.toFixed(4)), txt(Rg.source, '460px')]),
+      row('Deuda / capitalización de la regresión', [cell(f.m(Rg.debt, 0) + ' / ' + f.m(Rg.equity, 0)), txt('D/E ' + Rg.de.toFixed(4) + ' · tasa ' + f.p(Rg.tax, 0), '460px')]),
+      row('Beta desapalancada derivada (βU)', [cell(Rg.unlevered.toFixed(4)), txt('βU = βL / [1 + (1 − t) × D/E] = ' + Rg.levered.toFixed(4) + ' / [1 + (1 − ' + f.p(Rg.tax, 0) + ') × ' + Rg.de.toFixed(4) + ']' + (official ? '. Supuesto oficial del WACC.' : ''), '460px')], { fw: 700 })],
+    { minW: '760px' }));
+  out.push(table('beta', Rg ? '' : code, 'Beta sectorial de Damodaran' + (official ? ' (referencia, no usada)' : ''), Bt.source + ' · ' + Bt.date + ' · ' + Bt.industry, 'Damodaran (NYU Stern) · Excel maestro hoja Beta y Kd §1', 'x · %',
     head(['Valor', 'Lectura'], null, null).map((h, i) => i === 1 ? { ...h, align: 'left' } : h),
     [row('Industria', [cell(Bt.industry), txt((Bt.firms ? Bt.firms + ' empresas · ' : '') + 'muestra global', '420px')]),
       row('Beta apalancada de la industria (βL)', [cell(Bt.levered.toFixed(2)), txt('Refleja la estructura de capital promedio de la industria (D/E ' + f.p(Bt.de) + '), no la de la empresa.', '420px')]),
-      row('Beta desapalancada (βU)', [cell(Bt.unlevered.toFixed(2)), txt('βU = βL / [1 + (1 − t) × D/E] con t marginal ' + f.p(Bt.marginalTax) + (Bt.check != null ? ' → ' + Bt.check.toFixed(4) + ' (control)' : ''), '420px')], { fw: 700 }),
-      ...(Bt.unleveredCash != null ? [row('βU corregida por caja (no usada)', [cell(Bt.unleveredCash.toFixed(2)), txt('Sensibilidad documentada; el modelo reapalanca con deuda bruta y suma la caja en el puente.', '420px')])] : []),
-      ...(Bt.inherited != null ? [row('βU heredada del modelo anterior', [cell(Bt.inherited.toFixed(2)), txt('Solo reproduce el baseline histórico $31.16.', '420px')])] : [])],
-    { minW: '760px', note: Bt.treatment.join(' ') + (Bt.url ? ' Fuente: ' + Bt.url : '') }));
+      row('Beta desapalancada (βU)', [cell(Bt.unlevered.toFixed(2)), txt('βU = βL / [1 + (1 − t) × D/E] con t marginal ' + f.p(Bt.marginalTax) + (Bt.check != null ? ' → ' + Bt.check.toFixed(4) + ' (control)' : ''), '420px')]),
+      ...(Bt.unleveredCash != null ? [row('βU corregida por caja', [cell(Bt.unleveredCash.toFixed(2)), txt(official ? 'Beta oficial del equipo hasta el 19-oct-2026; hoy es referencia.' : 'Sensibilidad documentada.', '420px')], { fw: 700 })] : []),
+      ...(Bt.inherited != null ? [row('βU heredada del modelo anterior', [cell(Bt.inherited.toFixed(2)), txt('Solo reproduce el baseline histórico.', '420px')])] : [])],
+    { minW: '760px', note: Bt.treatment.filter(Boolean).join(' ') + (Bt.url ? ' Fuente: ' + Bt.url : '') }));
   out.push(table('beta', '', 'Reapalancamiento con la estructura de capital de la empresa', 'βL = βU × [1 + (1 − t) × D/E]; Ke = Rf + βL × PRM.', 'Motor ValuFlow · réplica de Beta y Kd §3', 'x · %', head(['A valor de mercado', 'Iterado al valor DCF']),
     [row('βU usada', [cell(W.betaU.toFixed(2)), cell(W.betaU.toFixed(2))]), row('D/E', [cell(mk.de.toFixed(4)), cell(it ? it.de.toFixed(4) : '—')]), row('Tasa fiscal', [cell(f.p(mk.tax)), cell(it ? f.p(it.tax) : '—')]),
       row('βL reapalancada', [cell(mk.beta.toFixed(4)), cell(it ? it.beta.toFixed(4) : '—')], { fw: 700 }), row('Ke', [cell(f.p(mk.ke)), cell(it ? f.p(it.ke) : '—')]), row('WACC', [cell(f.p(mk.wacc)), cell(f.p(b.wacc))], { fw: 700 })], { minW: '560px' }));
-  if (Bt.inherited != null && Math.abs(A.betaU - Bt.inherited) > 1e-12) {
-    const r0 = E.run(ds, { ...A, betaU: Bt.inherited });
+  // Impacto frente a la beta de referencia (Damodaran corregida por caja; si no existe, la heredada).
+  const refBeta = Bt.unleveredCash ?? Bt.inherited;
+  if (refBeta != null && Math.abs(A.betaU - refBeta) > 1e-12) {
+    const r0 = E.run(ds, { ...A, betaU: refBeta });
     if (r0.ok) {
       const d = (a: number, z: number, fm: (v: number) => string) => [cell(fm(a)), cell(fm(z)), cell((z - a >= 0 ? '+' : '−') + fm(Math.abs(z - a)).replace('−', ''))];
-      out.push(table('beta', '', 'Impacto del cambio de beta (supuestos activos)', 'Recalculado con el modelo completo: misma proyección, distinta beta.', 'Motor ValuFlow · réplica de Beta y Kd §4', '% · ' + (ds.profile.units || '') + ' · ' + ds.profile.currency, head(['βU ' + Bt.inherited.toFixed(2), 'βU ' + A.betaU.toFixed(2), 'Cambio']),
+      out.push(table('beta', '', 'Impacto del cambio de beta (supuestos activos)', 'Recalculado con el modelo completo: misma proyección, distinta beta. La columna de referencia es la beta oficial anterior.', 'Motor ValuFlow · réplica de Beta y Kd §4', '% · ' + (ds.profile.units || '') + ' · ' + ds.profile.currency, head(['βU ' + refBeta.toFixed(2) + (Bt.unleveredCash != null ? ' (Damodaran)' : ''), 'βU ' + A.betaU.toFixed(4), 'Cambio']),
         [row('βL iterada', d(r0.W.iterated!.beta, it!.beta, v => v.toFixed(4))), row('Ke', d(r0.ke, b.ke, v => f.p(v)).map((c, i) => i === 2 ? { ...c, t: String(c.t).replace('%', ' pp') } : c)), row('WACC', d(r0.wacc, b.wacc, v => f.p(v)).map((c, i) => i === 2 ? { ...c, t: String(c.t).replace('%', ' pp') } : c)),
           row('EV ponderado', d(r0.evW, b.evW, v => f.m(v, 1))), row('Equity a la fecha de valuación', d(r0.eqVal, b.eqVal, v => f.m(v, 1))), row('Precio DCF', d(r0.value, b.value, v => f.cur(v)), { fw: 700 })], { minW: '620px' }));
     }
@@ -327,7 +336,7 @@ export function betaTables(ds: Dataset, A: Assumptions, b: RunOk, code = ''): TT
     [row('Kd antes de impuestos (iteración)', [cell(f.p(Bt.kd.value)), txt(Bt.kd.source, '480px')], { fw: 700 }), row('Control: intereses 1S26 anualizados / deuda 2T26', [cell(f.p(Bt.kd.check)), txt(Bt.kd.checkNote || '', '480px')]),
       ...(Bt.kd.fy2025 != null ? [row('Referencia (no usada): tasa implícita FY2025', [cell(f.p(Bt.kd.fy2025)), txt('Solo alimenta el WACC a valor de mercado (punto de partida de la iteración).', '480px')])] : [])], { minW: '760px' }));
   const H = ds.inflation && ds.inflation.beta;
-  if (H) out.push(table('beta', '', 'Beta histórica (regresión) — NO alimenta el WACC', 'Concepto distinto de la beta sectorial del WACC.', 'Excel maestro · hoja Inflación §6', 'x', head(['Valor', 'Lectura'], null, null).map((h, i) => i === 1 ? { ...h, align: 'left' } : h),
+  if (H) out.push(table('beta', '', 'Beta del estudio de clase (regresión diaria) — NO alimenta el WACC', 'Estimación distinta de la regresión semanal que sí alimenta el WACC.', 'Excel maestro · hoja Inflación §6', 'x', head(['Valor', 'Lectura'], null, null).map((h, i) => i === 1 ? { ...h, align: 'left' } : h),
     [row('Pendiente: rendimientos diarios vs. IPC', [cell(H.historical.toFixed(4)), txt('R² ' + H.r2.toFixed(4) + ' · ' + H.n + ' observaciones: no es una estimación defendible.', '420px')]),
       row('Beta reportada en el estudio de clase', [cell(H.reported.toFixed(4)), txt('Fórmula SLOPE(…)×10: el factor ×10 no tiene sustento.', '420px')])], { minW: '720px' }));
   return out;
