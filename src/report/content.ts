@@ -75,7 +75,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
     ['Recomendación', recTxt],
     ['WACC / Ke / g', f.p(b.wacc) + ' / ' + f.p(b.ke) + ' / ' + f.p(b.g)],
     ['Beta desapalancada (βU) / apalancada (βL)', W.betaU.toFixed(2) + ' / ' + (it.beta != null ? it.beta.toFixed(4) : '—')],
-    ['Enterprise Value / Equity Value', f.m(b.evW) + ' / ' + f.m(b.eqVal) + ' mdp'],
+    ['Enterprise Value (' + L.closeDate + (b.roll ? ' / ' + L.rollDate : '') + ')', f.m(b.evW) + (b.roll ? ' / ' + f.m(b.ev) : '') + ' mdp'], ['Equity Value a la fecha de valuación', f.m(b.eqVal) + ' mdp'],
     ['Peso del valor terminal en el EV', f.p(b.tvWeightW, 1)]
   ];
   const cards: [string, string][] = [
@@ -217,7 +217,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
   // ---------------------------------------------------------------- 14. Escenarios y sensibilidad
   sections.push({ id: 'sens', title: '14. Escenarios y sensibilidad', page: true, blocks: [
     T('scenTab', 'Escenarios de inflación (modelo completo re-ejecutado)', SRC + ' · hojas Inflación y Escenarios', ['Escenario', 'Inflación', 'WACC', 'Ventas ' + last.year, 'FCFF ' + last.year, 'Valor por acción', 'vs. mercado'],
-      scen.map(s => [s.label + (s.reference ? ' (referencia)' : s.active ? ' (activo)' : ''), s.constant ? f.p(s.inflation) : 'trayectoria', f.p(s.wacc), f.m(s.revenueLast), f.m(s.fcfLast), cur(s.value), f.pp(s.upside)]), { bold: scen.map((s, i) => s.active ? i : -1).filter(i => i >= 0) }),
+      scen.map(s => [s.label + (s.reference && !/referencia/i.test(s.label) ? ' (referencia)' : s.active ? ' (activo)' : ''), s.constant ? f.p(s.inflation) : 'trayectoria', f.p(s.wacc), f.m(s.revenueLast), f.m(s.fcfLast), cur(s.value), f.pp(s.upside)]), { bold: scen.map((s, i) => s.active ? i : -1).filter(i => i >= 0) }),
     ...ch('scen'),
     T('tornTab', 'Tornado: una variable a la vez', 'Motor ValuFlow (WACC y Ke fijos en el caso activo)', ['Variable', 'Paso', 'Valor bajo', 'Valor alto', 'Rango'], torn.map(t => [t.label, '±' + t.step + ' ' + t.unit, cur(t.low), cur(t.high), cur(t.range)])),
     ...ch('tornado'),

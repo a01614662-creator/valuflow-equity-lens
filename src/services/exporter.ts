@@ -57,7 +57,7 @@ export function valuationJson(S: Snapshot): string {
     format: 'valuflow/2', app: 'ValuFlow', exportedAt: S.generatedAt.toISOString(),
     case: { isBase: S.isBase, changes: S.changes },
     results: {
-      price: b.price, dcf: n(b.value), upside: n(b.upside), wacc: n(b.wacc), ke: n(b.ke), g: n(b.g), ev: n(b.evW), equity: n(b.eqVal),
+      price: b.price, dcf: n(b.value), upside: n(b.upside), wacc: n(b.wacc), ke: n(b.ke), g: n(b.g), evClose: n(b.evW), ev: n(b.ev), equity: n(b.eqVal),
       comps: n(rel.comps?.value), transactionsSdc: n(rel.sdc?.value), combined: n(rel.combined?.value), recommendation: rec?.rating ?? null, potential: n(rec?.potential)
     },
     assumptions: S.A, dataset: S.ds
