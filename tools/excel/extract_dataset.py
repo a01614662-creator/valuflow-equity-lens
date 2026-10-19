@@ -292,6 +292,10 @@ funnel = []
 while S[f'A{fr}'].value:
     funnel.append([S[f'A{fr}'].value, S[f'C{fr}'].value, S[f'H{fr}'].value]); fr += 1
 cr0 = find_row(S, 'Estadístico oficial', start=D1)
+rr0 = find_row(S, 'Umbral para COMPRAR', start=D1)
+recommendation = {'buy': S[f'C{rr0}'].value, 'sell': S[f'C{rr0+1}'].value, 'target': S[f'C{rr0+2}'].value, 'potential': S[f'C{rr0+3}'].value,
+                  'rating': S[f'C{rr0+4}'].value, 'experts': S[f'C{rr0+5}'].value, 'fairLo': S[f'C{rr0+6}'].value, 'fairHi': S[f'C{rr0+7}'].value,
+                  'rule': 'Precio objetivo = valuación combinada; COMPRAR si el potencial supera +10%, VENDER si es menor que −10% (hoja Transacciones SDC §7).'}
 sdc = {
     'source': S['A2'].value,
     'screen': {'file': 'GridExport_October_19_2026_9_29_57.pdf', 'date': '2026-10-19', 'time': '09:29:57', 'count': 166, 'columns': 23, 'provider': 'LSEG/SDC (Refinitiv)'},
@@ -337,7 +341,7 @@ AU = X['Auditoría']
 audit = {'note': AU['A2'].value, 'findings': [[AU.cell(r, c).value for c in range(2, 8)] for r in range(5, 40) if AU.cell(r, 2).value]}
 
 data = {'file': os.path.basename(SRC), 'build': build, 'inflation': inflation, 'wacc': wacc, 'valuation': valuation, 'market': market, 'peersMarket': peersMkt,
-        'comps': comps, 'transactions': transactions, 'sdc': sdc, 'combined': combined, 'external': external, 'externalNotes': externalNotes,
+        'comps': comps, 'transactions': transactions, 'sdc': sdc, 'combined': combined, 'recommendation': recommendation, 'external': external, 'externalNotes': externalNotes,
         'registry': registry, 'beta': beta, 'notes': notes, 'audit': audit,
         'expected': {'dcf': exp, 'comps': compsExp, 'transactions': transExp, 'sdc': sdcExp, 'combined': combExp, 'validation': validation}}
 n_checks = len(validation['checks'])

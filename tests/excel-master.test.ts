@@ -211,6 +211,14 @@ describe('Precedent Transactions LSEG/SDC = hoja Transacciones SDC (auditada)', 
   });
 });
 
+describe('recomendación = hoja Transacciones SDC §7', () => {
+  it('precio objetivo combinado, potencial, calificación y rango de valor razonable', () => {
+    const b = run('base'), R = E.recommendation(soriana, E.defaults(soriana), b)!, X = XL.recommendation;
+    close(R.target!, X.target, 1e-12); close(R.potential!, X.potential, 1e-12); expect(R.rating).toBe(X.rating);
+    close(R.fairLo!, X.fairLo, 1e-12); close(R.fairHi!, X.fairHi, 1e-12);
+  });
+});
+
 describe('Valuación combinada = hoja Valuación Combinada', () => {
   [...SCEN, 'historico', 'base_beta080'].forEach(k => it(k + ': DCF 50% + Comps 50% + Transactions 0%', () => {
     const b = runX(k), R = E.relative(soriana, E.defaults(soriana), b.value);

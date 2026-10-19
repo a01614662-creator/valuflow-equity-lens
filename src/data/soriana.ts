@@ -41,6 +41,7 @@ export const soriana: Dataset = {
   transactions: XL.transactions as unknown as TransactionsSpec,
   sdc: XL.sdc as unknown as SdcSpec,
   combined: { weights: { ...XL.combined.weights }, reasons: { ...XL.combined.reasons }, classRule: XL.combined.classRule, transactionsSource: 'sdc' },
+  recommendation: { buy: XL.recommendation.buy, sell: XL.recommendation.sell, rule: XL.recommendation.rule, experts: XL.recommendation.experts },
   external: XL.external as unknown as ExternalRef[],
   externalNotes: XL.externalNotes,
   audit: XL.audit,

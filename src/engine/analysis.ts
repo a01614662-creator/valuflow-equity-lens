@@ -111,3 +111,19 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
   if (m.low52 && m.high52) out.push({ key: '52w', label: 'Rango 52 semanas', sub: 'Mercado', value: null, lo: m.low52, hi: m.high52, ref: true });
   return out;
 }
+
+export interface Recommendation { target: number | null; potential: number | null; rating: 'COMPRAR' | 'MANTENER' | 'VENDER' | null; buy: number; sell: number; rule: string; fairLo: number | null; fairHi: number | null }
+
+/**
+ * Recomendación del modelo (réplica de la hoja Transacciones SDC §7): precio objetivo = valuación combinada;
+ * COMPRAR si el potencial supera el umbral de compra, VENDER si es menor que el de venta, MANTENER en otro caso.
+ * Rango de valor razonable = mín./máx. de DCF, Trading Comps y Precedent Transactions (media sin atípicos).
+ */
+export function recommendation(ds: Dataset, A: Assumptions, base: RunOk): Recommendation | null {
+  const Rr = ds.recommendation; if (!Rr) return null;
+  const RV = relative(ds, A, base.value), target = RV.combined && isNum(RV.combined.value) ? RV.combined.value : null;
+  const potential = target != null && base.price > 0 ? target / base.price - 1 : null;
+  const rating = potential == null ? null : potential > Rr.buy ? 'COMPRAR' : potential < Rr.sell ? 'VENDER' : 'MANTENER';
+  const pts = [base.value, RV.comps && isNum(RV.comps.value) ? RV.comps.value : null, RV.sdc && isNum(RV.sdc.prices.meanEx) ? RV.sdc.prices.meanEx : null].filter((x): x is number => x != null);
+  return { target, potential, rating, buy: Rr.buy, sell: Rr.sell, rule: Rr.rule, fairLo: pts.length ? Math.min(...pts) : null, fairHi: pts.length ? Math.max(...pts) : null };
+}

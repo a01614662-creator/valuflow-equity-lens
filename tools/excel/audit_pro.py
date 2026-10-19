@@ -321,6 +321,47 @@ ws.cell(r, 1).alignment = Alignment(wrap_text=False); ws.cell(r, 1).font = NOTE
 r += 1
 ws.cell(r, 1, 'Mediana (estadístico central robusto) en lugar de la media: con n pequeño y un atípico (Profi 21.3x) la media se desplaza al alza.').font = NOTE
 
+r += 2
+# ---------------------------------------------------------------- 6. Triangulación y 7. recomendación (se conservan del original)
+section(ws, r, '6. TRIANGULACIÓN: MODELO, TRANSACCIONES Y OPINIÓN DE LOS EXPERTOS', 12)
+r += 1
+hdr(ws, r, ['Fuente / método', '', 'Precio (MXN)', 'Potencial vs. mercado', 'Lectura'])
+r += 1
+TRI0 = r
+tri = [
+    ('DCF (ValuFlow)', "='Valuación Combinada'!B4", 'Valor intrínseco del modelo del equipo.'),
+    ('Trading Comps', "='Valuación Combinada'!B5", 'Múltiplos de empresas comparables (CIQ).'),
+    ('Transacciones CIQ (hoja Transacciones, media, n = 3) — histórico', '=Transacciones!E49', 'Muestra no defendible (1 de 3 en ventana); incluye prima de control.'),
+    ('Transacciones SDC — mediana (referencia oficial)', f'=F{S["median"]}', 'Estadístico central robusto de la muestra auditada.'),
+    ('Transacciones SDC — media sin atípicos', f'=F{S["meanx"]}', 'Excluye atípicos por RIC.'),
+    ('Consenso de analistas (precio objetivo, S&P Capital IQ)', '=Comparativo!B18', '="Expertos: "&Comparativo!B19&" — sesgo vendedor."'),
+    ('Valuación combinada del proyecto (DCF 50% / Comps 50%)', "='Valuación Combinada'!B9", 'Precio objetivo del proyecto.'),
+    ('Sensibilidad: DCF, Comps y Transacciones SDC (mediana) a ⅓', f'=AVERAGE(C{r},C{r+1},C{r+3})', 'Si se diera peso a transacciones con la nueva muestra.'),
+]
+for lab, fx, rd in tri:
+    ws.cell(r, 1, lab); ws.cell(r, 3, fx).number_format = MXN; ws.cell(r, 4, f'=C{r}/$C${TRI0 + len(tri)}-1').number_format = PCT; ws.cell(r, 5, rd); r += 1
+ws.cell(r, 1, 'Precio de mercado de referencia (25-sep-2026)'); ws.cell(r, 3, "='Valuación Combinada'!B10").number_format = MXN
+MKT = r; r += 2
+section(ws, r, '7. CONCLUSIÓN, VALUACIÓN Y RECOMENDACIÓN', 12)
+r += 1
+REC = {}
+recs = [
+    ('buy', 'Umbral para COMPRAR (potencial mayor a)', 0.1, PCT), ('sell', 'Umbral para VENDER (potencial menor a)', -0.1, PCT),
+    ('target', 'Precio objetivo (valuación combinada)', f'=C{TRI0 + 6}', MXN), ('pot', 'Potencial / (baja) vs. mercado', None, PCT),
+    ('rec', 'Recomendación según el modelo', None, None), ('exp', 'Recomendación de los expertos', '=Comparativo!B19', None),
+    ('lo', 'Rango de valor razonable — bajo (mín. de DCF, Comps y SDC sin atípicos)', f'=MIN(C{TRI0},C{TRI0+1},C{TRI0+4})', MXN),
+    ('hi', 'Rango de valor razonable — alto', f'=MAX(C{TRI0},C{TRI0+1},C{TRI0+4})', MXN), ('cons', 'Precio objetivo de consenso de analistas', f'=C{TRI0+5}', MXN),
+]
+for k, lab, v, fmt in recs:
+    REC[k] = r; ws.cell(r, 1, lab)
+    if k == 'pot': v = f'=C{REC["target"]}/C{MKT}-1'
+    if k == 'rec': v = f'=IF(C{REC["pot"]}>C{REC["buy"]},"COMPRAR",IF(C{REC["pot"]}<C{REC["sell"]},"VENDER","MANTENER"))'
+    c = ws.cell(r, 3, v)
+    if fmt: c.number_format = fmt
+    if k in ('buy', 'sell'): c.fill = FILL_IN
+    if k in ('target', 'rec'): c.fill = FILL_OUT; c.font = B
+    r += 1
+
 for c_, w in {'A': 14, 'B': 12, 'C': 30, 'D': 14, 'E': 20, 'F': 12, 'G': 30, 'H': 14, 'I': 11, 'J': 16, 'K': 16, 'L': 15, 'M': 15,
               'AC': 70, 'Z': 26, 'AA': 13, 'W': 13}.items():
     ws.column_dimensions[c_].width = w

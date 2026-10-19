@@ -394,6 +394,8 @@ export interface Dataset {
   /** Precedent Transactions con la pantalla LSEG/SDC auditada. */
   sdc?: SdcSpec;
   combined?: CombinedSpec;
+  /** Regla de recomendación sobre el precio objetivo combinado (umbrales como fracción, p. ej. 0.10). */
+  recommendation?: { buy: number; sell: number; rule: string; experts?: string; target?: number; rating?: string; fairLo?: number; fairHi?: number };
   /** Contraste con plataformas externas y otros modelos (referencias). */
   external?: ExternalRef[];
   externalNotes?: string[];

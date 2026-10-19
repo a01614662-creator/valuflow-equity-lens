@@ -2502,6 +2502,17 @@ export const SORIANA_XL = {
   "transactionsSource": "sdc",
   "classRule": "Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Precedent Transactions 0% (referencia LSEG/SDC)."
  },
+ "recommendation": {
+  "buy": 0.1,
+  "sell": -0.1,
+  "target": 32.5548654995095,
+  "potential": -0.0276324522249256,
+  "rating": "MANTENER",
+  "experts": "Venta (0 C / 1 M / 6 V)",
+  "fairLo": 28.9893892547619,
+  "fairHi": 33.4928408544974,
+  "rule": "Precio objetivo = valuación combinada; COMPRAR si el potencial supera +10%, VENDER si es menor que −10% (hoja Transacciones SDC §7)."
+ },
  "external": [
   {
    "key": "team_dcf",
