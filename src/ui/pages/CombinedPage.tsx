@@ -3,9 +3,10 @@ import { Fragment } from 'react';
 import { css } from '../css';
 import type { VM } from '../viewmodel';
 import { TraceCard } from '../components/TraceCard';
+import { TableCard } from '../components/TableCard';
 
 export function CombinedPage({ vm }: { vm: VM }) {
-  const { co, comb, football, goLab, r, v } = vm;
+  const { ext, co, comb, football, goLab, r, v } = vm;
   if (!v.p6) return null;
   return (
     <section data-page data-screen-label="06 Combinada" style={css('display:flex; flex-direction:column; gap:28px;')}>
@@ -66,6 +67,13 @@ export function CombinedPage({ vm }: { vm: VM }) {
                 <span style={css(`font-family:var(--font-heading); font-size:22px; font-weight:600; color:${f.color};`)}>{f.valueTxt}</span>
                 <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{f.rangeTxt}</span></div></div>
           </Fragment>))}</div>
+        {ext && ext.has ? (<>
+          <div style={css('display:flex; flex-direction:column; gap:6px; margin-top:12px;')}>
+            <span style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Validación externa</span>
+            <h2 style={css('margin:0; font-size:clamp(28px, 3vw, 40px); line-height:1; text-transform:uppercase;')}>¿Qué dicen otras plataformas y modelos?</h2>
+            <span style={css('font-size:14px; color:var(--color-neutral-700); max-width:880px;')}>S&amp;P Capital IQ y LSEG Refinitiv se muestran como contraste: no reemplazan al modelo del equipo ni entran al precio combinado. El consenso de analistas es una estimación a 12 meses, no un valor intrínseco; el valor de StarMine se leyó de una gráfica (aproximado).</span></div>
+          {(ext.tables || []).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}
+        </>) : null}
         <div style={css('display:flex; justify-content:flex-end;')}>
           <button className="btn btn-primary blueprint" onClick={goLab}>
             <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>Modificar supuestos →</button></div>

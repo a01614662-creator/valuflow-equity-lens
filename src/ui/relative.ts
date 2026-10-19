@@ -22,7 +22,7 @@ function flip(cur: Record<string, number> | undefined, key: string, base: number
   return Object.keys(next).length ? next : undefined;
 }
 
-export function overridesActive(A: Assumptions) { return !!(A.compsInclude || A.compsUse || A.dealsInclude || A.dealsUse || A.weights); }
+export function overridesActive(A: Assumptions) { return !!(A.compsInclude || A.compsUse || A.dealsInclude || A.dealsUse || A.sdcInclude || A.weights); }
 
 const metricName: Record<string, string> = { revenue: 'Ventas LTM', ebitda: 'EBITDA LTM', ebit: 'EBIT LTM', eps: 'UPA LTM' };
 
@@ -42,7 +42,7 @@ function multipleChain(m: E.MultipleResult, adj: number, shares: number, sampleT
 }
 
 export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: RunOk) {
-  const none = { has: false, mult: { has: false }, trans: { has: false }, comb: { has: false } };
+  const none = { has: false, mult: { has: false }, trans: { has: false }, comb: { has: false }, ext: { has: false } };
   if (!ds.comps && !ds.combined) return none;
   const R = E.relative(ds, A, b.value), C = R.comps, T = R.transactions, K = R.combined, price = b.price;
   const up = (p: E.Price) => E.isNum(p) && price > 0 ? f.pp(p / price - 1) : '—';
@@ -94,7 +94,62 @@ export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: R
 
   // ------------------------------------------------------------- 05 · Precedent Transactions
   let trans: any = { has: false };
-  if (T) {
+  const SD = R.sdc;
+  if (SD) {
+    const S = SD.spec, tgt = ds.comps!.target, adj = E.bridgeAdj(tgt), st = SD.stats, tables: TTable[] = [];
+    const usd = (v: number | null) => v == null ? 'NA' : f.m(v, 1), pct = (v: number | null) => v == null ? 'NA' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+    const yes = (b: boolean) => cell(b ? 'Sí' : 'No', { color: b ? POS : NEG });
+    tables.push(table('sdcFunnel', '', 'Búsqueda y selección de la muestra', 'Primero se buscó autoservicio en México; al no haber operaciones con múltiplos, se amplió la industria y luego la geografía (decisión metodológica documentada).', S.screen.provider + ' · ' + S.screen.file + ' (' + S.screen.date + ' ' + (S.screen.time || '') + ')', '',
+      head(['Criterio', 'Resultado'], null, null).map(h => ({ ...h, align: 'left' })),
+      S.funnel.map(([k, c, r]) => row(k, [txt(c, '320px'), txt(r, '460px')]))
+        .concat([row('Ventana', [txt(S.criteria.windowYears + ' años: ' + S.criteria.windowStart + ' a ' + S.criteria.valuationDate + ' (fecha de valuación)', '320px'), txt(SD.checks.filter(c => c.inWindow).length + ' de ' + S.deals.length + ' operaciones evaluadas dentro.', '460px')]),
+          row('Datos mínimos', [txt('≥ ' + S.criteria.minMultiples + ' múltiplos de valor (EV/EBITDA, P/E, EV/Ventas)', '320px'), txt(SD.checks.filter(c => c.enough).length + ' de ' + S.deals.length + ' cumplen.', '460px')]),
+          row('Tipo de cambio', [txt(f.n(S.fx.rate, 2) + ' MXN por USD', '320px'), txt(S.fx.source, '460px')])]), { minW: '900px' }));
+    tables.push(table('sdcDeals', '', 'Operaciones evaluadas: monto, múltiplos, criterios y decisión', 'Datos tal como la pantalla LSEG/SDC (USD mm; múltiplos en x; NA = sin dato). "Valor de la operación" es el Rank Value de LSEG (incluye la deuda neta del objetivo); no es la contraprestación pagada. El EV al anuncio es un campo distinto.', S.screen.provider + ' · hoja Transacciones SDC del Excel', 'USD mm · MXN mm · x · %',
+      head(['Deal #', 'Anunciada', 'País objetivo', 'Comprador', 'País comprador', 'Subindustria SDC', 'Valor de la operación (USD mm)', 'EV al anuncio (USD mm)', 'EV al anuncio (MXN mm)', 'EV/EBITDA', 'EV/Ventas', 'P/E', 'Prima 1 día', '# múlt.', '¿Ventana?', '¿≥2 múlt.?', '¿Autoservicio?', '¿Recompra?', 'Naturaleza (juicio)', 'Juicio', 'Incluir', 'Motivo'], null, 6).map((h, i) => i >= 18 && i !== 20 ? { ...h, align: 'left' } : h),
+      S.deals.map((d, i) => { const c = SD.checks[i]; return row(d.target + (d.change ? ' · ' + d.change : ''), [txt(d.id, '90px'), txt(d.date, '86px'), txt(d.targetNation, '96px'), txt(d.acquiror, '180px'), txt(d.acquirorNation, '96px'), txt(d.targetIndustry, '150px'),
+        cell(usd(d.rankValue)), cell(usd(d.ev)), cell(d.ev == null ? 'NA' : f.m(d.ev * S.fx.rate, 0)), cell(mx(d.evEbitda), { strong: true }), cell(mx(d.evSales)), cell(mx(d.pe)), cell(pct(d.prem1d)), cell(String(c.nMultiples)),
+        yes(c.inWindow), yes(c.enough), cell(d.sector), cell(c.buyback ? 'Sí' : 'No', { color: c.buyback ? NEG : 'var(--color-text)' }), txt(d.nature, '170px'), txt(d.judgment, '90px'),
+        toggle(c.include, () => app.setA({ sdcInclude: flip(A.sdcInclude, d.id, c.criteria ? 1 : 0, c.include) }), 'Incluir o excluir la operación (cambio manual respecto a los criterios)'), txt(d.reason, '420px')], c.include ? { fw: 600 } : { lc: 'var(--color-neutral-700)' }); }),
+      { minW: '2900px' }));
+    const SK = ['min', 'p25', 'mean', 'median', 'p75', 'max'] as const;
+    tables.push(table('sdcStats', '', 'Estadísticos por múltiplo y precio implícito', 'Solo operaciones elegibles con dato (los NA no cuentan). Atípicos: fuera de P25 − 1.5·RIC y P75 + 1.5·RIC. Precio con el mismo puente EV → capital que Trading Comps.', 'Motor ValuFlow · réplica de Transacciones SDC §3', 'x · ' + ds.profile.currency + ' por acción',
+      head(['EV/EBITDA', 'EV/Ventas', 'P/E', 'Precio EV/EBITDA (usado)', 'Precio EV/Ventas (referencia)']),
+      SK.map(k => row(E.STAT_LABELS[k], [cell(st.evEbitda ? mx(st.evEbitda[k]) : 'NA'), cell(st.evSales ? mx(st.evSales[k]) : 'NA'), cell(st.pe ? mx(st.pe[k]) : 'NA'), cell(px(SD.prices[k]), { bg: k === S.official ? 'var(--color-accent-100)' : 'transparent', color: 'var(--color-text)' }), cell(px(SD.pricesSales[k]), { color: 'var(--color-neutral-700)' })], k === S.official ? { fw: 700 } : {}))
+        .concat([row('n', [cell(st.evEbitda ? st.evEbitda.n : 0), cell(st.evSales ? st.evSales.n : 0), cell(st.pe ? st.pe.n : 0), cell(''), cell('')]),
+          row('Límites de atípicos', [cell(st.evEbitda ? mx(st.evEbitda.lo) + ' a ' + mx(st.evEbitda.hi) : 'NA'), cell(st.evSales ? mx(st.evSales.lo) + ' a ' + mx(st.evSales.hi) : 'NA'), cell(st.pe ? mx(st.pe.lo) + ' a ' + mx(st.pe.hi) : 'NA'), cell(''), cell('')]),
+          row('Atípicos detectados', [cell(st.evEbitda ? st.evEbitda.nOut : 0), cell(st.evSales ? st.evSales.nOut : 0), cell(st.pe ? st.pe.nOut : 0), cell(''), cell('')]),
+          row('Media sin atípicos', [cell(st.evEbitda ? mx(st.evEbitda.meanEx) : 'NA'), cell(st.evSales ? mx(st.evSales.meanEx) : 'NA'), cell(st.pe ? mx(st.pe.meanEx) : 'NA'), cell(px(SD.prices.meanEx)), cell('')]),
+          row('Mediana sin atípicos', [cell(st.evEbitda ? mx(st.evEbitda.medianEx) : 'NA'), cell(st.evSales ? mx(st.evSales.medianEx) : 'NA'), cell(st.pe ? mx(st.pe.medianEx) : 'NA'), cell(px(SD.prices.medianEx)), cell('')])]),
+      { minW: '860px', note: (S.statNote || '') + ' P/E y EV/Ventas no entran al precio (pocas observaciones / ignora el margen).' }));
+    tables.push(table('sdcSens', '', 'Sensibilidad de la muestra a las operaciones de juicio', 'Cuánto cambia el resultado si se retiran las operaciones que dependen del criterio del analista.', 'Motor ValuFlow · réplica de Transacciones SDC §4', 'x · ' + ds.profile.currency + ' por acción',
+      head(['n', 'Mediana EV/EBITDA', 'Precio (mediana)', 'Media sin atípicos', 'Precio (media sin atípicos)', 'Operaciones retiradas']).map((h, i) => i === 5 ? { ...h, align: 'left' } : h),
+      SD.sensitivity.map((x, i) => row(x.label, [cell(x.n), cell(x.median == null ? 'NA' : mx(x.median)), cell(px(x.priceMedian), i === 0 ? { color: 'var(--color-accent)' } : undefined), cell(x.meanEx == null ? 'NA' : mx(x.meanEx)), cell(px(x.priceMeanEx)),
+        txt(x.drop.map(id => (S.deals.find(d => d.id === id) || { target: id }).target).join(', ') || '—', '360px')], i === 0 ? { fw: 700 } : {})), { minW: '980px' }));
+    if (T) tables.push(table('ciqHist', '', 'Muestra histórica de S&P Capital IQ (no defendible)', 'Se conserva para trazabilidad: 3 operaciones, 1 dentro de la ventana y ninguna en México.', 'S&P Capital IQ · hoja Transacciones', 'MXN mm · x',
+      head(['Fecha', 'Comprador', 'País', 'TEV (MXN mm)', 'EV/Ventas', 'EV/EBITDA', '¿Ventana?', 'Observaciones'], null, 3).map((h, i) => i === 7 ? { ...h, align: 'left' } : h),
+      T.spec.deals.map((d, i) => row(d.target, [txt(d.date, '90px'), txt(d.buyer || '—', '150px'), txt(d.country || '', '80px'), cell(d.tev == null ? '—' : f.m(d.tev, 1)), cell(mx(d.evSales)), cell(mx(d.evEbitda)), yes(T.checks[i].inWindow), txt(d.note || '', '380px')]))
+        .concat([row('Media EV/EBITDA → precio', [cell(''), cell(''), cell(''), cell(''), cell(''), cell(T.multiples.find(m => m.def.key === 'evEbitda')!.stats ? mx(T.multiples.find(m => m.def.key === 'evEbitda')!.stats!.mean) : 'NA'), cell(''), txt('Precio a la media: ' + px(T.value) + ' (rango ' + px(T.lo) + ' – ' + px(T.hi) + ')', '380px')], { fw: 700 })]),
+      { minW: '1200px' }));
+    const incl = SD.included.filter(d => d.evEbitda != null);
+    const statTxt = { median: 'mediana', mean: 'media', meanEx: 'media sin atípicos', medianEx: 'mediana sin atípicos' }[S.official];
+    const chains: Chain[] = [{ title: 'EV/EBITDA', steps: [
+      { k: 'Operaciones elegibles con EV/EBITDA', v: incl.length + ' de ' + S.deals.length, f: incl.map(d => d.target.split(' ').slice(0, 2).join(' ') + ' ' + mx(d.evEbitda)).join(' · ') },
+      { k: 'Estadístico oficial: ' + statTxt, v: st.evEbitda ? mx((st.evEbitda as unknown as Record<string, number>)[S.official]) : 'NA', f: 'P25 ' + (st.evEbitda ? mx(st.evEbitda.p25) : 'NA') + ' · P75 ' + (st.evEbitda ? mx(st.evEbitda.p75) : 'NA') + ' · media ' + (st.evEbitda ? mx(st.evEbitda.mean) : 'NA') },
+      { k: 'EBITDA LTM de Soriana', v: f.n(tgt.ebitda, 1), f: 'mdp · hoja Multiplos' },
+      { k: 'EV implícito', v: st.evEbitda ? f.m((st.evEbitda as unknown as Record<string, number>)[S.official] * tgt.ebitda, 1) : 'NA', f: 'múltiplo × EBITDA' },
+      { k: 'Equity Value', v: st.evEbitda ? f.m((st.evEbitda as unknown as Record<string, number>)[S.official] * tgt.ebitda + adj, 1) : 'NA', f: 'EV ' + (adj < 0 ? '− ' : '+ ') + f.m(Math.abs(adj), 1) + ' (caja − deuda − arrendamientos al 2T26)' },
+      { k: 'Precio implícito', v: px(SD.value), f: 'Equity ÷ ' + f.n(tgt.shares, 1) + ' mm de acciones', strong: true }] }];
+    chains.push({ title: 'Resultado del método', steps: [{ k: 'Precedent Transactions (' + statTxt + ')', v: px(SD.value), f: 'rango P25–P75: ' + px(SD.lo) + ' – ' + px(SD.hi), strong: true }, { k: 'Alternativa: media sin atípicos', v: px(SD.prices.meanEx), f: 'excluye ' + (st.evEbitda ? st.evEbitda.nOut : 0) + ' atípico(s)' }, ...(T ? [{ k: 'Histórico CIQ (media, 3 operaciones)', v: px(T.value), f: 'no defendible' }] : [])] });
+    const wT = (A.weights ?? ds.combined?.weights)?.transactions ?? 0;
+    trans = {
+      has: true, value: px(SD.value), lo: px(SD.lo), hi: px(SD.hi), up: up(SD.value), upColor: upC(SD.value), weightTxt: f.p(wT, 0), contributes: wT > 0, tables, chains,
+      stats: [{ k: 'Rango P25 – P75', v: px(SD.lo) + ' – ' + px(SD.hi) }, { k: 'Operaciones elegibles', v: SD.n + ' de ' + S.deals.length, s: (st.evEbitda ? st.evEbitda.n : 0) + ' con EV/EBITDA · ' + (st.evEbitda ? st.evEbitda.nOut : 0) + ' atípico' }, { k: 'Pantalla LSEG/SDC', v: S.screen.count + ' operaciones', s: '0 en México con múltiplos' }],
+      warning: S.weightNote || '', note: 'Muestra global ampliada por falta de operaciones mexicanas comparables; ver el embudo de búsqueda.',
+      modified: !!(A.sdcInclude), reset: () => app.setA({ sdcInclude: undefined })
+    };
+  }
+  if (!SD && T) {
     const S = T.spec, tgt = ds.comps!.target, ms = (['evSales', 'evEbitda'] as const).map(k => T.multiples.find(m => m.def.key === k)!), tables: TTable[] = [];
     tables.push(table('crit', '', 'Criterios de selección (metodología de clase, diap. 10)', 'Se evalúan con los datos de cada operación; no se agregan operaciones ni se amplían criterios sin una nueva búsqueda en CIQ.', 'Excel maestro · Precedent Transactions §1', '',
       head(['Valor', 'Lectura'], null, null).map((h, i) => i === 1 ? { ...h, align: 'left' } : h),
@@ -151,7 +206,21 @@ export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: R
       rows: K.rows.map(r => ({ key: r.key, label: r.label, price: px(r.price), weight: +(r.weight * 100).toFixed(6), onChange: setW(r.key), classW: f.p(r.classWeight, 1), contribution: f.cur(r.contribution), reason: reasons[r.key] || '', ref: r.weight === 0, tag: r.weight > 0 ? 'Contribuye' : 'Referencia · 0%', tagCls: r.weight > 0 ? 'tag-accent' : 'tag-neutral' }))
     };
   }
-  return { has: true, mult, trans, comb };
+  // ------------------------------------------------------------- Contraste externo (S&P Capital IQ, LSEG Refinitiv, otros modelos)
+  let ext: any = { has: false };
+  if (ds.external && ds.external.length) {
+    const live: Record<string, number | null> = { team_dcf: b.value, team_comps: C && E.isNum(C.value) ? C.value : null, team_sdc: R.sdc && E.isNum(R.sdc.value) ? R.sdc.value : null, team_ciq_trans: T && E.isNum(T.value) ? T.value : null, team_combined: K && E.isNum(K.value) ? K.value : null };
+    const rows = ds.external.map(x => { const v = x.key in live ? live[x.key] : x.value, rp = x.key in live ? price : x.refPrice; return { ...x, value: v, refPrice: rp, diff: v != null && rp ? v / rp - 1 : null, isLive: x.key in live }; });
+    const t = table('ext', '', 'Contraste con S&P Capital IQ, LSEG Refinitiv y otros modelos', 'Cada método con su fuente, fecha, supuestos y limitaciones. Solo DCF y Trading Comps del equipo forman el precio oficial; lo demás es referencia.', 'Hoja Contraste externo del Excel · Soriana_Reporte_Valuacion_CapitalIQ_Refinitiv.pdf (19-oct-2026)', ds.profile.currency + ' por acción',
+      head(['Método', 'Fecha', 'Precio por acción', 'Rango', 'Precio de referencia', 'Diferencia', '¿Entra al precio oficial?', 'Supuestos principales', 'Calidad y limitaciones', 'Pág.'], null, 2).map((h, i) => i >= 6 && i !== 9 ? { ...h, align: 'left' } : h),
+      rows.map(x => row(x.source, [txt(x.method, '240px'), txt(x.date, '90px'), cell(x.value == null ? 'NA' : f.cur(x.value), { color: x.isLive ? 'var(--color-accent)' : 'var(--color-text)', strong: x.isLive }),
+        cell(x.lo != null && x.hi != null ? f.cur(x.lo) + ' – ' + f.cur(x.hi) : '—'), cell(x.refPrice == null ? '—' : f.cur(x.refPrice) + ' (' + (x.isLive ? (ds.dates.price || '') : x.refDate) + ')'),
+        cell(x.diff == null ? '—' : f.pp(x.diff), { color: (x.diff ?? 0) >= 0 ? POS : NEG }), txt(x.official, '130px'), txt(x.assumptions, '300px'), txt(x.limits, '320px'), cell(x.page)])),
+      { minW: '2100px', note: (ds.externalNotes || []).join(' ') });
+    const pts = rows.filter(x => x.value != null).map(x => ({ label: x.method, source: x.source, value: x.value as number, lo: x.lo, hi: x.hi, team: x.key.startsWith('team_'), approx: /aprox/i.test(x.method) }));
+    ext = { has: true, tables: [t], pts, price: f.cur(price) };
+  }
+  return { has: true, mult, trans, comb, ext };
 }
 
 // ------------------------------------------------------------- Inflación (Laboratorio y anexo)
