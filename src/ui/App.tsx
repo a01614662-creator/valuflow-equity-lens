@@ -6,7 +6,8 @@ import type { Assumptions, Dataset, RunResult } from '../engine';
 import { BUILT_IN, DEFAULT_ID, checkDataset } from '../data/registry';
 import { store } from '../services/store';
 import { FIELDS, buildFromImport, parseWorkbook, type Parsed, type ParsedLite } from '../services/importer';
-import { getXLSX, printPanel } from '../services/exporter';
+import { getXLSX } from '../services/sheet';
+import { snapshot } from '../report/snapshot';
 import { brandColor, findLogo, research, type Research } from '../services/research';
 import { buildView, type Calc } from './viewmodel';
 import { Shell } from './Shell';
@@ -29,10 +30,16 @@ export interface AppState {
   research: Record<string, Research>; drag: boolean;
   /** Modo presentación (diapositivas): abierto y diapositiva actual. No modifica supuestos ni la vista de la app. */
   deck: boolean; slide: number;
+  /** Exportación en curso o terminada: avance real, archivo generado o error. */
+  exp: ExportState | null;
 }
 
+export type ExportKind = 'exec' | 'full' | 'xlsx' | 'csv' | 'json' | 'zip';
+export interface ExportState { kind: ExportKind; label: string; p: number; msg: string; status: 'run' | 'done' | 'error'; file?: string; detail?: string; modified: boolean }
+export const EXPORT_LABELS: Record<ExportKind, string> = { exec: 'PDF · Resumen ejecutivo', full: 'PDF · Reporte técnico completo', xlsx: 'Excel (.xlsx)', csv: 'CSV', json: 'Valuación JSON', zip: 'Paquete completo (.zip)' };
+
 export class App extends Component<object, AppState> {
-  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false, deck: false, slide: 0 };
+  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false, deck: false, slide: 0, exp: null };
 
   // Cálculo en caché (una sola fuente de verdad por render).
   _c: Calc | null = null; _ck: string | null = null;
@@ -115,7 +122,34 @@ export class App extends Component<object, AppState> {
     const ds = this.ds(), seq = SEQ.filter(x => !['p4', 'p5', 'p6'].includes(x) || !!(ds.comps || ds.combined));
     const i = Math.max(0, seq.indexOf(this.state.view)); const n = Math.min(seq.length - 1, Math.max(0, i + d)); if (n !== i) this.go(seq[n]);
   }
-  print(mode: 'summary' | 'full') { this.setState({ printing: mode, menu: null, reveal: true }); const p = () => { try { window.print(); } catch { /* bloqueado */ } }; setTimeout(() => { p(); printPanel(p); }, 600); }
+  // ---------- Exportación ----------
+  // Se exporta exactamente lo que se ve: los supuestos activos (caso base del Excel o escenario modificado del Laboratorio).
+  async exportRun(kind: ExportKind) {
+    if (this.state.exp && this.state.exp.status === 'run') return;
+    const label = EXPORT_LABELS[kind], A = this.state.A as Assumptions, ds = this.ds();
+    const set = (p: Partial<ExportState>) => this.setState(s => ({ exp: { ...(s.exp as ExportState), ...p } }));
+    this.setState({ menu: null, exp: { kind, label, p: 0, msg: 'Calculando con los supuestos activos', status: 'run', modified: false } });
+    try {
+      const S = snapshot(ds, A);
+      if (!S) throw new Error('los supuestos actuales no permiten calcular la valuación; corrígelos o restablece los valores base');
+      set({ modified: !S.isBase });
+      const X = await import('../services/exporter');
+      const prog = (p: number, msg: string) => set({ p: Math.max(0.03, Math.min(0.98, p)), msg });
+      const f = kind === 'exec' || kind === 'full' ? await X.makePdf(S, kind, prog) : kind === 'xlsx' ? await X.makeXlsx(S, prog) : kind === 'zip' ? await X.makeZip(S, prog) : kind === 'csv' ? X.makeCsv(S) : X.makeJson(S);
+      set({ p: 1, msg: 'Guardando' });
+      const r = await X.saveFile(f);
+      set({ status: r.ok ? 'done' : 'error', p: 1, file: f.name, msg: r.ok ? 'Listo' + (f.pages ? ' · ' + f.pages + ' páginas' : '') + ' · ' + (f.blob.size / 1024 < 1024 ? Math.round(f.blob.size / 1024) + ' KB' : (f.blob.size / 1048576).toFixed(1) + ' MB') : r.message, detail: r.ok ? undefined : r.message });
+    } catch (e) {
+      set({ status: 'error', msg: 'No se pudo generar el archivo', detail: (e as Error)?.message || String(e) });
+    }
+  }
+  closeExport() { this.setState({ exp: null }); }
+  /** JSON de una valuación de la Biblioteca (dataset + supuestos guardados) para reabrirla en otra computadora. */
+  async exportDatasetJson(ds: Dataset, A: Assumptions) {
+    const S = snapshot(ds, A); if (!S) { this.flash('Esta valuación no se puede calcular con sus supuestos guardados'); return; }
+    const X = await import('../services/exporter'), r = await X.saveFile(X.makeJson(S));
+    this.flash(r.ok ? 'JSON descargado · ' + r.name : r.message);
+  }
 
   // ---------- Cálculo central (una sola fuente de verdad) ----------
   calc(): Calc {

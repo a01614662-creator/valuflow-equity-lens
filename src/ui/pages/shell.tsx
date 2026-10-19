@@ -161,7 +161,7 @@ export function Header({ vm }: { vm: VM }) {
                 <i className="corner br"></i>
                 <div style={css('padding:8px 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);')}>Exportar valuación · {co.short}</div>
                 {(exportItems || []).map((e: any, $i: number) => (<Fragment key={$i}>
-                  <button className={cx(hv('background:var(--color-accent-100);'))} onClick={e.onClick} style={css('display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px; background:none; border:0; cursor:pointer; text-align:left; color:var(--color-text);')}>
+                  <button className={cx(hv('background:var(--color-accent-100);'))} onClick={e.onClick} disabled={e.disabled} style={css('display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px; background:none; border:0; cursor:pointer; text-align:left; color:var(--color-text);')}>
                     <span style={css('font-weight:600; font-size:14px;')}>{e.label}</span>
                     <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{e.desc}</span></button>
                 </Fragment>))}</div>
@@ -235,6 +235,32 @@ export function PresentationBar({ vm }: { vm: VM }) {
 }
 
 /** Aviso breve. */
+/** Estado de la exportación: avance real por etapa, archivo generado o error con su causa. */
+export function ExportStatus({ vm }: { vm: VM }) {
+  const x = vm.exp;
+  if (!x) return null;
+  return (
+    <div data-noprint role={x.error ? 'alert' : 'status'} aria-live="polite" className="blueprint" style={css('position:fixed; bottom:24px; right:24px; z-index:96; width:min(380px, calc(100vw - 32px)); background:var(--color-bg); box-shadow:var(--shadow-lg); padding:16px 18px; display:flex; flex-direction:column; gap:10px; font-size:14px;')}>
+      <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+      <div style={css('display:flex; justify-content:space-between; gap:12px; align-items:baseline;')}>
+        <strong style={css('font-family:var(--font-heading); font-size:18px; font-weight:600;')}>{x.label}</strong>
+        <span style={css(`font-size:13px; color:${x.error ? 'var(--neg)' : x.done ? 'var(--pos)' : 'var(--color-neutral-700)'};`)}>{x.error ? 'Error' : x.done ? 'Listo' : x.pct + '%'}</span>
+      </div>
+      <div style={css('font-size:12px; color:var(--color-neutral-700);')}>{x.scope}</div>
+      <div aria-hidden="true" style={css('height:6px; background:var(--color-neutral-200, #e3e3e6); position:relative; overflow:hidden;')}>
+        <div style={css(`position:absolute; inset:0 auto 0 0; width:${x.pct}%; background:${x.error ? 'var(--neg)' : 'var(--color-accent)'}; transition:width .25s ease;`)}></div>
+      </div>
+      <div data-export-msg style={css('line-height:1.45;')}>{x.done && x.file ? <>Descargado: <span style={css('word-break:break-all;')}>{x.file}</span> · {x.msg.replace(/^Listo · /, '')}</> : x.msg}</div>
+      {x.error && x.detail ? <div style={css('font-size:13px; color:var(--neg); line-height:1.45;')}>{x.detail}</div> : null}
+      {!x.running ? (
+        <div style={css('display:flex; gap:8px; justify-content:flex-end;')}>
+          {x.error ? <button className="btn btn-secondary" onClick={x.retry}>Reintentar</button> : null}
+          <button className="btn btn-ghost" onClick={x.close}>Cerrar</button>
+        </div>) : null}
+    </div>
+  );
+}
+
 export function Toast({ vm }: { vm: VM }) {
   const { toast } = vm;
   return (<>

@@ -4,7 +4,6 @@ import * as E from '../engine';
 import { fmt as f, labelsOf, unitsOf, type Assumptions, type Dataset, type RunOk, type RunResult } from '../engine';
 import { buildDeck } from './present/deck';
 import { FIELDS } from '../services/importer';
-import { exportCSV, exportJSON, exportXLSX, getXLSX } from '../services/exporter';
 import { store } from '../services/store';
 import { brandColor } from '../services/research';
 import { DEFAULT_ID } from '../data/registry';
@@ -12,7 +11,7 @@ import { PROJECT } from '../config';
 import { annexDefs, annexTables } from './annex';
 import { betaTables, inflationChain, inflationChart, inflationTables, overridesActive, relativeView } from './relative';
 import type { App } from './App';
-import { SEQ, SEQ_N } from './App';
+import { EXPORT_LABELS, SEQ, SEQ_N, type ExportKind } from './App';
 
 export type VM = Record<string, any>;
 
@@ -26,7 +25,7 @@ const initialsOf = (s: string) => s.split(/\s+/).map(w => w[0]).join('').slice(0
 
 export function buildView(app: App): VM {
   const S = app.state;
-  if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pres: {}, toast: {} };
+  if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pres: {}, toast: {}, exp: null };
   const c = app.calc(), ds = c.ds, b = c.view as RunOk, A = c.VA, P = ds.profile, rv = S.reveal || !!S.printing, L = labelsOf(ds);
   const view = S.view, pr = S.printing;
   const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, p4: view === 'p4' || !!pr, p5: view === 'p5' || !!pr, p6: view === 'p6' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
@@ -51,13 +50,14 @@ export function buildView(app: App): VM {
   const NAV = [['01', 'Valor', 'p1'], ['02', 'Flujos', 'p2'], ['03', 'Riesgo', 'p3']].concat(hasRel ? [['04', 'Múltiplos', 'p4'], ['05', 'Transacciones', 'p5'], ['06', 'Combinada', 'p6']] : []).concat([['', 'Laboratorio', 'lab'], ['', 'Anexos', 'annex'], ['', 'Equipo', 'team']]);
   const navItems = NAV.map(([num, label, vw]) => ({ num, label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
   const mobileNav = [['Inicio', 'cover'], ['Valor', 'p1'], ['Flujos', 'p2'], ['Riesgo', 'p3'], ['Más', 'annex']].map(([label, vw]) => ({ label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
-  const exportItems = [
-    { label: 'PDF · Resumen ejecutivo', desc: 'Valor, flujos, costo de capital y sensibilidad', onClick: () => app.print('summary') },
-    { label: 'PDF · Reporte completo', desc: 'Resumen + todos los anexos y la validación', onClick: () => app.print('full') },
-    { label: 'Excel (.xlsx)', desc: 'Resumen, supuestos, FCF, WACC, sensibilidad, validación', onClick: () => { app.setState({ menu: null }); getXLSX() ? (b.ok && exportXLSX(ds, A, b)) : app.flash('Excel aún no disponible'); } },
-    { label: 'CSV', desc: 'Datos financieros normalizados', onClick: () => { app.setState({ menu: null }); b.ok && exportCSV(ds, b); } },
-    { label: 'Dataset ValuFlow (.json)', desc: 'Para reabrir esta valuación en otra computadora', onClick: () => { app.setState({ menu: null }); exportJSON(ds, S.A as Assumptions); } }
-  ];
+  const exportItems = ([
+    ['exec', 'Dos o tres páginas: resultado, recomendación, escenarios y riesgos'],
+    ['full', 'Portada, índice, 16 secciones con tablas y gráficas numeradas'],
+    ['xlsx', 'Libro con fórmulas (WACC, FCFF, transacciones, combinada) y todas las tablas'],
+    ['csv', 'Todas las tablas del reporte en un archivo (UTF-8)'],
+    ['json', 'Dataset y supuestos activos; se reabre en ValuFlow'],
+    ['zip', 'Ambos PDF, Excel, CSV por tabla, JSON, gráficas y LEEME']
+  ] as [ExportKind, string][]).map(([k, desc]) => ({ label: EXPORT_LABELS[k], desc, onClick: () => app.exportRun(k), disabled: !!(S.exp && S.exp.status === 'run') }));
 
   // ----- Página 01 -----
   let track: any = {}, football: any = { rows: [] }, wf: any = { steps: [] }, kpis: any[] = [], insights: any[] = [];
@@ -257,7 +257,7 @@ export function buildView(app: App): VM {
     name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + ' · ' + x.profile.currency, hasLogo: !!x.profile.logo, noLogo: !x.profile.logo, logo: x.profile.logo || '', brand: x.profile.brand || ACC, initials: initialsOf(x.profile.short || x.profile.name), tag: x.builtIn ? 'Caso presentado' : 'Importada', tagCls: x.builtIn ? 'tag-accent' : 'tag-neutral', valTxt: rr.ok ? f.cur(rr.value) : '—', upTxt: rr.ok && rr.upside != null ? f.pp(rr.upside) : '—', upColor: rr.ok && (rr.upside ?? 0) >= 0 ? POS : NEG, created: (x.builtIn ? 'Modelo académico · ' : 'Creada ') + String(x.createdAt).slice(0, 10) + ' · ' + x.version, border: x.id === S.activeId ? ACC : 'var(--color-divider)', canDel: !x.builtIn,
     onOpen: () => { app.switchCompany(x.id); app.go('p1'); },
     onDup: () => { const cp: Dataset = JSON.parse(JSON.stringify(x)); cp.id = 'c' + Date.now().toString(36); cp.builtIn = false; cp.profile.name = x.profile.name + ' (copia)'; cp.createdAt = new Date().toISOString(); cp.updatedAt = cp.createdAt; cp.version = 'Copia de ' + x.version; store.setA(cp.id, store.getA(x.id)); app.saveCompanies([...app.state.companies, cp]); app.flash('Valuación duplicada'); },
-    onJson: () => exportJSON(x, x.id === S.activeId ? SA : { ...E.defaults(x), ...(store.getA(x.id) || {}) }),
+    onJson: () => app.exportDatasetJson(x, x.id === S.activeId ? SA : { ...E.defaults(x), ...(store.getA(x.id) || {}) }),
     onDel: () => { if (!confirm('¿Eliminar la valuación de ' + x.profile.name + '?')) return; store.setA(x.id, null); const list = app.state.companies.filter(y => y.id !== x.id); app.saveCompanies(list); if (S.activeId === x.id) app.switchCompany(DEFAULT_ID); }
   }));
 
@@ -315,6 +315,8 @@ export function buildView(app: App): VM {
     deck: S.deck && b.ok ? { data: buildDeck(ds, A, b, PROJECT.team.map(t => t[0]), PROJECT.institution + ' · ' + PROJECT.course + ' · ' + PROJECT.year, !c.isBase || overridesActive(c.A)), index: S.slide, onIndex: (i: number) => app.setSlide(i), onExit: () => app.exitPresent(), onLive: () => app.presentLive(), team: PROJECT.team.map(t => t[0]).join(' · ') } : null,
     pres: { on: S.presenting, label: (pi >= 0 ? SEQ_N[pi] : 'Fuera de secuencia') + ' · ' + (pi + 1) + '/' + SEQ.length, progress: ((pi + 1) / SEQ.length * 100) + '%', prev: () => app.presStep(-1), next: () => app.presStep(1), exit: () => app.exitPresent() },
     toast: { show: !!S.toast, t: S.toast || '' },
+    exp: S.exp ? { ...S.exp, pct: Math.round(S.exp.p * 100), running: S.exp.status === 'run', done: S.exp.status === 'done', error: S.exp.status === 'error', close: () => app.closeExport(), retry: () => app.exportRun(S.exp!.kind),
+      scope: S.exp.modified ? 'Escenario modificado (supuestos del Laboratorio)' : 'Caso base del Excel' } : null,
     startTour: () => app.go('p1'), startPresent: () => app.startPresent(), goCover: go('cover'), goImport: () => { app.setState({ imp: app.newImp() }); app.go('import'); }, goLibrary: go('library'),
     goP1: go('p1'), goP2: go('p2'), goP3: go('p3'), goLab: go('lab'), goAnnexMethod: go('annex', ds.method ? 'ls' : 'dcf'), goAnnexMet: go('annex', 'method'),
     toggleCompanyMenu: () => app.setState({ menu: S.menu === 'company' ? null : 'company' }), toggleExportMenu: () => app.setState({ menu: S.menu === 'export' ? null : 'export' }),

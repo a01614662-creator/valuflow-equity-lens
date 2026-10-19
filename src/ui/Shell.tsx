@@ -1,7 +1,7 @@
 // Estructura general de la página: portada o aplicación, más capas flotantes (panel, presentación, avisos).
 import { css } from './css';
 import type { VM } from './viewmodel';
-import { Cover, Drawer, ErrorBanner, Footer, Header, MobileNav, PresentationBar, Splash, Toast } from './pages/shell';
+import { Cover, Drawer, ErrorBanner, ExportStatus, Footer, Header, MobileNav, PresentationBar, Splash, Toast } from './pages/shell';
 import { ValuePage } from './pages/ValuePage';
 import { FlowsPage } from './pages/FlowsPage';
 import { RiskPage } from './pages/RiskPage';
@@ -46,6 +46,7 @@ export function Shell({ vm }: { vm: VM }) {
       <PresentationBar vm={vm} />
       {vm.deck ? <Deck deck={vm.deck.data} index={vm.deck.index} onIndex={vm.deck.onIndex} onExit={vm.deck.onExit} onLive={vm.deck.onLive} team={vm.deck.team} /> : null}
       <Toast vm={vm} />
+      <ExportStatus vm={vm} />
     </div>
   );
 }
