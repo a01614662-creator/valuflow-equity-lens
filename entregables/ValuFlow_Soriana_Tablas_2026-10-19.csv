@@ -1,7 +1,7 @@
 ﻿# ValuFlow,"Organización Soriana, S.A.B. de C.V. · datos del reporte técnico",,,
 # Escenario,Caso base del Excel (inflación Base),,,
 # Equipo,Adrián Fermín Rodríguez Valades (A01614820); Saúl González Loredo (A016113349); Miguel Emilio Pérez García (A01613516); Mauricio Fernandez Juarez (A01614732); Francisco Aarón Ponce Flores (A01614662),,,
-# Generado,2026-10-19T20:01:57.720Z,,,
+# Generado,2026-10-19T23:58:07.410Z,,,
 tabla,titulo,concepto,columna,valor
 Tabla 1,Datos clave de la valuación,Precio de mercado de referencia,Valor,$33.48 (cierre 25-sep-2026)
 Tabla 1,Datos clave de la valuación,Fecha de valuación,Valor,01-oct-2026
@@ -10,7 +10,7 @@ Tabla 1,Datos clave de la valuación,Rango DCF por escenario de inflación,Valor
 Tabla 1,Datos clave de la valuación,Trading Comps,Valor,"$33.49 (7 comparable(s), media)"
 Tabla 1,Datos clave de la valuación,Precedent Transactions LSEG/SDC (referencia),Valor,"$23.74 (mediana EV/EBITDA, 8 operaciones; peso 0%)"
 Tabla 1,Datos clave de la valuación,Precio objetivo combinado,Valor,$35.92 (50% DCF · 50% Trading Comps · 0% Transacciones)
-Tabla 1,Datos clave de la valuación,Recomendación,Valor,MANTENER (potencial +7.3% frente a $33.48)
+Tabla 1,Datos clave de la valuación,Recomendación,Valor,COMPRAR (potencial +7.3% frente a $33.48)
 Tabla 1,Datos clave de la valuación,WACC / Ke / g,Valor,9.56% / 10.40% / 3.50%
 Tabla 1,Datos clave de la valuación,Beta desapalancada (βU) / apalancada (βL),Valor,0.1705 / 0.2097
 Tabla 1,Datos clave de la valuación,Enterprise Value (cierre de 2025 / 2T26),Valor,"79,383 / 84,152 mdp"
@@ -1786,9 +1786,9 @@ Tabla 36,Ponderación de métodos,Precio objetivo combinado,Motivo,Diap. 18: pes
 Tabla 37,Recomendación,Precio objetivo,Valor,$35.92
 Tabla 37,Recomendación,Precio de mercado,Valor,$33.48 (25-sep-2026)
 Tabla 37,Recomendación,Potencial,Valor,+7.3%
-Tabla 37,Recomendación,Umbral de compra / venta,Valor,+10% / −10%
+Tabla 37,Recomendación,Umbral de compra / venta,Valor,+5% / −5%
 Tabla 37,Recomendación,Rango de valor razonable,Valor,$28.99 a $38.34
-Tabla 37,Recomendación,Recomendación,Valor,MANTENER
+Tabla 37,Recomendación,Recomendación,Valor,COMPRAR
 Tabla 38,Escenarios de inflación (modelo completo re-ejecutado),Cautela,Inflación,3.26%
 Tabla 38,Escenarios de inflación (modelo completo re-ejecutado),Cautela,WACC,9.56%
 Tabla 38,Escenarios de inflación (modelo completo re-ejecutado),Cautela,Ventas 2030E,"191,129"
@@ -2195,15 +2195,21 @@ Tabla 45,Auditoría del Excel PRO DEFINITIVO,13,Hallazgo,"La βU oficial pasa de
 Tabla 45,Auditoría del Excel PRO DEFINITIVO,13,Impacto,"Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F)."
 Tabla 45,Auditoría del Excel PRO DEFINITIVO,13,Corrección / decisión,"Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico)."
 Tabla 45,Auditoría del Excel PRO DEFINITIVO,13,Prueba,Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector.
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Hoja / área,DCF
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Tipo,"Revisado, sin cambio"
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Hallazgo,Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge.
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Impacto,—
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Corrección / decisión,Sin cambios.
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Prueba,Recálculo independiente y controles 23–32.
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Hoja / área,Fechas
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Hoja / área,Recomendación
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Tipo,"Cambio de supuesto (decisión del equipo, 19-oct-2026)"
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Hallazgo,Había dos umbrales: ±15% para la lectura del DCF (Proyección Final B155) y ±10% para la recomendación oficial (Transacciones SDC §7).
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Impacto,Dos reglas distintas podían dar recomendaciones diferentes.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Corrección / decisión,Un solo umbral de ±5%: Transacciones SDC §7 (COMPRAR / VENDER) y B155 vinculado a esa celda.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,14,Prueba,Validación y extractor leen el mismo umbral.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Hoja / área,DCF
 Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Tipo,"Revisado, sin cambio"
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Hallazgo,Fecha de valuación 01-oct-2026; precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación); balance 2T26; comparables CIQ al 30-jun-2026; pantalla SDC 19-oct-2026; reporte comparativo 19-oct-2026 con precio 33.10 MXN del 7-oct-2026.
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Impacto,Cada fecha cumple una función distinta.
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Corrección / decisión,"Se rotulan en cada salida; el precio nunca se presenta como ""del día""."
-Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Prueba,—
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Hallazgo,Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Impacto,—
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Corrección / decisión,Sin cambios.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,15,Prueba,Recálculo independiente y controles 23–32.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,16,Hoja / área,Fechas
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,16,Tipo,"Revisado, sin cambio"
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,16,Hallazgo,Fecha de valuación 01-oct-2026; precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación); balance 2T26; comparables CIQ al 30-jun-2026; pantalla SDC 19-oct-2026; reporte comparativo 19-oct-2026 con precio 33.10 MXN del 7-oct-2026.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,16,Impacto,Cada fecha cumple una función distinta.
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,16,Corrección / decisión,"Se rotulan en cada salida; el precio nunca se presenta como ""del día""."
+Tabla 45,Auditoría del Excel PRO DEFINITIVO,16,Prueba,—

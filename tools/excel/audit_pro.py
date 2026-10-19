@@ -348,7 +348,7 @@ section(ws, r, '7. CONCLUSIÓN, VALUACIÓN Y RECOMENDACIÓN', 12)
 r += 1
 REC = {}
 recs = [
-    ('buy', 'Umbral para COMPRAR (potencial mayor a)', 0.1, PCT), ('sell', 'Umbral para VENDER (potencial menor a)', -0.1, PCT),
+    ('buy', 'Umbral para COMPRAR (potencial mayor a)', 0.05, PCT), ('sell', 'Umbral para VENDER (potencial menor a)', -0.05, PCT),
     ('target', 'Precio objetivo (valuación combinada)', f'=C{TRI0 + 6}', MXN), ('pot', 'Potencial / (baja) vs. mercado', None, PCT),
     ('rec', 'Recomendación según el modelo', None, None), ('exp', 'Recomendación de los expertos', '=Comparativo!B19', None),
     ('lo', 'Rango de valor razonable — bajo (mín. de DCF, Comps y SDC sin atípicos)', f'=MIN(C{TRI0},C{TRI0+1},C{TRI0+4})', MXN),
@@ -363,6 +363,10 @@ for k, lab, v, fmt in recs:
     if k in ('buy', 'sell'): c.fill = FILL_IN
     if k in ('target', 'rec'): c.fill = FILL_OUT; c.font = B
     r += 1
+
+# Un solo umbral de decisión (±5%, decisión del equipo 19-oct-2026): la lectura del DCF (Proyección Final B155/B268) usa el de esta sección.
+wb['Proyección Final Soriana']['B155'] = f"='{ws.title}'!C{REC['buy']}"
+wb['Proyección Final Soriana']['A155'] = 'Umbral para recomendación (±) — vinculado a Transacciones SDC §7'
 
 for c_, w in {'A': 14, 'B': 12, 'C': 30, 'D': 14, 'E': 20, 'F': 12, 'G': 30, 'H': 14, 'I': 11, 'J': 16, 'K': 16, 'L': 15, 'M': 15,
               'AC': 70, 'Z': 26, 'AA': 13, 'W': 13}.items():
@@ -556,6 +560,7 @@ FIND = [
     ('Inflación', 'Presentación', 'Las etiquetas de ventana (C189:C192) usan TEXT(fecha,"mmm-yy"): en Excel en español el código "yy" no existe y se muestra literal ("nov-yy a sep-yy").', 'Etiqueta ilegible; no afecta cálculos.', 'Se sustituye por una fórmula independiente del idioma (CHOOSE(MONTH) & año).', 'Recálculo: "nov-24 a sep-26".'),
     ('Fuentes', 'Referencia', 'La fila de pesos apuntaba a "Valuación Combinada!C6:C8" (los pesos están en C4:C6) y no había registro de LSEG/SDC ni del contraste externo.', 'Trazabilidad incompleta.', 'Se corrige y se agregan 3 registros.', '—'),
     ('WACC / Beta', 'Cambio de supuesto (decisión del equipo, 19-oct-2026)', 'La βU oficial pasa de Damodaran 0.69 (corregida por caja) a la beta desapalancada de la regresión semanal de Soriana B contra el IPC: βL observada 0.2178 (p = 0.087, no significativa al 95%) desapalancada con D/E 23,618 / 59,580 y t 30% → βU 0.1705 (fórmula en Beta y Kd §2). Se reapalanca con la estructura de capital de este libro (WACC!B23 a mercado; D/E del DCF en la iteración), sin volver a usar la βL observada.', 'Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F).', "Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico).", 'Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector.'),
+    ('Recomendación', 'Cambio de supuesto (decisión del equipo, 19-oct-2026)', 'Había dos umbrales: ±15% para la lectura del DCF (Proyección Final B155) y ±10% para la recomendación oficial (Transacciones SDC §7).', 'Dos reglas distintas podían dar recomendaciones diferentes.', 'Un solo umbral de ±5%: Transacciones SDC §7 (COMPRAR / VENDER) y B155 vinculado a esa celda.', 'Validación y extractor leen el mismo umbral.'),
     ('DCF', 'Revisado, sin cambio', 'Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge.', '—', 'Sin cambios.', 'Recálculo independiente y controles 23–32.'),
     ('Fechas', 'Revisado, sin cambio', 'Fecha de valuación 01-oct-2026; precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación); balance 2T26; comparables CIQ al 30-jun-2026; pantalla SDC 19-oct-2026; reporte comparativo 19-oct-2026 con precio 33.10 MXN del 7-oct-2026.', 'Cada fecha cumple una función distinta.', 'Se rotulan en cada salida; el precio nunca se presenta como "del día".', '—'),
 ]

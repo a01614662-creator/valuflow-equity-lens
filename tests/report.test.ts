@@ -10,6 +10,7 @@ import { buildReport, reportTables } from '../src/report/content';
 import { chartCatalog } from '../src/report/charts';
 import { buildXlsx, parseCell, tableCsv } from '../src/services/xlsx';
 import { csvAll, valuationJson } from '../src/services/exporter';
+import { SORIANA_XL as XL } from '../src/data/soriana.excel';
 
 const ds = BUILT_IN[0], D = E.defaults(ds), when = new Date(2026, 9, 19);
 const S0 = snapshot(ds, D, when)!, R0 = buildReport(S0, 'full');
@@ -22,7 +23,7 @@ describe('contenido del reporte', () => {
     expect(R0.meta.caseLabel).toMatch(/Caso base del Excel/);
     expect(cell(R0, 'keyFacts', 'Valor DCF por acción')[1]).toContain(E.fmt.cur(S0.b.value));
     expect(cell(R0, 'keyFacts', 'Precio objetivo combinado')[1]).toContain(E.fmt.cur(S0.rel.combined!.value as number));
-    expect(cell(R0, 'keyFacts', 'Recomendación')[1]).toMatch(/^MANTENER/);
+    expect(cell(R0, 'keyFacts', 'Recomendación')[1]).toMatch(/^COMPRAR/); expect(S0.rec!.rating).toBe(XL.recommendation.rating);
   });
   it('reporte técnico: 16 secciones en orden, tablas y gráficas numeradas sin huecos', () => {
     expect(R0.sections.map(s => s.title.split('.')[0])).toEqual(Array.from({ length: 16 }, (_, i) => String(i + 1)));

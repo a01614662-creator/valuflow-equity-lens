@@ -297,7 +297,10 @@ cr0 = find_row(S, 'Estadístico oficial', start=D1)
 rr0 = find_row(S, 'Umbral para COMPRAR', start=D1)
 recommendation = {'buy': S[f'C{rr0}'].value, 'sell': S[f'C{rr0+1}'].value, 'target': S[f'C{rr0+2}'].value, 'potential': S[f'C{rr0+3}'].value,
                   'rating': S[f'C{rr0+4}'].value, 'experts': S[f'C{rr0+5}'].value, 'fairLo': S[f'C{rr0+6}'].value, 'fairHi': S[f'C{rr0+7}'].value,
-                  'rule': 'Precio objetivo = valuación combinada; COMPRAR si el potencial supera +10%, VENDER si es menor que −10% (hoja Transacciones SDC §7).'}
+                  'rule': None}
+pc = lambda x: ('+' if x > 0 else '−') + f'{abs(x) * 100:g}%'
+recommendation['rule'] = (f"Precio objetivo = valuación combinada; COMPRAR si el potencial supera {pc(recommendation['buy'])}, "
+                          f"VENDER si es menor que {pc(recommendation['sell'])} (hoja Transacciones SDC §7).")
 sdc = {
     'source': S['A2'].value,
     'screen': {'file': 'GridExport_October_19_2026_9_29_57.pdf', 'date': '2026-10-19', 'time': '09:29:57', 'count': 166, 'columns': 23, 'provider': 'LSEG/SDC (Refinitiv)'},

@@ -24,7 +24,7 @@ export function ValuePage({ vm }: { vm: VM }) {
             <i className="corner bl"></i>
             <i className="corner br"></i>
             <div style={css('display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;')}>
-              <span style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>Valor intrínseco por acción · {co.currency}</span>
+              <span style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>Valor intrínseco DCF por acción · {co.currency}</span>
               <div style={css('display:flex; gap:8px;')}>
                 <span className="tag tag-accent">Resultado</span>
                 <button className="btn btn-ghost" onClick={openDrawerValue} style={css('font-size:13px;')}>¿Cómo se calculó?</button></div></div>
@@ -68,9 +68,9 @@ export function ValuePage({ vm }: { vm: VM }) {
                 <span style={css(`font-family:var(--font-heading); font-size:30px; font-weight:600; color:${r.upColor};`)}>{r.diff}</span>
                 <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Valor − precio</span></div>
               <div style={css('padding:16px 0 0 16px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-                <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Lectura del modelo</span>
+                <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Recomendación</span>
                 <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600;')}>{r.signal}</span>
-                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Umbral ±{r.threshold} · académico</span></div></div></div>
+                <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{r.signalNote}</span></div></div></div>
           <div style={css('flex:5 1 380px; min-width:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0; border:1px solid var(--color-divider); align-content:stretch;')}>
             {(kpis || []).map((k: any, $i: number) => (<Fragment key={$i}>
               <button className={cx(hv('background:var(--color-accent-100);'))} onClick={k.onClick} style={css('text-align:left; background:none; border:0; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); padding:20px; display:flex; flex-direction:column; gap:6px; cursor:pointer; color:var(--color-text); transition:background .2s;')}>

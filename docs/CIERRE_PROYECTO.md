@@ -267,7 +267,7 @@ Decisión del equipo. Solo cambió la beta; transacciones, ponderación, diseño
 | Valor DCF por acción | $31.62 (−5.6%) | **$38.34 (+14.5%)** |
 | Escenarios Cautela / Base / Alcista | $31.28 / $31.62 / $32.29 | $37.93 / $38.34 / $39.14 |
 | Precio objetivo combinado (50% DCF + 50% Comps) | $32.55 (−2.8%) | **$35.92 (+7.3%)** |
-| Recomendación (±10%) | MANTENER | **MANTENER** |
+| Recomendación | MANTENER (±10%) | **MANTENER (±10%) → COMPRAR con el umbral ±5% (§12)** |
 | Rango de valor razonable | $28.99 – $33.49 | $28.99 – $38.34 |
 | Controles del Excel | 49 PASS de 49 | 49 PASS de 49 |
 
@@ -293,6 +293,18 @@ Decisión del equipo. Solo cambió la beta; transacciones, ponderación, diseño
 - Navegador: 29 de 29. Restaurar regresa a $38.34 / $35.92.
 - Excel exportado recalculado: fórmula = app (DCF 38.3401, WACC 9.5628%).
 - PDF ejecutivo: 3 páginas.
+
+## 12. Ajustes finales (19-oct-2026, tras la publicación)
+
+- **Umbral de decisión ±5%** (antes ±10% para la recomendación oficial y ±15% para la lectura del DCF). Ahora hay un solo umbral: `Transacciones SDC §7` (COMPRAR si el potencial > +5%, VENDER si < −5%). `Proyección Final!B155` queda vinculado a esa celda. Con el precio objetivo de $35.92 (+7.3% vs. $33.48), la recomendación pasa de **MANTENER a COMPRAR**. Excel: 49 PASS de 49.
+- **Mismas cifras en toda la app:** la portada mostraba el valor DCF ($38.34, +14.5%) y la presentación el precio objetivo ($35.92, +7.3%). Ahora la portada, la tarjeta "Recomendación" de 01 · Valor, la presentación, los PDF, el Excel y el JSON usan la misma recomendación oficial (precio objetivo combinado, ±5%). El DCF se muestra rotulado como "Valor intrínseco DCF".
+- **Presentación:** sin pies de fuente. Portada con franja de cifras (precio objetivo, mercado, potencial, recomendación), número de diapositiva, indicador de avance y distintivo de recomendación en el cierre. Los textos de pesos y del contraste de métodos se calculan con los supuestos activos.
+- **Verificación:**
+  - `npm test`: 122 de 122.
+  - Tipos y compilación: sin errores.
+  - Navegador: 29 de 29.
+  - Revisión cruzada de cifras: portada, 01, 06, las 7 diapositivas y ambos PDF.
+  - Excel exportado recalculado: fórmula = app y COMPRAR.
 
 ## 11. Archivos cambiados (rama `cierre-equipo-pro` frente a `main` 58e620f)
 
