@@ -97,7 +97,10 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
   const RV = ds.comps || ds.combined ? relative(ds, A, base.value) : null;
   const num = (p: unknown) => isNum(p) ? p : null;
   if (RV && RV.comps) out.push({ key: 'comps', label: 'Trading Comps', sub: RV.comps.n + ' comparables · rango P25–P75', value: num(RV.comps.value), lo: num(RV.comps.p25), hi: num(RV.comps.p75) });
-  if (RV && RV.transactions) out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'Referencia · ' + RV.transactions.n + ' operaciones · mín–máx', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
+  if (RV && RV.sdc && ds.combined?.transactionsSource === 'sdc') {
+    out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'LSEG/SDC · ' + (RV.sdc.stats.evEbitda?.n ?? 0) + ' operaciones · mediana · rango P25–P75', value: num(RV.sdc.value), lo: num(RV.sdc.lo), hi: num(RV.sdc.hi), ref: !(RV.combined && RV.combined.rows.find(r => r.key === 'transactions')!.weight > 0) });
+    if (RV.transactions) out.push({ key: 'transCiq', label: 'Transacciones CIQ (histórico)', sub: RV.transactions.n + ' operaciones · media · mín–máx · no defendible', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
+  } else if (RV && RV.transactions) out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'Referencia · ' + RV.transactions.n + ' operaciones · mín–máx', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
   if (RV && RV.combined) out.push({ key: 'combined', label: 'Valuación combinada', sub: RV.combined.rows.map(r => Math.round(r.weight * 100) + '%').join(' / ') + ' · DCF / Comps / Transactions', value: num(RV.combined.value), lo: null, hi: null, main: true });
   if (ds.altForecasts) Object.keys(ds.altForecasts).forEach(k => {
     const af = ds.altForecasts![k], r = run(ds, { ...A, ...af.overrides, forecastKey: k, dGrowth: 0, dMargin: 0, dCapex: 0, dTax: 0 });

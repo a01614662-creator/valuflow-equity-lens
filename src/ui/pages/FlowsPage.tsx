@@ -134,8 +134,8 @@ export function FlowsPage({ vm }: { vm: VM }) {
               <i className="corner br"></i>
               <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;')}>
                 <div>
-                  <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{extCount} variables externas</div>
-                  <h3 style={css('margin:4px 0 0; font-size:24px;')}>Ajuste a la proyección de ventas</h3></div>
+                  <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{extCount} ajustes por variables externas</div>
+                  <h3 style={css('margin:4px 0 0; font-size:24px;')}>Ajustes documentados en ventas y margen (primer año)</h3></div>
                 <div style={css('display:flex; gap:20px;')}>
                   {(extNet || []).map((e: any, $i: number) => (<Fragment key={$i}>
                     <div style={css('display:flex; flex-direction:column; align-items:flex-end;')}>

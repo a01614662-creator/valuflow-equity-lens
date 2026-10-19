@@ -70,10 +70,17 @@ export function project(ds: Dataset, A: Assumptions): { rows: ProjRow[]; drivers
   return { rows, drivers: D };
 }
 
-function evGordon(rows: ProjRow[], w: number, g: number) {
-  let s = 0; rows.forEach((r, i) => { s += r.fcf / Math.pow(1 + w, i + 1); });
+/** FCF del último año usado en el valor terminal: normalizado (capex = D&A → NOPAT − ΔNWC) o el FCF del año. */
+export function tvBaseFcf(ds: Dataset, rows: ProjRow[], A?: Pick<Assumptions, 'forecastKey'>): number {
   const last = rows[rows.length - 1];
-  return s + last.fcf * (1 + g) / (w - g) / Math.pow(1 + w, rows.length);
+  // La normalización es parte de la proyección final del Excel; las proyecciones alternas conservan su propio método.
+  const finalForecast = !A || !A.forecastKey || A.forecastKey === 'final';
+  return ds.valuation && ds.valuation.tvFcf === 'normalized' && finalForecast ? last.nopat - last.dNwc : last.fcf;
+}
+
+function evGordon(rows: ProjRow[], w: number, g: number, fcfTv: number) {
+  let s = 0; rows.forEach((r, i) => { s += r.fcf / Math.pow(1 + w, i + 1); });
+  return s + fcfTv * (1 + g) / (w - g) / Math.pow(1 + w, rows.length);
 }
 
 // ---------- WACC: mercado, iterado al valor DCF, o manual ----------
@@ -91,7 +98,7 @@ export function wacc(ds: Dataset, A: Assumptions, rows: ProjRow[]): WaccResult {
   const maxIt = W.iterations ?? 14;
   for (let k = 0; k < maxIt; k++) {
     if (!(w > g)) break;
-    const E = evGordon(rows, w, g) - nd; if (!(E > 0)) break;
+    const E = evGordon(rows, w, g, tvBaseFcf(ds, rows, A)) - nd; if (!(E > 0)) break;
     const de = D / E, beta = bu * (1 + (1 - t) * de), ke = rf + beta * prm;
     const wout = E / (D + E) * ke + D / (D + E) * kdAT;
     iters.push({ k, win: w, E, de, beta, ke, wout, wE: E / (D + E), wD: D / (D + E) });
@@ -122,8 +129,8 @@ export function run(ds: Dataset, A: Assumptions): RunResult {
   const w = W.wacc; let pvSum = 0;
   const drows = rows as (ProjRow & { df: number; pv: number })[];
   drows.forEach((r, i) => { r.df = 1 / Math.pow(1 + w, i + 1); r.pv = r.fcf * r.df; pvSum += r.pv; });
-  const last = drows[n - 1], dfN = last.df;
-  const fcfN1 = last.fcf * (1 + g), tvG = fcfN1 / (w - g), pvTvG = tvG * dfN, evG = pvSum + pvTvG;
+  const last = drows[n - 1], dfN = last.df, fcfTv = tvBaseFcf(ds, rows, A);
+  const fcfN1 = fcfTv * (1 + g), tvG = fcfN1 / (w - g), pvTvG = tvG * dfN, evG = pvSum + pvTvG;
   const mult = (A.exitMultiple ?? 0) > 0 ? A.exitMultiple as number : null;
   const tvM = mult ? last.ebitda * mult : null, pvTvM = mult ? tvM! * dfN : null, evM = mult ? pvSum + pvTvM! : null;
   const wG = mult ? Math.min(1, Math.max(0, A.wGordon / 100)) : 1;
@@ -143,13 +150,16 @@ export function run(ds: Dataset, A: Assumptions): RunResult {
   }
   const upside = price > 0 ? value / price - 1 : null;
   const th = ((ds.valuation && ds.valuation.signalThreshold) ?? 15) / 100;
-  const signal = upside == null ? null : (Math.abs(upside) <= th ? 'Mantener' : (upside > 0 ? 'Valor por encima del umbral' : 'Valor por debajo del umbral'));
+  // Misma regla que 'Proyección Final Soriana'!B268: COMPRAR si el potencial supera el umbral, VENDER si es menor que −umbral.
+  const signal = upside == null ? null : (upside > th ? 'Comprar' : upside < -th ? 'Vender' : 'Mantener');
   return {
     ok: true, errors, warnings, rows: drows, drivers: P.drivers, W, wacc: w, ke: W.ke, g,
     pvSum, fcfN1, tvG, pvTvG, evG, mult, tvM, pvTvM, evM, wG, evW, nd, eqClose, priceClose, priceG, priceM,
     pvTvW: wG * pvTvG + (1 - wG) * (pvTvM || 0), tvWeightG: pvTvG / evG, tvWeightW: (wG * pvTvG + (1 - wG) * (pvTvM || 0)) / evW,
     roll, eqVal, ev: roll ? roll.ev2 : evW, value, price, shares, upside, signal, threshold: th,
-    impliedMultiple: tvG / last.ebitda
+    impliedMultiple: tvG / last.ebitda, fcfTv,
+    // g implícita en el múltiplo de salida: TV = FCF(1+g)/(WACC−g) ⇒ g = (TV·WACC − FCF)/(TV + FCF).
+    impliedG: tvM != null ? (tvM * w - fcfTv) / (tvM + fcfTv) : null
   };
 }
 

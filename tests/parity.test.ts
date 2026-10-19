@@ -39,13 +39,17 @@ describe('dataset de Soriana', () => {
   });
 });
 
+// Cambios aprobados respecto al prototipo (instrucción de cierre, oct-2026): el resultado agrega fcfTv e impliedG
+// (FCF del valor terminal y g implícita del múltiplo) y la señal usa la regla del Excel (Comprar / Mantener / Vender).
+const cmp = (r: unknown) => { const x = plain(r) as Record<string, unknown>; delete x.fcfTv; delete x.impliedG; delete x.signal; return x; };
+
 describe('paridad con el motor original', () => {
   const ds = soriana;
 
   it('caso base: todos los resultados idénticos', () => {
     const A = E.defaults(ds);
     expect(plain(A)).toEqual(plain(VF.defaults(legacyDs)));
-    expect(plain(E.run(ds, A))).toEqual(plain(VF.run(legacyDs, A)));
+    expect(cmp(E.run(ds, A))).toEqual(cmp(VF.run(legacyDs, A)));
   });
 
   it('3,000 combinaciones aleatorias de supuestos: run() idéntico', () => {
@@ -54,7 +58,7 @@ describe('paridad con el motor original', () => {
     for (let i = 0; i < 3000; i++) {
       const A = randomAssumptions(ds, r);
       const mine = E.run(ds, A), theirs = VF.run(legacyDs, plain(A));
-      expect(plain(mine)).toEqual(plain(theirs));
+      expect(cmp(mine)).toEqual(cmp(theirs));
       mine.ok ? ok++ : fail++;
     }
     // Se cubren tanto valuaciones válidas como casos de error (p. ej. g ≥ WACC, sin acciones).

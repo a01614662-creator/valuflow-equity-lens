@@ -1,4 +1,4 @@
-// Excel = app. El Excel maestro integrado es la fuente; la app debe reproducirlo celda por celda.
+// Excel = app. El Excel PRO AUDITADO es la fuente; la app debe reproducirlo celda por celda.
 // Los resultados esperados se generaron recalculando el Excel con cada escenario de inflación
 // (tools/excel/extract_dataset.py → src/data/soriana.excel.ts).
 import { describe, expect, it } from 'vitest';
@@ -54,14 +54,27 @@ describe('DCF = Excel (por escenario de inflación y beta)', () => {
     });
   });
 
-  it('baseline histórico: trayectoria Citi + βU heredada 0.80 reproduce $31.164416…', () => {
-    expect(runX('historico').value).toBeCloseTo(31.164416422208653, 9);
+  it('baseline histórico del PRO: trayectoria Citi + βU heredada 0.80 = Validación!C9 ($30.93)', () => {
+    expect(runX('historico').value).toBeCloseTo(30.931885693122553, 9);
   });
-  it('valor oficial por defecto (Base 3.51%, βU Damodaran 0.65) = Excel', () => {
+  it('valor oficial por defecto (Base 3.51%, βU Damodaran 0.69 corregida por caja) = Excel PRO auditado ($31.62)', () => {
     expect(E.defaults(soriana).inflation).toBe('base');
     const b = E.run(soriana, E.defaults(soriana)) as E.RunOk;
     close(b.value, XL.expected.dcf.base.price, 1e-11);
-    expect(b.value).toBeCloseTo(32.41476081702, 9);
+    expect(b.value).toBeCloseTo(31.6168901445216, 9);
+    expect(b.signal).toBe('Mantener'); expect(XL.expected.dcf.base.signal).toBe('MANTENER');
+  });
+  it('valor terminal con FCF normalizado (capex = D&A) y tendencia de mínimos cuadrados que crece con la inflación', () => {
+    (['citi', 'cautela', 'base', 'alcista'] as const).forEach(k => {
+      const b = run(k), X = XL.expected.dcf[k];
+      close(b.fcfTv, X.fcfTv, 1e-11); close(b.impliedMultiple, X.impliedMultiple, 1e-11); close(b.impliedG!, X.impliedG, 1e-10);
+      const B = b.drivers.build!; close(B.lsBase, X.lsSales[0], 1e-14); B.years.forEach((y, i) => close(y.lsSales, X.lsSales[i + 1], 1e-12));
+    });
+  });
+  it('sensibilidad del PRECIO OBJETIVO FINAL (WACC × g, Ke fijo) = sección 12 del Excel; el centro es el precio oficial', () => {
+    const X = XL.expected.dcf.base.sensFinal, base = run('base'), G = E.grid(soriana, E.defaults(soriana), base, 0.5, 0.5);
+    X.waccs.forEach((w, i) => { close(G.ws[i] / 100, w, 1e-12); X.gs.forEach((g, j) => { close(G.gs[j] / 100, g, 1e-12); close(G.cells[i][j] as number, X.grid[i][j], 1e-10); }); });
+    close(X.grid[2][2], base.value, 1e-10);
   });
   it('mayor inflación → mayor valor (WACC nominal fijo; limitación documentada)', () => {
     const v = ['cautela', 'base', 'alcista'].map(k => run(k).value);
@@ -138,7 +151,7 @@ describe('Trading Comps = hoja Trading Comps', () => {
   });
 });
 
-describe('Precedent Transactions = hoja Precedent Transactions', () => {
+describe('Precedent Transactions CIQ (histórico) = hoja Transacciones', () => {
   const T = E.transactions(soriana.transactions!, soriana.comps!.target), X = XL.expected.transactions;
   it('criterios de clase: ventana de 3 años, geografía y ≥2 múltiplos', () => {
     expect(T.windowStart).toBe(X.windowStart);
@@ -158,6 +171,46 @@ describe('Precedent Transactions = hoja Precedent Transactions', () => {
   });
 });
 
+describe('Precedent Transactions LSEG/SDC = hoja Transacciones SDC (auditada)', () => {
+  const S = E.sdc(soriana.sdc!, soriana.comps!.target), X = XL.expected.sdc;
+  it('criterios por operación = columnas U:AB del Excel (ventana, ≥2 múltiplos, recompra, juicio)', () => {
+    soriana.sdc!.deals.forEach((d, i) => {
+      const e = (XL.sdc.deals[i] as unknown as { expected: Record<string, unknown> }).expected, c = S.checks[i];
+      expect(c.nMultiples).toBe(e.nMultiples); expect(c.inWindow ? 'Sí' : 'No').toBe(e.inWindow); expect(c.enough ? 'Sí' : 'No').toBe(e.enough);
+      expect(c.buyback ? 'Sí' : 'No').toBe(e.buyback); expect(c.include).toBe(e.include);
+    });
+    expect(S.n).toBe(9); expect(soriana.sdc!.deals.length).toBe(23);
+  });
+  it('estadísticos por múltiplo (NA no cuenta), límites de atípicos y precios implícitos', () => {
+    (['evEbitda', 'evSales', 'pe'] as const).forEach(k => {
+      const m = S.stats[k]!, x = X.stats[k];
+      (['min', 'p25', 'mean', 'median', 'p75', 'max', 'lo', 'hi', 'meanEx', 'medianEx'] as const).forEach(s => close(m[s], x[s] as number, 1e-12));
+      expect(m.n).toBe(x.n); expect(m.nOut).toBe(x.nOut);
+    });
+    (Object.keys(X.prices) as (keyof typeof X.prices)[]).forEach(k => close(S.prices[k] as number, X.prices[k] as number, 1e-12));
+    close(S.value as number, X.prices.median, 1e-12); close(S.lo as number, X.prices.p25, 1e-12); close(S.hi as number, X.prices.p75, 1e-12);
+    expect(S.stats.evEbitda!.n).toBe(8); expect(S.stats.evSales!.n).toBe(9);
+  });
+  it('sensibilidad de la muestra (operaciones de juicio) = sección 4 del Excel', () => {
+    S.sensitivity.forEach((sc, i) => {
+      const x = XL.sdc.sensitivity[i]; expect(sc.n).toBe(x.n); close(sc.median!, x.median, 1e-12); close(sc.priceMedian as number, x.priceMedian, 1e-12);
+      close(sc.meanEx!, x.meanEx, 1e-12); close(sc.priceMeanEx as number, x.priceMeanEx, 1e-12);
+    });
+  });
+  it('Rank Value y EV al anuncio son campos distintos; los NA quedan como null (nunca cero)', () => {
+    const exito = soriana.sdc!.deals.find(d => d.id === '4144889040')!;
+    expect(exito.rankValue).toBeCloseTo(1019.99, 2); expect(exito.ev).toBeCloseTo(1744.4697, 3); expect(exito.pe).toBeNull();
+    const rimi = soriana.sdc!.deals.find(d => d.id === '4364904040')!;
+    expect(rimi.ev).toBeNull(); expect(rimi.evEbitda).toBeNull();
+    const hq = soriana.sdc!.deals.find(d => d.id === '4172416040')!;
+    expect(hq.target).toMatch(/Hongqi/); expect(hq.change).toBe('Corregido');
+  });
+  it('cambiar la inclusión de una operación recalcula la mediana y el precio', () => {
+    const S2 = E.sdc(soriana.sdc!, soriana.comps!.target, { sdcInclude: { '4338758040': 0 } });
+    close(S2.stats.evEbitda!.median, XL.sdc.sensitivity[1].median, 1e-12);
+  });
+});
+
 describe('Valuación combinada = hoja Valuación Combinada', () => {
   [...SCEN, 'historico', 'base_beta080'].forEach(k => it(k + ': DCF 50% + Comps 50% + Transactions 0%', () => {
     const b = runX(k), R = E.relative(soriana, E.defaults(soriana), b.value);
@@ -174,7 +227,7 @@ describe('Valuación combinada = hoja Valuación Combinada', () => {
     const R = E.combine({ dcf: 30, comps: 34, transactions: 40 }, { dcf: 0.6, comps: 0.5, transactions: 0 });
     expect(R.value).toBe('NA'); expect(R.errors[0]).toMatch(/100%/);
     const R2 = E.relative(soriana, { ...E.defaults(soriana), weights: { dcf: 0.5, comps: 0.3, transactions: 0.2 } }, 32);
-    close(R2.combined!.value as number, 0.5 * 32 + 0.3 * (XL.expected.comps.value) + 0.2 * XL.expected.transactions.value, 1e-12);
+    close(R2.combined!.value as number, 0.5 * 32 + 0.3 * (XL.expected.comps.value) + 0.2 * XL.expected.sdc.prices.median, 1e-12);
     expect(R2.combined!.rows.filter(r => r.weight > 0).length).toBe(3);
   });
   it('un método con peso y sin precio deja el combinado en NA (no se toma como cero)', () => {
@@ -184,9 +237,9 @@ describe('Valuación combinada = hoja Valuación Combinada', () => {
 });
 
 describe('controles del Excel maestro', () => {
-  it('todos los controles PASS en la hoja Validación (39)', () => {
-    expect(XL.expected.validation.checks.length).toBe(39);
-    expect(XL.expected.validation.summary).toBe('39 PASS de 39');
+  it('todos los controles PASS en la hoja Validación (49: 39 originales + 10 de la auditoría)', () => {
+    expect(XL.expected.validation.checks.length).toBe(49);
+    expect(XL.expected.validation.summary).toBe('49 PASS de 49');
     expect(XL.expected.validation.checks.every(c => c[1] === 'PASS')).toBe(true);
   });
 });
@@ -225,24 +278,24 @@ describe('pruebas aleatorias de los métodos nuevos', () => {
 
 describe('beta del WACC (Damodaran global, enero 2026)', () => {
   const Bt = soriana.beta!, X = XL.expected.dcf;
-  it('fuente documentada: Retail (Grocery and Food), βL 0.87, βU 0.65', () => {
-    expect(Bt.industry).toBe('Retail (Grocery and Food)'); expect(Bt.date).toMatch(/2026/);
-    expect(Bt.levered).toBe(0.87); expect(Bt.unlevered).toBe(0.65); expect(Bt.url).toMatch(/BetasGlobal/);
+  it('fuente documentada: Retail (Grocery and Food), βL 0.87, βU 0.65, corregida por caja 0.69', () => {
+    expect(Bt.industry).toBe('Retail (Grocery and Food)'); expect(String(Bt.date)).toMatch(/2026/);
+    expect(Bt.levered).toBe(0.87); expect(Bt.unlevered).toBe(0.65); expect(Bt.unleveredCash).toBe(0.69); expect(Bt.used).toBe(0.69);
   });
   it('control: desapalancar 0.87 con D/E 45.96% y t 25.37% da 0.65 (redondeo)', () => {
     const bu = Bt.levered / (1 + (1 - Bt.marginalTax) * Bt.de);
     expect(Math.abs(bu - Bt.unlevered)).toBeLessThan(0.005); close(bu, Bt.check!, 1e-12);
   });
   it('el WACC usa la βU sectorial reapalancada (no la βL de 0.87 ni la beta histórica)', () => {
-    expect(soriana.wacc.betaU).toBe(Bt.unlevered);
+    expect(soriana.wacc.betaU).toBe(Bt.used);
     expect(soriana.wacc.betaU).not.toBe(soriana.inflation!.beta!.historical);
     const b = run('base'), it = b.W.iterated!, mk = b.W.market;
-    close(mk.beta, Bt.unlevered * (1 + (1 - mk.tax) * mk.de), 1e-12);
-    close(it.beta, Bt.unlevered * (1 + (1 - it.tax) * it.de), 1e-12);
+    close(mk.beta, Bt.used * (1 + (1 - mk.tax) * mk.de), 1e-12);
+    close(it.beta, Bt.used * (1 + (1 - it.tax) * it.de), 1e-12);
     close(it.ke, b.W.rf + it.beta * b.W.prm, 1e-12);
     close(it.beta, X.base.betaLIter, 1e-11); close(mk.beta, X.base.betaLMarket, 1e-12);
   });
-  it('impacto del cambio de beta = Excel (Base: βU 0.80 → 0.65)', () => {
+  it('impacto del cambio de beta = Excel (Base: βU 0.80 → 0.69)', () => {
     const a = runX('base_beta080'), b = run('base');
     close(a.value, X.base_beta080.price, 1e-11); close(b.value, X.base.price, 1e-11);
     expect(b.ke).toBeLessThan(a.ke); expect(b.wacc).toBeLessThan(a.wacc); expect(b.value).toBeGreaterThan(a.value);

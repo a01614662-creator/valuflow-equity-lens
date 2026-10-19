@@ -35,7 +35,7 @@ export function buildView(app: App): VM {
   const mu = co.units;
   const r = b.ok ? {
     value: f.cur(b.value), price: b.price ? f.cur(b.price) : 'No disponible', upside: b.upside != null ? f.pp(b.upside) : '—', upColor, heroDisp: f.cur(S.heroDisp || 0),
-    diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: b.signal === 'Mantener' ? 'Mantener' : ((b.upside as number) > 0 ? 'Sobre umbral' : 'Bajo umbral'), threshold: Math.round(b.threshold * 100) + '%',
+    diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: b.signal || '—', threshold: Math.round(b.threshold * 100) + '%',
     modelLabel: A.forecastKey && A.forecastKey !== 'final' && ds.altForecasts ? ds.altForecasts[A.forecastKey].label : (ds.builtIn ? 'Proyección final · DCF' : 'DCF base'), tvWeight: f.p(b.tvWeightG, 1)
   } : { value: '—', price: '—', upside: '—', upColor, heroDisp: '—', diff: '—', signal: '—', threshold: '', modelLabel: '', tvWeight: '—' };
 
@@ -105,7 +105,10 @@ export function buildView(app: App): VM {
     const yrs = [ds.forecast.baseYear].concat(R.map(rr => rr.year)), X0 = 80, X1 = 600, xs = (i: number) => X0 + i * (X1 - X0) / (yrs.length - 1);
     const series: any[] = [{ label: 'Proyección final', color: ACC, dash: 'solid', w: 3, data: [B.revenue as number].concat(R.map(rr => rr.revenue)), solid: true }];
     const M = ds.method;
-    if (M) { series.push({ label: M.salesConstLabel || 'Supuestos constantes', color: 'var(--color-neutral-600)', dash: 'dashed', w: 2, data: [B.revenue as number].concat(M.salesConst) }); series.push({ label: M.salesLSLabel || 'Mínimos cuadrados', color: 'var(--color-accent-400)', dash: 'dotted', w: 2, data: [M.salesLTM].concat(M.salesLS) }); }
+    // La tendencia de mínimos cuadrados se toma de la proyección en vivo (depende del escenario de inflación activo).
+    const BLD = b.drivers.build, lsLine = BLD ? [BLD.lsBase].concat(BLD.years.map(y => y.lsSales)) : (M ? [M.salesLTM].concat(M.salesLS) : null);
+    if (M) series.push({ label: M.salesConstLabel || 'Supuestos constantes', color: 'var(--color-neutral-600)', dash: 'dashed', w: 2, data: [B.revenue as number].concat(M.salesConst) });
+    if (M && lsLine) series.push({ label: M.salesLSLabel || 'Mínimos cuadrados', color: 'var(--color-accent-400)', dash: 'dotted', w: 2, data: lsLine });
     const allS = series.flatMap(s => s.data as number[]), ymn = Math.min(...allS) * 0.96, ymx = Math.max(...allS) * 1.02, ys = (vv: number) => 248 - (vv - ymn) / (ymx - ymn) * 220;
     const lastY = R[R.length - 1];
     sales = {
@@ -114,7 +117,7 @@ export function buildView(app: App): VM {
       paths: series.map(s => ({ d: (s.data as number[]).map((vv, i) => (i ? 'L' : 'M') + xs(i).toFixed(1) + ' ' + ys(vv).toFixed(1)).join(' '), color: s.color, w: s.w, dash: s.solid ? '1000' : (s.dash === 'dashed' ? '7 6' : '2 5'), off: s.solid ? (rv ? 0 : 1000) : 0 })),
       dots: (series[0].data as number[]).map((vv, i) => ({ x: xs(i).toFixed(1), y: ys(vv).toFixed(1), ty: (ys(vv) - 12).toFixed(1), t: f.m(vv / 1000, 1) + 'k' })),
       xl: yrs.map((y, i) => ({ x: xs(i).toFixed(1), t: y, fw: i === 0 ? 700 : 400 })),
-      note: M ? 'Ventas ' + lastY.year + ': ' + f.m(lastY.revenue) + ' ' + mu + ' con la proyección final, frente a ' + f.m(M.salesConst[M.salesConst.length - 1]) + ' con supuestos constantes y ' + f.m(M.salesLS[M.salesLS.length - 1]) + ' con la tendencia lineal pura.' : 'Crecimiento constante de ' + f.p(R[0].growth) + ' anual a partir del último año reportado.'
+      note: M ? 'Ventas ' + lastY.year + ': ' + f.m(lastY.revenue) + ' ' + mu + ' con la proyección final, frente a ' + f.m(M.salesConst[M.salesConst.length - 1]) + ' con supuestos constantes y ' + f.m(lsLine ? lsLine[lsLine.length - 1] : M.salesLS[M.salesLS.length - 1]) + ' con la tendencia de mínimos cuadrados.' : 'Crecimiento constante de ' + f.p(R[0].growth) + ' anual a partir del último año reportado.'
     };
     if (M) {
       const ls = M.leastSquares, Q = M.lsQuarters, Y = ds.forecast.years, wN = M.weightsExternal.length - 1;
@@ -122,11 +125,18 @@ export function buildView(app: App): VM {
       methodSteps = [
         { n: '01', title: 'Mínimos cuadrados', text: 'Tendencia lineal sobre ' + (Q.length === 5 ? 'cinco' : Q.length) + ' trimestres (' + Q[0] + '–' + Q[Q.length - 1] + ') para ventas, costos, impuestos, D&A, capex y capital de trabajo.', meta: 'R²: ventas ' + r2('ventas') + ' · D&A ' + r2('da') + ' · capital de trabajo ' + r2('nwc') },
         { n: '02', title: 'Variables externas', text: M.external.length + ' variables macroeconómicas, regulatorias y sectoriales ajustan la trayectoria de ventas, costos y capex.', meta: 'Ajuste neto: ventas ' + M.externalNet.sales.toFixed(2) + '% · costos +' + M.externalNet.costs.toFixed(2) + '% · capex +' + M.externalNet.capex.toFixed(2) + '%' },
-        { n: '03', title: 'Ponderación', text: 'La proyección final combina ambos métodos: ' + M.weightsExternal[0] + '% variables externas en ' + Y[0] + ', hasta ' + M.weightsExternal[wN] + '% en ' + Y[wN] + '.', meta: 'Crecimiento final: ' + M.growthFinal[0].toFixed(2) + '% → ' + M.growthFinal[M.growthFinal.length - 1].toFixed(2) + '%' }
+        { n: '03', title: 'Ponderación', text: 'La proyección final combina ambos métodos: ' + M.weightsExternal[0] + '% variables externas en ' + Y[0] + ', hasta ' + M.weightsExternal[wN] + '% en ' + Y[wN] + '.', meta: 'Crecimiento final: ' + f.p(R[0].growth) + ' → ' + f.p(R[R.length - 1].growth) + ' (escenario activo)' }
       ];
       weights = M.weightsExternal.map((w, i) => ({ year: Y[i], ext: rv ? w + '%' : '0%', extTxt: w + '%', lsTxt: (100 - w) + '%', delay: (i * 80) + 'ms' }));
-      extNet = [{ k: 'Ventas', v: M.externalNet.sales.toFixed(2) + '%', color: M.externalNet.sales < 0 ? NEG : POS }, { k: 'Costos', v: '+' + M.externalNet.costs.toFixed(2) + '%', color: NEG }, { k: 'Capex', v: '+' + M.externalNet.capex.toFixed(2) + '%', color: NEG }];
-      extTop = M.external.filter(e => e[5]).sort((a, z) => Math.abs(z[5]) - Math.abs(a[5])).slice(0, 8).map(e => { const w = Math.abs(e[5]) / 0.5 * 46; return { name: e[1], cat: e[0], v: (e[5] > 0 ? '+' : '') + e[5].toFixed(2) + '%', left: e[5] < 0 ? (50 - (rv ? w : 0)) + '%' : '50%', width: rv ? w + '%' : '0%', color: e[5] < 0 ? NEG : POS }; });
+      // Ajustes documentados en la hoja Proyección Final (filas 15–22 ventas y 32–39 margen), primer año proyectado.
+      const BS = ds.forecast.build, sumAt = (L: { values: number[] }[], i: number) => L.reduce((a, x) => a + (x.values[i] || 0), 0) * 100;
+      if (BS) {
+        const sA = sumAt(BS.sales.adjustments, 0), mA = sumAt(BS.margin.adjustments, 0);
+        extNet = [{ k: 'Ventas ' + ds.forecast.years[0], v: (sA >= 0 ? '+' : '') + sA.toFixed(2) + ' pp', color: sA < 0 ? NEG : POS }, { k: 'Margen EBIT ' + ds.forecast.years[0], v: (mA >= 0 ? '+' : '') + mA.toFixed(2) + ' pp', color: mA < 0 ? NEG : POS }];
+        const adj = [...BS.sales.adjustments.map(a => ({ cat: 'Ventas', a })), ...BS.margin.adjustments.map(a => ({ cat: 'Margen EBIT', a }))].filter(x => x.a.values[0]);
+        const mxA = Math.max(...adj.map(x => Math.abs(x.a.values[0]))) || 1;
+        extTop = adj.sort((p, q) => Math.abs(q.a.values[0]) - Math.abs(p.a.values[0])).slice(0, 8).map(x => { const e = x.a.values[0] * 100, w = Math.abs(x.a.values[0]) / mxA * 46; return { name: x.a.label.replace(/^\(±\)\s*/, ''), cat: x.cat + ' · ' + (x.a.cell || ''), v: (e > 0 ? '+' : '') + e.toFixed(2) + ' pp', left: e < 0 ? (50 - (rv ? w : 0)) + '%' : '50%', width: rv ? w + '%' : '0%', color: e < 0 ? NEG : POS }; });
+      }
     } else {
       methodSteps = [
         { n: '01', title: 'Base del archivo', text: 'Último año reportado: ventas ' + f.m(B.revenue) + ' ' + mu + ', margen EBIT ' + f.p((B.ebit as number) / (B.revenue as number)) + '.', meta: 'Fuente: ' + (ds.source.file || 'captura') },
@@ -136,7 +146,7 @@ export function buildView(app: App): VM {
     }
     tv = { lastYear: lastY.year, fcfN: f.m(lastY.fcf), g: f.p(b.g), denom: f.p(b.wacc - b.g), tv: f.m(b.tvG), pv: f.m(b.pvTvG), wExp: rv ? ((1 - b.tvWeightG) * 100).toFixed(1) + '%' : '0%', expTxt: f.p(1 - b.tvWeightG, 1), tvTxt: f.p(b.tvWeightG, 1) };
   }
-  const extCount = ds.method ? ds.method.external.length : 0;
+  const extCount = ds.forecast.build ? ds.forecast.build.sales.adjustments.length + ds.forecast.build.margin.adjustments.length : (ds.method ? ds.method.external.length : 0);
 
   // ----- Página 03 -----
   let wb: any = { keBlocks: [], kdBlocks: [] }, iter: any = { yl: [], pts: [], stats: [] }, heat: any = { steps: [], cols: [], rows: [] }, torn: any = { rows: [] }, scen: any[] = [];

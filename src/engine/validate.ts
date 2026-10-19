@@ -42,7 +42,8 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
     add('Múltiplos', 'Trading Comps · muestra con al menos 3 comparables', C.n >= 3, C.n + ' comparables incluidos');
     add('Múltiplos', 'Trading Comps · al menos un múltiplo usado con precio', C.used > 0, C.used + ' múltiplos usados');
   }
-  if (RV && RV.transactions) add('Múltiplos', 'Precedent Transactions · operaciones incluidas', RV.transactions.n > 0, RV.transactions.n + ' operaciones · ' + RV.transactions.checks.filter(c => c.inWindow).length + ' dentro de la ventana');
+  if (RV && RV.sdc) add('Múltiplos', 'Precedent Transactions LSEG/SDC · operaciones elegibles', RV.sdc.n > 0, RV.sdc.n + ' de ' + RV.sdc.spec.deals.length + ' operaciones evaluadas · ' + (RV.sdc.stats.evEbitda?.n ?? 0) + ' con EV/EBITDA');
+  else if (RV && RV.transactions) add('Múltiplos', 'Precedent Transactions · operaciones incluidas', RV.transactions.n > 0, RV.transactions.n + ' operaciones · ' + RV.transactions.checks.filter(c => c.inWindow).length + ' dentro de la ventana');
   if (RV && RV.combined) {
     const K = RV.combined;
     add('Múltiplos', 'Valuación combinada · pesos suman 100%', Math.abs(K.weightSum - 1) < 1e-9, K.rows.map(r => r.label + ' ' + Math.round(r.weight * 100) + '%').join(' · '));
@@ -67,7 +68,7 @@ export function validate(ds: Dataset, A: Assumptions, base: RunResult, isBase: b
     // Valuación relativa: solo se compara si la muestra y los pesos son los del dataset.
     const noOverrides = !A.compsInclude && !A.compsUse && !A.dealsInclude && !A.dealsUse && !A.weights;
     if (RV && noOverrides) {
-      const rel: [string, unknown, number | undefined][] = [['Trading Comps', RV.comps && RV.comps.value, E.comps], ['Precedent Transactions', RV.transactions && RV.transactions.value, E.transactions], ['Valuación combinada', RV.combined && RV.combined.value, E.combined]];
+      const rel: [string, unknown, number | undefined][] = [['Trading Comps', RV.comps && RV.comps.value, E.comps], ['Precedent Transactions', ds.combined?.transactionsSource === 'sdc' ? RV.sdc && RV.sdc.value : RV.transactions && RV.transactions.value, E.transactions], ['Valuación combinada', RV.combined && RV.combined.value, E.combined]];
       rel.forEach(([l, c, e]) => { if (e != null) add(SOURCE_GROUP, l, isNum(c) ? tol(c, e, 0.02) : false, '', isNum(c) ? cur(c) : String(c), cur(e)); });
     }
     const sr = E.sensRow;
