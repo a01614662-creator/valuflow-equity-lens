@@ -133,7 +133,6 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
     const betas: [number, string][] = [[A.betaU, Math.abs(A.betaU - D0) < 1e-9 ? (Rg && Math.abs(Rg.unlevered - D0) < 1e-9 ? 'regresión semanal · usada' : 'usada') : 'Laboratorio · usada']];
     if (Rg) betas.push([Rg.unlevered, 'regresión semanal (oficial)']);
     if (Bt && Bt.unleveredCash != null) betas.push([Bt.unleveredCash, 'Damodaran · referencia']);
-    if (Bt && Bt.inherited != null) betas.push([Bt.inherited, 'heredada del Excel anterior']);
     const uniq = betas.filter((x, i) => betas.findIndex(y => Math.abs(y[0] - x[0]) < 1e-9) === i).sort((a, z) => a[0] - z[0]);
     const side = uniq.map(([bu, lab]) => { const r = E.run(ds, { ...A, betaU: bu }); return { k: 'βU ' + (Math.abs(bu * 100 - Math.round(bu * 100)) > 1e-9 ? bu.toFixed(4) : bu.toFixed(2)) + ' · ' + lab, v: r.ok ? cur(r.value) : 'NA', tone: (Math.abs(bu - A.betaU) < 1e-9 ? undefined : 'muted') as 'muted' | undefined }; });
     const hb = ds.inflation && ds.inflation.beta;

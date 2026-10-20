@@ -44,7 +44,7 @@ export function buildView(app: App): VM {
     signalNote: rec && rec.target != null ? 'Precio objetivo ' + f.cur(rec.target) + ' (' + f.pp(rec.potential) + ') · umbral ±' + Math.round(rec.buy * 100) + '%' : 'Umbral ±' + Math.round(b.threshold * 100) + '%',
     target: rec && rec.target != null ? f.cur(rec.target) : f.cur(b.value), targetUp: rec && rec.potential != null ? f.pp(rec.potential) : (b.upside != null ? f.pp(b.upside) : '—'),
     targetColor: rec && rec.potential != null ? (rec.potential >= 0 ? POS : NEG) : upColor, targetRule, threshold: Math.round(b.threshold * 100) + '%',
-    modelLabel: A.forecastKey && A.forecastKey !== 'final' && ds.altForecasts ? ds.altForecasts[A.forecastKey].label : (ds.builtIn ? 'Proyección final · DCF' : 'DCF base'), tvWeight: f.p(b.tvWeightG, 1)
+    modelLabel: A.forecastKey && A.forecastKey !== 'final' && ds.altForecasts ? ds.altForecasts[A.forecastKey].label : (ds.builtIn ? 'Proyección final · DCF' : 'DCF base'), tvWeight: f.p(b.tvWeightW, 1)
   } : { value: '—', price: '—', upside: '—', upColor, heroDisp: '—', diff: '—', signal: '—', signalNote: '', target: '—', targetUp: '—', targetColor: upColor, targetRule: '', threshold: '', modelLabel: '', tvWeight: '—' };
 
   const cv = { o1: rv ? 1 : 0, o2: rv ? 1 : 0, o3: rv ? 1 : 0, o4: rv ? 1 : 0, t1: rv ? 'none' : 'translateY(-10px)', t2: rv ? 'none' : 'translateY(28px)', t3: rv ? 'none' : 'translateY(36px)' };
@@ -90,7 +90,7 @@ export function buildView(app: App): VM {
       { label: 'Crecimiento perpetuo', kind: 'Supuesto', value: f.p(b.g), unit: '', desc: 'Crecimiento de los flujos después del periodo explícito.', onClick: () => app.setState({ drawer: 'tv' }) },
       { label: 'Enterprise Value', kind: 'Cálculo', value: f.m(b.ev), unit: mu, desc: b.roll ? 'Al ' + L.rollDate + ' · ' + Math.round(b.wG * 100) + '% Gordon / ' + Math.round((1 - b.wG) * 100) + '% múltiplo.' : 'VP de FCF + VP del valor terminal.', onClick: () => app.setState({ drawer: 'ev' }) },
       { label: 'Equity Value', kind: 'Resultado', value: f.m(b.eqVal), unit: mu, desc: 'Valor para los accionistas' + (b.roll ? ' a la fecha de valuación.' : '.'), onClick: () => app.setState({ drawer: 'value' }) },
-      { label: 'Peso del valor terminal', kind: 'Cálculo', value: f.p(b.tvWeightG, 1), unit: '', desc: 'Proporción del EV (Gordon) que proviene del valor terminal.', onClick: () => app.setState({ drawer: 'tv' }) },
+      { label: 'Peso del valor terminal', kind: 'Cálculo', value: f.p(b.tvWeightW, 1), unit: '', desc: 'Proporción del EV (ponderado Gordon y múltiplo) que proviene del valor terminal.', onClick: () => app.setState({ drawer: 'tv' }) },
       { label: 'FCF ' + b.rows[0].year, kind: 'Cálculo', value: f.m(b.rows[0].fcf), unit: mu, desc: 'Flujo libre disponible para proveedores de capital.', onClick: () => app.go('p2') }
     ];
     const RVk = (ds.comps || ds.combined) ? E.relative(ds, A, b.value) : null;
@@ -106,7 +106,7 @@ export function buildView(app: App): VM {
     const sel = Math.min(S.fcfSel, R.length - 1);
     fcfChart.cols = [{ label: ds.forecast.baseYear, fcfTxt: B.fcf != null ? f.m(B.fcf) : '—', pvTxt: '—', hF: rv && B.fcf ? (B.fcf / mxF * 100).toFixed(1) + '%' : '0%', hP: '0%', fBg: 'transparent', fBorder: '1px dashed var(--color-neutral-600)', bg: 'transparent', weight: 500, delay: '0ms', delay2: '0ms', onClick: () => { /* año base: sin desglose */ } }]
       .concat(R.map((x, i) => ({ label: x.year, fcfTxt: f.m(x.fcf), pvTxt: f.m(x.pv), hF: rv ? (x.fcf / mxF * 100).toFixed(1) + '%' : '0%', hP: rv ? (x.pv / mxF * 100).toFixed(1) + '%' : '0%', fBg: 'var(--color-accent-300)', fBorder: 'none', bg: i === sel ? 'var(--color-accent-100)' : 'transparent', weight: i === sel ? 700 : 500, delay: ((i + 1) * 90) + 'ms', delay2: ((i + 1) * 90 + 300) + 'ms', onClick: () => app.setState({ fcfSel: i }) })));
-    fcfChart.note = 'Suma del valor presente ' + f.m(b.pvSum) + ' ' + mu + ' (' + f.p(1 - b.tvWeightG, 1) + ' del EV Gordon). ' + (B.fcf != null ? ds.forecast.baseYear + ' = flujo actual de referencia.' : '');
+    fcfChart.note = 'Suma del valor presente ' + f.m(b.pvSum) + ' ' + mu + ' (' + f.p(1 - b.tvWeightW, 1) + ' del EV ponderado). ' + (B.fcf != null ? ds.forecast.baseYear + ' = flujo actual de referencia.' : '');
     const x = R[sel], mxB = Math.max(x.ebit, x.nopat + x.da) * 1.05, pc = (vv: number) => (vv / mxB * 100).toFixed(2) + '%';
     const it: [string, number, number, string][] = [['EBIT', 0, x.ebit, 'add'], ['(−) Impuestos', x.nopat, x.ebit, 'sub'], ['NOPAT', 0, x.nopat, 'tot'], ['(+) D&A', x.nopat, x.nopat + x.da, 'add'], ['(−) Capex', x.nopat + x.da - x.capex, x.nopat + x.da, 'sub'], ['(−) ΔNWC', Math.min(x.fcf, x.fcf + x.dNwc), Math.max(x.fcf, x.fcf + x.dNwc), x.dNwc > 0 ? 'sub' : 'add'], ['FCF', 0, x.fcf, 'tot']];
     const vals = [x.ebit, -x.tax, x.nopat, x.da, -x.capex, -x.dNwc, x.fcf];
@@ -216,7 +216,7 @@ export function buildView(app: App): VM {
     groups, price: numIn(SA.price), shares: numIn(SA.shares),
     onPrice: (e: { target: { value: string } }) => app.setA({ price: parseFloat(e.target.value) }), onShares: (e: { target: { value: string } }) => app.setA({ shares: parseFloat(e.target.value) }),
     delta: b.ok && b0.ok ? (b.value - b0.value >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b0.value).toFixed(2) : '—', deltaColor: b.ok && b0.ok ? (b.value - b0.value >= 0 ? POS : NEG) : 'var(--color-text)',
-    stats: b.ok ? [{ k: 'Enterprise Value', v: f.m(b.ev) }, { k: 'Equity Value', v: f.m(b.eqVal) }, { k: 'WACC', v: f.p(b.wacc) }, { k: 'Peso valor terminal', v: f.p(b.tvWeightG, 1) }] : []
+    stats: b.ok ? [{ k: 'Enterprise Value', v: f.m(b.ev) }, { k: 'Equity Value', v: f.m(b.eqVal) }, { k: 'WACC', v: f.p(b.wacc) }, { k: 'Peso valor terminal', v: f.p(b.tvWeightW, 1) }] : []
   };
 
   // ----- Anexos -----
