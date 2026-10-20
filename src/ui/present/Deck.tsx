@@ -62,17 +62,30 @@ function Side({ s }: { s: Slide }) {
   );
 }
 
+function Kpis({ s }: { s: Slide }) {
+  if (!s.kpis || !s.kpis.length) return null;
+  return (
+    <dl className="deck-kpis">
+      {s.kpis.map((x, k) => (
+        <div key={k} className={'deck-kpi' + (x.tone ? ' tone-' + x.tone : '')}>
+          <dt>{x.k}</dt><dd>{x.v}</dd>{x.s ? <span>{x.s}</span> : null}
+        </div>))}
+    </dl>
+  );
+}
+
 function SlideView({ s, deck, i, n, team, onLive }: { s: Slide; deck: DeckData; i: number; n: number; team: string; onLive: () => void }) {
   const fig = s.figure ? <div className="deck-fig" dangerouslySetInnerHTML={{ __html: s.figure }} /> : null;
   const notes = s.notes && s.notes.length ? <ul className="deck-notes">{s.notes.map((x, k) => <li key={k}>{x}</li>)}</ul> : null;
-  const head = (cls = '') => (<header className={'deck-head ' + cls}><p className="deck-kicker">{s.kicker}</p><h1 className="deck-title">{s.title}</h1>{s.lede ? <p className="deck-lede">{s.lede}</p> : null}</header>);
-  const foot = <footer className="deck-foot"><span>{s.source}</span><span>{deck.company} · {i + 1}/{n}</span></footer>;
+  const head = (cls = '') => (<header className={'deck-head ' + cls}><p className="deck-kicker"><span className="deck-index">{String(i + 1).padStart(2, '0')}</span>{s.kicker}</p><h1 className="deck-title">{s.title}</h1>{s.lede ? <p className="deck-lede">{s.lede}</p> : null}</header>);
+  const foot = <footer className="deck-foot"><span>ValuFlow · {deck.company} · {deck.ticker}</span><span className="deck-dots" aria-hidden="true">{Array.from({ length: n }, (_, k) => <i key={k} className={k === i ? 'on' : k < i ? 'past' : ''} />)}</span><span>{i + 1} / {n}</span></footer>;
   let body;
   switch (s.key) {
     case 'conclusion':
       body = (<>
         <div className="deck-brand"><img src="assets/soriana.svg" alt="Soriana" /><img src="assets/tec.svg" alt="Tecnológico de Monterrey" /></div>
         {head('is-cover')}
+        <Kpis s={s} />
         <div className="deck-cover-fig">{fig}</div>
         <p className="deck-team">{team}</p>
       </>); break;
@@ -83,7 +96,9 @@ function SlideView({ s, deck, i, n, team, onLive }: { s: Slide; deck: DeckData; 
     case 'metodos':
       body = (<>{head()}<div className="deck-row"><div className="deck-col">{fig}</div><aside className="deck-aside is-narrow">{notes}</aside></div></>); break;
     case 'cierre':
-      body = (<>{head()}<div className="deck-row"><div className="deck-col">{fig}</div><aside className="deck-aside"><Side s={s} />
+      body = (<>{head()}<div className="deck-row"><div className="deck-col">{fig}</div><aside className="deck-aside">
+        {s.badge ? <div className={'deck-badge tone-' + s.badge.tone}><strong>{s.badge.v}</strong><span>{s.badge.s}</span></div> : null}
+        <Side s={s} />
         <button className="deck-live" onClick={onLive}>Ver el modelo en vivo en ValuFlow</button></aside></div></>); break;
     default:
       body = (<>{head()}<div className="deck-row"><div className="deck-col">{fig}</div><aside className="deck-aside"><Side s={s} />{notes}</aside></div></>);

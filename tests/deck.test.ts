@@ -17,7 +17,7 @@ describe('modo presentación', () => {
   });
   it('títulos y cifras salen del motor (caso base del Excel)', () => {
     const { b, d } = deckOf(D), R = E.recommendation(ds, D, b)!;
-    expect(d.slides[0].title).toContain(f.cur(R.target!)); expect(d.slides[0].lede).toContain(f.cur(b.value)); expect(d.slides[0].lede).toContain(R.rating!);
+    expect(d.slides[0].title).toContain(f.cur(R.target!)); expect(d.slides[0].lede).toContain(f.cur(b.value)); expect(d.slides[0].kpis!.find(k => k.k === 'Recomendación')!.v).toBe(R.rating!); expect(d.slides[0].kpis!.find(k => k.k === 'Precio objetivo')!.v).toBe(f.cur(R.target!)); expect(d.slides[6].badge!.v).toBe(R.rating!); expect(R.rating).toBe('COMPRAR');
     expect(d.slides[2].title).toContain(f.p(b.wacc, 2));
     expect(d.slides[4].title).toContain(f.cur(b.value)); expect(d.slides[4].figure).toContain(f.m(b.roll!.eq3));
     expect(d.slides[6].title.toLowerCase()).toContain(R.rating!.toLowerCase());

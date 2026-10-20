@@ -27,8 +27,12 @@ const num = (p: E.Price) => E.isNum(p) ? p : null;
 
 export interface Slide {
   key: string; theme: 'light' | 'dark'; kicker: string; title: string; lede?: string;
-  figure?: string; side?: { k: string; v: string; s?: string; tone?: 'neg' | 'pos' | 'muted' }[]; notes?: string[]; source: string;
-  big?: { v: string; s: string }; cta?: boolean;
+  figure?: string; side?: { k: string; v: string; s?: string; tone?: 'neg' | 'pos' | 'muted' }[]; notes?: string[];
+  /** Cifras clave en franja (portada). */
+  kpis?: { k: string; v: string; s?: string; tone?: 'pos' | 'neg' | 'accent' }[];
+  /** Distintivo de la recomendación (cierre). */
+  badge?: { v: string; s: string; tone: 'pos' | 'neg' | 'neutral' };
+  cta?: boolean;
 }
 
 export interface DeckData { slides: Slide[]; company: string; ticker: string; market: string; marketDate: string; modified: boolean; logo?: string | null }
@@ -42,7 +46,13 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
   const target = Rec && Rec.target != null ? Rec.target : (num(RV.combined ? RV.combined.value : 'NA') ?? b.value);
   const pot = target / price - 1;
   const slides: Slide[] = [];
-  const srcX = 'Fuente: ' + (ds.source.file || 'dataset') + ' · motor ValuFlow con los supuestos ' + (modified ? 'modificados en el Laboratorio' : 'del Excel');
+  // Regla del precio objetivo con los pesos activos (pueden cambiar en el Laboratorio).
+  const wRows = RV.combined ? RV.combined.rows.filter(r => r.weight > 0) : [];
+  const wTxt = (r: E.CombinedRow) => Math.round(r.weight * 100) + '% ' + (r.key === 'dcf' ? 'DCF' : r.key === 'comps' ? 'Trading Comps' : 'Transacciones');
+  const ruleShort = wRows.length ? wRows.map(wTxt).join(' + ') : 'DCF';
+  const ruleLong = wRows.length ? wRows.map(r => wTxt(r) + ' (' + cur(num(r.price)) + ')').join(' + ') : 'DCF (' + cur(b.value) + ')';
+  const rating = Rec?.rating || (b.signal ? b.signal.toUpperCase() : '—'), th = Rec ? Rec.buy : b.threshold;
+  const tone = rating === 'COMPRAR' ? 'pos' : rating === 'VENDER' ? 'neg' : 'neutral';
 
   // ---------- 1. Conclusión ----------
   {
@@ -58,11 +68,16 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
     });
     s += Ln(X(price), 60, X(price), 214, '#ffffff', 2, '6 5') + T(X(price), 236, 'Precio de mercado ' + mkt + ' (' + mktDate + ')', { size: 16, c: '#ffffff', a: 'middle' });
     slides.push({
-      key: 'conclusion', theme: 'dark', kicker: 'Valuación de ' + P.name,
-      title: 'Soriana vale ' + cur(target) + ' por acción: ' + f.p(Math.abs(pot), 1) + (pot >= 0 ? ' más' : ' menos') + ' que su precio de mercado',
-      lede: 'Precio objetivo = 50% DCF (' + cur(b.value) + ') + 50% Trading Comps (' + cur(num(RV.comps?.value ?? 'NA')) + '). Recomendación: ' + (Rec?.rating || '—') + ' (umbral ±' + f.p(Rec ? Rec.buy : 0.1, 0) + ').',
-      big: { v: cur(target), s: (pot >= 0 ? '+' : '−') + f.p(Math.abs(pot), 1) + ' vs. ' + mkt },
-      figure: svg(W, H, s), source: srcX + ' · ' + institution,
+      key: 'conclusion', theme: 'dark', kicker: 'Valuación de ' + P.name + ' (' + (P.ticker || '') + ')',
+      title: 'Precio objetivo de ' + cur(target) + ' por acción: ' + f.p(Math.abs(pot), 1) + (pot >= 0 ? ' arriba' : ' abajo') + ' del mercado',
+      lede: 'Precio objetivo = ' + ruleLong + '. Recomendación con umbral de ±' + f.p(th, 0) + ' sobre el precio de mercado.',
+      kpis: [
+        { k: 'Precio objetivo', v: cur(target), s: ruleShort, tone: 'accent' },
+        { k: 'Precio de mercado', v: mkt, s: 'cierre ' + mktDate },
+        { k: 'Potencial', v: f.pp(pot), s: 'umbral ±' + f.p(th, 0), tone: pot >= 0 ? 'pos' : 'neg' },
+        { k: 'Recomendación', v: rating, s: Rec ? 'precio objetivo vs. mercado' : 'DCF vs. mercado', tone: tone === 'neutral' ? undefined : tone }
+      ],
+      figure: svg(W, H, s)
     });
   }
 
@@ -92,8 +107,7 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
         ...off.map(x => ({ k: x.label + ' · ' + f.p(x.inflation, 2), v: cur(x.value), s: x.active ? 'escenario activo' : 'DCF con este escenario', tone: x.active ? undefined : 'muted' as const }))
       ],
       notes: ['La inflación entra al modelo solo por el crecimiento nominal de ventas (WACC nominal fijo).',
-        corr ? 'Precio de Soriana vs. inflación: correlación ' + (+corr[1]).toFixed(2) + ' en ' + String(corr[0]).replace(/^Toda la muestra\s*/i, '').replace(/[()]/g, '') + '; relación débil, no causal.' : ''].filter(Boolean),
-      source: 'Banco de México, serie SP74833 (INPC quincenal) · modelos exponenciales de la hoja Inflación · ' + L.sourceShort
+        corr ? 'Precio de Soriana vs. inflación: correlación ' + (+corr[1]).toFixed(2) + ' en ' + String(corr[0]).replace(/^Toda la muestra\s*/i, '').replace(/[()]/g, '') + '; relación débil, no causal.' : ''].filter(Boolean)
     });
   }
 
@@ -128,8 +142,7 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
       title: 'Los accionistas exigen ' + f.p(src.ke, 1) + '; con la deuda, el flujo se descuenta al ' + f.p(b.wacc, 2),
       figure: svg(W, H2, s), side,
       notes: ['βU ' + A.betaU.toFixed(4) + (Rg && Math.abs(A.betaU - Rg.unlevered) < 1e-9 ? ' (regresión semanal: βL observada ' + Rg.levered.toFixed(4) + ' desapalancada)' : '') + ' reapalancada con D/E ' + src.de.toFixed(2) + ' → βL ' + src.beta.toFixed(3) + '.',
-        Rg ? 'La pendiente de la regresión no es significativa al 95% (p ≈ 0.09); con Damodaran (βU ' + (Bt!.unleveredCash ?? Bt!.unlevered).toFixed(2) + ') el valor sería el de la tabla.' : (hb ? 'La regresión propia de Soriana da β ' + (+hb.historical).toFixed(3) + ' con R² ' + (+hb.r2).toFixed(4) + '.' : '')].filter(Boolean),
-      source: 'CAPM y WACC iterado (' + b.W.iters.length + ' iteraciones) · ' + L.rfSource + ' · ' + L.sourceShort
+        Rg ? 'La pendiente de la regresión no es significativa al 95% (p ≈ 0.09); con Damodaran (βU ' + (Bt!.unleveredCash ?? Bt!.unlevered).toFixed(2) + ') el valor sería el de la tabla.' : (hb ? 'La regresión propia de Soriana da β ' + (+hb.historical).toFixed(3) + ' con R² ' + (+hb.r2).toFixed(4) + '.' : '')].filter(Boolean)
     });
   }
 
@@ -152,8 +165,7 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
       title: 'El flujo libre crece de ' + f.m(first) + ' a ' + f.m(lastR) + ' mdp, pero ' + f.p(b.tvWeightW, 0) + ' del valor está después de ' + R[R.length - 1].year,
       figure: svg(W, H, s),
       side: [{ k: 'VP de los flujos ' + R[0].year + '–' + R[R.length - 1].year, v: f.m(b.pvSum) + ' mdp' }, { k: 'VP del valor terminal (50% Gordon, 50% múltiplo ' + f.x(b.mult ?? 0, 2) + ')', v: f.m(b.pvTvW) + ' mdp' }, { k: 'Crecimiento perpetuo g', v: f.p(b.g, 2), s: 'g implícita en el múltiplo: ' + (b.impliedG != null ? f.p(b.impliedG, 2) : 'NA') }],
-      notes: ['FCFF = NOPAT + D&A − Capex − ΔNWC; valor terminal con FCF normalizado (capex = D&A).'],
-      source: 'Proyección por variables externas y mínimos cuadrados · ' + L.sourceShort
+      notes: ['FCFF = NOPAT + D&A − Capex − ΔNWC; valor terminal con FCF normalizado (capex = D&A).']
     });
   }
 
@@ -180,8 +192,7 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
       key: 'valor', theme: 'light', kicker: 'Construcción del valor',
       title: 'De ' + f.m(b.evW) + ' mdp de valor operativo a ' + cur(b.value) + ' por acción',
       figure: svg(W, H, s),
-      side: [{ k: 'Enterprise Value ' + (b.roll ? 'al ' + L.rollDate : ''), v: f.m(b.ev) + ' mdp' }, { k: 'Equity Value a la fecha de valuación', v: f.m(b.eqVal) + ' mdp' }, { k: 'Valor DCF por acción', v: cur(b.value), s: (b.upside ?? 0) >= 0 ? '+' + f.p(b.upside, 1) + ' vs. precio' : '−' + f.p(Math.abs(b.upside ?? 0), 1) + ' vs. precio', tone: (b.upside ?? 0) < 0 ? 'neg' : 'pos' }],
-      source: 'Puente del cierre 2025 al 2T26 y a la fecha de valuación (' + ds.dates.valuation + ') · ' + L.sourceShort
+      side: [{ k: 'Enterprise Value ' + (b.roll ? 'al ' + L.rollDate : ''), v: f.m(b.ev) + ' mdp' }, { k: 'Equity Value a la fecha de valuación', v: f.m(b.eqVal) + ' mdp' }, { k: 'Valor DCF por acción', v: cur(b.value), s: (b.upside ?? 0) >= 0 ? '+' + f.p(b.upside, 1) + ' vs. precio' : '−' + f.p(Math.abs(b.upside ?? 0), 1) + ' vs. precio', tone: (b.upside ?? 0) < 0 ? 'neg' : 'pos' }]
     });
   }
 
@@ -193,7 +204,7 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
     rows.push({ l: 'DCF', s: 'rango: escenarios de inflación', lo: Math.min(...scV), hi: Math.max(...scV), v: b.value, kind: 'main' });
     if (RV.comps) rows.push({ l: 'Trading Comps', s: RV.comps.n + ' pares · P25–P75', lo: num(RV.comps.p25), hi: num(RV.comps.p75), v: num(RV.comps.value), kind: 'main' });
     if (RV.sdc) rows.push({ l: 'Precedent Transactions', s: 'LSEG/SDC · ' + (RV.sdc.stats.evEbitda?.n ?? 0) + ' operaciones · P25–P75 · peso 0%', lo: num(RV.sdc.lo), hi: num(RV.sdc.hi), v: num(RV.sdc.value), kind: 'ref' });
-    rows.push({ l: 'Precio objetivo combinado', s: '50% DCF + 50% Comps', lo: null, hi: null, v: target, kind: 'target' });
+    rows.push({ l: 'Precio objetivo combinado', s: ruleShort, lo: null, hi: null, v: target, kind: 'target' });
     const ex = (k: string) => (ds.external || []).find(x => x.key === k);
     const cons = ex('ciq_consensus'), star = ex('starmine_iv');
     if (cons) rows.push({ l: 'Consenso de analistas', s: 'S&P Capital IQ · 12 meses · referencia', lo: cons.lo, hi: cons.hi, v: cons.value, kind: 'ref' });
@@ -211,13 +222,15 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
       if (r.v != null) { const near = Math.abs(X(r.v) - X(price)) < 34, a = near ? (r.v >= price ? 'start' : 'end') : 'middle'; s += T(X(r.v) + (a === 'start' ? 14 : a === 'end' ? -14 : 0), near ? y - 14 : y - 20, cur(r.v), { size: 15, a, w: 600, c: ref ? C.gray : C.ink }); }
     });
     s += Ln(X(price), T0 - 6, X(price), H - 44, C.market, 2, '7 5') + T(X(price) + 6, H - 50, 'Mercado ' + mkt, { size: 14, w: 600 });
-    const inDcfComps = rows.filter(r => r.kind === 'main').some(r => r.lo != null && r.hi != null && price >= r.lo && price <= r.hi);
+    const pos = (r?: Row) => !r || r.lo == null || r.hi == null ? '' : price < r.lo ? 'arriba' : price > r.hi ? 'abajo' : 'en línea';
+    const dcfPos = pos(rows.find(r => r.l === 'DCF')), compsPos = pos(rows.find(r => r.l === 'Trading Comps'));
+    const refsBelow = rows.filter(r => r.kind === 'ref' && r.v != null && r.l !== 'StarMine (aprox.)').every(r => (r.v as number) < price);
+    const mTitle = (dcfPos ? 'El DCF queda ' + (dcfPos === 'en línea' ? 'en línea con el mercado' : dcfPos + ' del mercado') : '') + (compsPos ? (dcfPos ? ' y los múltiplos ' : 'Los múltiplos quedan ') + (compsPos === 'en línea' ? 'en línea' : compsPos) : '') + (refsBelow ? '; transacciones y analistas apuntan más abajo' : '');
     slides.push({
       key: 'metodos', theme: 'light', kicker: 'Contraste de metodologías',
-      title: inDcfComps ? 'DCF y múltiplos rodean el precio de mercado; transacciones y analistas apuntan más abajo' : 'Los métodos del precio objetivo no contienen el precio de mercado',
+      title: mTitle || 'Contraste de metodologías frente al precio de mercado',
       figure: svg(W, H, s),
-      notes: ['Barra llena = forma parte del precio objetivo. Contorno punteado = referencia (no entra al precio).', 'Transacciones: muestra global sin operaciones mexicanas; detalle por operación en 05 · Transacciones.'],
-      source: 'DCF, Trading Comps y LSEG/SDC del ' + L.sourceShort + ' · S&P Capital IQ y LSEG Refinitiv (consulta 19-oct-2026)'
+      notes: ['Barra llena = forma parte del precio objetivo. Contorno punteado = referencia (no entra al precio).', 'Transacciones: muestra global sin operaciones mexicanas; detalle por operación en 05 · Transacciones.']
     });
   }
 
@@ -236,14 +249,15 @@ export function buildDeck(ds: Dataset, A: Assumptions, b: RunOk, team: string[],
     top.forEach((t, i) => { const y = T0 + off.length * 70 + 78 + i * 28; s += T(L0, y, t.label + ' ±' + t.step + (t.unit === 'x' ? 'x' : ' pp'), { size: 15 }) + T(W - 20, y, cur(Math.min(t.low ?? NaN, t.high ?? NaN)) + ' a ' + cur(Math.max(t.low ?? NaN, t.high ?? NaN)), { size: 15, a: 'end', w: 600 }); });
     slides.push({
       key: 'cierre', theme: 'dark', kicker: 'Escenarios, riesgos y conclusión',
-      title: 'Recomendación: ' + (Rec?.rating || '—').toLowerCase() + '. El precio objetivo de ' + cur(target) + ' queda ' + (pot >= 0 ? 'arriba' : 'abajo') + ' del mercado por ' + f.p(Math.abs(pot), 1),
+      title: 'Recomendación: ' + rating.toLowerCase() + '. El precio objetivo de ' + cur(target) + ' queda ' + f.p(Math.abs(pot), 1) + (pot >= 0 ? ' arriba' : ' abajo') + ' del mercado',
+      badge: { v: rating, s: f.pp(pot) + ' vs. ' + mkt + ' · umbral ±' + f.p(th, 0), tone },
       figure: svg(W, H + 90, s.replace(/fill="#1d1f20"/g, 'fill="#ffffff"').replace(/stroke="#1d1f20"/g, 'stroke="#ffffff"').replace(/fill="#1d2d3d" font/g, 'fill="#1d2d3d" font')),
       side: [
         { k: 'Rango de valor razonable', v: cur(Rec?.fairLo) + ' – ' + cur(Rec?.fairHi), s: 'DCF, Comps y transacciones sin atípicos' },
         { k: 'Variable con más impacto: ' + (top[0] ? top[0].label : ''), v: top[0] ? cur(top[0].range) : '—', s: 'de rango con ±' + (top[0] ? top[0].step : '') + (top[0] && top[0].unit === 'x' ? 'x' : ' pp') },
         { k: 'Consenso de analistas', v: cur((ds.external || []).find(x => x.key === 'ciq_consensus')?.value ?? null), s: Rec && ds.recommendation?.experts ? ds.recommendation.experts : '' }
       ],
-      cta: true, source: srcX
+      cta: true
     });
   }
   return { slides, company: P.name, ticker: P.ticker || '', market: mkt, marketDate: mktDate, modified, logo: P.logo };

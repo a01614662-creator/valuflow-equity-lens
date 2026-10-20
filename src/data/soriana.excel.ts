@@ -1122,7 +1122,7 @@ export const SORIANA_XL = {
   "multipleDiscount": 0.1,
   "wGordon": 0.5,
   "tvFcf": "normalized",
-  "signalThreshold": 15.0,
+  "signalThreshold": 5.0,
   "bridge": {
    "debt": 11500.0,
    "lease": 12118.0,
@@ -2503,15 +2503,15 @@ export const SORIANA_XL = {
   "classRule": "Diap. 18: pesos iguales (⅓) entre métodos; aquí 50/50 entre los métodos activos y Precedent Transactions 0% (referencia LSEG/SDC)."
  },
  "recommendation": {
-  "buy": 0.1,
-  "sell": -0.1,
+  "buy": 0.05,
+  "sell": -0.05,
   "target": 35.9164595827377,
   "potential": 0.0727735837137917,
-  "rating": "MANTENER",
+  "rating": "COMPRAR",
   "experts": "Venta (0 C / 1 M / 6 V)",
   "fairLo": 28.9893892547619,
   "fairHi": 38.3400783109781,
-  "rule": "Precio objetivo = valuación combinada; COMPRAR si el potencial supera +10%, VENDER si es menor que −10% (hoja Transacciones SDC §7)."
+  "rule": "Precio objetivo = valuación combinada; COMPRAR si el potencial supera +5%, VENDER si es menor que −5% (hoja Transacciones SDC §7)."
  },
  "external": [
   {
@@ -3077,6 +3077,14 @@ export const SORIANA_XL = {
     "Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector."
    ],
    [
+    "Recomendación",
+    "Cambio de supuesto (decisión del equipo, 19-oct-2026)",
+    "Había dos umbrales: ±15% para la lectura del DCF (Proyección Final B155) y ±10% para la recomendación oficial (Transacciones SDC §7).",
+    "Dos reglas distintas podían dar recomendaciones diferentes.",
+    "Un solo umbral de ±5%: Transacciones SDC §7 (COMPRAR / VENDER) y B155 vinculado a esa celda.",
+    "Validación y extractor leen el mismo umbral."
+   ],
+   [
     "DCF",
     "Revisado, sin cambio",
     "Secuencia ventas → EBIT → NOPAT → FCFF → WACC → VT (Gordon con FCF normalizado capex = D&A; múltiplo 5.81x) → EV → puente al 2T26 → Equity a la fecha de valuación. FCFF descontado al WACC (no se mezclan flujos al accionista). Balance cuadra; iteración converge.",
@@ -3239,7 +3247,7 @@ export const SORIANA_XL = {
     "tvWeight": 65.2942415552481,
     "impliedMultiple": 5.45085638768995,
     "impliedG": 0.0397653889545372,
-    "signal": "MANTENER",
+    "signal": "VENDER",
     "waccMarket": 12.500800915571899,
     "keMarket": 13.8293538829152,
     "betaMarket": 1.01946900305323,
@@ -3855,7 +3863,7 @@ export const SORIANA_XL = {
     "tvWeight": 72.6300103106483,
     "impliedMultiple": 7.46343136048509,
     "impliedG": 0.0189752190547926,
-    "signal": "MANTENER",
+    "signal": "COMPRAR",
     "waccMarket": 10.0630184051038,
     "keMarket": 10.436182627388101,
     "betaMarket": 0.21730085753856,
@@ -4163,7 +4171,7 @@ export const SORIANA_XL = {
     "tvWeight": 72.7053310635735,
     "impliedMultiple": 7.44626689247961,
     "impliedG": 0.0191272410371974,
-    "signal": "MANTENER",
+    "signal": "COMPRAR",
     "waccMarket": 10.0630184051038,
     "keMarket": 10.436182627388101,
     "betaMarket": 0.21730085753856,
@@ -4779,7 +4787,7 @@ export const SORIANA_XL = {
     "tvWeight": 65.2116218198061,
     "impliedMultiple": 5.46455522188038,
     "impliedG": 0.0395786256783505,
-    "signal": "MANTENER",
+    "signal": "VENDER",
     "waccMarket": 12.500800915571899,
     "keMarket": 13.8293538829152,
     "betaMarket": 1.01946900305323,
@@ -5087,7 +5095,7 @@ export const SORIANA_XL = {
     "tvWeight": 66.4264330859607,
     "impliedMultiple": 5.7263785977169,
     "impliedG": 0.0360650508392349,
-    "signal": "MANTENER",
+    "signal": "VENDER",
     "waccMarket": 12.0748041823037,
     "keMarket": 13.2364052240143,
     "betaMarket": 0.879292015133413,

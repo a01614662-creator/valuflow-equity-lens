@@ -1,7 +1,7 @@
 {
   "format": "valuflow/2",
   "app": "ValuFlow",
-  "exportedAt": "2026-10-19T20:01:58.473Z",
+  "exportedAt": "2026-10-19T23:58:08.126Z",
   "case": {
     "isBase": true,
     "changes": []
@@ -19,7 +19,7 @@
     "comps": 33.492841,
     "transactionsSdc": 23.7448,
     "combined": 35.91646,
-    "recommendation": "MANTENER",
+    "recommendation": "COMPRAR",
     "potential": 0.072774
   },
   "assumptions": {
@@ -2212,9 +2212,9 @@
       "transactionsSource": "sdc"
     },
     "recommendation": {
-      "buy": 0.1,
-      "sell": -0.1,
-      "rule": "Precio objetivo = valuación combinada; COMPRAR si el potencial supera +10%, VENDER si es menor que −10% (hoja Transacciones SDC §7).",
+      "buy": 0.05,
+      "sell": -0.05,
+      "rule": "Precio objetivo = valuación combinada; COMPRAR si el potencial supera +5%, VENDER si es menor que −5% (hoja Transacciones SDC §7).",
       "experts": "Venta (0 C / 1 M / 6 V)"
     },
     "external": [
@@ -2569,6 +2569,14 @@
           "Resultados anteriores con βU 0.69 (para trazabilidad): DCF $31.62, Ke 13.35%, WACC iterado 11.38%, precio combinado $32.55, MANTENER. Los nuevos resultados salen de las fórmulas (tabla A, columna F).",
           "Selector 'Beta y Kd'!B18 = 2 (regresión, oficial); 1 = Damodaran 0.69 (referencia, tabla A columna H); 0 = heredada 0.80 (histórico).",
           "Tabla A recalculada en LibreOffice con cada combinación; control βU usada = selector."
+        ],
+        [
+          "Recomendación",
+          "Cambio de supuesto (decisión del equipo, 19-oct-2026)",
+          "Había dos umbrales: ±15% para la lectura del DCF (Proyección Final B155) y ±10% para la recomendación oficial (Transacciones SDC §7).",
+          "Dos reglas distintas podían dar recomendaciones diferentes.",
+          "Un solo umbral de ±5%: Transacciones SDC §7 (COMPRAR / VENDER) y B155 vinculado a esa celda.",
+          "Validación y extractor leen el mismo umbral."
         ],
         [
           "DCF",
@@ -3215,7 +3223,7 @@
         "lease": 12220.588,
         "cash": 6875.384
       },
-      "signalThreshold": 15,
+      "signalThreshold": 5,
       "tvFcf": "normalized"
     },
     "expected": {

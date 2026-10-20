@@ -68,14 +68,18 @@ export function Cover({ vm }: { vm: VM }) {
                   <div style={css('font-size:14px; color:var(--color-neutral-700);')}>{co.sector}</div></div>
                 <div style={css('display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--color-divider);')}>
                   <div style={css('padding:14px 12px 0 0; display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Valor intrínseco</span>
-                    <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);')}>{r.value}</span></div>
+                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio objetivo</span>
+                    <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);')}>{r.target}</span></div>
                   <div style={css('padding:14px 12px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
                     <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio</span>
                     <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600;')}>{r.price}</span></div>
                   <div style={css('padding:14px 0 0 12px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
                     <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Potencial</span>
-                    <span style={css(`font-family:var(--font-heading); font-size:30px; font-weight:600; color:${r.upColor};`)}>{r.upside}</span></div></div></div></div></div>
+                    <span style={css(`font-family:var(--font-heading); font-size:30px; font-weight:600; color:${r.targetColor};`)}>{r.targetUp}</span></div></div>
+                <div style={css('display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-top:14px; border-top:1px solid var(--color-divider);')}>
+                  <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Recomendación</span>
+                  <span style={css('font-family:var(--font-heading); font-size:24px; font-weight:600;')}>{r.signal}</span></div>
+                <div style={css('font-size:12px; line-height:1.5; color:var(--color-neutral-700);')}>{r.targetRule} · umbral ±{r.threshold}.</div></div></div></div>
           <div style={css(`display:flex; flex-direction:column; gap:14px; opacity:${cv.o4}; transition:opacity 1s ease .45s;`)}>
             <div style={css('display:flex; align-items:baseline; gap:12px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
               <span>Equipo</span>

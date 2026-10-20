@@ -33,11 +33,19 @@ export function buildView(app: App): VM {
   const upColor = b.ok && b.upside != null ? (b.upside >= 0 ? POS : NEG) : 'var(--color-text)';
   const co = { ticker: P.ticker || '—', exchange: P.exchange || '—', hasLogo: !!P.logo, noLogo: !P.logo, logo: P.logo || '', name: P.name, short: P.short || P.name, legalName: P.legalName || P.name, brand: P.brand || ACC, initials: initialsOf(P.short || P.name || '?'), sector: P.sector || P.industry || '', currency: P.currency, units: unitsOf(ds), valDate: ds.dates.valuation, priceDate: ds.dates.price };
   const mu = co.units;
+  // Recomendación oficial (una sola regla en toda la app): precio objetivo combinado frente al mercado, umbral ±5% del Excel.
+  const rec = b.ok ? E.recommendation(ds, A, b) : null;
+  const K = b.ok && (ds.comps || ds.combined) ? E.relative(ds, A, b.value).combined : null;
+  const targetRule = K ? 'Precio objetivo = ' + K.rows.filter(x => x.weight > 0).map(x => Math.round(x.weight * 100) + '% ' + (x.key === 'dcf' ? 'DCF (' + f.cur(b.value) + ')' : x.key === 'comps' ? 'Trading Comps' : 'Transacciones')).join(' + ') : 'Precio objetivo = DCF';
+  const cap = (t: string | null | undefined) => t ? t.charAt(0) + t.slice(1).toLowerCase() : '—';
   const r = b.ok ? {
     value: f.cur(b.value), price: b.price ? f.cur(b.price) : 'No disponible', upside: b.upside != null ? f.pp(b.upside) : '—', upColor, heroDisp: f.cur(S.heroDisp || 0),
-    diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: b.signal || '—', threshold: Math.round(b.threshold * 100) + '%',
+    diff: b.price ? (b.value - b.price >= 0 ? '+' : '−') + '$' + Math.abs(b.value - b.price).toFixed(2) : '—', signal: rec && rec.rating ? cap(rec.rating) : (b.signal || '—'),
+    signalNote: rec && rec.target != null ? 'Precio objetivo ' + f.cur(rec.target) + ' (' + f.pp(rec.potential) + ') · umbral ±' + Math.round(rec.buy * 100) + '%' : 'Umbral ±' + Math.round(b.threshold * 100) + '%',
+    target: rec && rec.target != null ? f.cur(rec.target) : f.cur(b.value), targetUp: rec && rec.potential != null ? f.pp(rec.potential) : (b.upside != null ? f.pp(b.upside) : '—'),
+    targetColor: rec && rec.potential != null ? (rec.potential >= 0 ? POS : NEG) : upColor, targetRule, threshold: Math.round(b.threshold * 100) + '%',
     modelLabel: A.forecastKey && A.forecastKey !== 'final' && ds.altForecasts ? ds.altForecasts[A.forecastKey].label : (ds.builtIn ? 'Proyección final · DCF' : 'DCF base'), tvWeight: f.p(b.tvWeightG, 1)
-  } : { value: '—', price: '—', upside: '—', upColor, heroDisp: '—', diff: '—', signal: '—', threshold: '', modelLabel: '', tvWeight: '—' };
+  } : { value: '—', price: '—', upside: '—', upColor, heroDisp: '—', diff: '—', signal: '—', signalNote: '', target: '—', targetUp: '—', targetColor: upColor, targetRule: '', threshold: '', modelLabel: '', tvWeight: '—' };
 
   const cv = { o1: rv ? 1 : 0, o2: rv ? 1 : 0, o3: rv ? 1 : 0, o4: rv ? 1 : 0, t1: rv ? 'none' : 'translateY(-10px)', t2: rv ? 'none' : 'translateY(28px)', t3: rv ? 'none' : 'translateY(36px)' };
   const team = PROJECT.team.map((m, i) => ({ n: String(i + 1).padStart(2, '0'), name: m[0], id: m[1] }));
