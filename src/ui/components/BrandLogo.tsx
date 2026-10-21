@@ -13,8 +13,8 @@ export function BrandLogo({ b, w = 140, h = 52, pad = 6, bg = '#ffffff' }: { b: 
     return <span role="img" aria-label={b.name} title={b.name + ' · logo no disponible en el paquete local'} style={css(box + 'font-family:var(--font-heading); font-weight:600; font-size:' + Math.max(12, Math.round(h * 0.3)) + 'px; line-height:1.05; text-align:center; color:var(--color-neutral-700); overflow:hidden;')}>{b.name}</span>;
   }
   return (
-    <span style={css(box)}>
-      <img src={b.src} alt={b.alt} loading="lazy" decoding="async" onError={() => setFailed(true)} style={css('max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; display:block;')} />
+    <span style={css(box.replace('display:grid; place-items:center;', 'display:block;'))}>
+      <img src={b.src} alt={b.alt} loading="lazy" decoding="async" onError={() => setFailed(true)} style={css('width:100%; height:100%; object-fit:contain; object-position:center; display:block;')} />
     </span>
   );
 }
