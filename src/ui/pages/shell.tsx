@@ -18,22 +18,22 @@ export function Splash({ vm }: { vm: VM }) {
 
 /** Portada. */
 export function Cover({ vm }: { vm: VM }) {
-  const { co, cv, goImport, r, startPresent, startTour, team, v } = vm;
+  const { co, cv, goImport, qr, r, startTour, team, v } = vm;
   return (<>
     {v.cover ? (<>
       <section data-screen-label="00 Portada" style={css('position:relative; min-height:100vh; overflow:hidden; background-image:linear-gradient(var(--color-divider) 1px, transparent 1px), linear-gradient(90deg, var(--color-divider) 1px, transparent 1px); background-size:56px 56px; background-position:-1px -1px;')}>
         <div style={css('position:absolute; inset:0; background:radial-gradient(ellipse at 70% 40%, transparent 0%, var(--color-bg) 78%); pointer-events:none;')}></div>
-        <div style={css('position:relative; max-width:1360px; margin:0 auto; padding:40px 32px 32px; min-height:100vh; display:flex; flex-direction:column; gap:40px;')}>
+        <div style={css('position:relative; max-width:var(--page-max); margin:0 auto; padding:40px var(--page-pad) 32px; min-height:100vh; display:flex; flex-direction:column; gap:40px;')}>
           <div style={css(`display:flex; align-items:center; gap:16px; flex-wrap:wrap; opacity:${cv.o1}; transform:${cv.t1}; transition:all .7s cubic-bezier(.2,.7,.2,1);`)}>
             <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('width:56px; height:56px;')} />
             <div style={css('display:flex; flex-direction:column;')}>
               <span style={css('font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.01em;')}>Tecnológico de Monterrey</span>
-              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Valuación de Empresas · 2026</span></div>
-            <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-700);')}>
+              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Valuación de Empresas · 2026</span></div>
+            <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px; font-size:13.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-700);')}>
               <span style={css('width:8px; height:8px; background:var(--color-accent);')}></span>ValuFlow · Motor de valuación</div></div>
           <div style={css('flex:1; display:flex; flex-wrap:wrap; gap:48px; align-items:center;')}>
             <div style={css(`flex:7 1 520px; min-width:0; display:flex; flex-direction:column; gap:28px; opacity:${cv.o2}; transform:${cv.t2}; transition:all .9s cubic-bezier(.2,.7,.2,1) .1s;`)}>
-              <div style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Plataforma de Valuación Empresarial</div>
+              <div style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Plataforma de Valuación Empresarial</div>
               <h1 style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:clamp(56px, 8.4vw, 132px); line-height:.9; letter-spacing:-.025em; text-transform:uppercase; text-wrap:balance;')}>Valor intrínseco,
                 <br />
                 <span style={css('color:var(--color-accent);')}>paso a paso.</span></h1>
@@ -45,15 +45,19 @@ export function Cover({ vm }: { vm: VM }) {
                   <i className="corner bl"></i>
                   <i className="corner br"></i>Explorar valuación{' '}
                   <span style={css('font-family:var(--font-body);')}>→</span></button>
-                <button className="btn btn-secondary" onClick={startPresent} style={css('font-size:15px; padding:13px 18px;')}>Modo presentación</button>
-                <button className="btn btn-ghost" onClick={goImport} style={css('font-size:15px;')}>+ Nueva valuación</button></div></div>
+                <button className="btn btn-ghost" onClick={goImport} style={css('font-size:15px;')}>+ Nueva valuación</button></div>
+              <figure style={css('margin:0; display:flex; align-items:center; gap:18px; flex-wrap:wrap;')}>
+                <div style={css('width:136px; height:136px; padding:6px; background:#fff; border:1px solid var(--color-divider); flex:0 0 auto;')} dangerouslySetInnerHTML={{ __html: qr.svg.replace(/width="\d+" height="\d+"/, 'width="122" height="122"') }} />
+                <figcaption style={css('display:flex; flex-direction:column; gap:4px; min-width:0;')}>
+                  <span style={css('font-size:15px; font-weight:600;')}>Sigue la presentación en tu teléfono</span>
+                  <a href={qr.url} style={css('font-family:var(--font-heading); font-size:20px; font-weight:600; word-break:break-all;')}>{qr.host}</a></figcaption></figure></div>
             <div style={css(`flex:5 1 380px; min-width:0; opacity:${cv.o3}; transform:${cv.t3}; transition:all .9s cubic-bezier(.2,.7,.2,1) .25s;`)}>
               <div className="blueprint" style={css('padding:28px; background:color-mix(in srgb, var(--color-bg) 82%, transparent); display:flex; flex-direction:column; gap:22px;')}>
                 <i className="corner tl"></i>
                 <i className="corner tr"></i>
                 <i className="corner bl"></i>
                 <i className="corner br"></i>
-                <div style={css('display:flex; justify-content:space-between; align-items:center; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
+                <div style={css('display:flex; justify-content:space-between; align-items:center; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
                   <span>Caso de estudio</span>
                   <span>{co.ticker} · {co.exchange}</span></div>
                 <div style={css('height:72px; display:flex; align-items:center;')}>
@@ -68,20 +72,20 @@ export function Cover({ vm }: { vm: VM }) {
                   <div style={css('font-size:14px; color:var(--color-neutral-700);')}>{co.sector}</div></div>
                 <div style={css('display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--color-divider);')}>
                   <div style={css('padding:14px 12px 0 0; display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio objetivo</span>
+                    <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio objetivo</span>
                     <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);')}>{r.target}</span></div>
                   <div style={css('padding:14px 12px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio</span>
+                    <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio</span>
                     <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600;')}>{r.price}</span></div>
                   <div style={css('padding:14px 0 0 12px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Potencial</span>
+                    <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Potencial</span>
                     <span style={css(`font-family:var(--font-heading); font-size:30px; font-weight:600; color:${r.targetColor};`)}>{r.targetUp}</span></div></div>
                 <div style={css('display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-top:14px; border-top:1px solid var(--color-divider);')}>
-                  <span style={css('font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Recomendación</span>
+                  <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Recomendación</span>
                   <span style={css('font-family:var(--font-heading); font-size:24px; font-weight:600;')}>{r.signal}</span></div>
-                <div style={css('font-size:12px; line-height:1.5; color:var(--color-neutral-700);')}>{r.targetRule} · umbral ±{r.threshold}.</div></div></div></div>
+                <div style={css('font-size:13.5px; line-height:1.5; color:var(--color-neutral-700);')}>{r.targetRule} · umbral ±{r.threshold}.</div></div></div></div>
           <div style={css(`display:flex; flex-direction:column; gap:14px; opacity:${cv.o4}; transition:opacity 1s ease .45s;`)}>
-            <div style={css('display:flex; align-items:baseline; gap:12px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
+            <div style={css('display:flex; align-items:baseline; gap:12px; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
               <span>Equipo</span>
               <span style={css('flex:1; height:1px; background:var(--color-divider);')}></span></div>
             <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0;')}>
@@ -90,7 +94,7 @@ export function Cover({ vm }: { vm: VM }) {
                   <span style={css('font-family:var(--font-heading); font-size:14px; color:var(--color-accent);')}>{m.n}</span>
                   <div style={css('display:flex; flex-direction:column;')}>
                     <span style={css('font-weight:500; font-size:14px; line-height:1.3;')}>{m.name}</span>
-                    <span style={css('font-size:12px; color:var(--color-neutral-700); letter-spacing:.04em;')}>{m.id}</span></div></div>
+                    <span style={css('font-size:13.5px; color:var(--color-neutral-700); letter-spacing:.04em;')}>{m.id}</span></div></div>
               </Fragment>))}</div></div></div></section>
     </>) : null}
   </>);
@@ -98,14 +102,15 @@ export function Cover({ vm }: { vm: VM }) {
 
 /** Barra superior: empresa, navegación y exportación. */
 export function Header({ vm }: { vm: VM }) {
-  const { co, companyList, exportItems, goCover, goImport, goLibrary, navItems, resetA, startPresent, toggleCompanyMenu, toggleExportMenu, ui } = vm;
+  const { closeMenu, co, companyList, exportItems, goCover, goImport, goLibrary, moreCurrent, moreItems, navItems, resetA, toggleCompanyMenu, toggleExportMenu, toggleMoreMenu, ui } = vm;
   return (<>
-    <header data-noprint style={css(`position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--color-bg) 90%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--color-divider); transform:${ui.headerT}; transition:transform .3s;`)}>
-      <div style={css('max-width:1360px; margin:0 auto; padding:0 24px; height:64px; display:flex; align-items:center; gap:14px;')}>
+    <header data-noprint style={css('position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--color-bg) 92%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--color-divider);')}>
+      {ui.menuOpen ? <div onClick={closeMenu} style={css('position:fixed; inset:0; z-index:39;')} aria-hidden="true"></div> : null}
+      <div style={css('position:relative; z-index:41; max-width:var(--page-max); margin:0 auto; padding:0 var(--page-pad); height:60px; display:flex; align-items:center; gap:14px;')}>
         <button onClick={goCover} title="Portada" style={css('display:flex; align-items:center; gap:10px; background:none; border:0; cursor:pointer; padding:0; color:var(--color-text);')}>
           <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('height:32px; width:32px;')} />
-          <span style={css('font-family:var(--font-heading); font-weight:600; font-size:20px; letter-spacing:.02em;')}>ValuFlow</span></button>
-        <span style={css('width:1px; height:28px; background:var(--color-divider);')}></span>
+          {ui.desktop ? <span style={css('font-family:var(--font-heading); font-weight:600; font-size:20px; letter-spacing:.02em;')}>ValuFlow</span> : null}</button>
+        {ui.desktop ? <span style={css('width:1px; height:28px; background:var(--color-divider);')}></span> : null}
         <div style={css('position:relative;')}>
           <button className={cx(hv('border-color:var(--color-divider);'))} onClick={toggleCompanyMenu} style={css('display:flex; align-items:center; gap:10px; background:none; border:1px solid transparent; cursor:pointer; padding:6px 10px 6px 6px; color:var(--color-text);')}>
             <span style={css('width:44px; height:28px; display:grid; place-items:center;')}>
@@ -117,39 +122,29 @@ export function Header({ vm }: { vm: VM }) {
               </>) : null}</span>
             <span style={css('display:flex; flex-direction:column; align-items:flex-start; line-height:1.15;')}>
               <span style={css('font-weight:600; font-size:14px; white-space:nowrap;')}>{co.short}</span>
-              <span style={css('font-size:11px; color:var(--color-neutral-700); letter-spacing:.06em; white-space:nowrap;')}>{co.ticker} · {co.exchange}</span></span>
-            <span style={css('font-size:10px; color:var(--color-neutral-700);')}>▼</span></button>
+              <span style={css('font-size:12.5px; color:var(--color-neutral-700); letter-spacing:.06em; white-space:nowrap;')}>{co.ticker} · {co.exchange}</span></span>
+            <span style={css('font-size:11.5px; color:var(--color-neutral-700);')}>▼</span></button>
           {ui.companyMenu ? (<>
             <div className="blueprint" style={css('position:absolute; top:52px; left:0; width:320px; background:var(--color-bg); box-shadow:var(--shadow-lg); padding:8px; display:flex; flex-direction:column; gap:2px; z-index:60;')}>
               <i className="corner tl"></i>
               <i className="corner tr"></i>
               <i className="corner bl"></i>
               <i className="corner br"></i>
-              <div style={css('padding:8px 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);')}>Empresa actual</div>
+              <div style={css('padding:8px 10px; font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);')}>Empresa actual</div>
               {(companyList || []).map((c: any, $i: number) => (<Fragment key={$i}>
                 <button className={cx(hv('background:var(--color-accent-100);'))} onClick={c.onClick} style={css(`display:flex; align-items:center; gap:10px; padding:10px; background:${c.bg}; border:0; cursor:pointer; text-align:left; color:var(--color-text);`)}>
                   <span style={css('flex:1; display:flex; flex-direction:column;')}>
                     <span style={css('font-weight:600; font-size:14px;')}>{c.name}</span>
-                    <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{c.meta}</span></span>
+                    <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{c.meta}</span></span>
                   <span style={css('font-family:var(--font-heading); font-size:16px;')}>{c.value}</span></button>
               </Fragment>))}
               <div style={css('height:1px; background:var(--color-divider); margin:6px 0;')}></div>
               <button className="btn btn-ghost" onClick={goLibrary} style={css('justify-content:flex-start; padding:8px 10px;')}>Mis valuaciones</button>
               <button className="btn btn-ghost" onClick={goImport} style={css('justify-content:flex-start; padding:8px 10px;')}>+ Nueva valuación</button></div>
           </>) : null}</div>
-        {ui.desktop ? (<>
-          <nav style={css('display:flex; align-items:stretch; height:64px; margin-left:12px;')}>
-            {(navItems || []).map((it: any, $i: number) => (<Fragment key={$i}>
-              <button className={cx(hv('color:var(--color-accent);'))} onClick={it.onClick} style={css(`display:flex; align-items:center; gap:5px; padding:0 9px; background:none; border:0; border-bottom:2px solid ${it.border}; cursor:pointer; font-family:var(--font-heading); font-size:15px; white-space:nowrap; font-weight:600; color:${it.color}; transition:color .2s, border-color .2s;`)}>
-                <span style={css('font-size:12px; font-family:var(--font-body); font-weight:500; opacity:.7;')}>{it.num}</span>{it.label}</button>
-            </Fragment>))}</nav>
-        </>) : null}
-        <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px;')}>
+        <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px; flex:0 0 auto;')}>
           {ui.modified ? (<>
-            <button className="tag tag-accent" onClick={resetA} style={css('border:0; cursor:pointer; gap:6px;')} title="Restaurar valores base">● Modelo modificado · Restaurar</button>
-          </>) : null}
-          {ui.desktop ? (<>
-            <button className="btn btn-secondary" onClick={startPresent}>Presentar</button>
+            <button className="tag tag-accent" onClick={resetA} style={css('border:0; cursor:pointer; gap:6px;')} title="Restaurar valores base">{ui.mobile ? '● Restaurar' : '● Modelo modificado · Restaurar'}</button>
           </>) : null}
           <div style={css('position:relative;')}>
             <button className="btn btn-primary blueprint" onClick={toggleExportMenu}>
@@ -163,13 +158,32 @@ export function Header({ vm }: { vm: VM }) {
                 <i className="corner tr"></i>
                 <i className="corner bl"></i>
                 <i className="corner br"></i>
-                <div style={css('padding:8px 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);')}>Exportar valuación · {co.short}</div>
+                <div style={css('padding:8px 10px; font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-neutral-700);')}>Exportar valuación · {co.short}</div>
                 {(exportItems || []).map((e: any, $i: number) => (<Fragment key={$i}>
                   <button className={cx(hv('background:var(--color-accent-100);'))} onClick={e.onClick} disabled={e.disabled} style={css('display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px; background:none; border:0; cursor:pointer; text-align:left; color:var(--color-text);')}>
                     <span style={css('font-weight:600; font-size:14px;')}>{e.label}</span>
-                    <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{e.desc}</span></button>
+                    <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{e.desc}</span></button>
                 </Fragment>))}</div>
-            </>) : null}</div></div></div></header>
+            </>) : null}</div></div></div>
+      {ui.desktop ? (
+        <nav aria-label="Secciones de la valuación" style={css('position:relative; z-index:40; max-width:var(--page-max); margin:0 auto; padding:0 var(--page-pad); display:flex; align-items:stretch; height:46px; border-top:1px solid color-mix(in srgb, var(--color-text) 6%, transparent);')}>
+          <div style={css('display:flex; align-items:stretch; min-width:0; overflow-x:auto; scrollbar-width:none;')}>
+            {(navItems || []).map((it: any, $i: number) => (<Fragment key={$i}>
+              <button className={cx(hv('color:var(--color-accent);'))} onClick={it.onClick} aria-current={it.current ? 'page' : undefined} title={it.num + ' · ' + it.title} style={css(`display:flex; align-items:center; gap:6px; padding:0 12px; background:none; border:0; border-bottom:3px solid ${it.border}; cursor:pointer; font-family:var(--font-heading); font-size:17px; white-space:nowrap; font-weight:600; color:${it.color}; transition:color .2s, border-color .2s;`)}>
+                <span style={css('font-size:13px; font-family:var(--font-body); font-weight:500; opacity:.7;')}>{it.num}</span>{it.label}</button>
+            </Fragment>))}</div>
+          <div style={css('margin-left:auto; position:relative; display:flex; align-items:stretch;')}>
+            <button onClick={toggleMoreMenu} aria-expanded={ui.moreMenu} aria-haspopup="true" style={css(`display:flex; align-items:center; gap:6px; padding:0 12px; background:none; border:0; border-bottom:3px solid ${moreCurrent ? 'var(--color-accent)' : 'transparent'}; cursor:pointer; font-family:var(--font-heading); font-size:17px; font-weight:600; color:${moreCurrent ? 'var(--color-accent)' : 'var(--color-text)'};`)}>Más ▾</button>
+            {ui.moreMenu ? (
+              <div className="blueprint" role="menu" style={css('position:absolute; top:46px; right:0; width:320px; background:var(--color-bg); box-shadow:var(--shadow-lg); padding:8px; display:flex; flex-direction:column; z-index:60;')}>
+                <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+                <div style={css('padding:8px 10px; font-size:14px; color:var(--color-neutral-700);')}>Herramientas de apoyo</div>
+                {(moreItems || []).map((m: any, $i: number) => (
+                  <button key={$i} role="menuitem" className={cx(hv('background:var(--color-accent-100);'))} onClick={m.onClick} style={css(`display:flex; flex-direction:column; align-items:flex-start; gap:2px; padding:10px; background:${m.current ? 'var(--color-accent-100)' : 'none'}; border:0; cursor:pointer; text-align:left; color:var(--color-text);`)}>
+                    <span style={css('font-weight:600; font-size:15px;')}>{m.label}</span>
+                    <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{m.desc}</span></button>))}</div>) : null}</div>
+        </nav>) : null}
+    </header>
   </>);
 }
 
@@ -178,24 +192,47 @@ export function Footer({ vm }: { vm: VM }) {
   const { co, project, teamNames } = vm;
   return (<>
     <footer data-noprint style={css('border-top:1px solid var(--color-divider);')}>
-      <div style={css('max-width:1360px; margin:0 auto; padding:24px 24px 96px; display:flex; flex-wrap:wrap; gap:12px 32px; font-size:12px; color:var(--color-neutral-700);')}>
+      <div style={css('max-width:var(--page-max); margin:0 auto; padding:24px var(--page-pad) 96px; display:flex; flex-wrap:wrap; gap:12px 32px; font-size:13.5px; color:var(--color-neutral-700);')}>
         <span style={css('font-weight:600; color:var(--color-text);')}>{project.institution} · {project.course} · {project.year}</span>
         <span>Caso de estudio: {co.legalName}</span>
         <span>Equipo: {teamNames}</span></div></footer>
   </>);
 }
 
-/** Navegación inferior en pantallas angostas. */
+/** Navegación inferior en pantallas angostas: Anterior · Secciones · Siguiente. */
 export function MobileNav({ vm }: { vm: VM }) {
-  const { mobileNav, ui } = vm;
+  const { closeMenu, moreItems, navItems, pager, toggleSections, ui } = vm;
+  if (!ui.mobile) return null;
+  const btn = 'height:60px; background:none; border:0; color:var(--color-text); font-family:var(--font-heading); font-size:16px; font-weight:600; cursor:pointer; padding:0 8px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
   return (<>
-    {ui.mobile ? (<>
-      <nav data-noprint style={css('position:fixed; left:0; right:0; bottom:0; z-index:45; display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); background:var(--color-bg); border-top:1px solid var(--color-divider);')}>
-        {(mobileNav || []).map((it: any, $i: number) => (<Fragment key={$i}>
-          <button onClick={it.onClick} style={css(`height:60px; background:none; border:0; border-top:2px solid ${it.border}; color:${it.color}; font-family:var(--font-heading); font-size:14px; font-weight:600; cursor:pointer;`)}>{it.label}</button>
-        </Fragment>))}</nav>
-    </>) : null}
+    {ui.sectionsMenu ? (<>
+      <div data-noprint onClick={closeMenu} style={css('position:fixed; inset:0; z-index:46; background:color-mix(in srgb, var(--color-neutral-900) 35%, transparent);')}></div>
+      <nav data-noprint aria-label="Secciones" style={css('position:fixed; left:0; right:0; bottom:60px; z-index:47; max-height:70vh; overflow-y:auto; background:var(--color-bg); border-top:1px solid var(--color-divider); padding:8px 16px 12px; display:flex; flex-direction:column;')}>
+        {(navItems || []).map((it: any, $i: number) => (
+          <button key={$i} onClick={it.onClick} aria-current={it.current ? 'page' : undefined} style={css(`display:flex; gap:10px; align-items:baseline; padding:12px 4px; background:none; border:0; border-bottom:1px solid var(--color-divider); text-align:left; cursor:pointer; font-family:var(--font-heading); font-size:19px; font-weight:600; color:${it.color};`)}>
+            <span style={css('font-family:var(--font-body); font-size:14px; opacity:.7; min-width:22px;')}>{it.num}</span>{it.title}</button>))}
+        <div style={css('padding:12px 4px 4px; font-size:14px; color:var(--color-neutral-700);')}>Más</div>
+        <div style={css('display:flex; flex-wrap:wrap; gap:8px;')}>
+          {(moreItems || []).map((m: any, $i: number) => <button key={$i} className="btn btn-secondary" onClick={m.onClick} style={css('font-size:14px;')}>{m.label}</button>)}</div>
+      </nav></>) : null}
+    <nav data-noprint aria-label="Recorrido" style={css('position:fixed; left:0; right:0; bottom:0; z-index:48; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); background:var(--color-bg); border-top:1px solid var(--color-divider);')}>
+      <button onClick={pager.prev ? pager.prev.onClick : undefined} disabled={!pager.prev} aria-label={pager.prev ? 'Anterior: ' + pager.prev.label : 'Anterior'} style={css(btn + 'text-align:left;' + (pager.prev ? '' : 'opacity:.35;'))}>← {pager.prev ? pager.prev.label.split(' · ')[0] : ''}</button>
+      <button onClick={toggleSections} aria-expanded={ui.sectionsMenu} style={css(btn + 'border-left:1px solid var(--color-divider); border-right:1px solid var(--color-divider); padding:0 16px; color:var(--color-accent);')}>Secciones</button>
+      <button onClick={pager.next ? pager.next.onClick : undefined} disabled={!pager.next} aria-label={pager.next ? 'Siguiente: ' + pager.next.label : 'Siguiente'} style={css(btn + 'text-align:right;' + (pager.next ? '' : 'opacity:.35;'))}>{pager.next ? pager.next.label.split(' · ')[0] : ''} →</button></nav>
   </>);
+}
+
+/** Anterior / Siguiente al final de cada página del recorrido (sin barra de avance). */
+export function PageNav({ vm }: { vm: VM }) {
+  const { pager, ui } = vm;
+  if (!pager.show || ui.mobile) return null;
+  const b = 'display:flex; flex-direction:column; gap:2px; padding:14px 18px; background:none; border:1px solid var(--color-divider); cursor:pointer; color:var(--color-text); min-width:0; max-width:48%;';
+  return (
+    <nav data-noprint aria-label="Anterior y siguiente" style={css('display:flex; justify-content:space-between; gap:16px; margin-top:48px; padding-top:24px; border-top:1px solid var(--color-divider);')}>
+      {pager.prev ? <button className={cx(hv('border-color:var(--color-accent);'))} onClick={pager.prev.onClick} style={css(b + 'align-items:flex-start; text-align:left;')}><span style={css('font-size:14px; color:var(--color-neutral-700);')}>← Anterior</span><span style={css('font-family:var(--font-heading); font-size:20px; font-weight:600;')}>{pager.prev.label}</span></button> : <span />}
+      {pager.next ? <button className={cx(hv('border-color:var(--color-accent);'))} onClick={pager.next.onClick} style={css(b + 'align-items:flex-end; text-align:right;')}><span style={css('font-size:14px; color:var(--color-neutral-700);')}>Siguiente →</span><span style={css('font-family:var(--font-heading); font-size:20px; font-weight:600;')}>{pager.next.label}</span></button> : <span />}
+    </nav>
+  );
 }
 
 /** Panel lateral "¿Cómo se calculó?". */
@@ -207,7 +244,7 @@ export function Drawer({ vm }: { vm: VM }) {
       <aside data-noprint style={css('position:fixed; top:0; right:0; bottom:0; z-index:81; width:min(520px, 100%); background:var(--color-bg); border-left:1px solid var(--color-divider); box-shadow:var(--shadow-lg); padding:28px; overflow-y:auto; display:flex; flex-direction:column; gap:18px;')}>
         <div style={css('display:flex; justify-content:space-between; align-items:flex-start; gap:12px;')}>
           <div>
-            <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>¿Cómo se calculó?</div>
+            <div style={css('font-size:13.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>¿Cómo se calculó?</div>
             <h3 style={css('margin:4px 0 0; font-size:28px;')}>{drawer.title}</h3></div>
           <button className="btn btn-secondary btn-icon" onClick={closeDrawer} aria-label="Cerrar">✕</button></div>
         <div style={css('display:flex; flex-direction:column;')}>
@@ -215,25 +252,10 @@ export function Drawer({ vm }: { vm: VM }) {
             <div style={css('display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; padding:12px 0; border-top:1px solid var(--color-divider);')}>
               <strong style={css(`font-size:14px; font-weight:${s.fw};`)}>{s.k}</strong>
               <span style={css(`font-family:var(--font-heading); font-size:20px; font-weight:600; color:${s.color}; text-align:right;`)}>{s.v}</span>
-              <span style={css('font-size:12px; color:var(--color-neutral-700); grid-column:1 / -1;')}>{s.f}</span></div>
+              <span style={css('font-size:13.5px; color:var(--color-neutral-700); grid-column:1 / -1;')}>{s.f}</span></div>
           </Fragment>))}</div>
-        <span style={css('font-size:12px; color:var(--color-neutral-700); line-height:1.5;')}>{drawer.note}</span>
+        <span style={css('font-size:13.5px; color:var(--color-neutral-700); line-height:1.5;')}>{drawer.note}</span>
         <button className="btn btn-secondary" onClick={drawer.goAnnex}>Ver tabla completa en anexos →</button></aside>
-    </>) : null}
-  </>);
-}
-
-/** Controles del modo presentación. */
-export function PresentationBar({ vm }: { vm: VM }) {
-  const { pres } = vm;
-  return (<>
-    {pres.on ? (<>
-      <div data-noprint style={css('position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:90; display:flex; align-items:center; gap:4px; padding:6px; background:var(--color-accent-900); color:#fff; box-shadow:var(--shadow-lg);')}>
-        <button onClick={pres.prev} style={css('width:40px; height:40px; background:none; border:0; color:#fff; cursor:pointer; font-size:18px;')} aria-label="Anterior">←</button>
-        <span style={css('font-family:var(--font-heading); font-size:15px; font-weight:600; padding:0 10px; min-width:170px; text-align:center;')}>{pres.label}</span>
-        <button onClick={pres.next} style={css('width:40px; height:40px; background:none; border:0; color:#fff; cursor:pointer; font-size:18px;')} aria-label="Siguiente">→</button>
-        <button onClick={pres.exit} style={css('height:40px; padding:0 12px; background:none; border:0; border-left:1px solid rgba(255,255,255,.25); color:#fff; cursor:pointer; font-size:13px;')}>Salir</button></div>
-      <div data-noprint style={css(`position:fixed; top:0; left:0; height:3px; z-index:91; background:var(--color-accent); width:${pres.progress}; transition:width .5s;`)}></div>
     </>) : null}
   </>);
 }
@@ -250,7 +272,7 @@ export function ExportStatus({ vm }: { vm: VM }) {
         <strong style={css('font-family:var(--font-heading); font-size:18px; font-weight:600;')}>{x.label}</strong>
         <span style={css(`font-size:13px; color:${x.error ? 'var(--neg)' : x.done ? 'var(--pos)' : 'var(--color-neutral-700)'};`)}>{x.error ? 'Error' : x.done ? 'Listo' : x.pct + '%'}</span>
       </div>
-      <div style={css('font-size:12px; color:var(--color-neutral-700);')}>{x.scope}</div>
+      <div style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{x.scope}</div>
       <div aria-hidden="true" style={css('height:6px; background:var(--color-neutral-200, #e3e3e6); position:relative; overflow:hidden;')}>
         <div style={css(`position:absolute; inset:0 auto 0 0; width:${x.pct}%; background:${x.error ? 'var(--neg)' : 'var(--color-accent)'}; transition:width .25s ease;`)}></div>
       </div>

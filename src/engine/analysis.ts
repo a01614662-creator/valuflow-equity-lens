@@ -101,14 +101,14 @@ export function methods(ds: Dataset, A: Assumptions, base: RunOk): MethodRow[] {
     out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'LSEG/SDC · ' + (RV.sdc.stats.evEbitda?.n ?? 0) + ' operaciones · mediana · rango P25–P75', value: num(RV.sdc.value), lo: num(RV.sdc.lo), hi: num(RV.sdc.hi), ref: !(RV.combined && RV.combined.rows.find(r => r.key === 'transactions')!.weight > 0) });
     if (RV.transactions) out.push({ key: 'transCiq', label: 'Transacciones CIQ (histórico)', sub: RV.transactions.n + ' operaciones · media · mín–máx · no defendible', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
   } else if (RV && RV.transactions) out.push({ key: 'trans', label: 'Precedent Transactions', sub: 'Referencia · ' + RV.transactions.n + ' operaciones · mín–máx', value: num(RV.transactions.value), lo: num(RV.transactions.lo), hi: num(RV.transactions.hi), ref: true });
-  if (RV && RV.combined) out.push({ key: 'combined', label: 'Valuación combinada', sub: RV.combined.rows.map(r => Math.round(r.weight * 100) + '%').join(' / ') + ' · DCF / Comps / Transactions', value: num(RV.combined.value), lo: null, hi: null, main: true });
+  if (RV && RV.combined) out.push({ key: 'combined', label: 'Conclusión de valuación', sub: RV.combined.rows.map(r => Math.round(r.weight * 100) + '%').join(' / ') + ' · DCF / Comps / Transactions', value: num(RV.combined.value), lo: null, hi: null, main: true });
   if (ds.altForecasts) Object.keys(ds.altForecasts).forEach(k => {
     const af = ds.altForecasts![k], r = run(ds, { ...A, ...af.overrides, forecastKey: k, dGrowth: 0, dMargin: 0, dCapex: 0, dTax: 0 });
     if (r.ok) out.push({ key: k, label: 'Proyección base anterior', sub: af.short || 'Supuestos constantes', value: r.value, lo: null, hi: null, ref: true });
   });
   const m = ds.market || ({} as Dataset['market']);
   if (m.consensus) out.push({ key: 'cons', label: 'Consenso de analistas', sub: m.consensusLabel || '', value: m.consensus, lo: null, hi: null, ref: true });
-  if (m.low52 && m.high52) out.push({ key: '52w', label: 'Rango 52 semanas', sub: 'Mercado', value: null, lo: m.low52, hi: m.high52, ref: true });
+  if (m.low52 && m.high52) out.push({ key: '52w', label: 'Rango 52 semanas', sub: 'Mercado' + (m.technicalDate ? ' · al ' + m.technicalDate : ''), value: null, lo: m.low52, hi: m.high52, ref: true });
   return out;
 }
 

@@ -10,7 +10,7 @@ export function TraceCard({ c, label }: { c: Chain; label?: string }) {
       <i className="corner tr"></i>
       <i className="corner bl"></i>
       <i className="corner br"></i>
-      <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{label || '¿De dónde salió este número?'}</div>
+      <div style={css('font-size:13.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{label || '¿De dónde salió este número?'}</div>
       <h4 style={css('margin:0; font-size:20px;')}>{c.title}</h4>
       <ol style={css('margin:0; padding:0; list-style:none; display:flex; flex-direction:column;')}>
         {c.steps.map((s, i) => (<Fragment key={i}>
@@ -19,7 +19,7 @@ export function TraceCard({ c, label }: { c: Chain; label?: string }) {
             <span style={css(`font-size:13px; font-weight:${s.strong ? 700 : 500};`)}>{s.k}</span>
             <span style={css(`font-family:var(--font-heading); font-size:${s.strong ? 20 : 15}px; font-weight:600; text-align:right; color:${s.strong ? 'var(--color-accent)' : 'var(--color-text)'};`)}>{s.v}</span>
             <span></span>
-            <span style={css('grid-column:2 / 4; font-size:11px; line-height:1.45; color:var(--color-neutral-700);')}>{s.f}</span></li>
+            <span style={css('grid-column:2 / 4; font-size:12.5px; line-height:1.45; color:var(--color-neutral-700);')}>{s.f}</span></li>
         </Fragment>))}</ol></div>
   );
 }

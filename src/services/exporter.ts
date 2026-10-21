@@ -91,7 +91,7 @@ export async function makeZip(S: Snapshot, onProgress?: Progress): Promise<FileO
     'Contenido:',
     '- ' + pe.name + ' (resumen ejecutivo, ' + pe.pages + ' páginas)',
     '- ' + pf.name + ' (reporte técnico completo, ' + pf.pages + ' páginas)',
-    '- ' + x.name + ' (libro con fórmulas: Supuestos, WACC, FCFF y valuación, Transacciones SDC, Combinada; más las tablas del reporte)',
+    '- ' + x.name + ' (libro con fórmulas: Supuestos, WACC, FCFF y valuación, Transacciones SDC, Conclusión; más las tablas del reporte)',
     '- ' + c.name + ' (todas las tablas en formato largo, UTF-8 con BOM)',
     '- csv/ (una tabla por archivo, numeradas como en el reporte técnico)',
     '- ' + j.name + ' (dataset y supuestos; se reabre en ValuFlow desde Biblioteca > Importar dataset)',

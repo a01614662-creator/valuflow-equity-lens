@@ -58,6 +58,8 @@ export interface Market {
   ma50?: number;
   ma200?: number;
   technical?: string;
+  /** Fecha de corte de las cifras técnicas (52 semanas, variación 1 año, RSI) si difiere de la del precio. */
+  technicalDate?: string;
   [k: string]: unknown;
 }
 
@@ -369,6 +371,34 @@ export interface ImportedField {
   key: string; label: string; value: number | null; period?: string | null; srcLabel?: string | null; srcSheet?: string | null; conf?: string;
 }
 
+/** Fuente citada: [nombre, enlace (opcional), nota de alcance o fecha]. */
+export type SourceRef = [string, string, string];
+
+/** Página «Acerca de» (00): perfil breve de la empresa con cifras fechadas y su fuente. */
+export interface AboutSpec {
+  kpis: { k: string; v: string; s: string }[];
+  /** Tiendas por formato en dos cortes; `periods` = [etiqueta, fuente] de cada columna. */
+  formats: { periods: [string, string][]; rows: { name: string; desc: string; stores: (number | null)[] }[] };
+  /** Negocios relacionados documentados (p. ej. inmobiliario, digital). */
+  related: { name: string; v: string; src: string }[];
+  threats: { name: string; desc: string; src: string }[];
+  insights: { t: string; src: string }[];
+  /** Serie de precio: moneda, frecuencia y fecha/valor de referencia que se resaltan en la gráfica. */
+  price: { refDate: string; refLabel: string; note: string };
+  sources: SourceRef[];
+}
+
+/** Indicador ESG reportado: dato de la fuente separado de la lectura del equipo. */
+export interface EsgItem { k: string; v: string; period: string; src: string; reading: string; team?: boolean }
+export interface EsgSpec {
+  pillars: { key: string; title: string; items: EsgItem[] }[];
+  /** Comparación del consejo entre dos cortes: [corte, total, patrimoniales, relacionados, independientes, % indep., fuente]. */
+  board: { rows: [string, number, number, number | null, number, number, string][]; note: string; bestPractice: number };
+  committees: { name: string; v: string; src: string }[];
+  note: string;
+  sources: SourceRef[];
+}
+
 export interface Dataset {
   id: string;
   builtIn: boolean;
@@ -410,6 +440,8 @@ export interface Dataset {
   quarterly?: { periods: string[]; [k: string]: string[] | number[] };
   ratios?: Ratio5[];
   governance?: Governance;
+  about?: AboutSpec;
+  esg?: EsgSpec;
   timeline?: [string, string, string, string][];
   dividends?: [string, string, number][];
   news?: [string, string][];

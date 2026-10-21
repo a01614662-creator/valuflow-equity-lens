@@ -12,9 +12,9 @@ import { brandColor, findLogo, research, type Research } from '../services/resea
 import { buildView, type Calc } from './viewmodel';
 import { Shell } from './Shell';
 
-export const SEQ = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab'];
-export const SEQ_N = ['Portada', '01 · Valor', '02 · Flujos', '03 · Riesgo', '04 · Múltiplos', '05 · Transacciones', '06 · Combinada', 'Laboratorio'];
-const VIEWS = ['cover', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab', 'annex', 'team', 'library'];
+/** Recorrido principal (Anterior / Siguiente): portada, 00 Acerca de, 01–07. Herramientas de apoyo van en el menú «Más». */
+export const TOUR = ['cover', 'p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'];
+const VIEWS = [...TOUR, 'lab', 'annex', 'team', 'library'];
 
 export interface ImpState {
   step: number; parsing: boolean; error: string | null; parsed: Parsed | null;
@@ -26,10 +26,8 @@ export interface ImpState {
 export interface AppState {
   ready: boolean; view: string; annexId: string | null; activeId: string; companies: Dataset[]; A: Assumptions | null;
   menu: string | null; drawer: string | null; toast: string | null; busy: boolean; reveal: boolean; heroDisp: number;
-  presenting: boolean; printing: string | null; fcfSel: number; step: number; mobile: boolean; imp: ImpState | null;
+  printing: string | null; fcfSel: number; step: number; mobile: boolean; imp: ImpState | null;
   research: Record<string, Research>; drag: boolean;
-  /** Modo presentación (diapositivas): abierto y diapositiva actual. No modifica supuestos ni la vista de la app. */
-  deck: boolean; slide: number;
   /** Exportación en curso o terminada: avance real, archivo generado o error. */
   exp: ExportState | null;
 }
@@ -39,7 +37,7 @@ export interface ExportState { kind: ExportKind; label: string; p: number; msg: 
 export const EXPORT_LABELS: Record<ExportKind, string> = { exec: 'PDF · Resumen ejecutivo', full: 'PDF · Reporte técnico completo', xlsx: 'Excel (.xlsx)', csv: 'CSV', json: 'Valuación JSON', zip: 'Paquete completo (.zip)' };
 
 export class App extends Component<object, AppState> {
-  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, presenting: false, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false, deck: false, slide: 0, exp: null };
+  state: AppState = { ready: false, view: 'cover', annexId: null, activeId: DEFAULT_ID, companies: [], A: null, menu: null, drawer: null, toast: null, busy: false, reveal: false, heroDisp: 0, printing: null, fcfSel: 0, step: 0.5, mobile: false, imp: null, research: {}, drag: false, exp: null };
 
   // Cálculo en caché (una sola fuente de verdad por render).
   _c: Calc | null = null; _ck: string | null = null;
@@ -52,11 +50,8 @@ export class App extends Component<object, AppState> {
   onKey = (e: KeyboardEvent) => {
     const t = e.target as HTMLElement | null;
     if (t && /INPUT|SELECT|TEXTAREA/.test(t.tagName)) return;
-    if (this.state.deck) return; // la presentación maneja su propio teclado
-    if (e.key === 'Escape') { if (this.state.drawer) this.setState({ drawer: null }); else if (this.state.presenting) this.exitPresent(); else this.setState({ menu: null }); }
-    if (!this.state.presenting) return;
-    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); this.presStep(1); }
-    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); this.presStep(-1); }
+    // Solo Escape (cerrar panel o menú). Espacio y flechas conservan su comportamiento normal del navegador.
+    if (e.key === 'Escape') { if (this.state.drawer) this.setState({ drawer: null }); else this.setState({ menu: null }); }
   };
 
   componentDidMount() {
@@ -111,16 +106,15 @@ export class App extends Component<object, AppState> {
   switchCompany(id: string) { store.setActive(id); this.setState({ activeId: id, A: this.loadA(this.state.companies, id), menu: null, fcfSel: 0, annexId: null }, () => this.enter()); }
   saveCompanies(list: Dataset[]) { this.setState({ companies: list }); store.save(list.filter(c => !c.builtIn)); }
 
-  // ---------- Presentación / impresión ----------
-  // Presentación por diapositivas: estado visual propio; al salir se conserva la vista, los supuestos y la valuación.
-  startPresent() { this.setState({ deck: true, slide: 0, menu: null, drawer: null }); }
-  exitPresent() { this.setState({ deck: false, presenting: false }); try { document.fullscreenElement && document.exitFullscreen(); } catch { /* no permitido */ } }
-  setSlide(i: number) { this.setState({ slide: i }); }
-  presentLive() { this.exitPresent(); this.go(this.state.view === 'cover' ? 'p1' : this.state.view); }
-  presStep(d: number) {
-    // Las páginas de múltiplos solo forman parte de la presentación si el dataset las documenta.
-    const ds = this.ds(), seq = SEQ.filter(x => !['p4', 'p5', 'p6'].includes(x) || !!(ds.comps || ds.combined));
-    const i = Math.max(0, seq.indexOf(this.state.view)); const n = Math.min(seq.length - 1, Math.max(0, i + d)); if (n !== i) this.go(seq[n]);
+  // ---------- Recorrido ----------
+  /** Páginas del recorrido disponibles para el dataset activo (04–06 solo si documenta múltiplos; 00 y 07 si hay perfil). */
+  tour(): string[] {
+    const ds = this.ds(), rel = !!(ds.comps || ds.combined);
+    return TOUR.filter(x => (!['p4', 'p5', 'p6'].includes(x) || rel) && (x !== 'p0' || !!ds.about) && (x !== 'p7' || !!ds.esg));
+  }
+  step(d: number) {
+    const seq = this.tour(), i = seq.indexOf(this.state.view); if (i < 0) return;
+    const n = Math.min(seq.length - 1, Math.max(0, i + d)); if (n !== i) this.go(seq[n]);
   }
   // ---------- Exportación ----------
   // Se exporta exactamente lo que se ve: los supuestos activos (caso base del Excel o escenario modificado del Laboratorio).

@@ -21,5 +21,9 @@ cambio que altere la arquitectura o el resultado financiero.
 - Estado del importador en `App.tsx`: usa actualizaciones funcionales (`setState(s => …)`); React agrupa actualizaciones.
 - Sin CDN ni Google Fonts: SheetJS (`xlsx`), jsPDF, jspdf-autotable, ExcelJS, JSZip y las fuentes (@fontsource) van en el paquete.
 - Reportes: `src/report/snapshot.ts` (una instantánea por juego de supuestos) → `content.ts` (secciones; reutiliza las tablas de `src/ui/annex.ts` y `relative.ts`)
-  → `src/services/pdf.ts`, `xlsx.ts`, `exporter.ts`. Pantalla, presentación y exportaciones usan los mismos supuestos activos.
-- Cierre del proyecto (auditoría, reconciliación, transacciones, QA): `docs/CIERRE_PROYECTO.md`; guion de la presentación: `docs/PRESENTACION.md`.
+  → `src/services/pdf.ts`, `xlsx.ts`, `exporter.ts`. Pantalla y exportaciones usan los mismos supuestos activos.
+- Cierre del proyecto (auditoría, reconciliación, transacciones, QA): `docs/CIERRE_PROYECTO.md`; cierre para regionales (recorrido 00–07, precio 30-jun-2026, ESG): `docs/RECORRIDO_REGIONAL.md`.
+- No hay modo de diapositivas: la presentación es el recorrido por la app (00 Acerca de → 07 ESG y Gobierno) con Anterior/Siguiente.
+  Herramientas de apoyo (Laboratorio, Anexos, Valuaciones, Importar, Equipo) van en el menú «Más». Espacio y flechas no navegan.
+- Textos de empresa para 00 y 07 viven en el dataset (`about`, `esg`) con fecha y fuente por cifra; sin calificaciones ESG inventadas.
+- El QR se genera localmente (`src/services/qr.ts`, paquete `qrcode-generator`); el enlace sale de `DEMO_URL` en `src/config.ts` (`VITE_DEMO_URL` lo reemplaza).

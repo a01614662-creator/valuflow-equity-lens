@@ -31,7 +31,7 @@ function expectConsistent(A: E.Assumptions) {
   expect(vm.r.upside).toBe(f.pp(b.upside));
   const kp = Object.fromEntries(vm.kpis.map((k: { label: string; value: string }) => [k.label, k.value]));
   expect(kp['WACC']).toBe(f.p(b.wacc)); expect(kp['Enterprise Value']).toBe(f.m(b.ev)); expect(kp['Equity Value']).toBe(f.m(b.eqVal));
-  expect(kp['Valuación combinada']).toBe(f.cur(R.combined!.value as number));
+  expect(kp['Conclusión de valuación']).toBe(f.cur(R.combined!.value as number));
   expect(vm.wf.note).toContain(f.cur(b.value));
   // 02 · Flujos: FCF por año y valor terminal
   expect(vm.fcfChart.cols.slice(1).map((c: { fcfTxt: string }) => c.fcfTxt)).toEqual(b.rows.map(r => f.m(r.fcf)));

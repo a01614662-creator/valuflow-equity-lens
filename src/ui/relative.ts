@@ -1,4 +1,4 @@
-// Modelo de vista de la valuación relativa (04 · Múltiplos, 05 · Transacciones), la valuación combinada (06 · Combinada),
+// Modelo de vista de la valuación relativa (04 · Múltiplos, 05 · Transacciones), la conclusión de valuación (06 · Conclusión),
 // la inflación (Laboratorio) y la beta. Solo presentación: todos los números salen de src/engine.
 // Cada resultado trae su "cadena de trazabilidad": de dónde sale el número, paso a paso.
 import * as E from '../engine';
@@ -24,13 +24,17 @@ function flip(cur: Record<string, number> | undefined, key: string, base: number
 
 export function overridesActive(A: Assumptions) { return !!(A.compsInclude || A.compsUse || A.dealsInclude || A.dealsUse || A.sdcInclude || A.weights); }
 
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+/** 2026-06-30 → 30-jun-2026 (otros formatos pasan sin cambio). */
+const dmy = (iso: string) => /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(8, 10) + '-' + MESES[+iso.slice(5, 7) - 1] + '-' + iso.slice(0, 4) : iso;
+
 const metricName: Record<string, string> = { revenue: 'Ventas LTM', ebitda: 'EBITDA LTM', ebit: 'EBIT LTM', eps: 'UPA LTM' };
 
 /** Cadena múltiplo → estadístico → métrica → EV → Equity → precio para un múltiplo (a la media). */
 function multipleChain(m: E.MultipleResult, adj: number, shares: number, sampleTxt: string, sampleLabel: string): Chain {
   const st = m.stats!, d = m.detail, isP = m.def.metric === 'eps';
   const steps: Step[] = [
-    { k: sampleLabel, v: sampleTxt, f: 'Incluir = 1' },
+    { k: sampleLabel, v: sampleTxt, f: 'La lista está arriba (Incluir = 1)' },
     { k: 'Múltiplo ' + m.def.label, v: m.values.map(x => mx(x)).join(' · '), f: 'Publicado por la fuente (sin recalcular)' },
     { k: 'Estadístico: media', v: mx(st.mean), f: 'AVERAGE de ' + st.n + ' valores (mediana ' + mx(st.median) + ', P25 ' + mx(st.p25) + ', P75 ' + mx(st.p75) + ')' },
     { k: 'Métrica de la empresa', v: d.metric == null ? 'NA' : f.n(d.metric, isP ? 4 : 1), f: metricName[m.def.metric || ''] || '' }
@@ -83,11 +87,15 @@ export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: R
         .map(([l, v, k]) => row(l, [cell(f.n(v, k === 'eps' ? 4 : 1)), txt((tgt.sources || {})[k] || '', '420px')])).concat([row('Ajuste neto EV → capital', [cell(f.m(C.adj, 1)), txt('Diap. 7: caja − deuda − minoritarios − preferentes', '420px')], { fw: 700 })]),
       { minW: '760px' }));
     const incNames = S.peers.filter((_, i) => C.include[i] === 1).map(p => p.name.replace(/\s*\(.*\)$/, '').replace(/,? S\.A\.B?\..*$/i, ''));
-    const chains = C.multiples.filter(m => m.use === 1 && m.stats).map(m => multipleChain(m, C.adj, tgt.shares, C.n + ' de ' + S.peers.length + ': ' + incNames.join(', '), 'Comparables'));
+    const chains = C.multiples.filter(m => m.use === 1 && m.stats).map(m => multipleChain(m, C.adj, tgt.shares, C.n + ' emisoras', 'Muestra seleccionada'));
+    // La muestra se muestra una sola vez (chips); las cadenas solo la referencian.
+    const tick = (n: string) => { const t = /\(([^)]*)\)\s*$/.exec(n); return t ? t[1] : ''; };
+    const sample = S.peers.map((p, i) => ({ name: p.name.replace(/\s*\(.*\)$/, '').replace(/,? S\.A\.B?\..*$/i, '').replace(/ S\.A\.$/, ''), ticker: tick(p.name), country: p.country, cls: p.classification, inc: C.include[i] === 1 }));
     const usedP = C.multiples.filter(m => m.use === 1 && E.isNum(m.prices.mean));
     chains.push({ title: 'Resultado del método', steps: [...usedP.map(m => ({ k: 'Precio ' + m.def.label, v: px(m.prices.mean), f: 'a la media' })), { k: 'Trading Comps', v: px(C.value), f: 'Promedio simple de ' + usedP.length + ' precios (diap. 9)', strong: true }] });
     mult = {
-      has: true, value: px(C.value), p25: px(C.p25), p75: px(C.p75), n: C.n, total: S.peers.length, used: C.used, asOf: S.asOf || '', up: up(C.value), upColor: upC(C.value),
+      has: true, value: px(C.value), p25: px(C.p25), p75: px(C.p75), n: C.n, total: S.peers.length, used: C.used, asOf: S.asOf ? dmy(S.asOf) : '', up: up(C.value), upColor: upC(C.value),
+      sample: sample.filter(x => x.inc), excluded: sample.filter(x => !x.inc),
       note: S.note || '', tables, chains, modified: !!(A.compsInclude || A.compsUse), reset
     };
   }
@@ -196,13 +204,13 @@ export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: R
       app.setA({ weights: same ? undefined : cur });
     };
     const chain: Step[] = K.rows.map(r => ({ k: r.label + ' (' + f.p(r.weight, 0) + ')', v: f.cur(r.contribution), f: px(r.price) + ' × ' + f.p(r.weight, 0) + (r.weight > 0 ? '' : ' · no contribuye') }));
-    chain.push({ k: 'Precio combinado', v: px(K.value), f: 'Σ contribuciones (pesos = ' + f.p(K.weightSum, 0) + ')', strong: true });
+    chain.push({ k: 'Precio objetivo (conclusión)', v: px(K.value), f: 'Σ contribuciones (pesos = ' + f.p(K.weightSum, 0) + ')', strong: true });
     comb = {
       has: true, value: px(K.value), up: up(K.value), upColor: upC(K.value), classValue: px(K.classValue), weightSum: f.p(K.weightSum, 0), sumOk: Math.abs(K.weightSum - 1) < 1e-9,
       errors: K.errors, hasErrors: K.errors.length > 0, classRule: ds.combined!.classRule || '', modified: !!A.weights, reset: () => app.setA({ weights: undefined }),
       price: f.cur(price), diff: E.isNum(K.value) ? (K.value - price >= 0 ? '+' : '−') + '$' + Math.abs(K.value - price).toFixed(2) : '—',
       contributors: K.rows.filter(r => r.weight > 0).map(r => r.label).join(' + ') || 'ninguno',
-      chain: { title: '¿De dónde salió el precio combinado?', steps: chain },
+      chain: { title: '¿De dónde salió el precio objetivo?', steps: chain },
       rows: K.rows.map(r => ({ key: r.key, label: r.label, price: px(r.price), weight: +(r.weight * 100).toFixed(6), onChange: setW(r.key), classW: f.p(r.classWeight, 1), contribution: f.cur(r.contribution), reason: reasons[r.key] || '', ref: r.weight === 0, tag: r.weight > 0 ? 'Contribuye' : 'Referencia · 0%', tagCls: r.weight > 0 ? 'tag-accent' : 'tag-neutral' }))
     };
   }

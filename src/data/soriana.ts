@@ -53,7 +53,7 @@ export const soriana: Dataset = {
   market: {
     price: XL.market.price, shares: XL.market.shares, marketCap: XL.market.price * XL.market.shares, consensus: XL.market.consensus, consensusLabel: 'Venta · 0 C / 1 M / 6 V (S&P Capital IQ)',
     low52: 23.90, high52: 42.70, pe: XL.market.pe, pbv: XL.market.pbv, bvps: XL.market.bvps, divYield: XL.market.divYield * 100, lastDiv: XL.market.lastDiv,
-    chg1y: 21.3, rating: 'HR+1 (HR Ratings, corto plazo)', rsi: 75, macd: 1.154, ma50: 29.68, ma200: 29.71, technical: 'Compra fuerte',
+    chg1y: 21.3, rating: 'HR+1 (HR Ratings, corto plazo)', rsi: 75, macd: 1.154, ma50: 29.68, ma200: 29.71, technical: 'Compra fuerte', technicalDate: '25-sep-2026',
     hrRevenue2027: 196480
   },
   // Proyección final construida desde sus drivers (hoja "Proyección Final Soriana"): la inflación del escenario
@@ -160,6 +160,86 @@ export const soriana: Dataset = {
       ['Comité de Riesgos y Continuidad Operativa', 'Constituido en abril de 2026 · 13 miembros de alta dirección']
     ],
     controls: ['Auditoría interna', 'Código de Ética', 'Línea Directa', 'Mecanismos de conflicto de interés', '96% de la plantilla capacitada en ética (2025)']
+  },
+  // 00 · Acerca de. Cifras fechadas con su fuente; sin mezclar cortes (cierre 2025 frente a 2T26).
+  about: {
+    kpis: [
+      { k: 'Tiendas en operación', v: '812', s: 'Al 2T26 · 820 al cierre de 2025 · Resultados 2T26 y 4T25' },
+      { k: 'Ingresos 2T26', v: '$43,559 mdp', s: '1S26: $84,003 mdp (−3.7% anual) · Reporte 2T26' },
+      { k: 'Colaboradores', v: 'Más de 84 mil', s: '2025 · Informe de Responsabilidad Social 2025' }
+    ],
+    formats: {
+      periods: [['Cierre 2025', 'Reporte 4T25 (BMV)'], ['2T26', 'Total: Resultados 2T26; desglose por formato: prensa (Expansión, Líder Empresarial)']],
+      rows: [
+        { name: 'Híper', desc: 'Gran formato con surtido completo', stores: [372, 372] },
+        { name: 'Súper', desc: 'Supermercado de menor escala', stores: [136, 133] },
+        { name: 'Mercado', desc: 'Autoservicio de formato económico', stores: [165, 160] },
+        { name: 'Express', desc: 'Tienda de proximidad', stores: [106, 106] },
+        { name: 'City Club', desc: 'Club de precios con membresía', stores: [41, 41] }
+      ]
+    },
+    related: [
+      { name: 'Sodimac México', v: '15 tiendas al 2T26', src: 'Sociedad 50/50 con Falabella desde 2016 · AE 1 (HR Ratings, Forbes México)' },
+      { name: 'Comercio digital', v: 'Ingreso digital +20%; 1.75% del ingreso total', src: '2025 · Informe Anual 2025' },
+      { name: 'Negocio inmobiliario', v: 'Más de 9,200 locales comerciales, 91% de ocupación', src: '2025 · Informe Anual 2025' }
+    ],
+    threats: [
+      { name: 'Tiendas 3B', desc: 'Hard discount: pasó de 4% (2019) a 14% (2025) del mercado de descuento.', src: 'Excel · variables externas' },
+      { name: 'Bara', desc: 'Hard discount de surtido corto y precio bajo en zonas populares.', src: 'Retroalimentación del profesor · variables externas' },
+      { name: 'Bodega Aurrera Express', desc: 'Proximidad de bajo precio de Walmart de México.', src: 'Retroalimentación del profesor · variables externas' },
+      { name: 'Digital y omnicanalidad', desc: 'Exige inversión en surtido en línea y última milla; para Soriana lo digital pesa 1.75% del ingreso (2025).', src: 'Excel · variables externas; Informe Anual 2025' }
+    ],
+    insights: [
+      { t: 'Soriana pasó de crecer en metros cuadrados a buscar productividad por metro cuadrado: 812 tiendas al 2T26 frente a 820 al cierre de 2025, con ventas mismas tiendas de −4.5% en el trimestre.', src: 'AE 1 · Resultados 2T26' },
+      { t: 'En el 1S26 los ingresos bajaron 3.7%, pero la utilidad neta subió 33.5% por el menor costo financiero que dejó el desapalancamiento.', src: 'AE 1 · Reporte 2T26' }
+    ],
+    price: { refDate: XL.market.priceDate, refLabel: 'Cierre del ' + isoDate(XL.market.priceDate), note: 'Cierres mensuales en MXN (Excel maestro, hoja Inflación). El punto de junio de 2026 es el cierre del 30-jun-2026: el precio de referencia de la valuación.' },
+    sources: [
+      ['Organización Soriana · Relación con inversionistas', 'https://www.organizacionsoriana.com', 'Informe Anual 2025, Informe RS 2025, reportes trimestrales'],
+      ['Reporte 4T25 (inglés)', 'https://www.organizacionsoriana.com/pdf/reportes/2025/Eng/4Q2025_InfDir_Ingl%20VF2.4.pdf', 'Tiendas por formato al cierre de 2025'],
+      ['AE 1 · Etapa 1 (investigación del equipo)', '', 'Perfil, eventos relevantes y Resultados 2T26']
+    ]
+  },
+  // 07 · ESG y Gobierno Corporativo. Dato = cifra reportada por la fuente; lectura = interpretación del equipo. Sin calificaciones ESG.
+  esg: {
+    pillars: [
+      { key: 'env', title: 'Ambiental', items: [
+        { k: 'Energía de fuentes renovables', v: '62%', period: '2025', src: 'Informe RS 2025', reading: 'Menor exposición a la tarifa eléctrica, uno de los costos operativos de una red de 800+ tiendas.' },
+        { k: 'Huella de carbono, alcances 1 y 2', v: '−11% vs. 2024', period: '2025', src: 'Informe RS 2025', reading: 'La reducción viene sobre todo del consumo eléctrico; no cambia el FCFF del modelo.' },
+        { k: 'Materiales reciclados', v: '70.7 mil toneladas', period: '2025', src: 'Informe RS 2025', reading: 'Indicador operativo de gestión de residuos; sin efecto cuantificado en la valuación.' }
+      ] },
+      { key: 'soc', title: 'Social', items: [
+        { k: 'Inversión social', v: '$160.1 mdp', period: '2025', src: 'Fundación Soriana', reading: '699,776 personas beneficiadas según la propia fundación.' },
+        { k: 'Colaboradores', v: 'Más de 84 mil', period: '2025', src: 'Informe RS 2025', reading: 'La plantilla es el mayor gasto operativo; el alza del salario mínimo 2026 entra al modelo vía costos.' },
+        { k: 'Denuncias gestionadas (Línea Directa)', v: '183', period: '2025', src: 'Informe RS 2025', reading: 'Existe un canal confidencial y en uso, con 5 vías de reporte.' }
+      ] },
+      { key: 'gov', title: 'Gobierno', items: [
+        { k: 'Consejeros independientes', v: '23.08%', period: '2T26', src: 'Cuestionario de Mejores Prácticas (BMV) · AE 1', reading: 'Debajo del 25% de la Mejor Práctica 18; la empresa evalúa candidatos.', team: true },
+        { k: 'Comité de Auditoría y Prácticas Societarias', v: '3 de 3 independientes', period: '2T26', src: 'AE 1 · Código de Mejores Prácticas (BMV, 30-abr-2026)', reading: 'Auditoría, partes relacionadas y compensación quedan bajo supervisión independiente.', team: true },
+        { k: 'Plantilla capacitada en el Código de Ética', v: '96%', period: '2025', src: 'Dato reportado por Soriana, citado en AE 1', reading: 'Los mecanismos de integridad llegan a la operación, no solo al consejo.', team: true }
+      ] }
+    ],
+    board: {
+      rows: [
+        ['FY2025', 14, 10, null, 4, 28.6, 'Informe Anual 2025 (dato del equipo); HR Ratings, jul-2025: 14 consejeros, 4 independientes'],
+        ['2T26', 13, 9, 1, 3, 23.08, 'Cuestionario de Mejores Prácticas (BMV) · investigación del equipo (AE 1)']
+      ],
+      note: 'El cambio entre cortes refleja la salida del consejero independiente Fernando Marroquín Lavín el 29-abr-2026 (AE 1, con base en la BMV). Presidente del Consejo: Francisco Javier Martín Bringas; Director General y presidente suplente: Ricardo Martín Bringas.',
+      bestPractice: 25
+    },
+    committees: [
+      { name: 'Comité de Auditoría y Prácticas Societarias', v: 'Sergio F. Martínez San Germán (presidente), Alejandro Córdoba Ruiz (secretario), Guillermo Torre López (vocal desde abr-2026)', src: 'AE 1 · Código de Mejores Prácticas (BMV)' },
+      { name: 'Comité de Riesgos y Continuidad Operativa', v: '13 directivos, encabezado por Ricardo Martín Bringas; riesgo, cumplimiento y sostenibilidad. Constituido en abr-2026 según AE 1.', src: 'AE 1 · Código de Mejores Prácticas (BMV)' },
+      { name: 'Comité de Ética', v: 'Código de Ética y Línea Directa (anónima y confidencial); apoya al Consejo junto con el Comité de Auditoría.', src: 'Informe RS 2025 · Código de Ética 2022' }
+    ],
+    note: 'Indicadores reportados por la propia empresa; ValuFlow no los audita y no asigna calificaciones ESG. No localizamos una declaración de verificación externa independiente del Informe RS 2025. Los datos marcados como «Equipo» provienen de la investigación del equipo (AE 1).',
+    sources: [
+      ['Informe Anual 2025 e Informe de Responsabilidad Social 2025', 'https://www.organizacionsoriana.com', 'Organización Soriana · sección de inversionistas y sustentabilidad'],
+      ['Código de Ética 2022', 'https://www.organizacionsoriana.com/pdf/Organizacion%20Soriana_Codigo%20de%20Etica_2022.pdf', 'PDF oficial'],
+      ['Bolsa Mexicana de Valores · SORIANA', 'https://www.bmv.com.mx', 'Cuestionario de Mejores Prácticas Corporativas y eventos relevantes'],
+      ['HR Ratings · reporte de calificación 2025', 'https://www.hrratings.com', 'Composición del consejo FY2025 (14 miembros, 4 independientes)'],
+      ['AE 1 · Etapa 1, sección 4 (investigación del equipo)', '', 'Evaluación de gobierno corporativo al 2T26']
+    ]
   },
   timeline: [
     ['1968', 'Fundación en Torreón, Coahuila', 'Origen de la empresa.', 'Excel · Información general'],

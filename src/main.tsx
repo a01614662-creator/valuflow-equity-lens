@@ -9,7 +9,6 @@ import '@fontsource/barlow-condensed/latin-600.css';
 import '@fontsource/barlow-condensed/latin-ext-600.css';
 import './styles/industry.css';
 import './styles/app.css';
-import './styles/deck.css';
 import { App } from './ui/App';
 
 createRoot(document.getElementById('root')!).render(<App />);

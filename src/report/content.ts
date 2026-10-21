@@ -74,7 +74,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
     ['Rango DCF por escenario de inflación', off.length ? cur(scLo) + ' a ' + cur(scHi) + ' (' + off.map(s => s.label).join(', ') + ')' : '—'],
     ['Trading Comps', compsV != null ? cur(compsV) + ' (' + (comps!.n) + ' comparable(s), media)' : '—'],
     ['Precedent Transactions LSEG/SDC (referencia)', sdcV != null ? cur(sdcV) + ' (mediana EV/EBITDA, ' + (sd!.stats.evEbitda?.n ?? 0) + ' operaciones; peso ' + Math.round((K?.rows.find(r => r.key === 'transactions')?.weight ?? 0) * 100) + '%)' : '—'],
-    ['Precio objetivo combinado', comb != null ? cur(comb) + ' (' + weightsTxt + ')' : '—'],
+    ['Precio objetivo (conclusión)', comb != null ? cur(comb) + ' (' + weightsTxt + ')' : '—'],
     ['Recomendación', recTxt],
     ['WACC / Ke / g', f.p(b.wacc) + ' / ' + f.p(b.ke) + ' / ' + f.p(b.g)],
     ['Beta desapalancada (βU) / apalancada (βL)', W.betaU.toFixed(4) + ' / ' + (it.beta != null ? it.beta.toFixed(4) : '—')],
@@ -82,7 +82,7 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
     ['Peso del valor terminal en el EV', f.p(b.tvWeightW, 1)]
   ];
   const cards: [string, string][] = [
-    ['Precio objetivo combinado', comb != null ? cur(comb) : cur(b.value)], ['Precio de mercado (' + ds.dates.price + ')', cur(price)],
+    ['Precio objetivo (conclusión)', comb != null ? cur(comb) : cur(b.value)], ['Precio de mercado (' + ds.dates.price + ')', cur(price)],
     ['Valor DCF', cur(b.value)], ['Recomendación', rec?.rating ? rec.rating + ' (' + f.pp(rec.potential) + ')' : (b.signal ?? '—')]
   ];
   const meta: ReportMeta = {
@@ -210,9 +210,9 @@ export function buildReport(S: Snapshot, kind: 'full' | 'exec' = 'full'): Report
   ] });
 
   // ---------------------------------------------------------------- 13. Combinada y recomendación
-  sections.push({ id: 'comb', title: '13. Valuación combinada y recomendación', blocks: [
+  sections.push({ id: 'comb', title: '13. Conclusión de valuación y recomendación', blocks: [
     ...(K ? [T('combined', 'Ponderación de métodos', SRC + ' · hoja Valuación Combinada', ['Método', 'Precio por acción', 'Peso', 'Contribución', 'Motivo'], K.rows.map(r => [r.label, E.isNum(r.price) ? cur(r.price) : String(r.price), f.p(r.weight, 0), cur(r.contribution), ds.combined?.reasons?.[r.key] || ''])
-      .concat([['Precio objetivo combinado', cur(comb), f.p(K.weightSum, 0), cur(comb), ds.combined?.classRule || '']]), { bold: [K.rows.length] })] : []),
+      .concat([['Precio objetivo (conclusión)', cur(comb), f.p(K.weightSum, 0), cur(comb), ds.combined?.classRule || '']]), { bold: [K.rows.length] })] : []),
     ...(rec ? [T('rec', 'Recomendación', SRC + ' · hoja Transacciones SDC §7', ['Concepto', 'Valor'], [['Precio objetivo', cur(rec.target)], ['Precio de mercado', cur(price) + ' (' + ds.dates.price + ')'], ['Potencial', f.pp(rec.potential)], ['Umbral de compra / venta', f.pp(rec.buy, 0) + ' / ' + f.pp(rec.sell, 0)], ['Rango de valor razonable', cur(rec.fairLo) + ' a ' + cur(rec.fairHi)], ['Recomendación', rec.rating ?? '—']], { bold: [5], note: rec.rule })] : []),
     ...ch('rec')
   ] });
