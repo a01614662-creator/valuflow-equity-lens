@@ -1,6 +1,7 @@
-// Modelo de vista de la valuación relativa (04 · Múltiplos, 05 · Transacciones), la conclusión de valuación (06 · Conclusión),
+// Modelo de vista de la valuación relativa (Múltiplos, Transacciones), la conclusión de valuación,
 // la inflación (Laboratorio) y la beta. Solo presentación: todos los números salen de src/engine.
 // Cada resultado trae su "cadena de trazabilidad": de dónde sale el número, paso a paso.
+import { brandOf } from './brands';
 import * as E from '../engine';
 import { fmt as f, type Assumptions, type Dataset, type RunOk } from '../engine';
 import { cell, head, row, sec, table, toggle, txt, type TTable } from './tables';
@@ -34,7 +35,7 @@ const metricName: Record<string, string> = { revenue: 'Ventas LTM', ebitda: 'EBI
 function multipleChain(m: E.MultipleResult, adj: number, shares: number, sampleTxt: string, sampleLabel: string): Chain {
   const st = m.stats!, d = m.detail, isP = m.def.metric === 'eps';
   const steps: Step[] = [
-    { k: sampleLabel, v: sampleTxt, f: 'La lista está arriba (Incluir = 1)' },
+    { k: sampleLabel, v: sampleTxt, f: 'Ver muestra activa (arriba)' },
     { k: 'Múltiplo ' + m.def.label, v: m.values.map(x => mx(x)).join(' · '), f: 'Publicado por la fuente (sin recalcular)' },
     { k: 'Estadístico: media', v: mx(st.mean), f: 'AVERAGE de ' + st.n + ' valores (mediana ' + mx(st.median) + ', P25 ' + mx(st.p25) + ', P75 ' + mx(st.p75) + ')' },
     { k: 'Métrica de la empresa', v: d.metric == null ? 'NA' : f.n(d.metric, isP ? 4 : 1), f: metricName[m.def.metric || ''] || '' }
@@ -90,7 +91,9 @@ export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: R
     const chains = C.multiples.filter(m => m.use === 1 && m.stats).map(m => multipleChain(m, C.adj, tgt.shares, C.n + ' emisoras', 'Muestra seleccionada'));
     // La muestra se muestra una sola vez (chips); las cadenas solo la referencian.
     const tick = (n: string) => { const t = /\(([^)]*)\)\s*$/.exec(n); return t ? t[1] : ''; };
-    const sample = S.peers.map((p, i) => ({ name: p.name.replace(/\s*\(.*\)$/, '').replace(/,? S\.A\.B?\..*$/i, '').replace(/ S\.A\.$/, ''), ticker: tick(p.name), country: p.country, cls: p.classification, inc: C.include[i] === 1 }));
+    const logos = ds.peerLogos || {};
+    const short = (n: string) => n.replace(/\s*\(.*\)$/, '').replace(/,? S\.A\.B?\..*$/i, '').replace(/ S\.A\.$/, '');
+    const sample = S.peers.map((p, i) => ({ b: brandOf(logos[tick(p.name)], short(p.name)), name: short(p.name), ticker: tick(p.name), country: p.country, cls: p.classification, inc: C.include[i] === 1 }));
     const usedP = C.multiples.filter(m => m.use === 1 && E.isNum(m.prices.mean));
     chains.push({ title: 'Resultado del método', steps: [...usedP.map(m => ({ k: 'Precio ' + m.def.label, v: px(m.prices.mean), f: 'a la media' })), { k: 'Trading Comps', v: px(C.value), f: 'Promedio simple de ' + usedP.length + ' precios (diap. 9)', strong: true }] });
     mult = {
@@ -207,7 +210,7 @@ export function relativeView(app: RelativeApp, ds: Dataset, A: Assumptions, b: R
     chain.push({ k: 'Precio objetivo (conclusión)', v: px(K.value), f: 'Σ contribuciones (pesos = ' + f.p(K.weightSum, 0) + ')', strong: true });
     comb = {
       has: true, value: px(K.value), up: up(K.value), upColor: upC(K.value), classValue: px(K.classValue), weightSum: f.p(K.weightSum, 0), sumOk: Math.abs(K.weightSum - 1) < 1e-9,
-      errors: K.errors, hasErrors: K.errors.length > 0, classRule: ds.combined!.classRule || '', modified: !!A.weights, reset: () => app.setA({ weights: undefined }),
+      errors: K.errors, hasErrors: K.errors.length > 0, baseTxt: (['dcf', 'comps', 'transactions'] as const).map(x => Math.round(W0[x] * 100)).join(' · '), classRule: ds.combined!.classRule || '', modified: !!A.weights, reset: () => app.setA({ weights: undefined }),
       price: f.cur(price), diff: E.isNum(K.value) ? (K.value - price >= 0 ? '+' : '−') + '$' + Math.abs(K.value - price).toFixed(2) : '—',
       contributors: K.rows.filter(r => r.weight > 0).map(r => r.label).join(' + ') || 'ninguno',
       chain: { title: '¿De dónde salió el precio objetivo?', steps: chain },

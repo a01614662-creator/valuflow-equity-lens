@@ -1,0 +1,141 @@
+{
+ "note": "Registro de logos locales (public/assets/brands). file = null → la app muestra el nombre como texto. Los logos identifican entidades en un proyecto académico; no implican patrocinio ni aval.",
+ "accessed": "2026-10-21",
+ "brands": {
+  "soriana": {
+   "entity": "Organización Soriana",
+   "use": "Marca del caso (portada, encabezado, 00)",
+   "file": "soriana.png",
+   "source": "https://www.organizacionsoriana.com/",
+   "download": "repo:public/assets/soriana.svg",
+   "status": "incluido",
+   "note": "PNG renderizado desde el SVG que ya usaba la app (paquete del equipo)."
+  },
+  "tecnologico_de_monterrey": {
+   "entity": "Tecnológico de Monterrey",
+   "use": "Identidad institucional",
+   "file": "tecnologico_de_monterrey.png",
+   "source": "https://tec.mx/",
+   "download": "repo:public/assets/tec.svg",
+   "status": "incluido",
+   "note": "PNG renderizado desde el SVG que ya usaba la app (paquete del equipo)."
+  },
+  "banamex": {
+   "entity": "Banamex",
+   "use": "Encabezado · contexto «Reto Banamex» (sin patrocinio ni aval)",
+   "file": "banamex.png",
+   "source": "https://www.banamex.com/",
+   "download": "https://www.banamex.com/solicita-tu-tarjeta-credito-en-linea/assets/img/ilustraciones/Banamex.svg",
+   "status": "provisional",
+   "note": "Provisional: PNG del paquete del equipo, extraído del Reporte Ejecutivo SORIANA - BANAMEX (320×84 de origen). Reemplazar por la variante oficial SVG al tener acceso."
+  },
+  "tiendas_3b": {
+   "entity": "Tiendas 3B (BBB Foods)",
+   "use": "00 · Presiones competitivas",
+   "file": null,
+   "source": "https://www.tiendas3b.com/",
+   "download": null,
+   "status": "pendiente",
+   "note": "Obtener del sitio oficial. El archivo de Commons (File:3B_logo.svg) no documenta fuente: no aceptarlo automáticamente."
+  },
+  "bara": {
+   "entity": "Tiendas Bara",
+   "use": "00 · Presiones competitivas",
+   "file": null,
+   "source": "https://bara.com.mx/",
+   "download": null,
+   "status": "pendiente",
+   "note": "Obtener el logo del encabezado del sitio oficial."
+  },
+  "bodega_aurrera_express": {
+   "entity": "Bodega Aurrera Express (Walmart de México)",
+   "use": "00 · Presiones competitivas",
+   "file": null,
+   "source": "https://www.walmex.mx/nosotros/formatos-de-negocio.html",
+   "download": null,
+   "status": "pendiente",
+   "note": "Referencia corporativa histórica (Flickr de Walmart de México, 2015): confirmar vigencia contra los formatos actuales de Walmex antes de usarla."
+  },
+  "chedraui": {
+   "entity": "Grupo Comercial Chedraui",
+   "use": "04 · Muestra de Trading Comps (CHDRAUI B)",
+   "file": null,
+   "source": "https://www.chedraui.com.mx/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Chedraui2022logo.png",
+   "status": "pendiente",
+   "note": "Commons: PNG atribuido a Chedraui."
+  },
+  "grupo_mateus": {
+   "entity": "Grupo Mateus S.A.",
+   "use": "04 · Muestra de Trading Comps (GMAT3)",
+   "file": null,
+   "source": "https://www.grupomateus.com.br/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Logomarca_do_grupo_mateus.png",
+   "status": "pendiente",
+   "note": "Commons: PNG atribuido a grupomateus.com.br."
+  },
+  "walmart_mexico": {
+   "entity": "Walmart de México y Centroamérica",
+   "use": "04 · Muestra de Trading Comps (WALMEX *)",
+   "file": null,
+   "source": "https://www.walmartmexico.com/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Walmart_M%C3%A9xico_y_Centroam%C3%A9rica_logo_(2025).svg",
+   "status": "pendiente",
+   "note": "Commons: logo 2025 (SVG; se rasteriza a PNG)."
+  },
+  "la_comer": {
+   "entity": "La Comer",
+   "use": "04 · Muestra de Trading Comps (LACOMER UBC)",
+   "file": null,
+   "source": "https://www.lacomer.com.mx/",
+   "download": null,
+   "status": "pendiente",
+   "note": "Usar el logo renovado anunciado por La Comer (publicación oficial en LinkedIn, 2023)."
+  },
+  "sendas_assai": {
+   "entity": "Sendas Distribuidora S.A. (Assaí Atacadista)",
+   "use": "04 · Muestra de Trading Comps (ASAI3)",
+   "file": null,
+   "source": "https://www.assai.com.br/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Assa%C3%AD_Atacadista_logo_2024.svg",
+   "status": "pendiente",
+   "note": "Marca comercial Assaí; en pantalla se muestra el nombre del emisor Sendas Distribuidora S.A."
+  },
+  "cencosud": {
+   "entity": "Cencosud S.A.",
+   "use": "04 · Muestra de Trading Comps (CENCOSUD)",
+   "file": null,
+   "source": "https://www.cencosud.com/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Cencosud_logo.svg",
+   "status": "pendiente",
+   "note": "Commons: vector basado en archivo corporativo; validar vigencia."
+  },
+  "inretail_peru": {
+   "entity": "InRetail Perú Corp.",
+   "use": "04 · Muestra de Trading Comps (INRETC1)",
+   "file": null,
+   "source": "https://www.inretail.pe/es/inversionistas/reportes-financieros",
+   "download": null,
+   "status": "pendiente",
+   "note": "Wordmark del emisor (no de una división Consumer/Malls/Pharma)."
+  },
+  "falabella": {
+   "entity": "Falabella S.A.",
+   "use": "00 · Sodimac (socio 50/50); excluida de la muestra de comparables",
+   "file": null,
+   "source": "https://investors.grupofalabella.com/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Falabella.svg",
+   "status": "pendiente",
+   "note": "Commons; comprobar versión vigente."
+  },
+  "sodimac": {
+   "entity": "Sodimac",
+   "use": "00 · Negocios relacionados",
+   "file": null,
+   "source": "https://investors.grupofalabella.com/english/business-units/sodimac/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Logotipo_Sodimac.svg",
+   "status": "pendiente",
+   "note": "Commons; atribuido a S.A.C.I. Falabella."
+  }
+ }
+}

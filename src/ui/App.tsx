@@ -12,8 +12,13 @@ import { brandColor, findLogo, research, type Research } from '../services/resea
 import { buildView, type Calc } from './viewmodel';
 import { Shell } from './Shell';
 
-/** Recorrido principal (Anterior / Siguiente): portada, 00 Acerca de, 01–07. Herramientas de apoyo van en el menú «Más». */
-export const TOUR = ['cover', 'p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7'];
+/**
+ * Recorrido principal (Anterior / Siguiente) en el orden de la exposición regional: 00 Acerca de, 01 ESG y Gobierno,
+ * 02 Valor, 03 Flujos, 04 Múltiplos, 05 Transacciones, 06 Costo de capital y sensibilidad, 07 Conclusión.
+ * Los IDs internos (p0…p7) se conservan; el número visible sale de la posición en el recorrido.
+ * Laboratorio es una herramienta aparte (botón junto a Exportar); Anexos, Valuaciones, Importar y Equipo van en «Más».
+ */
+export const TOUR = ['cover', 'p0', 'p7', 'p1', 'p2', 'p4', 'p5', 'p3', 'p6'];
 const VIEWS = [...TOUR, 'lab', 'annex', 'team', 'library'];
 
 export interface ImpState {

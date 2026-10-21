@@ -16,93 +16,84 @@ export function Splash({ vm }: { vm: VM }) {
   </>);
 }
 
-/** Portada. */
+/** Portada: identidad (equipo, campus, reto) arriba; caso de estudio y QR grande como protagonistas. */
 export function Cover({ vm }: { vm: VM }) {
-  const { co, cv, goImport, qr, r, startTour, team, v } = vm;
-  return (<>
-    {v.cover ? (<>
-      <section data-screen-label="00 Portada" style={css('position:relative; min-height:100vh; overflow:hidden; background-image:linear-gradient(var(--color-divider) 1px, transparent 1px), linear-gradient(90deg, var(--color-divider) 1px, transparent 1px); background-size:56px 56px; background-position:-1px -1px;')}>
-        <div style={css('position:absolute; inset:0; background:radial-gradient(ellipse at 70% 40%, transparent 0%, var(--color-bg) 78%); pointer-events:none;')}></div>
-        <div style={css('position:relative; max-width:var(--page-max); margin:0 auto; padding:40px var(--page-pad) 32px; min-height:100vh; display:flex; flex-direction:column; gap:40px;')}>
-          <div style={css(`display:flex; align-items:center; gap:16px; flex-wrap:wrap; opacity:${cv.o1}; transform:${cv.t1}; transition:all .7s cubic-bezier(.2,.7,.2,1);`)}>
-            <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('width:56px; height:56px;')} />
-            <div style={css('display:flex; flex-direction:column;')}>
-              <span style={css('font-family:var(--font-heading); font-weight:600; font-size:22px; letter-spacing:.01em;')}>Tecnológico de Monterrey</span>
-              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Valuación de Empresas · 2026</span></div>
-            <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px; font-size:13.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--color-accent-700);')}>
-              <span style={css('width:8px; height:8px; background:var(--color-accent);')}></span>ValuFlow · Motor de valuación</div></div>
-          <div style={css('flex:1; display:flex; flex-wrap:wrap; gap:48px; align-items:center;')}>
-            <div style={css(`flex:7 1 520px; min-width:0; display:flex; flex-direction:column; gap:28px; opacity:${cv.o2}; transform:${cv.t2}; transition:all .9s cubic-bezier(.2,.7,.2,1) .1s;`)}>
-              <div style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Plataforma de Valuación Empresarial</div>
-              <h1 style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:clamp(56px, 8.4vw, 132px); line-height:.9; letter-spacing:-.025em; text-transform:uppercase; text-wrap:balance;')}>Valor intrínseco,
-                <br />
-                <span style={css('color:var(--color-accent);')}>paso a paso.</span></h1>
-              <p style={css('margin:0; max-width:560px; font-size:17px; line-height:1.55; color:var(--color-neutral-800); text-wrap:pretty;')}>Un motor DCF reutilizable: proyección de flujos, costo de capital iterado, valor terminal por dos métodos y sensibilidad, con trazabilidad hasta el dato de origen.</p>
-              <div style={css('display:flex; gap:12px; flex-wrap:wrap; align-items:center;')}>
-                <button className="btn btn-primary blueprint" onClick={startTour} style={css('font-size:17px; padding:14px 24px; gap:10px;')}>
-                  <i className="corner tl"></i>
-                  <i className="corner tr"></i>
-                  <i className="corner bl"></i>
-                  <i className="corner br"></i>Explorar valuación{' '}
-                  <span style={css('font-family:var(--font-body);')}>→</span></button>
-                <button className="btn btn-ghost" onClick={goImport} style={css('font-size:15px;')}>+ Nueva valuación</button></div>
-              <figure style={css('margin:0; display:flex; align-items:center; gap:18px; flex-wrap:wrap;')}>
-                <div style={css('width:136px; height:136px; padding:6px; background:#fff; border:1px solid var(--color-divider); flex:0 0 auto;')} dangerouslySetInnerHTML={{ __html: qr.svg.replace(/width="\d+" height="\d+"/, 'width="122" height="122"') }} />
-                <figcaption style={css('display:flex; flex-direction:column; gap:4px; min-width:0;')}>
-                  <span style={css('font-size:15px; font-weight:600;')}>Sigue la presentación en tu teléfono</span>
-                  <a href={qr.url} style={css('font-family:var(--font-heading); font-size:20px; font-weight:600; word-break:break-all;')}>{qr.host}</a></figcaption></figure></div>
-            <div style={css(`flex:5 1 380px; min-width:0; opacity:${cv.o3}; transform:${cv.t3}; transition:all .9s cubic-bezier(.2,.7,.2,1) .25s;`)}>
-              <div className="blueprint" style={css('padding:28px; background:color-mix(in srgb, var(--color-bg) 82%, transparent); display:flex; flex-direction:column; gap:22px;')}>
-                <i className="corner tl"></i>
-                <i className="corner tr"></i>
-                <i className="corner bl"></i>
-                <i className="corner br"></i>
-                <div style={css('display:flex; justify-content:space-between; align-items:center; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
-                  <span>Caso de estudio</span>
-                  <span>{co.ticker} · {co.exchange}</span></div>
-                <div style={css('height:72px; display:flex; align-items:center;')}>
-                  {co.hasLogo ? (<>
-                    <img src={co.logo} alt={co.name} style={css('max-height:72px; max-width:300px; object-fit:contain;')} />
-                  </>) : null}
-                  {co.noLogo ? (<>
-                    <div style={css(`width:72px; height:72px; display:grid; place-items:center; border:1px solid var(--color-divider); font-family:var(--font-heading); font-size:30px; font-weight:600; color:${co.brand};`)}>{co.initials}</div>
-                  </>) : null}</div>
-                <div style={css('display:flex; flex-direction:column; gap:2px;')}>
-                  <div style={css('font-family:var(--font-heading); font-weight:600; font-size:26px; line-height:1.1;')}>{co.legalName}</div>
-                  <div style={css('font-size:14px; color:var(--color-neutral-700);')}>{co.sector}</div></div>
-                <div style={css('display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--color-divider);')}>
-                  <div style={css('padding:14px 12px 0 0; display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio objetivo</span>
-                    <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);')}>{r.target}</span></div>
-                  <div style={css('padding:14px 12px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Precio</span>
-                    <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600;')}>{r.price}</span></div>
-                  <div style={css('padding:14px 0 0 12px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-                    <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Potencial</span>
-                    <span style={css(`font-family:var(--font-heading); font-size:30px; font-weight:600; color:${r.targetColor};`)}>{r.targetUp}</span></div></div>
-                <div style={css('display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding-top:14px; border-top:1px solid var(--color-divider);')}>
-                  <span style={css('font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);')}>Recomendación</span>
-                  <span style={css('font-family:var(--font-heading); font-size:24px; font-weight:600;')}>{r.signal}</span></div>
-                <div style={css('font-size:13.5px; line-height:1.5; color:var(--color-neutral-700);')}>{r.targetRule} · umbral ±{r.threshold}.</div></div></div></div>
-          <div style={css(`display:flex; flex-direction:column; gap:14px; opacity:${cv.o4}; transition:opacity 1s ease .45s;`)}>
-            <div style={css('display:flex; align-items:baseline; gap:12px; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-neutral-700);')}>
-              <span>Equipo</span>
-              <span style={css('flex:1; height:1px; background:var(--color-divider);')}></span></div>
-            <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0;')}>
-              {(team || []).map((m: any, $i: number) => (<Fragment key={$i}>
-                <div style={css('padding:10px 16px 10px 0; display:flex; gap:12px; align-items:baseline;')}>
-                  <span style={css('font-family:var(--font-heading); font-size:14px; color:var(--color-accent);')}>{m.n}</span>
-                  <div style={css('display:flex; flex-direction:column;')}>
-                    <span style={css('font-weight:500; font-size:14px; line-height:1.3;')}>{m.name}</span>
-                    <span style={css('font-size:13.5px; color:var(--color-neutral-700); letter-spacing:.04em;')}>{m.id}</span></div></div>
-              </Fragment>))}</div></div></div></section>
-    </>) : null}
-  </>);
+  const { banamex, co, cv, goImport, project, qr, r, startTour, team, ui, v } = vm;
+  if (!v.cover) return null;
+  const lbl = 'font-size:13.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--color-neutral-700);';
+  const qrPx = qr.px; // múltiplo entero de los módulos; el SVG trae su propia zona de silencio (4 módulos)
+  return (
+    <section data-screen-label="00 Portada" style={css('position:relative; min-height:100vh; overflow:hidden; background-image:linear-gradient(var(--color-divider) 1px, transparent 1px), linear-gradient(90deg, var(--color-divider) 1px, transparent 1px); background-size:56px 56px; background-position:-1px -1px;')}>
+      <div style={css('position:absolute; inset:0; background:radial-gradient(ellipse at 70% 40%, transparent 0%, var(--color-bg) 78%); pointer-events:none;')}></div>
+      <div style={css('position:relative; max-width:var(--page-max); margin:0 auto; padding:20px var(--page-pad) 24px; min-height:100vh; display:flex; flex-direction:column; gap:20px;')}>
+        <div style={css(`display:flex; align-items:center; gap:14px 20px; flex-wrap:wrap; opacity:${cv.o1}; transform:${cv.t1}; transition:all .7s cubic-bezier(.2,.7,.2,1);`)}>
+          <img src="assets/tec.svg" alt="Tecnológico de Monterrey" style={css('width:56px; height:56px; flex:0 0 auto;')} />
+          <div style={css('display:flex; flex-direction:column; min-width:0;')}>
+            <span style={css('font-family:var(--font-heading); font-weight:600; font-size:24px; letter-spacing:.01em; line-height:1.1;')}>Delta · {project.institution} · {project.campus}</span>
+            <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{project.course} · {project.year} · Equipo representante del {project.campus} en regionales</span></div>
+          {banamex ? (
+            <div title="Proyecto académico presentado en el Reto Banamex. Banamex no patrocina, no es autor ni avala esta valuación." style={css('margin-left:auto; display:flex; align-items:center; gap:10px;')}>
+              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Reto</span>
+              {banamex.src ? <img src={banamex.src} alt="Banamex" style={css('height:32px; width:auto; display:block;')} /> : <span style={css('font-family:var(--font-heading); font-weight:600; font-size:20px;')}>Banamex</span>}</div>) : null}</div>
+        <div style={css('flex:1; display:flex; flex-wrap:wrap; gap:28px 48px; align-items:flex-start;')}>
+          <div style={css(`flex:6 1 460px; min-width:0; ${ui.mobile ? 'order:2;' : ''} display:flex; flex-direction:column; gap:22px; padding-top:8px; opacity:${cv.o2}; transform:${cv.t2}; transition:all .9s cubic-bezier(.2,.7,.2,1) .1s;`)}>
+            <div style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>ValuFlow · Plataforma de valuación empresarial</div>
+            <h1 style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:clamp(52px, 7vw, 116px); line-height:.9; letter-spacing:-.025em; text-transform:uppercase; text-wrap:balance;')}>Valor intrínseco,
+              <br />
+              <span style={css('color:var(--color-accent);')}>paso a paso.</span></h1>
+            <p style={css('margin:0; max-width:560px; font-size:17px; line-height:1.55; color:var(--color-neutral-800); text-wrap:pretty;')}>Un motor DCF reutilizable: proyección de flujos, costo de capital iterado, valor terminal por dos métodos y sensibilidad, con trazabilidad hasta el dato de origen.</p>
+            <div style={css('display:flex; gap:12px; flex-wrap:wrap; align-items:center;')}>
+              <button className="btn btn-primary blueprint" onClick={startTour} style={css('font-size:17px; padding:14px 24px; gap:10px;')}>
+                <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>Explorar valuación{' '}
+                <span style={css('font-family:var(--font-body);')}>→</span></button>
+              <button className="btn btn-ghost" onClick={goImport} style={css('font-size:15px;')}>+ Nueva valuación</button></div></div>
+          <div style={css(`flex:6 1 520px; min-width:0; ${ui.mobile ? 'order:1;' : ''} display:flex; flex-direction:column; gap:16px; opacity:${cv.o3}; transform:${cv.t3}; transition:all .9s cubic-bezier(.2,.7,.2,1) .25s;`)}>
+            <div className="blueprint" style={css('padding:20px 26px; background:color-mix(in srgb, var(--color-bg) 86%, transparent); display:flex; flex-direction:column; gap:12px;')}>
+              <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+              <div style={css('display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;')}>
+                <span style={css(lbl + 'color:var(--color-accent-700);')}>Caso de estudio</span>
+                <span style={css(lbl)}>{co.ticker} · {co.exchange}</span></div>
+              <div style={css('display:flex; align-items:center; gap:10px 22px; flex-wrap:wrap;')}>
+                {co.hasLogo ? <img src={co.logo} alt={co.name} style={css(`height:${ui.mobile ? 60 : 76}px; max-width:100%; width:auto; object-fit:contain;`)} /> : (
+                  <div style={css(`width:92px; height:92px; display:grid; place-items:center; border:1px solid var(--color-divider); font-family:var(--font-heading); font-size:38px; font-weight:600; color:${co.brand};`)}>{co.initials}</div>)}
+                <div style={css('display:flex; flex-direction:column; gap:2px; min-width:0;')}>
+                  <div style={css('font-family:var(--font-heading); font-weight:600; font-size:clamp(26px, 2.6vw, 36px); line-height:1.05;')}>{co.legalName}</div>
+                  <div style={css('font-size:15px; color:var(--color-neutral-700);')}>{co.sector}</div></div></div>
+              <div style={css(`display:grid; grid-template-columns:${ui.mobile ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))'}; border-top:1px solid var(--color-divider);`)}>
+                {[['Precio objetivo', r.target, 'var(--color-accent)'], ['Precio de referencia', r.price, 'var(--color-text)'], ['Potencial', r.targetUp, r.targetColor], ['Recomendación', r.signal, 'var(--color-text)']].map(([k, val, col], i) => (
+                  <div key={i} style={css(`padding:12px 10px 0 ${i % (ui.mobile ? 2 : 4) ? '12px' : '0'}; border-left:${i % (ui.mobile ? 2 : 4) ? '1px solid var(--color-divider)' : '0'}; display:flex; flex-direction:column; gap:4px; min-width:0;`)}>
+                    <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{k}</span>
+                    <span style={css(`font-family:var(--font-heading); font-size:clamp(26px, 2.5vw, 34px); font-weight:600; line-height:1.05; color:${col};`)}>{val}</span></div>))}</div>
+              <div style={css('font-size:13.5px; line-height:1.5; color:var(--color-neutral-700);')}>{r.targetRule} · umbral ±{r.threshold} · precio de referencia al {co.priceDate}.</div></div>
+            <figure style={css('margin:0; display:flex; align-items:center; gap:24px; flex-wrap:wrap;')}>
+              <div data-qr style={css(`width:${qrPx}px; height:${qrPx}px; flex:0 0 auto; background:#fff; outline:1px solid var(--color-divider); line-height:0;`)} dangerouslySetInnerHTML={{ __html: qr.svg.replace(/width="\d+" height="\d+"/, 'width="100%" height="100%"') }} />
+              <figcaption style={css('display:flex; flex-direction:column; gap:6px; min-width:0;')}>
+                <span style={css('font-family:var(--font-heading); font-size:28px; font-weight:600; line-height:1.1; color:var(--color-text);')}>Escanea para abrir ValuFlow</span>
+                <a href={qr.url} style={css('font-family:var(--font-heading); font-size:21px; font-weight:600; word-break:break-all;')}>{qr.host}</a>
+                <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Si la cámara no lo lee, escribe la dirección.</span></figcaption></figure></div></div>
+        <div style={css(`display:flex; flex-direction:column; gap:12px; opacity:${cv.o4}; transition:opacity 1s ease .45s;`)}>
+          <div style={css('display:flex; align-items:baseline; gap:12px;' + lbl)}>
+            <span>Equipo</span>
+            <span style={css('flex:1; height:1px; background:var(--color-divider);')}></span></div>
+          <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0;')}>
+            {(team || []).map((m: any, $i: number) => (<Fragment key={$i}>
+              <div style={css('padding:8px 16px 8px 0; display:flex; gap:12px; align-items:baseline;')}>
+                <span style={css('font-family:var(--font-heading); font-size:15px; color:var(--color-accent);')}>{m.n}</span>
+                <div style={css('display:flex; flex-direction:column;')}>
+                  <span style={css('font-weight:500; font-size:15px; line-height:1.3;')}>{m.name}</span>
+                  <span style={css('font-size:13px; color:var(--color-neutral-700); letter-spacing:.04em;')}>{m.id}</span></div></div>
+            </Fragment>))}</div></div></div></section>
+  );
 }
 
 /** Barra superior: empresa, navegación y exportación. */
 export function Header({ vm }: { vm: VM }) {
-  const { closeMenu, co, companyList, exportItems, goCover, goImport, goLibrary, moreCurrent, moreItems, navItems, resetA, toggleCompanyMenu, toggleExportMenu, toggleMoreMenu, ui } = vm;
+  const { banamex, closeMenu, co, companyList, exportItems, goCover, goImport, goLibrary, labTool, moreCurrent, moreItems, navItems, resetA, toggleCompanyMenu, toggleExportMenu, toggleMoreMenu, ui } = vm;
+  const reto = banamex ? (
+    <span title="Proyecto académico presentado en el Reto Banamex. Banamex no patrocina, no es autor ni avala esta valuación." style={css('display:flex; align-items:center; gap:8px; flex:0 0 auto;')}>
+      <span style={css('font-size:13px; color:var(--color-neutral-700); white-space:nowrap;')}>Reto</span>
+      {banamex.src ? <img src={banamex.src} alt="Banamex" style={css(`height:${ui.mobile ? 22 : 28}px; width:auto; display:block;`)} /> : <span style={css('font-family:var(--font-heading); font-weight:600; font-size:17px;')}>Banamex</span>}</span>) : null;
+  const labBtn = <button className="btn btn-secondary" onClick={labTool.onClick} title={labTool.help} aria-label={labTool.label + ': ' + labTool.help} aria-current={labTool.current ? 'page' : undefined} style={css(`white-space:nowrap; ${labTool.current ? 'border-color:var(--color-accent); color:var(--color-accent);' : ''}`)}>{labTool.label}</button>;
   return (<>
     <header data-noprint style={css('position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--color-bg) 92%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--color-divider);')}>
       {ui.menuOpen ? <div onClick={closeMenu} style={css('position:fixed; inset:0; z-index:39;')} aria-hidden="true"></div> : null}
@@ -142,10 +133,12 @@ export function Header({ vm }: { vm: VM }) {
               <button className="btn btn-ghost" onClick={goLibrary} style={css('justify-content:flex-start; padding:8px 10px;')}>Mis valuaciones</button>
               <button className="btn btn-ghost" onClick={goImport} style={css('justify-content:flex-start; padding:8px 10px;')}>+ Nueva valuación</button></div>
           </>) : null}</div>
+        {ui.desktop && reto ? (<><span style={css('width:1px; height:28px; background:var(--color-divider);')}></span>{reto}</>) : null}
         <div style={css('margin-left:auto; display:flex; align-items:center; gap:8px; flex:0 0 auto;')}>
           {ui.modified ? (<>
             <button className="tag tag-accent" onClick={resetA} style={css('border:0; cursor:pointer; gap:6px;')} title="Restaurar valores base">{ui.mobile ? '● Restaurar' : '● Modelo modificado · Restaurar'}</button>
           </>) : null}
+          {ui.desktop ? labBtn : null}
           <div style={css('position:relative;')}>
             <button className="btn btn-primary blueprint" onClick={toggleExportMenu}>
               <i className="corner tl"></i>
@@ -165,6 +158,9 @@ export function Header({ vm }: { vm: VM }) {
                     <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{e.desc}</span></button>
                 </Fragment>))}</div>
             </>) : null}</div></div></div>
+      {ui.mobile ? (
+        <div style={css('position:relative; z-index:40; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:6px var(--page-pad); border-top:1px solid color-mix(in srgb, var(--color-text) 6%, transparent);')}>
+          {reto}{labBtn}</div>) : null}
       {ui.desktop ? (
         <nav aria-label="Secciones de la valuación" style={css('position:relative; z-index:40; max-width:var(--page-max); margin:0 auto; padding:0 var(--page-pad); display:flex; align-items:stretch; height:46px; border-top:1px solid color-mix(in srgb, var(--color-text) 6%, transparent);')}>
           <div style={css('display:flex; align-items:stretch; min-width:0; overflow-x:auto; scrollbar-width:none;')}>

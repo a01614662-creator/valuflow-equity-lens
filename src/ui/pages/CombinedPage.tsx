@@ -10,52 +10,68 @@ export function CombinedPage({ vm }: { vm: VM }) {
   const m = !!ui.mobile;
   if (!v.p6) return null;
   return (
-    <section data-page data-screen-label="06 Conclusión" style={css('display:flex; flex-direction:column; gap:28px;')}>
+    <section data-page data-screen-label={vm.nums.p6 + ' Conclusión'} style={css('display:flex; flex-direction:column; gap:28px;')}>
       <div style={css('display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;')}>
         <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-          <span style={css('font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>06 · Conclusión de valuación</span>
-          <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Qué valor estimamos para {co.short}?</h1></div>
+          <span style={css('font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p6} · Conclusión</span>
+          <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>Valor final</h1>
+          <span style={css('font-size:16px; color:var(--color-neutral-800);')}>Conclusión de valuación de {co.legalName}</span></div>
         {comb.modified ? <button className="tag tag-accent" onClick={comb.reset} style={css('border:0; cursor:pointer;')}>● Pesos modificados · Restaurar</button> : null}</div>
-      {k.has ? (
-        <div className="blueprint" style={css('padding:clamp(20px, 3vw, 36px); display:flex; flex-wrap:wrap; gap:28px 48px; align-items:flex-end;')}>
-          <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
-          <div style={css('flex:1 1 320px; display:flex; flex-direction:column; gap:6px; min-width:0;')}>
-            <span style={css('font-size:15px; color:var(--color-neutral-700);')}>Precio objetivo · {co.currency} por acción</span>
-            <span data-target style={css('font-family:var(--font-heading); font-weight:600; font-size:clamp(84px, 10vw, 150px); line-height:.85; letter-spacing:-.03em; color:var(--color-accent);')}>{k.target}</span>
-            <span style={css('font-size:15px; line-height:1.5; color:var(--color-neutral-800);')}>{k.formula}</span></div>
-          <dl style={css(`flex:1 1 420px; margin:0; display:grid; grid-template-columns:${m ? '1fr' : 'repeat(3, minmax(0, 1fr))'}; border-top:2px solid var(--color-text);`)}>
-            <div style={css('padding:14px 14px 0 0; display:flex; flex-direction:column; gap:4px;')}>
-              <dt style={css('font-size:14px; color:var(--color-neutral-700);')}>Precio de referencia</dt>
-              <dd style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:36px; line-height:1;')}>{k.price}</dd>
-              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Cierre del {k.priceDate}</span></div>
-            <div style={css(m ? 'padding:14px 0 0; display:flex; flex-direction:column; gap:4px;' : 'padding:14px 14px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-              <dt style={css('font-size:14px; color:var(--color-neutral-700);')}>Potencial</dt>
-              <dd style={css(`margin:0; font-family:var(--font-heading); font-weight:600; font-size:36px; line-height:1; color:${k.potColor};`)}>{k.potential}</dd>
-              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Precio objetivo ÷ referencia − 1</span></div>
-            <div style={css(m ? 'padding:14px 0 0; display:flex; flex-direction:column; gap:4px;' : 'padding:14px 0 0 14px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
-              <dt style={css('font-size:14px; color:var(--color-neutral-700);')}>Recomendación</dt>
-              <dd style={css(`margin:0; font-family:var(--font-heading); font-weight:600; font-size:36px; line-height:1; color:${k.tone};`)}>{k.rating}</dd>
-              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Umbral ±{r.threshold}</span></div>
-            <span style={css('grid-column:1 / -1; padding-top:12px; font-size:14px; line-height:1.5; color:var(--color-neutral-800);')}>{k.rule}</span></dl>
-        </div>) : null}
-      {k.has ? (
+      {comb.has ? (
         <div style={css('display:flex; flex-wrap:wrap; gap:28px; align-items:flex-start;')}>
-          <div style={css('flex:7 1 520px; min-width:0; display:flex; flex-direction:column; gap:10px;')}>
-            <h2 style={css('margin:0; font-size:28px;')}>Metodología</h2>
-            {k.rows.map((x: any, $i: number) => (
-              <div key={$i} style={css(`display:grid; grid-template-columns:${m ? 'minmax(0, 1fr) auto' : 'minmax(0, 1fr) 90px 150px'}; gap:4px 16px; align-items:center; padding:12px 0; border-top:1px solid var(--color-divider);`)}>
-                <span style={css(`font-size:16px; font-weight:600; color:${x.on ? 'var(--color-text)' : 'var(--color-neutral-700)'};`)}>{x.label}</span>
-                <span style={css('font-family:var(--font-heading); font-size:22px; font-weight:600; text-align:right;')}>{x.price}</span>
-                <span style={css(`font-family:var(--font-heading); font-size:20px; font-weight:600; text-align:right; ${m ? 'grid-column:1 / -1; text-align:left;' : ''} color:${x.on ? 'var(--color-accent)' : 'var(--color-neutral-700)'};`)}>{x.on ? x.w + ' → ' + x.contrib : '0% · referencia'}</span>
-                <div aria-hidden="true" style={css('grid-column:1 / -1; height:8px; background:var(--color-neutral-200);')}><div style={css(`height:100%; width:${x.bar}; background:var(--color-accent);`)}></div></div></div>))}
-            <span style={css('font-size:14px; line-height:1.5; color:var(--color-neutral-700);')}>Precedent Transactions se reporta como contraste con peso 0%: la muestra LSEG/SDC es pequeña y heterogénea. El precio objetivo y la recomendación salen del motor con los supuestos activos.</span></div>
-          <div style={css('flex:5 1 340px; min-width:0; display:flex; flex-direction:column; gap:10px;')}>
-            <h2 style={css('margin:0; font-size:28px;')}>Sensibilidad</h2>
-            {k.sens.map((x: any, $i: number) => (
-              <div key={$i} style={css('padding:12px 0; border-top:1px solid var(--color-divider); display:flex; flex-direction:column; gap:2px;')}>
-                <span style={css('font-size:15px; font-weight:600;')}>{x.k}</span>
-                <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; line-height:1.1;')}>{x.v}</span>
-                <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{x.s}</span></div>))}</div></div>) : null}
+          <div style={css('flex:8 1 600px; min-width:0; display:flex; flex-direction:column; gap:28px;')}>
+            {!k.has ? (
+              <div role="alert" className="blueprint" style={css('padding:28px; display:flex; flex-direction:column; gap:8px; border-color:var(--neg);')}>
+                <strong style={css('font-family:var(--font-heading); font-size:28px; color:var(--neg);')}>Sin valor final: los pesos suman {comb.weightSum}</strong>
+                <span style={css('font-size:15px; line-height:1.5;')}>Ajusta los pesos hasta que sumen 100% o usa «Restaurar {comb.baseTxt}» en el panel.</span></div>) : (<>
+            <div className="blueprint" style={css('padding:clamp(20px, 3vw, 36px); display:flex; flex-direction:column; gap:22px;')}>
+              <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+              <div style={css('display:flex; flex-direction:column; gap:6px; min-width:0;')}>
+                <span style={css('font-size:15px; color:var(--color-neutral-700);')}>Precio objetivo · {co.currency} por acción</span>
+                <span data-target style={css('font-family:var(--font-heading); font-weight:600; font-size:clamp(84px, 10vw, 150px); line-height:.85; letter-spacing:-.03em; color:var(--color-accent);')}>{k.target}</span>
+                <span style={css('font-size:15px; line-height:1.5; color:var(--color-neutral-800);')}>{k.formula}</span></div>
+              <dl style={css(`margin:0; display:grid; grid-template-columns:${m ? '1fr' : 'repeat(3, minmax(0, 1fr))'}; border-top:2px solid var(--color-text);`)}>
+                <div style={css('padding:14px 14px 0 0; display:flex; flex-direction:column; gap:4px;')}>
+                  <dt style={css('font-size:14px; color:var(--color-neutral-700);')}>Precio de referencia</dt>
+                  <dd style={css('margin:0; font-family:var(--font-heading); font-weight:600; font-size:36px; line-height:1;')}>{k.price}</dd>
+                  <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Cierre del {k.priceDate}</span></div>
+                <div style={css(m ? 'padding:14px 0 0; display:flex; flex-direction:column; gap:4px;' : 'padding:14px 14px 0; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
+                  <dt style={css('font-size:14px; color:var(--color-neutral-700);')}>Potencial</dt>
+                  <dd style={css(`margin:0; font-family:var(--font-heading); font-weight:600; font-size:36px; line-height:1; color:${k.potColor};`)}>{k.potential}</dd>
+                  <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Precio objetivo ÷ referencia − 1</span></div>
+                <div style={css(m ? 'padding:14px 0 0; display:flex; flex-direction:column; gap:4px;' : 'padding:14px 0 0 14px; border-left:1px solid var(--color-divider); display:flex; flex-direction:column; gap:4px;')}>
+                  <dt style={css('font-size:14px; color:var(--color-neutral-700);')}>Recomendación</dt>
+                  <dd style={css(`margin:0; font-family:var(--font-heading); font-weight:600; font-size:36px; line-height:1; color:${k.tone};`)}>{k.rating}</dd>
+                  <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Umbral ±{r.threshold}</span></div>
+                <span style={css('grid-column:1 / -1; padding-top:12px; font-size:14px; line-height:1.5; color:var(--color-neutral-800);')}>{k.rule}</span></dl></div>
+            <div style={css('display:flex; flex-direction:column; gap:10px;')}>
+              <h2 style={css('margin:0; font-size:28px;')}>Sensibilidad</h2>
+              <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0 28px;')}>
+                {k.sens.map((x: any, $i: number) => (
+                  <div key={$i} style={css('padding:12px 0; border-top:1px solid var(--color-divider); display:flex; flex-direction:column; gap:2px;')}>
+                    <span style={css('font-size:15px; font-weight:600;')}>{x.k}</span>
+                    <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; line-height:1.1;')}>{x.v}</span>
+                    <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{x.s}</span></div>))}</div></div></>)}</div>
+          <aside aria-label="Ponderación de métodos" className="blueprint" style={css(`flex:5 1 380px; min-width:0; padding:24px 26px; display:flex; flex-direction:column; gap:14px; background:var(--color-bg); ${m ? '' : 'position:sticky; top:124px;'}`)}>
+            <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+            <div style={css('display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap;')}>
+              <h2 style={css('margin:0; font-size:30px;')}>Ponderación de métodos</h2>
+              <span data-weights style={css('font-family:var(--font-heading); font-size:24px; font-weight:600; color:var(--color-accent);')}>{(comb.rows || []).map((x: any) => Math.round(x.weight)).join(' · ')}</span></div>
+            {(comb.rows || []).map((x: any, $i: number) => { const kr = (k.rows || [])[$i] || {}; return (
+              <div key={$i} style={css('display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:6px 14px; align-items:center; padding:12px 0; border-top:1px solid var(--color-divider);')}>
+                <div style={css('display:flex; flex-direction:column; gap:2px; min-width:0;')}>
+                  <span style={css(`font-size:17px; font-weight:600; color:${kr.on ? 'var(--color-text)' : 'var(--color-neutral-700)'};`)}>{kr.label || x.label}</span>
+                  <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Precio {x.price} · {kr.on ? 'aporta ' + x.contribution : 'solo referencia'}</span></div>
+                <label style={css('display:flex; align-items:baseline; gap:4px;')}>
+                  <input className="input" type="number" min="0" max="100" step="5" value={x.weight} onChange={x.onChange} aria-label={'Peso de ' + (kr.label || x.label) + ' (%)'} style={css(`width:96px; text-align:right; font-family:var(--font-heading); font-size:30px; font-weight:600; padding:4px 8px; color:${kr.on ? 'var(--color-accent)' : 'var(--color-neutral-700)'};`)} />
+                  <span style={css('font-family:var(--font-heading); font-size:24px; font-weight:600;')}>%</span></label>
+                <div aria-hidden="true" style={css('grid-column:1 / -1; height:10px; background:var(--color-neutral-200);')}><div style={css(`height:100%; width:${kr.bar || '0%'}; background:var(--color-accent); transition:width .4s ease;`)}></div></div></div>); })}
+            <div style={css('display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding-top:4px; border-top:2px solid var(--color-text);')}>
+              <span style={css(`font-size:15px; font-weight:600; color:${comb.sumOk ? 'var(--color-text)' : 'var(--neg)'};`)}>Suma de pesos: {comb.weightSum}</span>
+              {comb.modified ? <button className="btn btn-secondary" onClick={comb.reset}>Restaurar {comb.baseTxt}</button> : <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Caso base del modelo</span>}</div>
+            {comb.hasErrors ? <span role="alert" style={css('font-size:14px; color:var(--neg);')}>{comb.errors.join(' ')}</span> : null}
+            <span style={css('font-size:14px; line-height:1.5; color:var(--color-neutral-700);')}>Precedent Transactions se reporta como contraste con peso 0%: la muestra LSEG/SDC es pequeña y heterogénea. Al cambiar un peso, el precio objetivo, el potencial y la recomendación se recalculan con el motor.</span>
+          </aside></div>) : null}
       {!comb.has ? (
         <div className="blueprint" style={css('padding:24px;')}>Este dataset no documenta una conclusión de valuación (pesos por método).</div>
       ) : (<>

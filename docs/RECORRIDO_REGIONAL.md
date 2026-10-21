@@ -170,3 +170,23 @@ y, al aceptarlo, Vercel publica en https://valuflow-equity-lens.vercel.app (la m
   1. Precio de referencia del 30-jun-2026 desde el Excel.
   2. Recorrido 00–07, sin diapositivas, QR, Acerca de, ESG, Conclusión, Múltiplos y legibilidad.
 - Para publicar: abrir un PR `regional-recorrido-app → main`, revisar la vista previa de Vercel y aceptar el merge.
+
+
+## Pulido final (rama `regional-final-polish`, 21-oct-2026)
+
+Sin cambios de datos, fórmulas, precio, pesos ni muestra de comparables (precio objetivo $35.92; referencia $30.25 al 30-jun-2026;
+50% DCF · 50% Trading Comps · 0% Transacciones).
+
+- **Orden nuevo del recorrido:** 00 Acerca de · 01 «Lo que no está en el balance»: ESG y Gobierno Corporativo · 02 Valor · 03 Flujos ·
+  04 Múltiplos · 05 Transacciones · 06 Costo de capital y sensibilidad · 07 Conclusión (título «Valor final»).
+- **Laboratorio** fuera de «Más»: botón junto a Exportar («Modificar supuestos y ver su efecto»).
+- **Portada:** «Delta · Tecnológico de Monterrey · Campus San Luis Potosí», caso de estudio más grande y arriba, QR de 222 px
+  (módulos de 6 px, zona de silencio de 4 módulos) con «Escanea para abrir ValuFlow» y la URL; «Reto» + logo de Banamex.
+- **00:** la etiqueta «$30.25 · Cierre del 30-jun-2026» va en su propia franja con fondo; ya no cruza la línea. Tarjetas con espacio
+  de logo para 3B, Bara y Bodega Aurrera Express; «Digital y omnicanalidad» lleva la etiqueta «Factor de mercado» (sin logo).
+- **04:** «Muestra activa · 7 emisoras» en tarjetas con espacio de logo; las cadenas remiten a «ver muestra activa».
+- **07:** panel «Ponderación de métodos» grande, fijo al hacer scroll en escritorio, con pesos editables y «Restaurar 50 · 50 · 0»;
+  si los pesos no suman 100% el panel sigue visible y la página lo avisa.
+- **Logos:** ver `docs/ASSETS_MARCA.md`. Incluidos: Soriana, Tec y Banamex (provisional). Pendientes por bloqueo de red en el entorno
+  de desarrollo: 3B, Bara, Bodega Aurrera Express, Chedraui, Mateus, Walmex, La Comer, Sendas/Assaí, Cencosud, InRetail, Falabella,
+  Sodimac. Mientras tanto se muestra el nombre en el espacio del logo. `tools/brands/fetch_logos.py` los descarga con Internet.

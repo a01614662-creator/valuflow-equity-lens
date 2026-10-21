@@ -8,10 +8,10 @@ export function ValuePage({ vm }: { vm: VM }) {
   const { co, football, goP2, insights, kpis, openDrawerEV, openDrawerValue, r, track, ui, v, wf } = vm;
   return (<>
     {v.p1 ? (<>
-      <section data-page data-screen-label="01 Valor" style={css('display:flex; flex-direction:column; gap:28px;')}>
+      <section data-page data-screen-label={vm.nums.p1 + ' Valor'} style={css('display:flex; flex-direction:column; gap:28px;')}>
         <div style={css('display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;')}>
           <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>01 · Valor</span>
+            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p1} · Valor</span>
             <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Cuánto vale {co.short}?</h1></div>
           <div style={css('display:flex; flex-wrap:wrap; gap:8px;')}>
             <span className="tag tag-outline">Modelo: {r.modelLabel}</span>

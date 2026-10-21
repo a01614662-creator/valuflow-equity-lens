@@ -1,6 +1,7 @@
 // Datos del proyecto académico (no de la empresa valuada). Cambia aquí el equipo o la institución.
 export const PROJECT = {
   institution: 'Tecnológico de Monterrey',
+  campus: 'Campus San Luis Potosí',
   course: 'Valuación de Empresas',
   year: 2026,
   team: [
