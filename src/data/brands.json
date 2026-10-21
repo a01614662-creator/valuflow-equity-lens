@@ -43,20 +43,24 @@
   "bara": {
    "entity": "Tiendas Bara",
    "use": "00 · Presiones competitivas",
-   "file": null,
+   "file": "bara.png",
    "source": "https://bara.com.mx/",
    "download": null,
-   "status": "pendiente",
-   "note": "Obtener el logo del encabezado del sitio oficial."
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo (carrito con la marca Bara).",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "4924d79d97fc368ec7193cf2af99421ae8e575d5d42ba8a144130c30302781db"
   },
   "bodega_aurrera_express": {
    "entity": "Bodega Aurrera Express (Walmart de México)",
    "use": "00 · Presiones competitivas",
-   "file": null,
+   "file": "bodega_aurrera_express.png",
    "source": "https://www.walmex.mx/nosotros/formatos-de-negocio.html",
    "download": null,
-   "status": "pendiente",
-   "note": "Referencia corporativa histórica (Flickr de Walmart de México, 2015): confirmar vigencia contra los formatos actuales de Walmex antes de usarla."
+   "status": "incluido",
+   "note": "SVG proporcionado por el equipo: logo de la marca Aurrera (Bodega Aurrera, Walmart de México); no muestra la palabra «Express». Se usa como identificador de la familia de formatos; la tarjeta dice «Bodega Aurrera Express».",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "7c6d8dce54c72fac8a5a2c1d1d174727b87c20de839d056e5d5658e0209b2fd7"
   },
   "chedraui": {
    "entity": "Grupo Comercial Chedraui",
@@ -94,11 +98,13 @@
   "la_comer": {
    "entity": "La Comer",
    "use": "04 · Muestra de Trading Comps (LACOMER UBC)",
-   "file": null,
+   "file": "la_comer.png",
    "source": "https://www.lacomer.com.mx/",
    "download": null,
-   "status": "pendiente",
-   "note": "Usar el logo renovado anunciado por La Comer (publicación oficial en LinkedIn, 2023)."
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo: símbolo del pelícano de La Comer en su versión de ícono (fondo verde). No incluye el nombre; la tarjeta lo muestra en texto.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "00b89637c49a7040aaa4c45b963bd8aa5cdfa63c1b601a8ce752c50c3926c754"
   },
   "sendas_assai": {
    "entity": "Sendas Distribuidora S.A. (Assaí Atacadista)",
@@ -125,11 +131,13 @@
   "inretail_peru": {
    "entity": "InRetail Perú Corp.",
    "use": "04 · Muestra de Trading Comps (INRETC1)",
-   "file": null,
+   "file": "inretail_peru.png",
    "source": "https://www.inretail.pe/es/inversionistas/reportes-financieros",
    "download": null,
-   "status": "pendiente",
-   "note": "Wordmark del emisor (no de una división Consumer/Malls/Pharma)."
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo: wordmark del emisor InRetail (no de una división).",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "3486049ce2ac5c54b7e1b2a68d4a28089d36ea653b9d15263d78930637fa485d"
   },
   "falabella": {
    "entity": "Falabella S.A.",

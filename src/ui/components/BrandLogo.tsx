@@ -14,7 +14,7 @@ export function BrandLogo({ b, w = 140, h = 52, pad = 6, bg = '#ffffff' }: { b: 
   }
   return (
     <span style={css(box.replace('display:grid; place-items:center;', 'display:block;'))}>
-      <img src={b.src} alt={b.alt} loading="lazy" decoding="async" onError={() => setFailed(true)} style={css('width:100%; height:100%; object-fit:contain; object-position:center; display:block;')} />
+      <img src={b.src} alt={b.alt} decoding="async" onError={() => setFailed(true)} style={css('width:100%; height:100%; object-fit:contain; object-position:center; display:block;')} />
     </span>
   );
 }

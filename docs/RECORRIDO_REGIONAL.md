@@ -187,5 +187,5 @@ Sin cambios de datos, fórmulas, precio, pesos ni muestra de comparables (precio
 - **04:** «Muestra activa · 7 emisoras» en tarjetas con espacio de logo; las cadenas remiten a «ver muestra activa».
 - **07:** panel «Ponderación de métodos» grande, fijo al hacer scroll en escritorio, con pesos editables y «Restaurar 50 · 50 · 0»;
   si los pesos no suman 100% el panel sigue visible y la página lo avisa.
-- **Logos:** ver `docs/ASSETS_MARCA.md`. Incluidos 11 (Soriana, Tec, Banamex provisional, 3B, Chedraui, Mateus, Walmex, Sendas/Assaí,
-  Cencosud, Falabella, Sodimac). Pendientes: Bara, Bodega Aurrera Express, La Comer e InRetail (se muestra el nombre).
+- **Logos:** ver `docs/ASSETS_MARCA.md`. Incluidos los 15 requeridos (Banamex provisional, del reporte del equipo; Bodega Aurrera con el
+  logo de la marca Aurrera).
