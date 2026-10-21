@@ -17,6 +17,9 @@ const expectedOf = (e: XLExp): Expected => ({
   sensRow: [...e.sensFinal.grid[2]]
 });
 const XE = XL.expected.dcf;
+const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+/** '2026-06-30' → '30-jun-2026' (formato de fechas del dataset). */
+const isoDate = (iso: string) => iso.slice(8, 10) + '-' + MES[+iso.slice(5, 7) - 1] + '-' + iso.slice(0, 4);
 
 export const soriana: Dataset = {
   id: 'soriana', builtIn: true, version: 'Excel PRO auditado · DCF + inflación + múltiplos + transacciones LSEG/SDC', createdAt: '2026-10-01', updatedAt: '2026-10-19',
@@ -46,10 +49,10 @@ export const soriana: Dataset = {
   externalNotes: XL.externalNotes,
   audit: XL.audit,
   study: XL.inflation.study as unknown as Dataset['study'],
-  dates: { base: '31-dic-2025', balance: '30-jun-2026 (2T26)', valuation: '01-oct-2026', price: '25-sep-2026', nextReport: '23-oct-2026' },
+  dates: { base: '31-dic-2025', balance: '30-jun-2026 (2T26)', valuation: '01-oct-2026', price: isoDate(XL.market.priceDate), nextReport: '23-oct-2026' },
   market: {
     price: XL.market.price, shares: XL.market.shares, marketCap: XL.market.price * XL.market.shares, consensus: XL.market.consensus, consensusLabel: 'Venta · 0 C / 1 M / 6 V (S&P Capital IQ)',
-    low52: 23.90, high52: 42.70, pe: 18.08, pbv: 0.71, bvps: 47.07, divYield: 1.66, lastDiv: 0.5556,
+    low52: 23.90, high52: 42.70, pe: XL.market.pe, pbv: XL.market.pbv, bvps: XL.market.bvps, divYield: XL.market.divYield * 100, lastDiv: XL.market.lastDiv,
     chg1y: 21.3, rating: 'HR+1 (HR Ratings, corto plazo)', rsi: 75, macd: 1.154, ma50: 29.68, ma200: 29.71, technical: 'Compra fuerte',
     hrRevenue2027: 196480
   },
@@ -179,7 +182,7 @@ export const soriana: Dataset = {
     { topic: 'Valor por acción (DCF), versiones anteriores', a: ['ValuFlow anterior (Excel integrado, βU 0.65) · baseline histórico (Citi + βU 0.80)', '$32.41 · $31.16'], b: ['Excel PRO auditado con βU Damodaran 0.69 (oficial hasta el 19-oct-2026)', '$' + XE.base_damodaran.price.toFixed(2)], used: 'Histórico (trazabilidad)', note: 'El PRO corrige la beta por caja (0.65 → 0.69), deja la tendencia de mínimos cuadrados crecer con la inflación y normaliza el FCF del valor terminal (capex = D&A).' },
     { topic: 'DCF del reporte comparativo ($39.21)', a: ['Modelo individual (SORIANA_FINAL, 7-oct-2026)', 'βU 0.1705 (regresión) · WACC 9.63% · $39.21'], b: ['Modelo del equipo (Excel PRO auditado)', 'βU ' + XL.beta.regression.unlevered.toFixed(4) + ' (regresión) · WACC ' + XE.base.wacc.toFixed(2) + '% · $' + XE.base.price.toFixed(2)], used: 'Modelo del equipo', note: 'Misma beta desapalancada; la diferencia restante viene de la proyección, la fecha y el precio de referencia (33.48 del 25-sep vs. 33.10 del 7-oct-2026).' },
     { topic: 'Precedent Transactions', a: ['Muestra S&P Capital IQ (3 operaciones, media)', '$' + XL.expected.transactions.value.toFixed(2)], b: ['Muestra LSEG/SDC auditada (mediana EV/EBITDA)', '$' + XL.expected.sdc.prices.median.toFixed(2)], used: 'LSEG/SDC como referencia (peso 0%)', note: 'La muestra CIQ no es defendible (1 de 3 en la ventana). La SDC es global, de control mixto y dispersa: se muestra como contraste, no entra al precio combinado.' },
-    { topic: 'Precio de mercado de referencia', a: ['Modelo del equipo', '$' + XL.market.price.toFixed(2) + ' · cierre 25-sep-2026 (fecha de valuación 01-oct-2026)'], b: ['Reporte comparativo (CIQ / Refinitiv)', '$33.10 · cierre 7-oct-2026'], used: 'Modelo: $' + XL.market.price.toFixed(2), note: 'Cada fuente se compara contra su propio precio y fecha; ningún cierre se presenta como precio del día.' },
+    { topic: 'Precio de mercado de referencia', a: ['Modelo del equipo', '$' + XL.market.price.toFixed(2) + ' · cierre ' + isoDate(XL.market.priceDate) + ' (fecha de valuación 01-oct-2026)'], b: ['Reporte comparativo (CIQ / Refinitiv)', '$33.10 · cierre 7-oct-2026'], used: 'Modelo: $' + XL.market.price.toFixed(2), note: 'Precio de referencia = cierre del 30-jun-2026 (MXN 30.25), por indicación del profesor; antes se usaba 33.48 MXN del 25-sep-2026. Cada fuente se compara contra su propio precio y fecha.' },
     { topic: 'WACC', a: ['A valor de mercado (Kd histórico FY2025 13.0%)', XE.base.waccMarket.toFixed(2) + '%'], b: ['Iterado al valor DCF (Kd prospectivo 10%)', XE.base.wacc.toFixed(2) + '%'], used: 'Iterado (6 iteraciones)', note: 'El de mercado es solo el punto de partida de la iteración.' },
     { topic: 'Deuda total', a: ['Cierre 2025', '23,618 mdp'], b: ['2T26', '23,720.6 mdp'], used: 'Cierre 2025 para el EV; 2T26 para el puente a la fecha de valuación', note: 'El modelo usa ambos saldos en etapas distintas.' },
     { topic: 'Capitalización de mercado', a: ['Reportada (precio $30.10)', '54,180 mdp'], b: ['Precio de referencia × acciones', (XL.market.price * XL.market.shares).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' mdp'], used: 'Precio de referencia × 1,800 mm de acciones para el WACC de mercado', note: 'El Excel recalcula E con el precio de referencia.' }

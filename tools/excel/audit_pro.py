@@ -622,5 +622,50 @@ V['C37'] = "=CHOOSE('Beta y Kd'!$B$18+1,'Beta y Kd'!B17,'Beta y Kd'!B13,'Beta y 
 V['I7'] = ('Valores registrados al recalcular el modelo completo con cada combinación (tools/excel/scenarios.py; columnas C..H = selectores '
            '(0,0) (0,2) (1,2) (2,2) (3,2) (2,1)). El control "combinación activa = tabla" verifica que el modelo vivo coincide con su columna.')
 
+# =====================================================================================================
+# 9. PRECIO DE REFERENCIA DE MERCADO = cierre del 30-jun-2026 (MXN 30.25), retroalimentación del profesor (20-oct-2026)
+#    WACC!B13 alimenta la capitalización de mercado (E = precio × acciones → WACC a mercado, punto de partida de la iteración),
+#    el potencial y la recomendación. Se vincula a la serie mensual de precios (Inflación!B183, mes 2026-06 = cierre de junio).
+#    Fecha de valuación, balance, proyección, comparables y transacciones no cambian.
+# =====================================================================================================
+import datetime as _dt
+INF_ = wb['Inflación']
+assert str(INF_['A183'].value)[:7] == '2026-06' and abs(float(INF_['B183'].value) - 30.25) < 1e-9, (INF_['A183'].value, INF_['B183'].value)
+W_['B13'] = '=Inflación!B183'
+W_['A13'] = 'Precio de referencia por acción (MXN) — cierre del 30-jun-2026 (serie mensual, hoja Inflación fila 183)'
+W_['B14'] = _dt.datetime(2026, 6, 30)
+wb['Valuación Combinada']['A10'] = 'Precio de mercado de referencia (MXN, cierre 30-jun-2026)'
+for ws_, cell_ in (('Transacciones SDC', None),):
+    S_ = wb[ws_]
+    for row_ in S_.iter_rows():
+        for c_ in row_:
+            if isinstance(c_.value, str) and 'Precio de mercado de referencia (25-sep-2026)' in c_.value:
+                c_.value = c_.value.replace('25-sep-2026', '30-jun-2026')
+CE_ = wb['Contraste externo']
+for row_ in CE_.iter_rows(min_row=5, max_row=11):
+    k_ = row_[0].value
+    if isinstance(k_, str) and k_.startswith('team_') and row_[8].value == '25-sep-2026':
+        row_[8].value = '30-jun-2026'
+for row_ in CE_.iter_rows(min_row=5, max_row=11):
+    if row_[0].value == 'team_comps': row_[11].value = 'Múltiplos CIQ y precio de referencia al 30-jun-2026.'
+FU_ = wb['Fuentes']
+for row_ in FU_.iter_rows():
+    for c_ in row_:
+        if isinstance(c_.value, str) and 'misma fecha que el precio de Soriana' in c_.value:
+            c_.value = c_.value.replace('(misma fecha que el precio de Soriana, WACC!B14)', '(cercano a la fecha de valuación; el precio de referencia de Soriana es el cierre del 30-jun-2026, WACC!B14)')
+AU_ = wb['Auditoría']
+for row_ in AU_.iter_rows():
+    for c_ in row_:
+        if isinstance(c_.value, str) and 'precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación)' in c_.value:
+            c_.value = c_.value.replace('precio 33.48 MXN del 25-sep-2026 (último cierre antes de la valuación)', 'precio de referencia 30.25 MXN del 30-jun-2026 (antes 33.48 MXN del 25-sep-2026; ver hallazgo de precio)')
+nr_ = AU_.max_row + 1
+AU_.cell(nr_, 1, nr_ - 4)
+for j_, v_ in enumerate(('Precio de referencia', 'Cambio de supuesto (retroalimentación del profesor, 20-oct-2026)',
+        'El precio de comparación era 33.48 MXN (cierre 25-sep-2026). El profesor pidió usar 30.25 MXN, cierre del 30-jun-2026.',
+        'Cambia la capitalización de mercado (E = precio × acciones), el WACC a mercado (punto de partida de la iteración), el potencial y la recomendación. El WACC iterado converge al mismo punto fijo, así que el DCF casi no cambia.',
+        'WACC!B13 = Inflación!B183 (30.25, cierre de junio 2026) y WACC!B14 = 30-jun-2026. Fecha de valuación, balance, proyección, comparables y transacciones sin cambio. El Rf (Bono M) se conserva al 25-sep-2026.',
+        'Recálculo en LibreOffice; tabla A y controles de Validación.')):
+    AU_.cell(nr_, 2 + j_, v_).alignment = WRAP
+
 wb.save(OUT)
 print('OK', OUT, 'SDC rows', D0, D1, 'stats', S)
