@@ -380,8 +380,9 @@ export interface AboutSpec {
   /** Tiendas por formato en dos cortes; `periods` = [etiqueta, fuente] de cada columna. */
   formats: { periods: [string, string][]; rows: { name: string; desc: string; stores: (number | null)[] }[] };
   /** Negocios relacionados documentados (p. ej. inmobiliario, digital). */
-  related: { name: string; v: string; src: string }[];
-  threats: { name: string; desc: string; src: string }[];
+  related: { name: string; v: string; src: string; logo?: string }[];
+  /** Presiones competitivas; `logo` = id en src/data/brands.json (solo empresas, nunca factores genéricos). */
+  threats: { name: string; desc: string; src: string; logo?: string }[];
   insights: { t: string; src: string }[];
   /** Serie de precio: moneda, frecuencia y fecha/valor de referencia que se resaltan en la gráfica. */
   price: { refDate: string; refLabel: string; note: string };
@@ -441,6 +442,8 @@ export interface Dataset {
   ratios?: Ratio5[];
   governance?: Governance;
   about?: AboutSpec;
+  /** Logos locales de emisoras comparables: ticker (como aparece entre paréntesis en el nombre CIQ) → id en src/data/brands.json. */
+  peerLogos?: Record<string, string>;
   esg?: EsgSpec;
   timeline?: [string, string, string, string][];
   dividends?: [string, string, number][];

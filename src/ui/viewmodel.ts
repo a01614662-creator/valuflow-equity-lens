@@ -8,6 +8,7 @@ import { brandColor } from '../services/research';
 import { DEFAULT_ID } from '../data/registry';
 import { DEMO_URL, PROJECT } from '../config';
 import { qrSvg } from '../services/qr';
+import { brandOf } from './brands';
 import { annexDefs, annexTables } from './annex';
 import { betaTables, inflationChain, inflationChart, inflationTables, overridesActive, relativeView } from './relative';
 import type { App } from './App';
@@ -55,19 +56,22 @@ export function buildView(app: App): VM {
   };
   const companyList = S.companies.map(x => { const rr = E.run(x, x.id === S.activeId ? S.A as Assumptions : { ...E.defaults(x), ...(store.getA(x.id) || {}) }); return { name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + (x.builtIn ? ' · caso presentado' : ''), value: rr.ok ? f.cur(rr.value) : '—', bg: x.id === S.activeId ? 'var(--color-accent-100)' : 'transparent', onClick: () => app.switchCompany(x.id), rr, x }; });
   const hasRel = !!(ds.comps || ds.combined);
-  // Recorrido principal 00–07 (Anterior / Siguiente) y herramientas de apoyo en el menú «Más».
-  const TITLES: Record<string, [string, string]> = { cover: ['', 'Portada'], p0: ['00', 'Acerca de'], p1: ['01', 'Valor'], p2: ['02', 'Flujos'], p3: ['03', 'Riesgo'], p4: ['04', 'Múltiplos'], p5: ['05', 'Transacciones'], p6: ['06', 'Conclusión'], p7: ['07', 'ESG y Gobierno Corporativo'] };
+  // Recorrido principal 00–07 (Anterior / Siguiente). El número se toma de la posición en el recorrido.
+  // [título completo, etiqueta compacta para la barra]
+  const TITLES: Record<string, [string, string]> = { cover: ['Portada', 'Portada'], p0: ['Acerca de', 'Acerca de'], p7: ['“Lo que no está en el balance”: ESG y Gobierno Corporativo', 'ESG y gobierno'], p1: ['Valor', 'Valor'], p2: ['Flujos', 'Flujos'], p4: ['Múltiplos', 'Múltiplos'], p5: ['Transacciones', 'Transacciones'], p3: ['Costo de capital y sensibilidad', 'Capital y sensibilidad'], p6: ['Conclusión', 'Conclusión'] };
   const tour = app.tour();
-  const navItems = tour.filter(x => x !== 'cover').map(vw => ({ num: TITLES[vw][0], label: vw === 'p7' ? 'ESG y Gobierno' : TITLES[vw][1], title: TITLES[vw][1], onClick: go(vw), current: view === vw, color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
-  const MORE: [string, string, string][] = [['lab', 'Laboratorio', 'Cambia supuestos y mira el efecto'], ['annex', 'Anexos', 'Tablas completas, fórmulas y fuentes'], ['library', 'Valuaciones', 'Biblioteca de valuaciones guardadas'], ['import', 'Importar', 'Nueva valuación desde Excel, CSV o JSON'], ['team', 'Equipo', 'Integrantes y arquitectura del proyecto']];
+  const nums: Record<string, string> = {}; tour.filter(x => x !== 'cover').forEach((vw, i) => { nums[vw] = String(i).padStart(2, '0'); });
+  const navItems = tour.filter(x => x !== 'cover').map(vw => ({ num: nums[vw], label: TITLES[vw][1], title: TITLES[vw][0], onClick: go(vw), current: view === vw, color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
+  const MORE: [string, string, string][] = [['annex', 'Anexos', 'Tablas completas, fórmulas y fuentes'], ['library', 'Valuaciones', 'Biblioteca de valuaciones guardadas'], ['import', 'Importar', 'Nueva valuación desde Excel, CSV o JSON'], ['team', 'Equipo', 'Integrantes y arquitectura del proyecto']];
   const moreItems = MORE.map(([vw, label, desc]) => ({ label, desc, current: view === vw, onClick: vw === 'import' ? () => { app.setState({ imp: app.newImp() }); app.go('import'); } : go(vw) }));
   const moreCurrent = MORE.some(([vw]) => vw === view);
-  const ti = tour.indexOf(view), stepTxt = (vw: string) => (TITLES[vw][0] ? TITLES[vw][0] + ' · ' : '') + TITLES[vw][1];
+  const labTool = { label: 'Laboratorio', help: 'Modificar supuestos y ver su efecto', current: view === 'lab', onClick: go('lab') };
+  const ti = tour.indexOf(view), stepTxt = (vw: string) => (nums[vw] ? nums[vw] + ' · ' : '') + (vw === 'p7' ? 'ESG y Gobierno Corporativo' : TITLES[vw][0]);
   const pager = {
     show: ti > 0 && !pr,
     prev: ti > 0 ? { label: stepTxt(tour[ti - 1]), onClick: () => app.step(-1) } : null,
     next: ti >= 0 && ti < tour.length - 1 ? { label: stepTxt(tour[ti + 1]), onClick: () => app.step(1) } : null,
-    current: ti >= 0 ? stepTxt(view) : (MORE.find(([vw]) => vw === view) || ['', ''])[1]
+    current: ti >= 0 ? stepTxt(view) : view === 'lab' ? 'Laboratorio' : (MORE.find(([vw]) => vw === view) || ['', ''])[1]
   };
   const exportItems = ([
     ['exec', 'Dos o tres páginas: resultado, recomendación, escenarios y riesgos'],
@@ -349,7 +353,7 @@ export function buildView(app: App): VM {
   const AB = ds.about;
   const about: any = AB ? (() => {
     const pts = ((ds.study && ds.study.monthly) || []).map(x => ({ ym: String(x[0]).slice(0, 7), p: +x[1] })).filter(x => isFinite(x.p));
-    const W = S.mobile ? 420 : 720, H = S.mobile ? 280 : 260, L = 46, R = 16, T = 18, B = 34;
+    const W = S.mobile ? 420 : 720, H = S.mobile ? 300 : 290, L = 46, R = 16, T = 54, B = 34; // T reserva la franja de la etiqueta de referencia
     const lo = Math.floor(Math.min(...pts.map(x => x.p)) / 2) * 2, hi = Math.ceil(Math.max(...pts.map(x => x.p)) / 2) * 2;
     const X = (i: number) => L + (pts.length > 1 ? i / (pts.length - 1) : 0) * (W - L - R), Y = (p: number) => T + (hi - p) / ((hi - lo) || 1) * (H - T - B);
     const ri = pts.findIndex(x => x.ym === AB.price.refDate.slice(0, 7));
@@ -357,7 +361,11 @@ export function buildView(app: App): VM {
     const chart = pts.length > 1 ? {
       W, H, line: pts.map((x, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(x.p).toFixed(1)).join(' '),
       yTicks: yTicks.map(t => ({ y: Y(t), t: '$' + t })), xTicks: pts.map((x, i) => ({ x: X(i), t: monTxt(x.ym), show: i === 0 || i === pts.length - 1 || (!S.mobile && x.ym.endsWith('-01')) || i === ri })).filter(t => t.show),
-      ref: ri >= 0 ? { x: X(ri), y: Y(pts[ri].p), v: f.cur(pts[ri].p), label: AB.price.refLabel } : null,
+      ref: ri >= 0 ? (() => {
+        // Etiqueta en su propia franja (encima del área de la serie): nunca cruza la línea, el marcador ni los ejes.
+        const txt = f.cur(pts[ri].p) + ' · ' + AB.price.refLabel, bw = Math.round(txt.length * 7.4 + 24), bx = Math.max(L, Math.min(W - R - bw, X(ri) - bw / 2));
+        return { x: X(ri), y: Y(pts[ri].p), v: f.cur(pts[ri].p), label: AB.price.refLabel, txt, box: { x: bx, y: 6, w: bw, h: 30 } };
+      })() : null,
       last: { x: X(pts.length - 1), y: Y(pts[pts.length - 1].p), v: f.cur(pts[pts.length - 1].p), t: monTxt(pts[pts.length - 1].ym) },
       L, R, T, B, range: monTxt(pts[0].ym) + ' a ' + monTxt(pts[pts.length - 1].ym), n: pts.length,
       summary: 'Precio mensual de ' + P.ticker + ' de ' + monTxt(pts[0].ym) + ' a ' + monTxt(pts[pts.length - 1].ym) + '; cierre de referencia ' + (ri >= 0 ? f.cur(pts[ri].p) : '—') + ' (' + AB.price.refLabel + ').'
@@ -370,16 +378,19 @@ export function buildView(app: App): VM {
     ];
     const tot = AB.formats.periods.map((_, j) => AB.formats.rows.reduce((a, r) => a + (r.stores[j] || 0), 0));
     return { has: true, kpis, chart, note: AB.price.note, currency: P.currency, formats: { periods: AB.formats.periods.map(p => ({ label: p[0], src: p[1] })), rows: AB.formats.rows.map(r => ({ ...r, cells: r.stores.map(x => x == null ? '—' : f.n(x)) })), totals: tot.map(x => f.n(x)) },
-      related: AB.related, threats: AB.threats, insights: AB.insights, sources: AB.sources.map(([n, u, d]) => ({ n, u, d, link: !!u })) };
+      related: AB.related.map(x => ({ ...x, b: brandOf(x.logo, x.name) })), threats: AB.threats.map(x => ({ ...x, b: brandOf(x.logo, x.name) })), insights: AB.insights, sources: AB.sources.map(([n, u, d]) => ({ n, u, d, link: !!u })) };
   })() : { has: false };
   // 07 · ESG y Gobierno Corporativo.
   const EG = ds.esg;
   const esg: any = EG ? { has: true, pillars: EG.pillars, note: EG.note, committees: EG.committees, sources: EG.sources.map(([n, u, d]) => ({ n, u, d, link: !!u })),
     board: { note: EG.board.note, bestPractice: EG.board.bestPractice + '%', rows: EG.board.rows.map(([cut, tot, pat, rel, ind, pct, src]) => ({ cut, tot, pat, rel: rel == null ? 'n.d.' : String(rel), ind, pct: String(pct) + '%', below: pct < EG.board.bestPractice, src, w: Math.min(100, pct) + '%' })) } } : { has: false };
-  const qr = { url: DEMO_URL, host: DEMO_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''), svg: qrCache(DEMO_URL) };
+  const qrS = qrCache(DEMO_URL), qrN = +((/viewBox="0 0 (\d+)/.exec(qrS) || [])[1] || 0);
+  // Lado en píxeles = múltiplo entero de los módulos (incluida la zona de silencio): módulos nítidos, sin reescalado borroso.
+  const qrPx = (target: number) => qrN ? qrN * Math.max(1, Math.floor(target / qrN)) : target;
+  const qr = { url: DEMO_URL, host: DEMO_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''), svg: qrS, modules: qrN, px: qrPx(S.mobile ? 200 : 250) };
 
   return {
-    loading: false, v, cv, co, r, team, teamNames: PROJECT.team.map(t => t[0]).join(' · '), project: PROJECT, ui, companyList, navItems, moreItems, moreCurrent, pager, about, esg, qr, concl, exportItems, track, kpis, football, wf, insights,
+    loading: false, v, cv, co, r, team, teamNames: PROJECT.team.map(t => t[0]).join(' · '), project: PROJECT, ui, companyList, navItems, nums, labTool, banamex: brandOf('banamex', 'Banamex'), tecLogo: brandOf('tecnologico_de_monterrey', 'Tecnológico de Monterrey'), moreItems, moreCurrent, pager, about, esg, qr, concl, exportItems, track, kpis, football, wf, insights,
     fcfChart, fcfSel, sales, methodSteps, hasMethod: !!ds.method, weights, extNet, extTop, extCount, tv, wb, iter, heat, torn, scen, scenNote, hasScen, lab,
     mult: rel.mult, trans: (rel as any).trans || { has: false }, comb: rel.comb, ext: (rel as any).ext || { has: false }, inflFlow, hasInflFlow: inflFlow.length > 0, betaT, hasBeta: betaT.length > 0,
     goP4: go('p4'), goP5: go('p5'), goP6: go('p6'), goAnnexInfl: go('annex', 'infl'), goAnnexBeta: go('annex', 'beta'),

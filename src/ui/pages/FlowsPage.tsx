@@ -9,10 +9,10 @@ export function FlowsPage({ vm }: { vm: VM }) {
   const { co, extCount, extNet, extTop, fcfChart, fcfSel, goAnnexInfl, goAnnexMethod, goP3, hasInflFlow, hasMethod, inflFlow, methodSteps, sales, tv, v, weights } = vm;
   return (<>
     {v.p2 ? (<>
-      <section data-page data-screen-label="02 Flujos" style={css('display:flex; flex-direction:column; gap:28px;')}>
+      <section data-page data-screen-label={vm.nums.p2 + ' Flujos'} style={css('display:flex; flex-direction:column; gap:28px;')}>
         <div style={css('display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;')}>
           <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>02 · Flujos</span>
+            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p2} · Flujos</span>
             <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Cuánto efectivo genera?</h1></div>
           <span style={css('font-size:14px; color:var(--color-neutral-700); max-width:520px;')}>FCFF = EBIT × (1 − t) + D&amp;A − Capex − ΔNWC. {co.units}. A = actual, E = estimado.</span></div>
         <div style={css('display:flex; flex-wrap:wrap; gap:28px;')}>

@@ -21,10 +21,11 @@ export function EsgPage({ vm }: { vm: VM }) {
   const { co, esg: g, v } = vm;
   if (!v.p7 || !g.has) return null;
   return (
-    <section data-page data-screen-label="07 ESG y Gobierno Corporativo" style={css('display:flex; flex-direction:column; gap:28px;')}>
+    <section data-page data-screen-label={vm.nums.p7 + ' ESG y Gobierno Corporativo'} style={css('display:flex; flex-direction:column; gap:28px;')}>
       <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-        <span style={css('font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>07 · ESG y Gobierno Corporativo</span>
-        <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Cómo gestiona {co.short} lo que no está en el balance?</h1>
+        <span style={css('font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p7} · ESG y Gobierno Corporativo</span>
+        <h1 style={css('margin:0; max-width:1200px; font-size:clamp(36px, 4.4vw, 60px); line-height:1; text-transform:uppercase; letter-spacing:-.02em; text-wrap:balance;')}>“Lo que no está en el balance”: ESG y Gobierno Corporativo</h1>
+        <span style={css('font-size:16px; color:var(--color-neutral-800);')}>{co.legalName} · indicadores no financieros y estructura de gobierno</span>
         <p style={css('margin:4px 0 0; max-width:920px; font-size:15px; line-height:1.55; color:var(--color-neutral-800);')}>{g.note}</p></div>
 
       <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px;')}>

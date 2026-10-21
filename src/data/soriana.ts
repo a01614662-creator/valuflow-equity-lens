@@ -161,6 +161,7 @@ export const soriana: Dataset = {
     ],
     controls: ['Auditoría interna', 'Código de Ética', 'Línea Directa', 'Mecanismos de conflicto de interés', '96% de la plantilla capacitada en ética (2025)']
   },
+  peerLogos: { 'BMV:CHDRAUI B': 'chedraui', 'BOVESPA:GMAT3': 'grupo_mateus', 'BMV:WALMEX *': 'walmart_mexico', 'BMV:LACOMER UBC': 'la_comer', 'BOVESPA:ASAI3': 'sendas_assai', 'SNSE:CENCOSUD': 'cencosud', 'BVL:INRETC1': 'inretail_peru', 'SNSE:FALABELLA': 'falabella' },
   // 00 · Acerca de. Cifras fechadas con su fuente; sin mezclar cortes (cierre 2025 frente a 2T26).
   about: {
     kpis: [
@@ -179,14 +180,14 @@ export const soriana: Dataset = {
       ]
     },
     related: [
-      { name: 'Sodimac México', v: '15 tiendas al 2T26', src: 'Sociedad 50/50 con Falabella desde 2016 · AE 1 (HR Ratings, Forbes México)' },
+      { name: 'Sodimac México', logo: 'sodimac', v: '15 tiendas al 2T26', src: 'Sociedad 50/50 con Falabella desde 2016 · AE 1 (HR Ratings, Forbes México)' },
       { name: 'Comercio digital', v: 'Ingreso digital +20%; 1.75% del ingreso total', src: '2025 · Informe Anual 2025' },
       { name: 'Negocio inmobiliario', v: 'Más de 9,200 locales comerciales, 91% de ocupación', src: '2025 · Informe Anual 2025' }
     ],
     threats: [
-      { name: 'Tiendas 3B', desc: 'Hard discount: pasó de 4% (2019) a 14% (2025) del mercado de descuento.', src: 'Excel · variables externas' },
-      { name: 'Bara', desc: 'Hard discount de surtido corto y precio bajo en zonas populares.', src: 'Retroalimentación del profesor · variables externas' },
-      { name: 'Bodega Aurrera Express', desc: 'Proximidad de bajo precio de Walmart de México.', src: 'Retroalimentación del profesor · variables externas' },
+      { name: 'Tiendas 3B', logo: 'tiendas_3b', desc: 'Hard discount: pasó de 4% (2019) a 14% (2025) del mercado de descuento.', src: 'Excel · variables externas' },
+      { name: 'Bara', logo: 'bara', desc: 'Hard discount de surtido corto y precio bajo en zonas populares.', src: 'Retroalimentación del profesor · variables externas' },
+      { name: 'Bodega Aurrera Express', logo: 'bodega_aurrera_express', desc: 'Proximidad de bajo precio de Walmart de México.', src: 'Retroalimentación del profesor · variables externas' },
       { name: 'Digital y omnicanalidad', desc: 'Exige inversión en surtido en línea y última milla; para Soriana lo digital pesa 1.75% del ingreso (2025).', src: 'Excel · variables externas; Informe Anual 2025' }
     ],
     insights: [

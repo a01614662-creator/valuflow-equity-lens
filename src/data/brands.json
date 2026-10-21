@@ -1,0 +1,165 @@
+{
+ "note": "Registro de logos locales (public/assets/brands). file = null → la app muestra el nombre como texto. Los logos identifican entidades en un proyecto académico; no implican patrocinio ni aval.",
+ "accessed": "2026-10-21",
+ "brands": {
+  "soriana": {
+   "entity": "Organización Soriana",
+   "use": "Marca del caso (portada, encabezado, 00)",
+   "file": "soriana.png",
+   "source": "https://www.organizacionsoriana.com/",
+   "download": "repo:public/assets/soriana.svg",
+   "status": "incluido",
+   "note": "PNG renderizado desde el SVG que ya usaba la app (paquete del equipo)."
+  },
+  "tecnologico_de_monterrey": {
+   "entity": "Tecnológico de Monterrey",
+   "use": "Identidad institucional",
+   "file": "tecnologico_de_monterrey.png",
+   "source": "https://tec.mx/",
+   "download": "repo:public/assets/tec.svg",
+   "status": "incluido",
+   "note": "PNG renderizado desde el SVG que ya usaba la app (paquete del equipo)."
+  },
+  "banamex": {
+   "entity": "Banamex",
+   "use": "Encabezado · contexto «Reto Banamex» (sin patrocinio ni aval)",
+   "file": "banamex.png",
+   "source": "https://www.banamex.com/",
+   "download": "https://www.banamex.com/solicita-tu-tarjeta-credito-en-linea/assets/img/ilustraciones/Banamex.svg",
+   "status": "provisional",
+   "note": "Provisional: PNG del paquete del equipo, extraído del Reporte Ejecutivo SORIANA - BANAMEX (320×84 de origen). Reemplazar por la variante oficial SVG al tener acceso. El 21-oct-2026 el equipo envió otra imagen (variante anterior, letras azules, con fondo de cuadros incrustado): no se usó."
+  },
+  "tiendas_3b": {
+   "entity": "Tiendas 3B (BBB Foods)",
+   "use": "00 · Presiones competitivas",
+   "file": "tiendas_3b.png",
+   "source": "https://www.tiendas3b.com/",
+   "download": null,
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo (logotipo circular «BBB»). Origen exacto no documentado: confirmar contra tiendas3b.com.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "0abf18a635ba1e064c3900ccbf3dce983cca2fea15781f44ccd917bb46d2679d"
+  },
+  "bara": {
+   "entity": "Tiendas Bara",
+   "use": "00 · Presiones competitivas",
+   "file": "bara.png",
+   "source": "https://bara.com.mx/",
+   "download": null,
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo (carrito con la marca Bara).",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "4924d79d97fc368ec7193cf2af99421ae8e575d5d42ba8a144130c30302781db"
+  },
+  "bodega_aurrera_express": {
+   "entity": "Bodega Aurrera Express (Walmart de México)",
+   "use": "00 · Presiones competitivas",
+   "file": "bodega_aurrera_express.png",
+   "source": "https://www.walmex.mx/nosotros/formatos-de-negocio.html",
+   "download": null,
+   "status": "incluido",
+   "note": "SVG proporcionado por el equipo: logo de la marca Aurrera (Bodega Aurrera, Walmart de México); no muestra la palabra «Express». Se usa como identificador de la familia de formatos; la tarjeta dice «Bodega Aurrera Express».",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "7c6d8dce54c72fac8a5a2c1d1d174727b87c20de839d056e5d5658e0209b2fd7"
+  },
+  "chedraui": {
+   "entity": "Grupo Comercial Chedraui",
+   "use": "04 · Muestra de Trading Comps (CHDRAUI B)",
+   "file": "chedraui.png",
+   "source": "https://www.chedraui.com.mx/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Chedraui2022logo.png",
+   "status": "incluido",
+   "note": "Imagen proporcionada por el equipo (logotipo con «cuesta menos»), equivalente al archivo de Commons Chedraui2022logo.png.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "a6dfe2a6008afd9bb3df4aa28da86d559901e80c5a92a4db0508d6e844a3b2e5"
+  },
+  "grupo_mateus": {
+   "entity": "Grupo Mateus S.A.",
+   "use": "04 · Muestra de Trading Comps (GMAT3)",
+   "file": "grupo_mateus.png",
+   "source": "https://www.grupomateus.com.br/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Logomarca_do_grupo_mateus.png",
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo, equivalente al archivo de Commons Logomarca_do_grupo_mateus.png. Trae fondo blanco propio (se usa sobre tarjeta blanca).",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "34afd1fb19ccf0884c4ae900aa3be78df5c316671c201e49c4681744b06ee17c"
+  },
+  "walmart_mexico": {
+   "entity": "Walmart de México y Centroamérica",
+   "use": "04 · Muestra de Trading Comps (WALMEX *)",
+   "file": "walmart_mexico.png",
+   "source": "https://www.walmartmexico.com/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Walmart_M%C3%A9xico_y_Centroam%C3%A9rica_logo_(2025).svg",
+   "status": "incluido",
+   "note": "SVG de Commons «Walmart México y Centroamérica logo (2025)» proporcionado por el equipo; rasterizado a PNG transparente (1000 px).",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "17ce671c9740a0b296c4f60b20fa0d5902aadba0d3c89f2db4822d63acbd33a7"
+  },
+  "la_comer": {
+   "entity": "La Comer",
+   "use": "04 · Muestra de Trading Comps (LACOMER UBC)",
+   "file": "la_comer.png",
+   "source": "https://www.lacomer.com.mx/",
+   "download": null,
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo: símbolo del pelícano de La Comer en su versión de ícono (fondo verde). No incluye el nombre; la tarjeta lo muestra en texto.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "00b89637c49a7040aaa4c45b963bd8aa5cdfa63c1b601a8ce752c50c3926c754"
+  },
+  "sendas_assai": {
+   "entity": "Sendas Distribuidora S.A. (Assaí Atacadista)",
+   "use": "04 · Muestra de Trading Comps (ASAI3)",
+   "file": "sendas_assai.png",
+   "source": "https://www.assai.com.br/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Assa%C3%AD_Atacadista_logo_2024.svg",
+   "status": "incluido",
+   "note": "SVG de Commons «Assaí Atacadista logo 2024» proporcionado por el equipo; en pantalla se muestra el emisor Sendas Distribuidora S.A.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "22541b4b81b30491bd516ab7ff808ca4ec5321a0f57414c327c54d1db8fe345e"
+  },
+  "cencosud": {
+   "entity": "Cencosud S.A.",
+   "use": "04 · Muestra de Trading Comps (CENCOSUD)",
+   "file": "cencosud.png",
+   "source": "https://www.cencosud.com/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Cencosud_logo.svg",
+   "status": "incluido",
+   "note": "SVG de Commons «Cencosud logo» (licencia indicada en el archivo: CC BY-SA 3.0) proporcionado por el equipo; rasterizado a PNG transparente.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "777c0f77c43fc57cb5f0b8495bc9b11861b950abe1eb4a25a45ae16b107855fa"
+  },
+  "inretail_peru": {
+   "entity": "InRetail Perú Corp.",
+   "use": "04 · Muestra de Trading Comps (INRETC1)",
+   "file": "inretail_peru.png",
+   "source": "https://www.inretail.pe/es/inversionistas/reportes-financieros",
+   "download": null,
+   "status": "incluido",
+   "note": "PNG proporcionado por el equipo: wordmark del emisor InRetail (no de una división).",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "3486049ce2ac5c54b7e1b2a68d4a28089d36ea653b9d15263d78930637fa485d"
+  },
+  "falabella": {
+   "entity": "Falabella S.A.",
+   "use": "00 · Sodimac (socio 50/50); excluida de la muestra de comparables",
+   "file": "falabella.png",
+   "source": "https://investors.grupofalabella.com/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Falabella.svg",
+   "status": "incluido",
+   "note": "SVG de Commons «Falabella» proporcionado por el equipo; rasterizado a PNG transparente.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "f2ccbf93e1ee215710e154441bfbf14ce022b137f0fb3e732dc1751ab131d26a"
+  },
+  "sodimac": {
+   "entity": "Sodimac",
+   "use": "00 · Negocios relacionados",
+   "file": "sodimac.png",
+   "source": "https://investors.grupofalabella.com/english/business-units/sodimac/",
+   "download": "https://commons.wikimedia.org/wiki/Special:FilePath/Logotipo_Sodimac.svg",
+   "status": "incluido",
+   "note": "SVG de Commons «Logotipo Sodimac» proporcionado por el equipo; rasterizado a PNG transparente.",
+   "received": "Proporcionado por el equipo el 21-oct-2026",
+   "sha256": "ebd09d0c587eab9f106aed3154b9e5560506593d4a260a326f4ab4f9dd3ef98c"
+  }
+ }
+}

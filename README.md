@@ -15,10 +15,11 @@ npm test           # comprueba el motor contra el Excel y contra el prototipo or
 npm run build      # genera la versión publicable en dist/
 ```
 
-Recorrido de la app: **00 · Acerca de**, **01 · Valor**, **02 · Flujos**, **03 · Riesgo**, **04 · Múltiplos**, **05 · Transacciones**,
-**06 · Conclusión** y **07 · ESG y Gobierno Corporativo**, con botones Anterior / Siguiente. Laboratorio, Anexos, Valuaciones,
-Importar y Equipo están en el menú **Más**. La portada trae un código QR (generado en el navegador) hacia la demo publicada;
-para otra URL compila con `VITE_DEMO_URL=https://… npm run build`.
+Recorrido de la app: **00 · Acerca de**, **01 · ESG y Gobierno Corporativo**, **02 · Valor**, **03 · Flujos**, **04 · Múltiplos**,
+**05 · Transacciones**, **06 · Costo de capital y sensibilidad** y **07 · Conclusión**, con botones Anterior / Siguiente.
+**Laboratorio** es un botón aparte junto a Exportar; Anexos, Valuaciones, Importar y Equipo están en el menú **Más**.
+La portada trae un código QR (generado en el navegador) hacia la demo publicada; para otra URL compila con
+`VITE_DEMO_URL=https://… npm run build`. Logos locales: `docs/ASSETS_MARCA.md`.
 
 La carpeta `dist/` es un sitio estático: se puede publicar tal cual en GitHub Pages, Netlify, Vercel o cualquier servidor.
 

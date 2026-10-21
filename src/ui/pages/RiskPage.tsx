@@ -9,11 +9,12 @@ export function RiskPage({ vm }: { vm: VM }) {
   const { betaT, co, goAnnexBeta, goLab, goAnnexInfl, hasBeta, hasScen, heat, iter, openDrawerWacc, r, scen, scenNote, torn, v, wb } = vm;
   return (<>
     {v.p3 ? (<>
-      <section data-page data-screen-label="03 Riesgo" style={css('display:flex; flex-direction:column; gap:28px;')}>
+      <section data-page data-screen-label={vm.nums.p3 + ' Costo de capital y sensibilidad'} style={css('display:flex; flex-direction:column; gap:28px;')}>
         <div style={css('display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;')}>
           <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>03 · Costo de capital y sensibilidad</span>
-            <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Qué tan estable es el valor?</h1></div>
+            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p3} · Costo de capital y sensibilidad</span>
+            <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>Costo de capital y sensibilidad</h1>
+            <span style={css('font-size:16px; color:var(--color-neutral-800);')}>WACC, costo de deuda, costo de capital, beta y escenarios: ¿qué tan estable es el valor?</span></div>
           <span className="tag tag-outline">WACC: {wb.modeLabel}</span></div>
         <div style={css('display:flex; flex-wrap:wrap; gap:28px;')}>
           <div className="blueprint" style={css('flex:7 1 620px; min-width:0; padding:28px; display:flex; flex-direction:column; gap:22px;')}>

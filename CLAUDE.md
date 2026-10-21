@@ -23,7 +23,11 @@ cambio que altere la arquitectura o el resultado financiero.
 - Reportes: `src/report/snapshot.ts` (una instantánea por juego de supuestos) → `content.ts` (secciones; reutiliza las tablas de `src/ui/annex.ts` y `relative.ts`)
   → `src/services/pdf.ts`, `xlsx.ts`, `exporter.ts`. Pantalla y exportaciones usan los mismos supuestos activos.
 - Cierre del proyecto (auditoría, reconciliación, transacciones, QA): `docs/CIERRE_PROYECTO.md`; cierre para regionales (recorrido 00–07, precio 30-jun-2026, ESG): `docs/RECORRIDO_REGIONAL.md`.
-- No hay modo de diapositivas: la presentación es el recorrido por la app (00 Acerca de → 07 ESG y Gobierno) con Anterior/Siguiente.
-  Herramientas de apoyo (Laboratorio, Anexos, Valuaciones, Importar, Equipo) van en el menú «Más». Espacio y flechas no navegan.
+- No hay modo de diapositivas: la presentación es el recorrido por la app con Anterior/Siguiente, en este orden (`TOUR` en `App.tsx`;
+  el número visible sale de la posición): 00 Acerca de · 01 ESG y Gobierno · 02 Valor · 03 Flujos · 04 Múltiplos · 05 Transacciones ·
+  06 Costo de capital y sensibilidad · 07 Conclusión («Valor final»). Laboratorio es un botón aparte junto a Exportar (no numerado);
+  Anexos, Valuaciones, Importar y Equipo van en «Más». Espacio y flechas no navegan.
+- Logos: PNG locales en `public/assets/brands/`, registrados en `src/data/brands.json` (fuente, fecha, estado) y dibujados con
+  `src/ui/components/BrandLogo.tsx` (nombre siempre visible; sin archivo → texto). Nunca hotlinks. Ver `docs/ASSETS_MARCA.md`.
 - Textos de empresa para 00 y 07 viven en el dataset (`about`, `esg`) con fecha y fuente por cifra; sin calificaciones ESG inventadas.
 - El QR se genera localmente (`src/services/qr.ts`, paquete `qrcode-generator`); el enlace sale de `DEMO_URL` en `src/config.ts` (`VITE_DEMO_URL` lo reemplaza).

@@ -10,10 +10,10 @@ export function TransactionsPage({ vm }: { vm: VM }) {
   const { co, goP6, r, trans: T, v } = vm;
   if (!v.p5) return null;
   return (
-    <section data-page data-screen-label="05 Transacciones" style={css('display:flex; flex-direction:column; gap:28px;')}>
+    <section data-page data-screen-label={vm.nums.p5 + ' Transacciones'} style={css('display:flex; flex-direction:column; gap:28px;')}>
       <div style={css('display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;')}>
         <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-          <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>05 · Transacciones precedentes</span>
+          <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p5} · Transacciones precedentes</span>
           <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Cuánto se ha pagado en operaciones comparables?</h1></div>
         <div style={css('display:flex; flex-wrap:wrap; gap:8px;')}>
           <span className="tag tag-neutral">Precio al {co.priceDate}: {r.price}</span>

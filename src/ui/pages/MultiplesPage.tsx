@@ -4,6 +4,7 @@ import { css } from '../css';
 import type { VM } from '../viewmodel';
 import { TableCard } from '../components/TableCard';
 import { TraceCard } from '../components/TraceCard';
+import { BrandLogo } from '../components/BrandLogo';
 
 export function Stat({ k, v, s, color }: { k: string; v: string; s?: string; color?: string }) {
   return (
@@ -18,10 +19,10 @@ export function MultiplesPage({ vm }: { vm: VM }) {
   const { co, goP5, mult, r, v } = vm;
   if (!v.p4) return null;
   return (
-    <section data-page data-screen-label="04 Múltiplos" style={css('display:flex; flex-direction:column; gap:28px;')}>
+    <section data-page data-screen-label={vm.nums.p4 + ' Múltiplos'} style={css('display:flex; flex-direction:column; gap:28px;')}>
       <div style={css('display:flex; flex-wrap:wrap; gap:16px 32px; align-items:flex-end; justify-content:space-between;')}>
         <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-          <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>04 · Múltiplos · Trading Comps</span>
+          <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>{vm.nums.p4} · Múltiplos · Trading Comps</span>
           <h1 style={css('margin:0; font-size:clamp(40px, 5vw, 64px); line-height:.95; text-transform:uppercase; letter-spacing:-.02em;')}>¿Cuánto vale frente a sus pares?</h1></div>
         <div style={css('display:flex; flex-wrap:wrap; gap:8px;')}>
           {mult.has ? <span className="tag tag-neutral">S&amp;P Capital IQ · corte {mult.asOf}</span> : null}
@@ -44,20 +45,21 @@ export function MultiplesPage({ vm }: { vm: VM }) {
               <Stat k="Múltiplos usados" v={String(mult.used)} s="promedio a la media" /></div>
             <span style={css('font-size:13.5px; line-height:1.5; color:var(--color-neutral-700);')}>Metodología de clase: muestra depurada → múltiplos publicados → 6 estadísticos → métrica de la empresa → EV → Equity → precio. Usa los botones Sí/No de las tablas para cambiar la muestra o los múltiplos; todo se recalcula. {mult.note}</span></div>
           {(mult.chains || []).slice(-1).map((c: any, $i: number) => (<Fragment key={$i}><TraceCard c={c} /></Fragment>))}</div>
-        <div className="blueprint" style={css('padding:22px 24px; display:flex; flex-direction:column; gap:12px;')}>
+        <div id="muestra-activa" className="blueprint" style={css('padding:22px 24px; display:flex; flex-direction:column; gap:12px; scroll-margin-top:120px;')}>
           <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
           <div style={css('display:flex; justify-content:space-between; gap:8px 16px; flex-wrap:wrap; align-items:baseline;')}>
-            <h2 style={css('margin:0; font-size:26px;')}>Muestra seleccionada · {mult.n} emisoras</h2>
+            <h2 style={css('margin:0; font-size:26px;')}>Muestra activa · {mult.n} emisoras</h2>
             <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Selección del Excel maestro · S&amp;P Capital IQ, corte {mult.asOf}</span></div>
-          <ul style={css('margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px;')}>
+          <ul aria-label="Muestra activa de emisoras comparables" style={css('margin:0; padding:0; list-style:none; display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:10px;')}>
             {(mult.sample || []).map((p: any, $i: number) => (
-              <li key={$i} title={p.cls} style={css('display:flex; flex-direction:column; gap:1px; padding:8px 12px; border:1px solid var(--color-accent-300); background:var(--color-accent-100);')}>
+              <li key={$i} title={p.cls} style={css('display:flex; flex-direction:column; gap:8px; padding:12px; border:1px solid var(--color-accent-300); background:var(--color-accent-100);')}>
+                <BrandLogo b={p.b} w={150} h={54} />
                 <span style={css('font-family:var(--font-heading); font-weight:600; font-size:17px; line-height:1.15;')}>{p.name}</span>
-                <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{p.ticker} · {p.country}</span></li>))}</ul>
+                <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{p.ticker} · {p.country}</span></li>))}</ul>
           {(mult.excluded || []).length ? <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Excluidas por comparabilidad: {mult.excluded.map((p: any) => p.name).join(', ')}. Detalle y razones en la tabla «Muestra y criterios».</span> : null}</div>
         <div style={css('display:flex; flex-direction:column; gap:6px;')}>
           <h2 style={css('margin:0; font-size:28px;')}>Trazabilidad por múltiplo</h2>
-          <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Cada cadena usa la muestra seleccionada de {mult.n} emisoras: múltiplo → estadístico → métrica de la empresa → EV → Equity → precio.</span></div>
+          <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Cada cadena usa la muestra activa de {mult.n} emisoras (<a href="#muestra-activa">ver muestra activa</a>): múltiplo → estadístico → métrica de la empresa → EV → Equity → precio.</span></div>
         <div style={css('display:flex; flex-wrap:wrap; gap:20px;')}>
           {(mult.chains || []).slice(0, -1).map((c: any, $i: number) => (<Fragment key={$i}><TraceCard c={c} label="Cadena de cálculo" /></Fragment>))}</div>
         {(mult.tables || []).map((t: any, $i: number) => (<Fragment key={$i}><TableCard t={t} /></Fragment>))}
