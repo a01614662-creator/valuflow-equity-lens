@@ -10,7 +10,7 @@ export function ImportPage({ vm }: { vm: VM }) {
     {v.import ? (<>
       <section data-screen-label="Nueva valuación" style={css('display:flex; flex-direction:column; gap:24px; max-width:1080px; margin:0 auto; width:100%;')}>
         <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-          <span style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Nueva valuación</span>
+          <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Nueva valuación</span>
           <h1 style={css('margin:0; font-size:clamp(36px, 4.4vw, 56px); line-height:.95; text-transform:uppercase;')}>{imp.title}</h1></div>
         <div style={css('display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); border:1px solid var(--color-divider);')}>
           {(imp.steps || []).map((s: any, $i: number) => (<Fragment key={$i}>
@@ -32,7 +32,7 @@ export function ImportPage({ vm }: { vm: VM }) {
             <span style={css('font-family:var(--font-heading); font-size:26px; font-weight:600;')}>Arrastra tu archivo aquí</span>
             <span style={css('font-size:14px; color:var(--color-neutral-700);')}>o{' '}
               <span style={css('color:var(--color-accent); text-decoration:underline;')}>selecciona un archivo</span>{' '}· XLS · XLSX · CSV</span>
-            <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Compatible con exportaciones de plataformas financieras como Capital IQ (Income Statement, Balance Sheet, Cash Flow, Key Stats…).</span>
+            <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Compatible con exportaciones de plataformas financieras como Capital IQ (Income Statement, Balance Sheet, Cash Flow, Key Stats…).</span>
             <input type="file" accept=".xls,.xlsx,.csv" onChange={onFile} style={css('display:none;')} /></label>
           {imp.parsing ? (<>
             <span className="tag tag-neutral" style={css('align-self:flex-start;')}>Leyendo archivo…</span>
@@ -52,7 +52,7 @@ export function ImportPage({ vm }: { vm: VM }) {
               <i className="corner tr"></i>
               <i className="corner bl"></i>
               <i className="corner br"></i>
-              <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>Archivo detectado</div>
+              <div style={css('font-size:13.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>Archivo detectado</div>
               {(imp.meta || []).map((m: any, $i: number) => (<Fragment key={$i}>
                 <div style={css('display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-top:1px solid color-mix(in srgb, var(--color-text) 8%, transparent); font-size:14px;')}>
                   <span style={css('color:var(--color-neutral-700);')}>{m.k}</span>
@@ -64,9 +64,9 @@ export function ImportPage({ vm }: { vm: VM }) {
               <i className="corner bl"></i>
               <i className="corner br"></i>
               <div style={css('display:flex; justify-content:space-between; align-items:flex-end;')}>
-                <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>Mapeo automático</div>
+                <div style={css('font-size:13.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>Mapeo automático</div>
                 <span style={css('font-family:var(--font-heading); font-size:48px; font-weight:600; line-height:.9; color:var(--color-accent);')}>{imp.coverage}</span></div>
-              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{imp.coverageTxt}</span>
+              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{imp.coverageTxt}</span>
               <div style={css('display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px 16px;')}>
                 {(imp.sections || []).map((s: any, $i: number) => (<Fragment key={$i}>
                   <span style={css(`font-size:13px; color:${s.color};`)}>{s.icon} {s.name}</span>
@@ -80,9 +80,9 @@ export function ImportPage({ vm }: { vm: VM }) {
             <i className="corner br"></i>
             <div>
               <h3 style={css('margin:0; font-size:24px;')}>Revisar datos antes de crear la valuación</h3>
-              <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Corrige el campo de origen o el valor de cualquier concepto. Los campos marcados con * son necesarios para el DCF.</span></div>
+              <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Corrige el campo de origen o el valor de cualquier concepto. Los campos marcados con * son necesarios para el DCF.</span></div>
             <div style={css('overflow-x:auto;')}>
-              <table className="table" style={css('font-size:13px; min-width:860px;')}>
+              <table className="table" style={css('font-size:14.5px; min-width:860px;')}>
                 <thead>
                   <tr>
                     <th>Campo interno</th>
@@ -96,7 +96,7 @@ export function ImportPage({ vm }: { vm: VM }) {
                     <tr>
                       <td style={css('font-weight:600;')}>{f.label}{f.reqMark}</td>
                       <td>
-                        <select className="input" value={f.sel} onChange={f.onSel} style={css('min-height:30px; padding:4px 6px; font-size:12px; max-width:260px;')}>
+                        <select className="input" value={f.sel} onChange={f.onSel} style={css('min-height:30px; padding:4px 6px; font-size:13.5px; max-width:260px;')}>
                           <option value="-1">— Sin asignar —</option>
                           {(f.options || []).map((o: any, $i: number) => (<Fragment key={$i}>
                             <option value={o.id}>{o.label}</option>
@@ -126,7 +126,7 @@ export function ImportPage({ vm }: { vm: VM }) {
                     <span style={css('font-family:var(--font-heading); font-size:26px; font-weight:600; color:var(--color-neutral-600);')}>{imp.initials}</span>
                   </>) : null}</span>
                 <div style={css('display:flex; flex-direction:column; gap:6px;')}>
-                  <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{imp.logoTxt}</span>
+                  <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{imp.logoTxt}</span>
                   <div style={css('display:flex; gap:6px; flex-wrap:wrap;')}>
                     <button className="btn btn-secondary" onClick={findLogo}>Buscar logo</button>
                     <label className="btn btn-ghost" style={css('cursor:pointer;')}>Subir logo
@@ -144,14 +144,14 @@ export function ImportPage({ vm }: { vm: VM }) {
               <i className="corner br"></i>
               <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;')}>
                 <h3 style={css('margin:0; font-size:22px;')}>Supuestos de valuación</h3>
-                <button className="btn btn-ghost" onClick={copyMarketParams} style={css('font-size:12px;')}>Copiar Rf/PRM/βU de {co.short}</button></div>
-              <span style={css('font-size:12px; color:var(--color-neutral-700);')}>Los drivers de proyección se proponen a partir del archivo. Rf, PRM, beta y g no se infieren: deben capturarse.</span>
+                <button className="btn btn-ghost" onClick={copyMarketParams} style={css('font-size:13.5px;')}>Copiar Rf/PRM/βU de {co.short}</button></div>
+              <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>Los drivers de proyección se proponen a partir del archivo. Rf, PRM, beta y g no se infieren: deben capturarse.</span>
               <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;')}>
                 {(imp.aFields || []).map((f: any, $i: number) => (<Fragment key={$i}>
                   <div className="field">
                     <label>{f.label}{f.reqMark}</label>
                     <input className="input" type="number" step="any" value={f.value} onChange={f.onChange} style={css(`border-color:${f.border};`)} />
-                    <span style={css('font-size:11px; color:var(--color-neutral-700);')}>{f.hint}</span></div>
+                    <span style={css('font-size:12.5px; color:var(--color-neutral-700);')}>{f.hint}</span></div>
                 </Fragment>))}</div></div></div>
         </>) : null}
         {imp.s5 ? (<>
@@ -164,7 +164,7 @@ export function ImportPage({ vm }: { vm: VM }) {
             <div style={css('display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); border-top:1px solid var(--color-divider); border-left:1px solid var(--color-divider);')}>
               {(imp.summary || []).map((s: any, $i: number) => (<Fragment key={$i}>
                 <div style={css('padding:14px; border-right:1px solid var(--color-divider); border-bottom:1px solid var(--color-divider); display:flex; flex-direction:column; gap:2px;')}>
-                  <span style={css('font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-neutral-700);')}>{s.k}</span>
+                  <span style={css('font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-neutral-700);')}>{s.k}</span>
                   <span style={css('font-family:var(--font-heading); font-size:22px; font-weight:600;')}>{s.v}</span></div>
               </Fragment>))}</div>
             {imp.hasBlock ? (<>
@@ -176,10 +176,10 @@ export function ImportPage({ vm }: { vm: VM }) {
             </>) : null}
             {imp.hasPreview ? (<>
               <div style={css('display:flex; gap:24px; align-items:baseline; flex-wrap:wrap;')}>
-                <span style={css('font-size:13px; color:var(--color-neutral-700);')}>Vista previa del motor</span>
+                <span style={css('font-size:14px; color:var(--color-neutral-700);')}>Vista previa del motor</span>
                 <span style={css('font-family:var(--font-heading); font-size:44px; font-weight:600; color:var(--color-accent);')}>{imp.previewValue}</span>
                 <span style={css(`font-family:var(--font-heading); font-size:22px; font-weight:600; color:${imp.previewColor};`)}>{imp.previewUp}</span>
-                <span style={css('font-size:13px; color:var(--color-neutral-700);')}>WACC {imp.previewWacc}</span></div>
+                <span style={css('font-size:14px; color:var(--color-neutral-700);')}>WACC {imp.previewWacc}</span></div>
             </>) : null}</div>
         </>) : null}
         <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;')}>

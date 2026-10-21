@@ -1,6 +1,6 @@
 # ValuFlow · Equity Lens
 
-Plataforma de valuación empresarial (DCF, inflación, Trading Comps, Precedent Transactions y valuación combinada) del proyecto de **Valuación de Empresas · Tecnológico de Monterrey**.
+Plataforma de valuación empresarial (DCF, inflación, Trading Comps, Precedent Transactions y conclusión de valuación) del proyecto de **Valuación de Empresas · Tecnológico de Monterrey**.
 El caso inicial es **Organización Soriana**, pero el motor no tiene nada específico de Soriana: cualquier empresa se puede valuar
 cargando un archivo de Capital IQ / Excel / CSV, capturando datos a mano o importando un dataset `.json`.
 
@@ -14,6 +14,11 @@ npm run dev        # abre la app en http://localhost:5173
 npm test           # comprueba el motor contra el Excel y contra el prototipo original
 npm run build      # genera la versión publicable en dist/
 ```
+
+Recorrido de la app: **00 · Acerca de**, **01 · Valor**, **02 · Flujos**, **03 · Riesgo**, **04 · Múltiplos**, **05 · Transacciones**,
+**06 · Conclusión** y **07 · ESG y Gobierno Corporativo**, con botones Anterior / Siguiente. Laboratorio, Anexos, Valuaciones,
+Importar y Equipo están en el menú **Más**. La portada trae un código QR (generado en el navegador) hacia la demo publicada;
+para otra URL compila con `VITE_DEMO_URL=https://… npm run build`.
 
 La carpeta `dist/` es un sitio estático: se puede publicar tal cual en GitHub Pages, Netlify, Vercel o cualquier servidor.
 

@@ -2,16 +2,16 @@
 // (textos formateados, posiciones de gráficas, acciones). Las pantallas (pages/*.tsx) solo dibujan.
 import * as E from '../engine';
 import { fmt as f, labelsOf, unitsOf, type Assumptions, type Dataset, type RunOk, type RunResult } from '../engine';
-import { buildDeck } from './present/deck';
 import { FIELDS } from '../services/importer';
 import { store } from '../services/store';
 import { brandColor } from '../services/research';
 import { DEFAULT_ID } from '../data/registry';
-import { PROJECT } from '../config';
+import { DEMO_URL, PROJECT } from '../config';
+import { qrSvg } from '../services/qr';
 import { annexDefs, annexTables } from './annex';
 import { betaTables, inflationChain, inflationChart, inflationTables, overridesActive, relativeView } from './relative';
 import type { App } from './App';
-import { EXPORT_LABELS, SEQ, SEQ_N, type ExportKind } from './App';
+import { EXPORT_LABELS, type ExportKind } from './App';
 
 export type VM = Record<string, any>;
 
@@ -25,10 +25,10 @@ const initialsOf = (s: string) => s.split(/\s+/).map(w => w[0]).join('').slice(0
 
 export function buildView(app: App): VM {
   const S = app.state;
-  if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pres: {}, toast: {}, exp: null };
+  if (!S.ready || !S.A) return { loading: true, v: {}, co: {}, r: {}, cv: {}, ui: {}, drawer: {}, pager: {}, toast: {}, exp: null };
   const c = app.calc(), ds = c.ds, b = c.view as RunOk, A = c.VA, P = ds.profile, rv = S.reveal || !!S.printing, L = labelsOf(ds);
   const view = S.view, pr = S.printing;
-  const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, p4: view === 'p4' || !!pr, p5: view === 'p5' || !!pr, p6: view === 'p6' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
+  const v = { cover: view === 'cover' && !pr, app: view !== 'cover' || !!pr, p0: (view === 'p0' || !!pr) && !!ds.about, p7: (view === 'p7' || !!pr) && !!ds.esg, p1: view === 'p1' || !!pr, p2: view === 'p2' || !!pr, p3: view === 'p3' || !!pr, p4: view === 'p4' || !!pr, p5: view === 'p5' || !!pr, p6: view === 'p6' || !!pr, lab: view === 'lab' && !pr, annex: view === 'annex' || pr === 'full', library: view === 'library' && !pr, import: view === 'import' && !pr, team: view === 'team' && !pr };
   const go = (x: string, a?: string | null) => () => app.go(x, a);
   const upColor = b.ok && b.upside != null ? (b.upside >= 0 ? POS : NEG) : 'var(--color-text)';
   const co = { ticker: P.ticker || '—', exchange: P.exchange || '—', hasLogo: !!P.logo, noLogo: !P.logo, logo: P.logo || '', name: P.name, short: P.short || P.name, legalName: P.legalName || P.name, brand: P.brand || ACC, initials: initialsOf(P.short || P.name || '?'), sector: P.sector || P.industry || '', currency: P.currency, units: unitsOf(ds), valDate: ds.dates.valuation, priceDate: ds.dates.price };
@@ -50,18 +50,29 @@ export function buildView(app: App): VM {
   const cv = { o1: rv ? 1 : 0, o2: rv ? 1 : 0, o3: rv ? 1 : 0, o4: rv ? 1 : 0, t1: rv ? 'none' : 'translateY(-10px)', t2: rv ? 'none' : 'translateY(28px)', t3: rv ? 'none' : 'translateY(36px)' };
   const team = PROJECT.team.map((m, i) => ({ n: String(i + 1).padStart(2, '0'), name: m[0], id: m[1] }));
   const ui = {
-    headerT: S.presenting ? 'translateY(-100%)' : 'none', companyMenu: S.menu === 'company', exportMenu: S.menu === 'export', desktop: !S.mobile, mobile: S.mobile,
-    modified: !c.isBase || overridesActive(c.A), pageO: rv ? 1 : 0, pageT: rv ? 'none' : 'translateY(14px)', errorsShow: !c.base.ok && ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab'].includes(view), errors: c.base.errors || [], busy: S.busy
+    companyMenu: S.menu === 'company', moreMenu: S.menu === 'more', sectionsMenu: S.menu === 'sections', menuOpen: !!S.menu && S.menu !== 'sections', exportMenu: S.menu === 'export', desktop: !S.mobile, mobile: S.mobile,
+    modified: !c.isBase || overridesActive(c.A), pageO: rv ? 1 : 0, pageT: rv ? 'none' : 'translateY(14px)', errorsShow: !c.base.ok && ['p0', 'p7', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'lab'].includes(view), errors: c.base.errors || [], busy: S.busy
   };
   const companyList = S.companies.map(x => { const rr = E.run(x, x.id === S.activeId ? S.A as Assumptions : { ...E.defaults(x), ...(store.getA(x.id) || {}) }); return { name: x.profile.name, meta: x.profile.ticker + ' · ' + x.profile.exchange + (x.builtIn ? ' · caso presentado' : ''), value: rr.ok ? f.cur(rr.value) : '—', bg: x.id === S.activeId ? 'var(--color-accent-100)' : 'transparent', onClick: () => app.switchCompany(x.id), rr, x }; });
   const hasRel = !!(ds.comps || ds.combined);
-  const NAV = [['01', 'Valor', 'p1'], ['02', 'Flujos', 'p2'], ['03', 'Riesgo', 'p3']].concat(hasRel ? [['04', 'Múltiplos', 'p4'], ['05', 'Transacciones', 'p5'], ['06', 'Combinada', 'p6']] : []).concat([['', 'Laboratorio', 'lab'], ['', 'Anexos', 'annex'], ['', 'Equipo', 'team']]);
-  const navItems = NAV.map(([num, label, vw]) => ({ num, label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
-  const mobileNav = [['Inicio', 'cover'], ['Valor', 'p1'], ['Flujos', 'p2'], ['Riesgo', 'p3'], ['Más', 'annex']].map(([label, vw]) => ({ label, onClick: go(vw), color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
+  // Recorrido principal 00–07 (Anterior / Siguiente) y herramientas de apoyo en el menú «Más».
+  const TITLES: Record<string, [string, string]> = { cover: ['', 'Portada'], p0: ['00', 'Acerca de'], p1: ['01', 'Valor'], p2: ['02', 'Flujos'], p3: ['03', 'Riesgo'], p4: ['04', 'Múltiplos'], p5: ['05', 'Transacciones'], p6: ['06', 'Conclusión'], p7: ['07', 'ESG y Gobierno Corporativo'] };
+  const tour = app.tour();
+  const navItems = tour.filter(x => x !== 'cover').map(vw => ({ num: TITLES[vw][0], label: vw === 'p7' ? 'ESG y Gobierno' : TITLES[vw][1], title: TITLES[vw][1], onClick: go(vw), current: view === vw, color: view === vw ? ACC : 'var(--color-text)', border: view === vw ? ACC : 'transparent' }));
+  const MORE: [string, string, string][] = [['lab', 'Laboratorio', 'Cambia supuestos y mira el efecto'], ['annex', 'Anexos', 'Tablas completas, fórmulas y fuentes'], ['library', 'Valuaciones', 'Biblioteca de valuaciones guardadas'], ['import', 'Importar', 'Nueva valuación desde Excel, CSV o JSON'], ['team', 'Equipo', 'Integrantes y arquitectura del proyecto']];
+  const moreItems = MORE.map(([vw, label, desc]) => ({ label, desc, current: view === vw, onClick: vw === 'import' ? () => { app.setState({ imp: app.newImp() }); app.go('import'); } : go(vw) }));
+  const moreCurrent = MORE.some(([vw]) => vw === view);
+  const ti = tour.indexOf(view), stepTxt = (vw: string) => (TITLES[vw][0] ? TITLES[vw][0] + ' · ' : '') + TITLES[vw][1];
+  const pager = {
+    show: ti > 0 && !pr,
+    prev: ti > 0 ? { label: stepTxt(tour[ti - 1]), onClick: () => app.step(-1) } : null,
+    next: ti >= 0 && ti < tour.length - 1 ? { label: stepTxt(tour[ti + 1]), onClick: () => app.step(1) } : null,
+    current: ti >= 0 ? stepTxt(view) : (MORE.find(([vw]) => vw === view) || ['', ''])[1]
+  };
   const exportItems = ([
     ['exec', 'Dos o tres páginas: resultado, recomendación, escenarios y riesgos'],
     ['full', 'Portada, índice, 16 secciones con tablas y gráficas numeradas'],
-    ['xlsx', 'Libro con fórmulas (WACC, FCFF, transacciones, combinada) y todas las tablas'],
+    ['xlsx', 'Libro con fórmulas (WACC, FCFF, transacciones, conclusión) y todas las tablas'],
     ['csv', 'Todas las tablas del reporte en un archivo (UTF-8)'],
     ['json', 'Dataset y supuestos activos; se reabre en ValuFlow'],
     ['zip', 'Ambos PDF, Excel, CSV por tabla, JSON, gráficas y LEEME']
@@ -94,7 +105,7 @@ export function buildView(app: App): VM {
       { label: 'FCF ' + b.rows[0].year, kind: 'Cálculo', value: f.m(b.rows[0].fcf), unit: mu, desc: 'Flujo libre disponible para proveedores de capital.', onClick: () => app.go('p2') }
     ];
     const RVk = (ds.comps || ds.combined) ? E.relative(ds, A, b.value) : null;
-    if (RVk && RVk.combined && E.isNum(RVk.combined.value)) kpis.push({ label: 'Valuación combinada', kind: 'Resultado', value: f.cur(RVk.combined.value), unit: '', desc: RVk.combined.rows.map(x => x.label + ' ' + Math.round(x.weight * 100) + '%').join(' · ') + '.', onClick: () => app.go('p6') });
+    if (RVk && RVk.combined && E.isNum(RVk.combined.value)) kpis.push({ label: 'Conclusión de valuación', kind: 'Resultado', value: f.cur(RVk.combined.value), unit: '', desc: RVk.combined.rows.map(x => x.label + ' ' + Math.round(x.weight * 100) + '%').join(' · ') + '.', onClick: () => app.go('p6') });
     if (RVk && RVk.comps && E.isNum(RVk.comps.value)) kpis.push({ label: 'Trading Comps', kind: 'Resultado', value: f.cur(RVk.comps.value), unit: '', desc: RVk.comps.n + ' comparables · promedio de ' + RVk.comps.used + ' múltiplos a la media.', onClick: () => app.go('p4') });
     insights = (c.ins || []).map((x, i) => ({ ...x, op: rv ? 1 : 0, tr: rv ? 'none' : 'translateY(12px)', delay: (200 + i * 90) + 'ms' }));
   }
@@ -235,7 +246,7 @@ export function buildView(app: App): VM {
     hasDesc: !!P.description, desc: P.description, facts, hasFormats: !!(P.formats && P.formats.length), formats: P.formats || [],
     timeline: (ds.timeline || []).map(t => ({ date: t[0], title: t[1], desc: t[2], src: t[3] })).concat(applied.filter(i => i.section === 'Historia').map(i => ({ date: i.date || '', title: i.field, desc: i.value, src: 'Investigación · ' + (i.url || '') }))),
     hasGov: !!gv, gov: gv ? { board: gv.board, patrimonial: gv.patrimonial, related: gv.related, independent: gv.independent, ind: gv.independencePct.toFixed(2) + '%', best: gv.bestPractice + '%', pW: (gv.patrimonial / gv.board * 100) + '%', rW: (gv.related / gv.board * 100) + '%', chair: gv.chair, ceo: gv.ceo, committees: gv.committees.map(x => ({ k: x[0], v: x[1] })), controls: gv.controls } : {},
-    market: ([['Precio', m.price ? f.cur(m.price) : null], ['Acciones en circulación', m.shares ? f.n(m.shares, 1) + ' mm' : null], ['Capitalización de mercado', m.marketCap ? f.m(m.marketCap) + ' ' + mu : null], ['P/U', m.pe ? f.x(m.pe) : null], ['P/VL', m.pbv ? f.x(m.pbv) : null], ['Rendimiento por dividendo', m.divYield ? m.divYield.toFixed(2) + '%' : null], ['Variación 1 año', m.chg1y ? (m.chg1y >= 0 ? '+' : '') + m.chg1y.toFixed(1) + '%' : null], ['Rango 52 semanas', m.low52 ? f.cur(m.low52) + ' – ' + f.cur(m.high52) : null], ['Consenso de analistas', m.consensus ? f.cur(m.consensus) + ' · ' + m.consensusLabel : null], ['Calificación crediticia', m.rating], ['Señal técnica · RSI (14)', m.technical ? m.technical + ' · ' + m.rsi : null]] as [string, unknown][]).filter(x => x[1]).map(([k, vv]) => ({ k, v: vv })),
+    market: ((td => [['Precio de referencia' + (ds.dates.price ? ' (cierre ' + ds.dates.price + ')' : ''), m.price ? f.cur(m.price) : null], ['Acciones en circulación', m.shares ? f.n(m.shares, 1) + ' mm' : null], ['Capitalización de mercado', m.marketCap ? f.m(m.marketCap) + ' ' + mu : null], ['P/U', m.pe ? f.x(m.pe) : null], ['P/VL', m.pbv ? f.x(m.pbv) : null], ['Rendimiento por dividendo', m.divYield ? m.divYield.toFixed(2) + '%' : null], ['Variación 1 año' + td, m.chg1y ? (m.chg1y >= 0 ? '+' : '') + m.chg1y.toFixed(1) + '%' : null], ['Rango 52 semanas' + td, m.low52 ? f.cur(m.low52) + ' – ' + f.cur(m.high52) : null], ['Consenso de analistas', m.consensus ? f.cur(m.consensus) + ' · ' + m.consensusLabel : null], ['Calificación crediticia', m.rating], ['Señal técnica · RSI (14)' + td, m.technical ? m.technical + ' · ' + m.rsi : null]])(m.technicalDate ? ' (al ' + m.technicalDate + ')' : '') as [string, unknown][]).filter(x => x[1]).map(([k, vv]) => ({ k, v: vv })),
     hasDiv: !!(ds.dividends && ds.dividends.length), div: (ds.dividends || []).map(d => ({ a: d[0], b: d[1], c: '$' + d[2].toFixed(4) }))
   };
   emp.hasTimeline = emp.timeline.length > 0;
@@ -311,21 +322,72 @@ export function buildView(app: App): VM {
   const rel = b.ok ? relativeView(app, ds, A, b) : { has: false, mult: { has: false }, comb: { has: false } };
   const inflFlow = b.ok && ds.inflation ? inflationTables(ds, A, b).slice(0, 2) : [];
   const betaT = b.ok && ds.beta ? betaTables(ds, A, b) : [];
-  const pi = SEQ.indexOf(view);
   const arch = [['01', 'Datos', 'Dataset por empresa: perfil, estados, mercado, fuentes'], ['02', 'Supuestos', 'Drivers, WACC, g, múltiplo; editables y persistentes'], ['03', 'Motor', 'Proyección → WACC iterado → TV → EV → Equity'], ['04', 'Análisis', 'Sensibilidad, tornado, escenarios, validación'], ['05', 'Presentación', 'Dashboard, anexos y exportación']].map(([n, k, d], i) => ({ n, k, d, bg: i === 2 ? ACC : 'transparent', color: i === 2 ? 'var(--color-bg)' : 'var(--color-text)', border: i === 2 ? ACC : 'var(--color-divider)' }));
 
+  // 06 · Conclusión: precio objetivo (motor), recomendación ±umbral, metodología y rangos de sensibilidad etiquetados.
+  const concl: any = (() => {
+    if (!b.ok || !rec || rec.target == null) return { has: false };
+    const RV = E.relative(ds, A, b.value), K = RV.combined; if (!K) return { has: false };
+    const g = c.grid, inner = g ? g.cells.slice(1, 4).flatMap(rw => rw.slice(1, 4)).filter((x): x is number => x != null) : [];
+    const wD = (K.rows.find(x => x.key === 'dcf') || { weight: 0 }).weight;
+    const dLo = inner.length ? Math.min(...inner) : null, dHi = inner.length ? Math.max(...inner) : null, st = S.step;
+    const tone = rec.rating === 'COMPRAR' ? POS : rec.rating === 'VENDER' ? NEG : 'var(--color-text)';
+    const rows = K.rows.map(x => ({ label: x.key === 'dcf' ? 'DCF (flujos descontados)' : x.key === 'comps' ? 'Trading Comps (múltiplos)' : 'Precedent Transactions (LSEG/SDC)', price: E.isNum(x.price) ? f.cur(x.price) : 'NA', w: Math.round(x.weight * 100) + '%', contrib: x.weight > 0 ? f.cur(x.contribution) : 'Solo referencia', on: x.weight > 0, bar: (x.weight * 100) + '%' }));
+    return {
+      has: true, target: f.cur(rec.target), price: f.cur(b.price), priceDate: ds.dates.price, potential: f.pp(rec.potential), potColor: (rec.potential || 0) >= 0 ? POS : NEG,
+      rating: cap(rec.rating), tone, rule: 'Comprar si el potencial supera +' + Math.round(rec.buy * 100) + '%; vender si queda debajo de ' + Math.round(rec.sell * 100) + '%; en medio, mantener.',
+      formula: rows.filter(x => x.on).map(x => x.w + ' ' + x.label.split(' (')[0] + ' (' + x.price + ')').join(' + '), rows,
+      sens: dLo != null && dHi != null ? [
+        { k: 'Rango del DCF', v: f.cur(dLo) + ' – ' + f.cur(dHi), s: 'WACC ±' + st + ' pp y g ±' + st + ' pp (tabla de sensibilidad)' },
+        { k: 'Rango del precio objetivo', v: f.cur(K.value as number + wD * (dLo - b.value)) + ' – ' + f.cur(K.value as number + wD * (dHi - b.value)), s: 'Mismo cambio en el DCF; Trading Comps sin cambio (peso ' + Math.round(wD * 100) + '% en el DCF)' }
+      ] : []
+    };
+  })();
+  // 00 · Acerca de: KPIs fechados, serie mensual de precio con el cierre de referencia resaltado, formatos y presiones competitivas.
+  const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const monTxt = (ym: string) => MESES[+ym.slice(5, 7) - 1] + '-' + ym.slice(2, 4);
+  const AB = ds.about;
+  const about: any = AB ? (() => {
+    const pts = ((ds.study && ds.study.monthly) || []).map(x => ({ ym: String(x[0]).slice(0, 7), p: +x[1] })).filter(x => isFinite(x.p));
+    const W = S.mobile ? 420 : 720, H = S.mobile ? 280 : 260, L = 46, R = 16, T = 18, B = 34;
+    const lo = Math.floor(Math.min(...pts.map(x => x.p)) / 2) * 2, hi = Math.ceil(Math.max(...pts.map(x => x.p)) / 2) * 2;
+    const X = (i: number) => L + (pts.length > 1 ? i / (pts.length - 1) : 0) * (W - L - R), Y = (p: number) => T + (hi - p) / ((hi - lo) || 1) * (H - T - B);
+    const ri = pts.findIndex(x => x.ym === AB.price.refDate.slice(0, 7));
+    const yTicks: number[] = []; for (let t = lo; t <= hi + 1e-9; t += (hi - lo) > 8 ? 4 : 2) yTicks.push(t);
+    const chart = pts.length > 1 ? {
+      W, H, line: pts.map((x, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(x.p).toFixed(1)).join(' '),
+      yTicks: yTicks.map(t => ({ y: Y(t), t: '$' + t })), xTicks: pts.map((x, i) => ({ x: X(i), t: monTxt(x.ym), show: i === 0 || i === pts.length - 1 || (!S.mobile && x.ym.endsWith('-01')) || i === ri })).filter(t => t.show),
+      ref: ri >= 0 ? { x: X(ri), y: Y(pts[ri].p), v: f.cur(pts[ri].p), label: AB.price.refLabel } : null,
+      last: { x: X(pts.length - 1), y: Y(pts[pts.length - 1].p), v: f.cur(pts[pts.length - 1].p), t: monTxt(pts[pts.length - 1].ym) },
+      L, R, T, B, range: monTxt(pts[0].ym) + ' a ' + monTxt(pts[pts.length - 1].ym), n: pts.length,
+      summary: 'Precio mensual de ' + P.ticker + ' de ' + monTxt(pts[0].ym) + ' a ' + monTxt(pts[pts.length - 1].ym) + '; cierre de referencia ' + (ri >= 0 ? f.cur(pts[ri].p) : '—') + ' (' + AB.price.refLabel + ').'
+    } : null;
+    const mcap = b.ok && b.price && ds.market.shares ? b.price * ds.market.shares : null;
+    const kpis = [
+      { k: 'Precio de referencia', v: b.ok && b.price ? f.cur(b.price) : '—', s: AB.price.refLabel + ' · ' + P.ticker + ' (' + P.exchange + ')', accent: true },
+      ...(mcap ? [{ k: 'Valor de mercado', v: '$' + f.m(mcap) + ' ' + mu, s: f.n(ds.market.shares) + ' mm de acciones × precio de referencia' }] : []),
+      ...AB.kpis
+    ];
+    const tot = AB.formats.periods.map((_, j) => AB.formats.rows.reduce((a, r) => a + (r.stores[j] || 0), 0));
+    return { has: true, kpis, chart, note: AB.price.note, currency: P.currency, formats: { periods: AB.formats.periods.map(p => ({ label: p[0], src: p[1] })), rows: AB.formats.rows.map(r => ({ ...r, cells: r.stores.map(x => x == null ? '—' : f.n(x)) })), totals: tot.map(x => f.n(x)) },
+      related: AB.related, threats: AB.threats, insights: AB.insights, sources: AB.sources.map(([n, u, d]) => ({ n, u, d, link: !!u })) };
+  })() : { has: false };
+  // 07 · ESG y Gobierno Corporativo.
+  const EG = ds.esg;
+  const esg: any = EG ? { has: true, pillars: EG.pillars, note: EG.note, committees: EG.committees, sources: EG.sources.map(([n, u, d]) => ({ n, u, d, link: !!u })),
+    board: { note: EG.board.note, bestPractice: EG.board.bestPractice + '%', rows: EG.board.rows.map(([cut, tot, pat, rel, ind, pct, src]) => ({ cut, tot, pat, rel: rel == null ? 'n.d.' : String(rel), ind, pct: String(pct) + '%', below: pct < EG.board.bestPractice, src, w: Math.min(100, pct) + '%' })) } } : { has: false };
+  const qr = { url: DEMO_URL, host: DEMO_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''), svg: qrCache(DEMO_URL) };
+
   return {
-    loading: false, v, cv, co, r, team, teamNames: PROJECT.team.map(t => t[0]).join(' · '), project: PROJECT, ui, companyList, navItems, mobileNav, exportItems, track, kpis, football, wf, insights,
+    loading: false, v, cv, co, r, team, teamNames: PROJECT.team.map(t => t[0]).join(' · '), project: PROJECT, ui, companyList, navItems, moreItems, moreCurrent, pager, about, esg, qr, concl, exportItems, track, kpis, football, wf, insights,
     fcfChart, fcfSel, sales, methodSteps, hasMethod: !!ds.method, weights, extNet, extTop, extCount, tv, wb, iter, heat, torn, scen, scenNote, hasScen, lab,
     mult: rel.mult, trans: (rel as any).trans || { has: false }, comb: rel.comb, ext: (rel as any).ext || { has: false }, inflFlow, hasInflFlow: inflFlow.length > 0, betaT, hasBeta: betaT.length > 0,
     goP4: go('p4'), goP5: go('p5'), goP6: go('p6'), goAnnexInfl: go('annex', 'infl'), goAnnexBeta: go('annex', 'beta'),
     annexNav, annexTables: annexTablesV, ax, emp, res, val, formulas, sources, libCards, imp, drawer, arch,
-    deck: S.deck && b.ok ? { data: buildDeck(ds, A, b, PROJECT.team.map(t => t[0]), PROJECT.institution + ' · ' + PROJECT.course + ' · ' + PROJECT.year, !c.isBase || overridesActive(c.A)), index: S.slide, onIndex: (i: number) => app.setSlide(i), onExit: () => app.exitPresent(), onLive: () => app.presentLive(), team: PROJECT.team.map(t => t[0]).join(' · ') } : null,
-    pres: { on: S.presenting, label: (pi >= 0 ? SEQ_N[pi] : 'Fuera de secuencia') + ' · ' + (pi + 1) + '/' + SEQ.length, progress: ((pi + 1) / SEQ.length * 100) + '%', prev: () => app.presStep(-1), next: () => app.presStep(1), exit: () => app.exitPresent() },
     toast: { show: !!S.toast, t: S.toast || '' },
     exp: S.exp ? { ...S.exp, pct: Math.round(S.exp.p * 100), running: S.exp.status === 'run', done: S.exp.status === 'done', error: S.exp.status === 'error', close: () => app.closeExport(), retry: () => app.exportRun(S.exp!.kind),
       scope: S.exp.modified ? 'Escenario modificado (supuestos del Laboratorio)' : 'Caso base del Excel' } : null,
-    startTour: () => app.go('p1'), startPresent: () => app.startPresent(), goCover: go('cover'), goImport: () => { app.setState({ imp: app.newImp() }); app.go('import'); }, goLibrary: go('library'),
+    startTour: () => app.go(tour[1] || 'p1'), toggleMoreMenu: () => app.setState({ menu: S.menu === 'more' ? null : 'more' }), toggleSections: () => app.setState({ menu: S.menu === 'sections' ? null : 'sections' }), closeMenu: () => app.setState({ menu: null }), goCover: go('cover'), goImport: () => { app.setState({ imp: app.newImp() }); app.go('import'); }, goLibrary: go('library'),
     goP1: go('p1'), goP2: go('p2'), goP3: go('p3'), goLab: go('lab'), goAnnexMethod: go('annex', ds.method ? 'ls' : 'dcf'), goAnnexMet: go('annex', 'method'),
     toggleCompanyMenu: () => app.setState({ menu: S.menu === 'company' ? null : 'company' }), toggleExportMenu: () => app.setState({ menu: S.menu === 'export' ? null : 'export' }),
     resetA: () => app.resetA(), openDrawerValue: () => app.setState({ drawer: 'value' }), openDrawerEV: () => app.setState({ drawer: 'ev' }), openDrawerWacc: () => app.setState({ drawer: 'wacc' }), closeDrawer: () => app.setState({ drawer: null }),
@@ -339,6 +401,10 @@ export function buildView(app: App): VM {
     copyMarketParams: () => app.setImp({ a: { ...app.state.imp!.a, rf: SA.rf, prm: SA.prm, betaU: SA.betaU }, hints: { ...app.state.imp!.hints, rf: 'Copiado de ' + co.short + ' · verificar país', prm: 'Copiado de ' + co.short, betaU: 'Copiado de ' + co.short + ' · beta sectorial' + (P.sector ? ' (' + P.sector + ')' : '') } })
   };
 }
+
+let _qr: [string, string] | null = null;
+/** SVG del QR (se genera una vez por URL). */
+function qrCache(url: string): string { if (!_qr || _qr[0] !== url) _qr = [url, qrSvg(url, { size: 168, label: 'Código QR para abrir ValuFlow: ' + url })]; return _qr[1]; }
 
 /** Valor para un <input type="number"> controlado: vacío si no es un número válido. */
 function numIn(v: number | null | undefined): number | string { return typeof v === 'number' && isFinite(v) ? v : ''; }

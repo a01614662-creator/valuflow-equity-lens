@@ -22,7 +22,7 @@ describe('contenido del reporte', () => {
     expect(R0.meta.team).toEqual(PROJECT.team); expect(R0.meta.team).toHaveLength(5);
     expect(R0.meta.caseLabel).toMatch(/Caso base del Excel/);
     expect(cell(R0, 'keyFacts', 'Valor DCF por acción')[1]).toContain(E.fmt.cur(S0.b.value));
-    expect(cell(R0, 'keyFacts', 'Precio objetivo combinado')[1]).toContain(E.fmt.cur(S0.rel.combined!.value as number));
+    expect(cell(R0, 'keyFacts', 'Precio objetivo (conclusión)')[1]).toContain(E.fmt.cur(S0.rel.combined!.value as number));
     expect(cell(R0, 'keyFacts', 'Recomendación')[1]).toMatch(/^COMPRAR/); expect(S0.rec!.rating).toBe(XL.recommendation.rating);
   });
   it('reporte técnico: 16 secciones en orden, tablas y gráficas numeradas sin huecos', () => {
@@ -95,12 +95,12 @@ describe('archivos', () => {
     const bytes = await buildXlsx(R0, {}), wb = new ExcelJS.Workbook();
     await wb.xlsx.load(bytes.buffer as ArrayBuffer);
     const names = wb.worksheets.map(w => w.name);
-    expect(names.slice(0, 7)).toEqual(['Portada', 'Supuestos', 'WACC', 'FCFF y valuación', 'Transacciones SDC', 'Combinada', '01 Resumen ejecutivo']);
+    expect(names.slice(0, 7)).toEqual(['Portada', 'Supuestos', 'WACC', 'FCFF y valuación', 'Transacciones SDC', 'Conclusión', '01 Resumen ejecutivo']);
     expect(names).toHaveLength(7 + 14); // secciones 1 a 15 (la 16 solo tiene tablas si hay supuestos modificados)
     const F = wb.getWorksheet('FCFF y valuación')!;
     expect((F.getCell('B32').value as { formula: string }).formula).toBe('B31/Supuestos!$B$22');
     expect(F.getCell('B36').value).toBeCloseTo(S0.b.value, 10);
-    expect((wb.getWorksheet('Combinada')!.getCell('B11').value as { formula: string }).formula).toMatch(/COMPRAR/);
+    expect((wb.getWorksheet('Conclusión')!.getCell('B11').value as { formula: string }).formula).toMatch(/COMPRAR/);
     const P = wb.getWorksheet('Portada')!, col = Array.from({ length: 20 }, (_, i) => P.getCell(i + 1, 1).value);
     PROJECT.team.forEach(([n]) => expect(col).toContain(n));
   });

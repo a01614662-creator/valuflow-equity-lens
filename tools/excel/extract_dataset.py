@@ -163,7 +163,8 @@ valuation = {'g': num(v(X, PF, 'B123')), 'exitMultiple': num(v(X, PF, 'B234')), 
              'bridge': {'debt': num(v(X, PF, 'B91')), 'lease': num(v(X, PF, 'B92')), 'cash': num(v(X, PF, 'B84'))},
              'roll': {'enabled': True, 't1': num(v(X, PF, 'B253')), 't2': num(v(X, PF, 'B254')), 'fcfGenerated': num(v(X, PF, 'B257')),
                       'debt': -num(v(X, PF, 'B259')), 'lease': -num(v(X, PF, 'B260')), 'cash': num(v(X, PF, 'B261'))}}
-market = {'price': num(v(X, WA, 'B13')), 'shares': num(v(X, WA, 'B17')), 'priceDate': v(X, WA, 'B14'), 'consensus': num(v(X, 'Generales', 'B24'))}
+market = {'price': num(v(X, WA, 'B13')), 'shares': num(v(X, WA, 'B17')), 'priceDate': v(X, WA, 'B14'), 'consensus': num(v(X, 'Generales', 'B24')),
+          'pe': num(v(X, 'Generales', 'B56')), 'bvps': num(v(X, 'Generales', 'B57')), 'pbv': num(v(X, 'Generales', 'B58')), 'lastDiv': num(v(X, 'Generales', 'B62')), 'divYield': num(v(X, 'Generales', 'B63'))}
 peersMkt = [{'name': X[WA][f'{c}3'].value, 'price': X[WA][f'{c}13'].value, 'date': v(X, WA, f'{c}14'), 'ev': X[PF][f'{c2}229'].value, 'ebitda': X[PF][f'{c2}230'].value, 'evEbitda': X[PF][f'{c2}231'].value}
             for c, c2 in zip('CDE', 'CDE')]
 

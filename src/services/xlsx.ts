@@ -1,5 +1,5 @@
 // Libro de Excel profesional con ExcelJS (incluido en el paquete; no usa CDN).
-// Hojas con FÓRMULAS vivas (Supuestos → WACC → FCFF y valuación → Transacciones SDC → Combinada): al abrirlo en Excel
+// Hojas con FÓRMULAS vivas (Supuestos → WACC → FCFF y valuación → Transacciones SDC → Conclusión): al abrirlo en Excel
 // o LibreOffice, el valor por acción y el precio objetivo se recalculan y se comparan con la cifra de la app.
 // El resto de las hojas lleva las mismas tablas numeradas del reporte técnico, con números reales (no texto).
 import ExcelJS from 'exceljs';
@@ -81,13 +81,13 @@ export async function buildXlsx(R: Report, images: Record<string, ChartImage>): 
     r++; ws0.getCell(r, 1).value = 'Escenario modificado: supuestos distintos al Excel'; ws0.getCell(r, 1).font = { bold: true, color: { argb: WARN } }; r++;
     headerRow(ws0, r, ['Supuesto', 'Excel', 'Activo']); r++; meta.changes.forEach(c => { c.forEach((v, j) => { ws0.getCell(r, j + 1).value = v; }); r++; });
   }
-  r++; ws0.getCell(r, 1).value = 'Hojas con fórmulas: Supuestos, WACC, FCFF y valuación, Transacciones SDC y Combinada. Las demás hojas reproducen las tablas numeradas del reporte técnico.'; ws0.getCell(r, 1).font = { italic: true, size: 9, color: { argb: GRAY } };
+  r++; ws0.getCell(r, 1).value = 'Hojas con fórmulas: Supuestos, WACC, FCFF y valuación, Transacciones SDC y Conclusión. Las demás hojas reproducen las tablas numeradas del reporte técnico.'; ws0.getCell(r, 1).font = { italic: true, size: 9, color: { argb: GRAY } };
   r += 2; img(ws0, 'football', 0, r, 680);
   widths(ws0, [46, 70, 24]);
 
   // ---------------------------------------------------------------- Supuestos (insumos de las fórmulas)
   const wsS = wb.addWorksheet('Supuestos', { views: [{ state: 'frozen', ySplit: 3 }] });
-  title(wsS, 'Supuestos activos (insumos de las hojas con fórmulas)', 'Valores en azul: cambiarlos recalcula WACC, FCFF y valuación, transacciones y combinada.');
+  title(wsS, 'Supuestos activos (insumos de las hojas con fórmulas)', 'Valores en azul: cambiarlos recalcula WACC, FCFF y valuación, transacciones y conclusión.');
   headerRow(wsS, 3, ['Supuesto', 'Valor', 'Unidad', 'Fuente']);
   const ro = b.roll, it = b.W.iterated ?? b.W.market, ref: Record<string, string> = {};
   const tgt = ds.comps?.target, n = b.rows.length;
@@ -224,8 +224,8 @@ export async function buildXlsx(R: Report, images: Record<string, ChartImage>): 
   // ---------------------------------------------------------------- Combinada y recomendación (fórmulas)
   const K = rel.combined;
   if (K) {
-    const ws = wb.addWorksheet('Combinada');
-    title(ws, 'Valuación combinada y recomendación con fórmulas', 'Pesos en azul: editables. El precio objetivo y la recomendación se recalculan.');
+    const ws = wb.addWorksheet('Conclusión');
+    title(ws, 'Conclusión de valuación y recomendación con fórmulas', 'Pesos en azul: editables. El precio objetivo y la recomendación se recalculan.');
     headerRow(ws, 3, ['Método', 'Precio por acción', 'Peso', 'Contribución', 'Origen']);
     const src: Record<string, string> = { dcf: ref.dcf, transactions: ref.trans ?? '' };
     K.rows.forEach((x, i) => {
@@ -236,7 +236,7 @@ export async function buildXlsx(R: Report, images: Record<string, ChartImage>): 
       ws.getCell(rr, 5).value = src[x.key] ? 'Fórmula (hoja ' + (x.key === 'dcf' ? 'FCFF y valuación' : 'Transacciones SDC') + ')' : 'Motor ValuFlow (Trading Comps, media)';
     });
     const rT = 4 + K.rows.length;
-    ws.getCell(rT, 1).value = 'Precio objetivo combinado'; ws.getCell(rT, 1).font = { bold: true };
+    ws.getCell(rT, 1).value = 'Precio objetivo (conclusión)'; ws.getCell(rT, 1).font = { bold: true };
     ws.getCell(rT, 3).value = { formula: 'SUM(C4:C' + (rT - 1) + ')' }; ws.getCell(rT, 3).numFmt = '0%';
     ws.getCell(rT, 2).value = { formula: 'SUM(D4:D' + (rT - 1) + ')/C' + rT }; ws.getCell(rT, 2).numFmt = '$#,##0.00'; ws.getCell(rT, 2).font = { bold: true };
     const rr = rT + 2;

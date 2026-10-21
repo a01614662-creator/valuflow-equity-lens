@@ -16,7 +16,7 @@ export function chartCatalog(S: Snapshot): Record<string, ChartDef> {
 
   // Campo de fútbol: rango por método, precio de mercado y precio objetivo combinado.
   const comb = rel.combined && E.isNum(rel.combined.value) ? rel.combined.value : null;
-  const marks = [{ x: price, label: 'Mercado ' + mxn(price), color: PAL.neg }].concat(comb != null ? [{ x: comb, label: 'Combinado ' + mxn(comb), color: PAL.accent }] : []);
+  const marks = [{ x: price, label: 'Mercado ' + mxn(price), color: PAL.neg }].concat(comb != null ? [{ x: comb, label: 'Objetivo ' + mxn(comb), color: PAL.accent }] : []);
   add('football', 'Campo de fútbol: valor por acción por método (MXN)', 'hojas Valuación Combinada, Escenarios y Transacciones SDC',
     footballChart({ rows: methods.filter(m => m.key !== 'combined' && (m.value != null || (m.lo != null && m.hi != null))).map(m => ({ label: m.label, lo: m.lo, hi: m.hi, value: m.value, main: m.main, ref: m.ref })), marks, fmt: mxn }), true);
 
@@ -63,6 +63,6 @@ export function chartCatalog(S: Snapshot): Record<string, ChartDef> {
   }
 
   // Recomendación: potencial frente a los umbrales
-  if (rec && rec.target != null) add('rec', 'Precio objetivo combinado frente al mercado y bandas de recomendación (MXN)', 'hoja Transacciones SDC §7 · regla de recomendación', barChart({ cats: ['Mercado', 'DCF', 'Trading Comps', 'Objetivo combinado'], series: [{ name: '', color: PAL.accent, values: [price, b.value, rel.comps ? num(rel.comps.value) : null, rec.target] }], hline: { y: price * (1 + rec.buy), label: 'COMPRAR > $' + mxn(price * (1 + rec.buy)) }, yFmt: v => nf(0).format(v), valFmt: mxn }));
+  if (rec && rec.target != null) add('rec', 'Precio objetivo (conclusión) frente al mercado y bandas de recomendación (MXN)', 'hoja Transacciones SDC §7 · regla de recomendación', barChart({ cats: ['Mercado', 'DCF', 'Trading Comps', 'Objetivo combinado'], series: [{ name: '', color: PAL.accent, values: [price, b.value, rel.comps ? num(rel.comps.value) : null, rec.target] }], hline: { y: price * (1 + rec.buy), label: 'COMPRAR > $' + mxn(price * (1 + rec.buy)) }, yFmt: v => nf(0).format(v), valFmt: mxn }));
   return C;
 }

@@ -1,7 +1,9 @@
-// Estructura general de la página: portada o aplicación, más capas flotantes (panel, presentación, avisos).
+// Estructura general de la página: portada o aplicación, más capas flotantes (panel, avisos).
 import { css } from './css';
 import type { VM } from './viewmodel';
-import { Cover, Drawer, ErrorBanner, ExportStatus, Footer, Header, MobileNav, PresentationBar, Splash, Toast } from './pages/shell';
+import { Cover, Drawer, ErrorBanner, ExportStatus, Footer, Header, MobileNav, PageNav, Splash, Toast } from './pages/shell';
+import { AboutPage } from './pages/AboutPage';
+import { EsgPage } from './pages/EsgPage';
 import { ValuePage } from './pages/ValuePage';
 import { FlowsPage } from './pages/FlowsPage';
 import { RiskPage } from './pages/RiskPage';
@@ -13,7 +15,6 @@ import { AnnexPage } from './pages/AnnexPage';
 import { LibraryPage } from './pages/LibraryPage';
 import { ImportPage } from './pages/ImportPage';
 import { TeamPage } from './pages/TeamPage';
-import { Deck } from './present/Deck';
 
 export function Shell({ vm }: { vm: VM }) {
   const { v, ui } = vm;
@@ -24,27 +25,28 @@ export function Shell({ vm }: { vm: VM }) {
       {v.app ? (
         <div>
           <Header vm={vm} />
-          <main style={css(`max-width:1360px; margin:0 auto; padding:32px 24px 120px; opacity:${ui.pageO}; transform:${ui.pageT}; transition:opacity .45s ease, transform .55s cubic-bezier(.2,.7,.2,1);`)}>
+          <main style={css(`max-width:var(--page-max); margin:0 auto; padding:32px var(--page-pad) 120px; opacity:${ui.pageO}; transform:${ui.pageT}; transition:opacity .45s ease, transform .55s cubic-bezier(.2,.7,.2,1);`)}>
             <ErrorBanner vm={vm} />
+            <AboutPage vm={vm} />
             <ValuePage vm={vm} />
             <FlowsPage vm={vm} />
             <RiskPage vm={vm} />
             <MultiplesPage vm={vm} />
             <TransactionsPage vm={vm} />
             <CombinedPage vm={vm} />
+            <EsgPage vm={vm} />
             <LabPage vm={vm} />
             <AnnexPage vm={vm} />
             <LibraryPage vm={vm} />
             <ImportPage vm={vm} />
             <TeamPage vm={vm} />
+            <PageNav vm={vm} />
           </main>
           <Footer vm={vm} />
           <MobileNav vm={vm} />
         </div>
       ) : null}
       <Drawer vm={vm} />
-      <PresentationBar vm={vm} />
-      {vm.deck ? <Deck deck={vm.deck.data} index={vm.deck.index} onIndex={vm.deck.onIndex} onExit={vm.deck.onExit} onLive={vm.deck.onLive} team={vm.deck.team} /> : null}
       <Toast vm={vm} />
       <ExportStatus vm={vm} />
     </div>

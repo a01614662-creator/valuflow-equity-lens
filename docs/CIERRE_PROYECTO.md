@@ -372,3 +372,11 @@ M	tools/excel/extract_dataset.py
 M	tools/excel/scenarios.py
 M	docs/CIERRE_PROYECTO.md
 ```
+
+## 13. Cierre para regionales (21-oct-2026)
+
+Por indicación del profesor, el precio de referencia es **MXN $30.25, cierre del 30-jun-2026** (antes $33.48 del 25-sep-2026).
+Entra desde el Excel auditado (`WACC!B13 = Inflación!B183`, fila nueva en la hoja Auditoría). DCF ($38.34), WACC iterado (9.56%) y precio
+objetivo ($35.92) no cambian; el potencial pasa de +7.3% a **+18.7%** (COMPRAR). Las tablas de las secciones anteriores que citan $33.48
+quedan como historial. Se retiró el modo de diapositivas (la presentación es el recorrido 00–07 de la app) y se agregaron 00 · Acerca de
+y 07 · ESG y Gobierno Corporativo. Detalle, pruebas y limitaciones: `docs/RECORRIDO_REGIONAL.md`.

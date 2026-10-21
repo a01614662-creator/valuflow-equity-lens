@@ -12,15 +12,15 @@ export function TableCard({ t }: { t: TTable }) {
       <i className="corner br"></i>
       <div style={css('display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;')}>
         <div>
-          <div style={css('font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{t.code ? t.code + ' · ' : ''}{t.unit}</div>
+          <div style={css('font-size:13.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-700);')}>{t.code ? t.code + ' · ' : ''}{t.unit}</div>
           <h3 style={css('margin:4px 0 0; font-size:26px;')}>{t.title}</h3>
-          <span style={css('font-size:13px; color:var(--color-neutral-700);')}>{t.question}</span></div>
+          <span style={css('font-size:14px; color:var(--color-neutral-700);')}>{t.question}</span></div>
         <span className="tag tag-outline">Fuente: {t.source}</span></div>
       {t.warn ? (
         <div role="note" style={css('padding:10px 14px; border:1px solid var(--neg); color:var(--neg); font-size:13px; line-height:1.5;')}>{t.warn}</div>
       ) : null}
       <div style={css('overflow:auto; max-height:640px; border-top:1px solid var(--color-text);')}>
-        <table className="table" style={css(`font-size:13px; min-width:${t.minW};`)}>
+        <table className="table" style={css(`font-size:14.5px; min-width:${t.minW};`)}>
           <thead>
             <tr>
               <th style={css('position:sticky; top:0; left:0; z-index:2; background:var(--color-bg);')}>Concepto</th>
@@ -34,12 +34,12 @@ export function TableCard({ t }: { t: TTable }) {
                 {(row.cells || []).map((c, $j) => (<Fragment key={$j}>
                   <td title={c.title} style={css(`text-align:${c.align}; white-space:${c.ws}; min-width:${c.mw}; background:${c.bg}; color:${c.color}; font-weight:${c.strong ? 600 : row.fw};`)}>
                     {c.onClick ? (
-                      <button onClick={c.onClick} title={c.title} style={css(`border:1px solid var(--color-divider); background:none; color:${c.color}; cursor:pointer; font-size:12px; padding:3px 8px; font-weight:600;`)}>{String(c.t)}</button>
+                      <button onClick={c.onClick} title={c.title} style={css(`border:1px solid var(--color-divider); background:none; color:${c.color}; cursor:pointer; font-size:13.5px; padding:3px 8px; font-weight:600;`)}>{String(c.t)}</button>
                     ) : String(c.t)}</td>
                 </Fragment>))}</tr>
             </Fragment>))}</tbody></table></div>
       {t.hasNote ? (
-        <span style={css('font-size:12px; line-height:1.5; color:var(--color-neutral-700);')}>{t.note}</span>
+        <span style={css('font-size:13.5px; line-height:1.5; color:var(--color-neutral-700);')}>{t.note}</span>
       ) : null}</div>
   );
 }

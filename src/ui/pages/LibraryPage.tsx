@@ -11,7 +11,7 @@ export function LibraryPage({ vm }: { vm: VM }) {
       <section data-screen-label="Mis valuaciones" style={css('display:flex; flex-direction:column; gap:24px;')}>
         <div style={css('display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between;')}>
           <div style={css('display:flex; flex-direction:column; gap:8px;')}>
-            <span style={css('font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Plataforma</span>
+            <span style={css('font-size:13.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--color-accent-700);')}>Plataforma</span>
             <h1 style={css('margin:0; font-size:clamp(36px, 4.4vw, 56px); line-height:.95; text-transform:uppercase;')}>Mis valuaciones</h1></div>
           <div style={css('display:flex; gap:8px; flex-wrap:wrap;')}>
             <label className="btn btn-secondary" style={css('cursor:pointer;')}>Importar dataset (.json)
@@ -38,15 +38,15 @@ export function LibraryPage({ vm }: { vm: VM }) {
                 <span className={cx(`tag ${c.tagCls}`)}>{c.tag}</span></div>
               <div>
                 <div style={css('font-family:var(--font-heading); font-size:22px; font-weight:600;')}>{c.name}</div>
-                <div style={css('font-size:13px; color:var(--color-neutral-700);')}>{c.meta}</div></div>
+                <div style={css('font-size:14px; color:var(--color-neutral-700);')}>{c.meta}</div></div>
               <div style={css('display:flex; gap:20px; align-items:baseline; border-top:1px solid var(--color-divider); padding-top:12px;')}>
                 <div style={css('display:flex; flex-direction:column;')}>
-                  <span style={css('font-size:11px; color:var(--color-neutral-700);')}>Valor intrínseco</span>
+                  <span style={css('font-size:12.5px; color:var(--color-neutral-700);')}>Valor intrínseco</span>
                   <span style={css('font-family:var(--font-heading); font-size:30px; font-weight:600; color:var(--color-accent);')}>{c.valTxt}</span></div>
                 <div style={css('display:flex; flex-direction:column;')}>
-                  <span style={css('font-size:11px; color:var(--color-neutral-700);')}>Potencial</span>
+                  <span style={css('font-size:12.5px; color:var(--color-neutral-700);')}>Potencial</span>
                   <span style={css(`font-family:var(--font-heading); font-size:22px; font-weight:600; color:${c.upColor};`)}>{c.upTxt}</span></div></div>
-              <span style={css('font-size:12px; color:var(--color-neutral-700);')}>{c.created}</span>
+              <span style={css('font-size:13.5px; color:var(--color-neutral-700);')}>{c.created}</span>
               <div style={css('display:flex; gap:6px; flex-wrap:wrap;')}>
                 <button className="btn btn-primary" onClick={c.onOpen}>Abrir →</button>
                 <button className="btn btn-secondary" onClick={c.onDup}>Duplicar</button>

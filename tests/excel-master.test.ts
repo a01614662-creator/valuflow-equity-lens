@@ -56,7 +56,7 @@ describe('DCF = Excel (por escenario de inflación y beta)', () => {
   });
 
   it('baseline histórico del PRO: trayectoria Citi + βU heredada 0.80 = Validación!C9 ($30.93)', () => {
-    expect(runX('historico').value).toBeCloseTo(30.931885693122553, 9);
+    expect(runX('historico').value).toBeCloseTo(30.9318859, 6); close(runX('historico').value, XL.expected.dcf.historico.price, 1e-11);
   });
   it('valor oficial por defecto (Base 3.51%, βU de la regresión desapalancada) = Excel PRO auditado', () => {
     expect(E.defaults(soriana).inflation).toBe('base');
@@ -67,7 +67,7 @@ describe('DCF = Excel (por escenario de inflación y beta)', () => {
   });
   it('trazabilidad: con la βU de Damodaran 0.69 se reproduce el resultado oficial anterior (Validación!H9)', () => {
     close(runX('base_damodaran').value, XL.expected.dcf.base_damodaran.price, 1e-11);
-    expect(runX('base_damodaran').value).toBeCloseTo(31.6168901445216, 9);
+    expect(runX('base_damodaran').value).toBeCloseTo(31.61689, 5);
   });
   it('valor terminal con FCF normalizado (capex = D&A) y tendencia de mínimos cuadrados que crece con la inflación', () => {
     (['citi', 'cautela', 'base', 'alcista'] as const).forEach(k => {
